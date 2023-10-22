@@ -8,6 +8,12 @@ environment:
 
 dependencies:
   dart_frog: ^1.0.0
+  dart_frog_auth: ^1.1.0
+  dart_jsonwebtoken: ^2.12.0
+  models:
+    path: ../packages/models
+  mongo_dart: ^0.9.3
+  synchronized: ^3.1.0
 
 dev_dependencies:
   mocktail: ^1.0.0
