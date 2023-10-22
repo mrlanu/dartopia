@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:dart_frog/dart_frog.dart';
+import 'package:models/models.dart';
 
 import '../../models/models.dart';
 
@@ -35,10 +36,11 @@ Future<Response> onRequest(RequestContext context) async {
 
 Future<Response> _onGet(RequestContext context) async {
   final allBooks = books;
+  final user = context.read<User>();
   return Response.json(
     body: {
       'status': 200,
-      'message': '',
+      'message': user,
       'data': allBooks,
     },
   );

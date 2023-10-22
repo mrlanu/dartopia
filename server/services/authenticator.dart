@@ -3,25 +3,27 @@ import 'package:models/models.dart';
 
 import '../config/config.dart';
 import '../helpers/hash.dart';
-
-import 'mongo_service.dart';
+import '../repositories/user_repository.dart';
 
 class Authenticator {
+  Authenticator({required UserRepository userRepository})
+      : _userRepository = userRepository;
+
+  final UserRepository _userRepository;
+
   Future<User?> findByUsernameAndPassword({
     required String username,
     required String password,
   }) async {
-    await MongoService.startDb();
-    final foundUser =
-        await MongoService.usersCollection.findOne({'email': username});
-    final foundUserPassword = foundUser?['password'] as String;
+    final foundUser = await _userRepository.findByEmail(email: username);
+    final foundUserPassword = foundUser?.password;
     final hashedPassword = hashPassword(
       password,
     );
     if (foundUser == null || hashedPassword != foundUserPassword) {
       return Future(() => null);
     }
-    return User.fromJson(foundUser);
+    return foundUser;
   }
 
   String generateToken({
@@ -55,12 +57,6 @@ class Authenticator {
   }
 
   Future<User?> _findByEmail({required String email}) async {
-    await MongoService.startDb();
-    final foundUser =
-        await MongoService.usersCollection.findOne({'email': email});
-    if (foundUser != null) {
-      return User.fromJson(foundUser);
-    }
-    return null;
+    return _userRepository.findByEmail(email: email);
   }
 }
