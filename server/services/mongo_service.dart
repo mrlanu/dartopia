@@ -1,26 +1,37 @@
 import 'package:mongo_dart/mongo_dart.dart';
-
 import '../config/config.dart';
 
 class MongoService {
 
-  Db? _db;
+  MongoService._();
 
-  Future<void> initializeMongo() async {
-    if(_db == null){
-      _db = await Db.create(Config.mongoDBUrl);
-      await _db!.open();
+  static MongoService? _instance;
+  late Db _db; // Private constructor
+
+  static MongoService get instance {
+    if (_instance == null) {
+      _instance = MongoService._(); // Initialize the instance if it doesn't exist
+      _instance!.initializeMongo();
     }
+    return _instance!;
+  }
+
+  void initializeMongo() {
+    _db = Db(Config.mongoDBUrl);
+    _db.open().then((_) {
+      print('MongoDB connection opened.');
+    });
   }
 
   Future<void> closeDb() async {
-    if (_db!.isConnected == true) {
-      await _db!.close();
+    if (_db.isConnected == true) {
+      await _db.close();
+      print('MongoDB connection closed.');
     }
   }
 
-  //collections
-  DbCollection get usersCollection => _db!.collection('users');
+  // Collections
+  DbCollection get usersCollection => _db.collection('users');
 
-  DbCollection get booksCollection => _db!.collection('books');
+  DbCollection get booksCollection => _db.collection('books');
 }

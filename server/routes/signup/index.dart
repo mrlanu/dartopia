@@ -19,7 +19,7 @@ Future<Response> onRequest(RequestContext context) async {
 Future<Response> _onPost(RequestContext context) async {
   try {
     final request = context.request;
-    final userRepository = await context.read<Future<UserRepository>>();
+    final userRepository = context.read<UserRepository>();
 
     final requestBody = await request.body();
     final requestData = jsonDecode(requestBody) as Map<String, dynamic>;
