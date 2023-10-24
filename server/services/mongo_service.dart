@@ -6,11 +6,11 @@ class MongoService {
   MongoService._();
 
   static MongoService? _instance;
-  late Db _db; // Private constructor
+  late Db _db;
 
   static MongoService get instance {
     if (_instance == null) {
-      _instance = MongoService._(); // Initialize the instance if it doesn't exist
+      _instance = MongoService._();
       _instance!.initializeMongo();
     }
     return _instance!;
@@ -23,6 +23,8 @@ class MongoService {
     });
   }
 
+  Db get db => _db;
+
   Future<void> closeDb() async {
     if (_db.isConnected == true) {
       await _db.close();
@@ -30,8 +32,8 @@ class MongoService {
     }
   }
 
-  // Collections
+  /*// Collections
   DbCollection get usersCollection => _db.collection('users');
-
-  DbCollection get booksCollection => _db.collection('books');
+  DbCollection get settlementsCollection => _db.collection('settlements');
+  DbCollection get booksCollection => _db.collection('books');*/
 }

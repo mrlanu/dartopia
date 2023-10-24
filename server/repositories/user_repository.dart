@@ -17,7 +17,7 @@ class UserRepositoryMongo extends UserRepository {
   @override
   Future<User?> findByEmail({required String email}) async {
     final userMap =
-        await _mongoService.usersCollection.findOne({'email': email});
+        await _mongoService.db.collection('users').findOne({'email': email});
     if (userMap == null) {
       return null;
     } else {
@@ -27,6 +27,6 @@ class UserRepositoryMongo extends UserRepository {
 
   @override
   Future<WriteResult> insertOne({required User user}) async {
-    return _mongoService.usersCollection.insertOne(user.toJson());
+    return _mongoService.db.collection('users').insertOne(user.toJson());
   }
 }
