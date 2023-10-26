@@ -7,7 +7,8 @@ class Settlement {
     this.name = 'New village',
     this.resources = const [500.0, 500.0, 500.0, 500.0],
     DateTime? lastModified,
-  }) : lastModified = lastModified ?? DateTime.now();
+  }) : lastModified =
+            lastModified ?? DateTime.now();
 
   ObjectId id;
   final String userId;
@@ -37,17 +38,16 @@ class Settlement {
   }
 
   List<double> _producePerHour() {
-    return [50.0, 100.0, 100.0, 100.0];
+    return [60.0, 60.0, 60.0, 60.0];
   }
 
   Settlement.fromMap(Map<String, dynamic> map)
       : id = map['_id'] as ObjectId,
         name = map['name'] as String,
         userId = map['userId'] as String,
-        resources = (map['resources'] as List<dynamic>?)
-                ?.map((e) => (e as num).toDouble())
-                .toList() ??
-            const [500.0, 500.0, 500.0, 500.0],
+        resources = (map['resources'] as List<dynamic>)
+            .map((e) => (e as num).toDouble())
+            .toList(),
         lastModified = map['lastModified'] as DateTime;
 
   Map<String, dynamic> toMap() => <String, dynamic>{

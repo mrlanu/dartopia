@@ -5,8 +5,13 @@ import '../services/mongo_service.dart';
 
 abstract class SettlementRepository {
   Future<Settlement?> saveSettlement(Settlement settlement);
+
   Future<Settlement?> updateSettlement(Settlement settlement);
+
   Future<Settlement?> getById(String id);
+
+  //movements
+  Future<List<Movement>> getAllMovementsBySettlementId(String id);
 }
 
 class SettlementRepositoryMongoImpl implements SettlementRepository {
@@ -51,4 +56,12 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
       return null;
     }
   }
+
+  @override
+  Future<List<Movement>> getAllMovementsBySettlementId(String id) =>
+      _mongoService.db
+          .collection('movements')
+          .find(where.eq('from', id).or(where.eq('to', id)))
+          .map(Movement.fromMap)
+          .toList();
 }

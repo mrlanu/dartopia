@@ -10,7 +10,9 @@ const filePath = 'lock.lock';
 final file = File(filePath);
 
 Future<void> performAutomation() async {
-  //await Future.delayed(const Duration(seconds: 15));
+  print('Automation has been started');
+  await Future.delayed(const Duration(seconds: 5));
+  print('Automation has been completed.');
   file.deleteSync();
 }
 

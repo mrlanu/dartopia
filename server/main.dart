@@ -5,7 +5,7 @@ import 'package:dart_frog/dart_frog.dart';
 import 'services/mongo_service.dart';
 
 Future<void> init(InternetAddress ip, int port) async {
-  MongoService.instance;
+  await MongoService.instance.initializeMongo();
 }
 
 Future<HttpServer> run(Handler handler, InternetAddress ip, int port) {

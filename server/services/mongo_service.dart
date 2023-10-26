@@ -9,18 +9,14 @@ class MongoService {
   late Db _db;
 
   static MongoService get instance {
-    if (_instance == null) {
-      _instance = MongoService._();
-      _instance!.initializeMongo();
-    }
+    _instance ??= MongoService._();
     return _instance!;
   }
 
-  void initializeMongo() {
+  Future<void> initializeMongo() async {
     _db = Db(Config.mongoDBUrl);
-    _db.open().then((_) {
-      print('MongoDB connection opened.');
-    });
+    await _db.open();
+    print('MongoDB connection opened.');
   }
 
   Db get db => _db;

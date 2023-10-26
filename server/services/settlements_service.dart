@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:models/models.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
@@ -25,8 +27,12 @@ class SettlementServiceImpl extends SettlementService {
     DateTime? untilDateTime,
   }) async {
     untilDateTime ??= DateTime.now();
+
     final settlement = await _settlementRepository.getById(settlementId);
+    final movements =
+        await _settlementRepository.getAllMovementsBySettlementId(settlementId);
     settlement!.calculateProducedGoods();
+
     return _settlementRepository
         .updateSettlement(settlement.copyWith(lastModified: DateTime.now()));
   }
