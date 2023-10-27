@@ -47,9 +47,9 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
 
   @override
   Future<Settlement?> updateSettlement(Settlement settlement) async {
-    final result = await _mongoService.db
-        .collection('settlements')
-        .replaceOne(where.id(settlement.id), settlement.toMap());
+    final result = await _mongoService.db.collection('settlements').replaceOne(
+        where.id(settlement.id),
+        settlement.copyWith(lastModified: DateTime.now()).toMap(),);
     if (result.isSuccess) {
       return settlement;
     } else {

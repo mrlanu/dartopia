@@ -5,7 +5,8 @@ import 'dart:isolate';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:models/models.dart';
 
-import '../../services/settlements_service.dart';
+import '../../../services/settlements_service.dart';
+
 
 
 FutureOr<Response> onRequest(RequestContext context, String id) async {
@@ -35,8 +36,8 @@ FutureOr<Response> onRequest(RequestContext context, String id) async {
 
 Future<Response> _get(RequestContext context, Settlement settlement) async {
   print('Response has been sent for ID: ${settlement.id}');
-  return Response(
-      body: settlement.toResponseBody().toString(),);
+  return Response.json(
+      body: settlement.toResponseBody(),);
 }
 
 Future<Response> _put(

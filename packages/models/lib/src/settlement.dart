@@ -1,12 +1,17 @@
+import 'package:collection/collection.dart';
+
 import 'package:models/src/construction_task.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
+/// The `Settlement` class
 class Settlement {
+
+  /// Creates a new `Settlement`.
   Settlement({
     required this.id,
     required this.userId,
     this.name = 'New village',
-    this.resources = const [500.0, 500.0, 500.0, 500.0],
+    this.storage = const [500.0, 500.0, 500.0, 500.0],
     this.buildings = const [
       BuildingRecord(id: 1, level: 1),
       BuildingRecord(id: 2, level: 1),
@@ -18,46 +23,11 @@ class Settlement {
     DateTime? lastModified,
   }) : lastModified = lastModified ?? DateTime.now();
 
-  ObjectId id;
-  final String userId;
-  String name;
-  List<double> resources;
-
-  List<BuildingRecord> buildings;
-
-  List<ConstructionTask> constructionTasks;
-  DateTime lastModified;
-
-  /// The method calculates the production of wood, clay, iron, and crop resources
-  /// over a specified duration and updates the resource storage with the new values.
-  void calculateProducedGoods({DateTime? toDateTime}) {
-    toDateTime ??= DateTime.now();
-    final producePerHour = _producePerHour();
-    final durationSinceLastModified =
-        toDateTime.difference(lastModified).inSeconds;
-    final divider = durationSinceLastModified / 3600;
-    final woodProduced = producePerHour[0] * divider;
-    final clayProduced = producePerHour[1] * divider;
-    final ironProduced = producePerHour[2] * divider;
-    final cropProduced = producePerHour[3] * divider;
-    final newStorage = [
-      double.parse((resources[0] + woodProduced).toStringAsFixed(4)),
-      double.parse((resources[1] + clayProduced).toStringAsFixed(4)),
-      double.parse((resources[2] + ironProduced).toStringAsFixed(4)),
-      double.parse((resources[3] + cropProduced).toStringAsFixed(4)),
-    ];
-    resources = newStorage;
-  }
-
-  List<double> _producePerHour() {
-    return [60.0, 60.0, 60.0, 60.0];
-  }
-
   Settlement.fromMap(Map<String, dynamic> map)
       : id = map['_id'] as ObjectId,
         name = map['name'] as String,
         userId = map['userId'] as String,
-        resources = (map['resources'] as List<dynamic>)
+        storage = (map['storage'] as List<dynamic>)
             .map((e) => (e as num).toDouble())
             .toList(),
         buildings = (map['buildings'] as List<dynamic>)
@@ -68,31 +38,130 @@ class Settlement {
             .toList(),
         lastModified = map['lastModified'] as DateTime;
 
-  Map<String, dynamic> toMap() => <String, dynamic>{
+  ObjectId id;
+  final String userId;
+  String name;
+  List<double> storage;
+  List<BuildingRecord> buildings;
+  List<ConstructionTask> constructionTasks;
+  DateTime lastModified;
+
+  /// Add new ConstructionTask to constructionTasks list
+  void addConstructionTask(ConstructionTask task) {
+    constructionTasks.add(task);
+  }
+
+  /// Calculate the resource production per hour for specific buildings.
+  ///
+  /// This function filters the `buildings` list to select buildings with
+  /// specific `id` values, groups them by `id`, and calculates the total
+  /// production based on each building's level.
+  ///
+  /// Returns a list of integers representing the production per hour for
+  /// each building type. The order in the list corresponds to the building
+  /// types with IDs 1, 2, 3, and 4.
+  List<int> calculateProducePerHour() {
+    // Filter buildings based on specific `id` values (1, 2, 3, 4).
+    final resourceBuilding = buildings.where((b) =>
+    b.id == 1 || b.id == 2 || b.id == 3 || b.id == 4,).toList();
+
+    // Group the filtered buildings by `id`.
+    final groupedBuildings = groupBy(
+      resourceBuilding,
+          (BuildingRecord b) => b.id,
+    );
+
+    // Calculate the total production for each building type.
+    final reducedMap = groupedBuildings.map((key, value) {
+      // here I used simple multiplication by 10,
+      // should be changed to actual benefit from Building specification
+      final sum = value.fold(0, (a, b) => a + b.level * 10);
+      return MapEntry(key, sum);
+    });
+
+    // Create a list to store the production per hour for each building type.
+    final result = List<int>.filled(4, 0);
+
+    var index = 0;
+    reducedMap.forEach((key, value) {
+      result[index] = value;
+      index++;
+    });
+
+    return result;
+  }
+
+  /// Calculate the production of wood, clay, iron, and crop resources
+  /// over a specified duration and updates the resource storage with
+  /// the new values.
+  void calculateProducedGoods({DateTime? toDateTime}) {
+    toDateTime ??= DateTime.now();
+    final producePerHour = calculateProducePerHour();
+    final durationSinceLastModified =
+        toDateTime
+            .difference(lastModified)
+            .inSeconds;
+    final divider = durationSinceLastModified / 3600;
+    final woodProduced = producePerHour[0] * divider;
+    final clayProduced = producePerHour[1] * divider;
+    final ironProduced = producePerHour[2] * divider;
+    final cropProduced = producePerHour[3] * divider;
+    final newStorage = [
+      double.parse((storage[0] + woodProduced).toStringAsFixed(4)),
+      double.parse((storage[1] + clayProduced).toStringAsFixed(4)),
+      double.parse((storage[2] + ironProduced).toStringAsFixed(4)),
+      double.parse((storage[3] + cropProduced).toStringAsFixed(4)),
+    ];
+    storage = newStorage;
+    lastModified = toDateTime;
+  }
+
+  void castStorage() {
+    for (var i = 0; i < storage.length - 1; i++) {
+      if (storage[i] > _getWarehouseCapacity()){
+        storage[i] = _getWarehouseCapacity();
+      }
+      // cast crop
+      if (storage[3] > _getGranaryCapacity()){
+        storage[3] = _getGranaryCapacity();
+      }
+    }
+  }
+
+  double _getWarehouseCapacity() => 2000;
+  double _getGranaryCapacity() => 2000;
+
+  /// Converting a BuildingRecord to a map representation.
+  Map<String, dynamic> toMap() =>
+      <String, dynamic>{
         '_id': id,
         'name': name,
         'userId': userId,
-        'resources': resources,
+        'storage': storage,
         'buildings': buildings.map((b) => b.toMap()).toList(),
         'constructionTasks': constructionTasks.map((c) => c.toMap()).toList(),
         'lastModified': lastModified,
       };
 
-  Map<String, dynamic> toResponseBody() => <String, dynamic>{
+  /// Converting a Settlement to a ResponseBody representation.
+  Map<String, dynamic> toResponseBody() =>
+      <String, dynamic>{
         'id': id.$oid,
         'name': name,
         'userId': userId,
-        'resources': resources,
+        'storage': storage,
         'buildings': buildings.map((b) => b.toMap()).toList(),
-        'constructionTasks': constructionTasks.map((c) => c.toMap()).toList(),
-        'lastModified': lastModified,
+        'constructionTasks': constructionTasks.map((c) => c.toResponseBody())
+            .toList(),
+        'lastModified': lastModified.toIso8601String(),
       };
 
+  /// Returns a new `Settlement` instance with the specified updates.
   Settlement copyWith({
     ObjectId? id,
     String? name,
     String? userId,
-    List<double>? resources,
+    List<double>? storage,
     List<BuildingRecord>? buildings,
     List<ConstructionTask>? constructionTasks,
     DateTime? lastModified,
@@ -101,7 +170,7 @@ class Settlement {
       id: id ?? this.id,
       name: name ?? this.name,
       userId: userId ?? this.userId,
-      resources: resources ?? this.resources,
+      storage: storage ?? this.storage,
       buildings: buildings ?? this.buildings,
       constructionTasks: constructionTasks ?? this.constructionTasks,
       lastModified: lastModified ?? this.lastModified,
@@ -109,21 +178,31 @@ class Settlement {
   }
 }
 
+/// The `BuildingRecord` class is used to create records
+/// for buildings in Settlement class
 class BuildingRecord {
-  final int id;
-  final int level;
 
+  /// Creates a new `BuildingRecord` with the specified `id` and `level`.
   const BuildingRecord({required this.id, required this.level});
 
+  /// Creates a new `BuildingRecord` from a map representation.
   BuildingRecord.fromMap(Map<String, dynamic> map)
       : id = map['id'] as int,
         level = map['level'] as int;
 
-  Map<String, dynamic> toMap() => <String, dynamic>{
+  /// The unique identifier for the building type.
+  final int id;
+  /// The current level of the building.
+  final int level;
+
+  /// Converting a BuildingRecord to a map representation.
+  Map<String, dynamic> toMap() =>
+      <String, dynamic>{
         'id': id,
         'level': level,
       };
 
+  /// Returns a new `BuildingRecord` instance with the specified updates.
   BuildingRecord copyWith({int? id, int? level}) {
     return BuildingRecord(id: id ?? this.id, level: level ?? this.level);
   }
