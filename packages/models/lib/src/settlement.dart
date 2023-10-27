@@ -1,3 +1,4 @@
+import 'package:models/src/construction_task.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
 class Settlement {
@@ -6,14 +7,25 @@ class Settlement {
     required this.userId,
     this.name = 'New village',
     this.resources = const [500.0, 500.0, 500.0, 500.0],
+    this.buildings = const [
+      BuildingRecord(id: 1, level: 1),
+      BuildingRecord(id: 2, level: 1),
+      BuildingRecord(id: 3, level: 1),
+      BuildingRecord(id: 4, level: 1),
+      BuildingRecord(id: 5, level: 1),
+    ],
+    this.constructionTasks = const [],
     DateTime? lastModified,
-  }) : lastModified =
-            lastModified ?? DateTime.now();
+  }) : lastModified = lastModified ?? DateTime.now();
 
   ObjectId id;
   final String userId;
   String name;
   List<double> resources;
+
+  List<BuildingRecord> buildings;
+
+  List<ConstructionTask> constructionTasks;
   DateTime lastModified;
 
   /// The method calculates the production of wood, clay, iron, and crop resources
@@ -48,6 +60,12 @@ class Settlement {
         resources = (map['resources'] as List<dynamic>)
             .map((e) => (e as num).toDouble())
             .toList(),
+        buildings = (map['buildings'] as List<dynamic>)
+            .map((e) => BuildingRecord.fromMap(e as Map<String, dynamic>))
+            .toList(),
+        constructionTasks = (map['constructionTasks'] as List<dynamic>)
+            .map((e) => ConstructionTask.fromMap(e as Map<String, dynamic>))
+            .toList(),
         lastModified = map['lastModified'] as DateTime;
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -55,6 +73,8 @@ class Settlement {
         'name': name,
         'userId': userId,
         'resources': resources,
+        'buildings': buildings.map((b) => b.toMap()).toList(),
+        'constructionTasks': constructionTasks.map((c) => c.toMap()).toList(),
         'lastModified': lastModified,
       };
 
@@ -63,6 +83,8 @@ class Settlement {
         'name': name,
         'userId': userId,
         'resources': resources,
+        'buildings': buildings.map((b) => b.toMap()).toList(),
+        'constructionTasks': constructionTasks.map((c) => c.toMap()).toList(),
         'lastModified': lastModified,
       };
 
@@ -71,6 +93,8 @@ class Settlement {
     String? name,
     String? userId,
     List<double>? resources,
+    List<BuildingRecord>? buildings,
+    List<ConstructionTask>? constructionTasks,
     DateTime? lastModified,
   }) {
     return Settlement(
@@ -78,7 +102,29 @@ class Settlement {
       name: name ?? this.name,
       userId: userId ?? this.userId,
       resources: resources ?? this.resources,
+      buildings: buildings ?? this.buildings,
+      constructionTasks: constructionTasks ?? this.constructionTasks,
       lastModified: lastModified ?? this.lastModified,
     );
+  }
+}
+
+class BuildingRecord {
+  final int id;
+  final int level;
+
+  const BuildingRecord({required this.id, required this.level});
+
+  BuildingRecord.fromMap(Map<String, dynamic> map)
+      : id = map['id'] as int,
+        level = map['level'] as int;
+
+  Map<String, dynamic> toMap() => <String, dynamic>{
+        'id': id,
+        'level': level,
+      };
+
+  BuildingRecord copyWith({int? id, int? level}) {
+    return BuildingRecord(id: id ?? this.id, level: level ?? this.level);
   }
 }
