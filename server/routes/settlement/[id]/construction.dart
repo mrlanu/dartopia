@@ -37,16 +37,8 @@ Future<Response> _post(RequestContext context, Settlement settlement) async {
   final taskRequest = NewConstructionRequest.fromMap(
     await context.request.json() as Map<String, dynamic>,
   );
-  final newTask = ConstructionTask(
-    id: const Uuid().v4(),
-    position: taskRequest.position,
-    toLevel: taskRequest.toLevel,
-    when: DateTime.now().add(const Duration(minutes: 1)),
-  );
-  settlement.addConstructionTask(newTask);
-  final result = await settlementService.updateSettlement(
-    settlement: settlement,
-  );
+  final result = await settlementService.addConstructionTask(
+      settlement: settlement, request: taskRequest,);
   return Response.json(
     statusCode:
         result != null ? HttpStatus.created : HttpStatus.internalServerError,

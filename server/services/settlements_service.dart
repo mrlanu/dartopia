@@ -20,6 +20,10 @@ abstract class SettlementService {
   Future<String?> foundNewSettlement({
     required String userId,
   });
+
+  Future<Settlement?> addConstructionTask(
+      {required Settlement settlement,
+      required NewConstructionRequest request});
 }
 
 class SettlementServiceImpl extends SettlementService {
@@ -48,7 +52,7 @@ class SettlementServiceImpl extends SettlementService {
     return _settlementRepository.updateSettlement(settlement);
   }
 
-  void _executeAllTasks(Settlement settlement, List<Executable> tasks){
+  void _executeAllTasks(Settlement settlement, List<Executable> tasks) {
     var modified = settlement.lastModified;
     // main events loop
     for (var task in tasks) {
@@ -59,12 +63,13 @@ class SettlementServiceImpl extends SettlementService {
       while (cropPerHour < 0) {
         final leftCrop = settlement.storage[3];
         final durationToDeath = leftCrop / -cropPerHour * 3600;
-        final deathTime = modified
-            .add(Duration(seconds: durationToDeath.toInt()));
+        final deathTime =
+            modified.add(Duration(seconds: durationToDeath.toInt()));
 
         if (deathTime.isBefore(task.executionTime)) {
           final Executable deathEvent = DeathTask(deathTime);
-          settlement.calculateProducedGoods(toDateTime: deathEvent.executionTime);
+          settlement.calculateProducedGoods(
+              toDateTime: deathEvent.executionTime);
           deathEvent.execute(settlement);
           modified = deathEvent.executionTime;
         } else {
@@ -73,8 +78,9 @@ class SettlementServiceImpl extends SettlementService {
         cropPerHour = settlement.calculateProducePerHour()[3];
       }
       // recalculate storage leftovers
-      settlement..calculateProducedGoods(toDateTime: task.executionTime)
-      ..castStorage();
+      settlement
+        ..calculateProducedGoods(toDateTime: task.executionTime)
+        ..castStorage();
       task.execute(settlement);
       modified = task.executionTime;
     }
@@ -95,5 +101,21 @@ class SettlementServiceImpl extends SettlementService {
   @override
   Future<Settlement?> updateSettlement({required Settlement settlement}) {
     return _settlementRepository.updateSettlement(settlement);
+  }
+
+  @override
+  Future<Settlement?> addConstructionTask(
+      {required Settlement settlement,
+      required NewConstructionRequest request}) {
+    final newTask = ConstructionTask(
+      id: const Uuid().v4(),
+      position: request.position,
+      toLevel: request.toLevel,
+      when: DateTime.now().add(const Duration(minutes: 1)),
+    );
+    settlement.addConstructionTask(newTask);
+    return updateSettlement(
+      settlement: settlement,
+    );
   }
 }
