@@ -41,11 +41,12 @@ class SettlementServiceImpl extends SettlementService {
     final settlement = await _settlementRepository.getById(settlementId);
     final movements =
         await _settlementRepository.getAllMovementsBySettlementId(settlementId);
-    settlement!.calculateProducedGoods();
 
-    final List<Executable> executableTaskList = settlement.constructionTasks
-        .where((cTask) => cTask.when.isBefore(untilDateTime!))
-        .toList();
+    final executableTaskList = <Executable>[
+      ...settlement!.constructionTasks
+          .where((cTask) => cTask.when.isBefore(untilDateTime!)),
+      EmptyTask(untilDateTime),
+    ];
 
     _executeAllTasks(settlement, executableTaskList);
 
@@ -53,6 +54,7 @@ class SettlementServiceImpl extends SettlementService {
   }
 
   void _executeAllTasks(Settlement settlement, List<Executable> tasks) {
+    tasks.sort((a, b) => a.executionTime.compareTo(b.executionTime));
     var modified = settlement.lastModified;
     // main events loop
     for (var task in tasks) {
@@ -107,12 +109,18 @@ class SettlementServiceImpl extends SettlementService {
   Future<Settlement?> addConstructionTask(
       {required Settlement settlement,
       required NewConstructionRequest request}) {
+    final constructionTasks = settlement.constructionTasks;
+    // should be replaced with concrete Duration for particular task
+    const mockDuration = Duration(minutes: 1);
     final newTask = ConstructionTask(
-      id: const Uuid().v4(),
-      position: request.position,
-      toLevel: request.toLevel,
-      when: DateTime.now().add(const Duration(minutes: 1)),
-    );
+        id: const Uuid().v4(),
+        position: request.position,
+        toLevel: request.toLevel,
+        when: constructionTasks.isEmpty
+            ? DateTime.now().add(mockDuration)
+            : constructionTasks[constructionTasks.length - 1]
+                .executionTime
+                .add(mockDuration));
     settlement.addConstructionTask(newTask);
     return updateSettlement(
       settlement: settlement,

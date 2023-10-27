@@ -75,7 +75,7 @@ class Settlement {
     final reducedMap = groupedBuildings.map((key, value) {
       // here I used simple multiplication by 10,
       // should be changed to actual benefit from Building specification
-      final sum = value.fold(0, (a, b) => a + b.level * 10);
+      final sum = value.fold(0, (a, b) => a + b.level * 12);
       return MapEntry(key, sum);
     });
 

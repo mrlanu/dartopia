@@ -49,7 +49,7 @@ class ConstructionTask extends Equatable implements Executable {
 
   @override
   void execute(Settlement settlement) {
-    print('Inside Construction task execute method.');
+    print('Inside Construction task execute method. Task ID: $id');
     // upgrade building
     settlement.buildings[position] =
         settlement.buildings[position].copyWith(level: toLevel);
