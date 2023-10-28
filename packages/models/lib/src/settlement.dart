@@ -1,11 +1,11 @@
 import 'package:collection/collection.dart';
+import 'package:models/models.dart';
 
 import 'package:models/src/construction_task.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
 /// The `Settlement` class
 class Settlement {
-
   /// Creates a new `Settlement`.
   Settlement({
     required this.id,
@@ -20,6 +20,7 @@ class Settlement {
       BuildingRecord(id: 5, level: 1),
     ],
     this.constructionTasks = const [],
+    this.combatUnitQueue = const [],
     DateTime? lastModified,
   }) : lastModified = lastModified ?? DateTime.now();
 
@@ -36,6 +37,9 @@ class Settlement {
         constructionTasks = (map['constructionTasks'] as List<dynamic>)
             .map((e) => ConstructionTask.fromMap(e as Map<String, dynamic>))
             .toList(),
+        combatUnitQueue = (map['combatUnitQueue'] as List<dynamic>)
+            .map((e) => CombatUtitQueue.fromMap(e as Map<String, dynamic>))
+            .toList(),
         lastModified = map['lastModified'] as DateTime;
 
   ObjectId id;
@@ -44,11 +48,17 @@ class Settlement {
   List<double> storage;
   List<BuildingRecord> buildings;
   List<ConstructionTask> constructionTasks;
+  List<CombatUtitQueue> combatUnitQueue;
   DateTime lastModified;
 
   /// Add new ConstructionTask to constructionTasks list
   void addConstructionTask(ConstructionTask task) {
     constructionTasks.add(task);
+  }
+
+  /// Add new CombatUnitQueue to combatUnitQueue list
+  void addCombatUnitOrder(CombatUtitQueue order) {
+    combatUnitQueue.add(order);
   }
 
   /// Calculate the resource production per hour for specific buildings.
@@ -62,13 +72,16 @@ class Settlement {
   /// types with IDs 1, 2, 3, and 4.
   List<int> calculateProducePerHour() {
     // Filter buildings based on specific `id` values (1, 2, 3, 4).
-    final resourceBuilding = buildings.where((b) =>
-    b.id == 1 || b.id == 2 || b.id == 3 || b.id == 4,).toList();
+    final resourceBuilding = buildings
+        .where(
+          (b) => b.id == 1 || b.id == 2 || b.id == 3 || b.id == 4,
+        )
+        .toList();
 
     // Group the filtered buildings by `id`.
     final groupedBuildings = groupBy(
       resourceBuilding,
-          (BuildingRecord b) => b.id,
+      (BuildingRecord b) => b.id,
     );
 
     // Calculate the total production for each building type.
@@ -98,9 +111,7 @@ class Settlement {
     toDateTime ??= DateTime.now();
     final producePerHour = calculateProducePerHour();
     final durationSinceLastModified =
-        toDateTime
-            .difference(lastModified)
-            .inSeconds;
+        toDateTime.difference(lastModified).inSeconds;
     final divider = durationSinceLastModified / 3600;
     final woodProduced = producePerHour[0] * divider;
     final clayProduced = producePerHour[1] * divider;
@@ -118,41 +129,42 @@ class Settlement {
 
   void castStorage() {
     for (var i = 0; i < storage.length - 1; i++) {
-      if (storage[i] > _getWarehouseCapacity()){
+      if (storage[i] > _getWarehouseCapacity()) {
         storage[i] = _getWarehouseCapacity();
       }
       // cast crop
-      if (storage[3] > _getGranaryCapacity()){
+      if (storage[3] > _getGranaryCapacity()) {
         storage[3] = _getGranaryCapacity();
       }
     }
   }
 
   double _getWarehouseCapacity() => 2000;
+
   double _getGranaryCapacity() => 2000;
 
   /// Converting a BuildingRecord to a map representation.
-  Map<String, dynamic> toMap() =>
-      <String, dynamic>{
+  Map<String, dynamic> toMap() => <String, dynamic>{
         '_id': id,
         'name': name,
         'userId': userId,
         'storage': storage,
         'buildings': buildings.map((b) => b.toMap()).toList(),
         'constructionTasks': constructionTasks.map((c) => c.toMap()).toList(),
+        'combatUnitQueue': combatUnitQueue.map((c) => c.toMap()).toList(),
         'lastModified': lastModified,
       };
 
   /// Converting a Settlement to a ResponseBody representation.
-  Map<String, dynamic> toResponseBody() =>
-      <String, dynamic>{
+  Map<String, dynamic> toResponseBody() => <String, dynamic>{
         'id': id.$oid,
         'name': name,
         'userId': userId,
         'storage': storage,
         'buildings': buildings.map((b) => b.toMap()).toList(),
-        'constructionTasks': constructionTasks.map((c) => c.toResponseBody())
-            .toList(),
+        'constructionTasks':
+            constructionTasks.map((c) => c.toResponseBody()).toList(),
+        'combatUnitQueue': combatUnitQueue.map((c) => c.toResponseBody()).toList(),
         'lastModified': lastModified.toIso8601String(),
       };
 
@@ -164,6 +176,7 @@ class Settlement {
     List<double>? storage,
     List<BuildingRecord>? buildings,
     List<ConstructionTask>? constructionTasks,
+    List<CombatUtitQueue>? combatUnitQueue,
     DateTime? lastModified,
   }) {
     return Settlement(
@@ -173,6 +186,7 @@ class Settlement {
       storage: storage ?? this.storage,
       buildings: buildings ?? this.buildings,
       constructionTasks: constructionTasks ?? this.constructionTasks,
+      combatUnitQueue: combatUnitQueue ?? this.combatUnitQueue,
       lastModified: lastModified ?? this.lastModified,
     );
   }
@@ -181,7 +195,6 @@ class Settlement {
 /// The `BuildingRecord` class is used to create records
 /// for buildings in Settlement class
 class BuildingRecord {
-
   /// Creates a new `BuildingRecord` with the specified `id` and `level`.
   const BuildingRecord({required this.id, required this.level});
 
@@ -192,12 +205,12 @@ class BuildingRecord {
 
   /// The unique identifier for the building type.
   final int id;
+
   /// The current level of the building.
   final int level;
 
   /// Converting a BuildingRecord to a map representation.
-  Map<String, dynamic> toMap() =>
-      <String, dynamic>{
+  Map<String, dynamic> toMap() => <String, dynamic>{
         'id': id,
         'level': level,
       };

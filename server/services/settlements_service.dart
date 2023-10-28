@@ -21,9 +21,11 @@ abstract class SettlementService {
     required String userId,
   });
 
-  Future<Settlement?> addConstructionTask(
-      {required Settlement settlement,
-      required NewConstructionRequest request});
+  Future<Settlement?> addConstructionTask({required Settlement settlement,
+    required NewConstructionRequest request});
+
+  Future<Settlement?> orderCombatUnits({required Settlement settlement,
+    required OrderCombatUnitRequest request});
 }
 
 class SettlementServiceImpl extends SettlementService {
@@ -40,7 +42,7 @@ class SettlementServiceImpl extends SettlementService {
 
     final settlement = await _settlementRepository.getById(settlementId);
     final movements =
-        await _settlementRepository.getAllMovementsBySettlementId(settlementId);
+    await _settlementRepository.getAllMovementsBySettlementId(settlementId);
 
     final executableTaskList = <Executable>[
       ...settlement!.constructionTasks
@@ -66,7 +68,7 @@ class SettlementServiceImpl extends SettlementService {
         final leftCrop = settlement.storage[3];
         final durationToDeath = leftCrop / -cropPerHour * 3600;
         final deathTime =
-            modified.add(Duration(seconds: durationToDeath.toInt()));
+        modified.add(Duration(seconds: durationToDeath.toInt()));
 
         if (deathTime.isBefore(task.executionTime)) {
           final Executable deathEvent = DeathTask(deathTime);
@@ -106,9 +108,8 @@ class SettlementServiceImpl extends SettlementService {
   }
 
   @override
-  Future<Settlement?> addConstructionTask(
-      {required Settlement settlement,
-      required NewConstructionRequest request}) {
+  Future<Settlement?> addConstructionTask({required Settlement settlement,
+    required NewConstructionRequest request}) {
     final constructionTasks = settlement.constructionTasks;
     // should be replaced with concrete Duration for particular task
     const mockDuration = Duration(minutes: 1);
@@ -119,11 +120,36 @@ class SettlementServiceImpl extends SettlementService {
         when: constructionTasks.isEmpty
             ? DateTime.now().add(mockDuration)
             : constructionTasks[constructionTasks.length - 1]
-                .executionTime
-                .add(mockDuration));
+            .executionTime
+            .add(mockDuration));
     settlement.addConstructionTask(newTask);
     return updateSettlement(
       settlement: settlement,
     );
+  }
+
+  @override
+  Future<Settlement?> orderCombatUnits({required Settlement settlement,
+    required OrderCombatUnitRequest request}) async {
+    final ordersList = settlement.combatUnitQueue;
+
+    DateTime lastTime;
+    if (ordersList.isNotEmpty) {
+      final lastOrder = ordersList[ordersList.length - 1];
+      lastTime = lastOrder.lastTime.add(
+          Duration(seconds: lastOrder.leftTrain * lastOrder.durationEach));
+    } else {
+      lastTime = DateTime.now();
+    }
+
+    final order = CombatUtitQueue(lastTime: lastTime,
+        unitId: request.unitId,
+        leftTrain: request.amount,
+        durationEach: 10,);
+
+    // unimplemented spend resources
+
+    settlement.addCombatUnitOrder(order);
+    return updateSettlement(settlement: settlement);
   }
 }
