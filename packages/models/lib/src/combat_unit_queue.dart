@@ -3,9 +3,9 @@ import 'package:mongo_dart/mongo_dart.dart';
 
 class CombatUtitQueue extends Equatable{
   final String id;
-  final DateTime lastTime;
+  DateTime lastTime;
   final int unitId;
-  final int leftTrain;
+  int leftTrain;
   final int durationEach;
 
   CombatUtitQueue(

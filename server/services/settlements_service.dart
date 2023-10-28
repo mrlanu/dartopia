@@ -47,6 +47,7 @@ class SettlementServiceImpl extends SettlementService {
     final executableTaskList = <Executable>[
       ...settlement!.constructionTasks
           .where((cTask) => cTask.when.isBefore(untilDateTime!)),
+      ..._getReadyUnits(settlement, untilDateTime),
       EmptyTask(untilDateTime),
     ];
 
@@ -59,7 +60,7 @@ class SettlementServiceImpl extends SettlementService {
     tasks.sort((a, b) => a.executionTime.compareTo(b.executionTime));
     var modified = settlement.lastModified;
     // main events loop
-    for (var task in tasks) {
+    for (final task in tasks) {
       var cropPerHour = settlement.calculateProducePerHour()[3];
 
       // if crop in the village is less than 0 keep create the death event
@@ -88,6 +89,51 @@ class SettlementServiceImpl extends SettlementService {
       task.execute(settlement);
       modified = task.executionTime;
     }
+  }
+
+  List<Executable> _getReadyUnits(Settlement settlement, DateTime untilDateTime) {
+    final result = <Executable>[];
+    final ordersList = settlement.combatUnitQueue;
+    final newOrdersList = <CombatUtitQueue>[];
+
+    if (ordersList.isNotEmpty) {
+      for (final order in ordersList) {
+        final duration = untilDateTime
+            .difference(order.lastTime)
+            .inSeconds;
+
+        final endOrderTime = order.lastTime
+            .add(Duration(seconds: order.leftTrain * order.durationEach));
+        if (untilDateTime.isAfter(endOrderTime)) {
+          // add all troops from order to result list
+          result.addAll(_addCompletedCombatUnit(order, order.leftTrain));
+          continue;
+        }
+
+        final completedTroops = duration ~/ order.durationEach;
+
+        if (completedTroops > 0) {
+          // add completed troops from order to result list
+          result.addAll(_addCompletedCombatUnit(order, completedTroops));
+          order..leftTrain = order.leftTrain - completedTroops
+          ..lastTime = (order.lastTime.add(
+              Duration(seconds: completedTroops * order.durationEach),));
+        }
+        newOrdersList.add(order);
+      }
+    }
+    settlement.combatUnitQueue = newOrdersList;
+    return result;
+  }
+
+  List<Executable> _addCompletedCombatUnit(CombatUtitQueue order, int amount) {
+    final result = <Executable>[];
+    var exec = order.lastTime;
+    for (var i = 0; i < amount; i++) {
+      exec = exec.add(Duration(seconds: order.durationEach));
+      result.add(UnitReadyTask(order.unitId, exec));
+    }
+    return result;
   }
 
   @override
@@ -136,16 +182,18 @@ class SettlementServiceImpl extends SettlementService {
     DateTime lastTime;
     if (ordersList.isNotEmpty) {
       final lastOrder = ordersList[ordersList.length - 1];
-      lastTime = lastOrder.lastTime.add(
-          Duration(seconds: lastOrder.leftTrain * lastOrder.durationEach));
+      lastTime = lastOrder.lastTime
+          .add(Duration(seconds: lastOrder.leftTrain * lastOrder.durationEach));
     } else {
       lastTime = DateTime.now();
     }
 
-    final order = CombatUtitQueue(lastTime: lastTime,
-        unitId: request.unitId,
-        leftTrain: request.amount,
-        durationEach: 10,);
+    final order = CombatUtitQueue(
+      lastTime: lastTime,
+      unitId: request.unitId,
+      leftTrain: request.amount,
+      durationEach: 15,
+    );
 
     // unimplemented spend resources
 

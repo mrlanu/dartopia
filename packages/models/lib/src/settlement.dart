@@ -19,6 +19,7 @@ class Settlement {
       BuildingRecord(id: 4, level: 1),
       BuildingRecord(id: 5, level: 1),
     ],
+    this.army = const [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     this.constructionTasks = const [],
     this.combatUnitQueue = const [],
     DateTime? lastModified,
@@ -34,6 +35,7 @@ class Settlement {
         buildings = (map['buildings'] as List<dynamic>)
             .map((e) => BuildingRecord.fromMap(e as Map<String, dynamic>))
             .toList(),
+        army = (map['army'] as List<dynamic>).map((e) => e as int).toList(),
         constructionTasks = (map['constructionTasks'] as List<dynamic>)
             .map((e) => ConstructionTask.fromMap(e as Map<String, dynamic>))
             .toList(),
@@ -47,6 +49,7 @@ class Settlement {
   String name;
   List<double> storage;
   List<BuildingRecord> buildings;
+  List<int> army;
   List<ConstructionTask> constructionTasks;
   List<CombatUtitQueue> combatUnitQueue;
   DateTime lastModified;
@@ -150,6 +153,7 @@ class Settlement {
         'userId': userId,
         'storage': storage,
         'buildings': buildings.map((b) => b.toMap()).toList(),
+        'army': army.map((a) => a).toList(),
         'constructionTasks': constructionTasks.map((c) => c.toMap()).toList(),
         'combatUnitQueue': combatUnitQueue.map((c) => c.toMap()).toList(),
         'lastModified': lastModified,
@@ -162,9 +166,11 @@ class Settlement {
         'userId': userId,
         'storage': storage,
         'buildings': buildings.map((b) => b.toMap()).toList(),
+        'army': army.map((a) => a).toList(),
         'constructionTasks':
             constructionTasks.map((c) => c.toResponseBody()).toList(),
-        'combatUnitQueue': combatUnitQueue.map((c) => c.toResponseBody()).toList(),
+        'combatUnitQueue':
+            combatUnitQueue.map((c) => c.toResponseBody()).toList(),
         'lastModified': lastModified.toIso8601String(),
       };
 
@@ -175,6 +181,7 @@ class Settlement {
     String? userId,
     List<double>? storage,
     List<BuildingRecord>? buildings,
+    List<int>? army,
     List<ConstructionTask>? constructionTasks,
     List<CombatUtitQueue>? combatUnitQueue,
     DateTime? lastModified,
@@ -185,6 +192,7 @@ class Settlement {
       userId: userId ?? this.userId,
       storage: storage ?? this.storage,
       buildings: buildings ?? this.buildings,
+      army: army ?? this.army,
       constructionTasks: constructionTasks ?? this.constructionTasks,
       combatUnitQueue: combatUnitQueue ?? this.combatUnitQueue,
       lastModified: lastModified ?? this.lastModified,
