@@ -4,8 +4,9 @@ import 'package:mongo_dart/mongo_dart.dart';
 import '../repositories/settlement_repository.dart';
 
 abstract class SettlementService {
-  Future<Settlement?> recalculateState({
-    required String settlementId,
+  Future<Settlement?> tryToGetSettlement({required String settlementId});
+
+  Future<Settlement?> recalculateState({required String settlementId,
     DateTime? untilDateTime,
   });
 
@@ -21,11 +22,18 @@ abstract class SettlementService {
     required String userId,
   });
 
-  Future<Settlement?> addConstructionTask({required Settlement settlement,
-    required NewConstructionRequest request});
+  Future<Settlement?> addConstructionTask(
+      {required Settlement settlement,
+      required NewConstructionRequest request});
 
-  Future<Settlement?> orderCombatUnits({required Settlement settlement,
-    required OrderCombatUnitRequest request});
+  Future<Settlement?> orderCombatUnits(
+      {required Settlement settlement,
+      required OrderCombatUnitRequest request});
+
+  Future<List<Movement>> getMovementsBeforeNow();
+
+  Future<bool> sendUnits(
+      {required String fromId, required SendUnitsRequest request});
 }
 
 class SettlementServiceImpl extends SettlementService {
@@ -34,15 +42,22 @@ class SettlementServiceImpl extends SettlementService {
   final SettlementRepository _settlementRepository;
 
   @override
+  Future<Settlement?> tryToGetSettlement({required String settlementId}) async {
+    //if settlement has any movements before DateTime.now()
+    if(await _hasMovementsBeforeNow(settlementId)) {
+      return null;
+    }
+    return recalculateState(settlementId: settlementId);
+  }
+
+  @override
   Future<Settlement?> recalculateState({
     required String settlementId,
     DateTime? untilDateTime,
   }) async {
     untilDateTime ??= DateTime.now();
-
+    
     final settlement = await _settlementRepository.getById(settlementId);
-    final movements =
-    await _settlementRepository.getAllMovementsBySettlementId(settlementId);
 
     final executableTaskList = <Executable>[
       ...settlement!.constructionTasks
@@ -54,6 +69,12 @@ class SettlementServiceImpl extends SettlementService {
     _executeAllTasks(settlement, executableTaskList);
 
     return _settlementRepository.updateSettlement(settlement);
+  }
+
+  Future<bool> _hasMovementsBeforeNow(String settlementId) async {
+    final movements =
+    await _settlementRepository.getAllMovementsBySettlementId(settlementId);
+    return movements.any((element) => element.when.isBefore(DateTime.now()));
   }
 
   void _executeAllTasks(Settlement settlement, List<Executable> tasks) {
@@ -69,7 +90,7 @@ class SettlementServiceImpl extends SettlementService {
         final leftCrop = settlement.storage[3];
         final durationToDeath = leftCrop / -cropPerHour * 3600;
         final deathTime =
-        modified.add(Duration(seconds: durationToDeath.toInt()));
+            modified.add(Duration(seconds: durationToDeath.toInt()));
 
         if (deathTime.isBefore(task.executionTime)) {
           final Executable deathEvent = DeathTask(deathTime);
@@ -91,16 +112,15 @@ class SettlementServiceImpl extends SettlementService {
     }
   }
 
-  List<Executable> _getReadyUnits(Settlement settlement, DateTime untilDateTime) {
+  List<Executable> _getReadyUnits(
+      Settlement settlement, DateTime untilDateTime) {
     final result = <Executable>[];
     final ordersList = settlement.combatUnitQueue;
     final newOrdersList = <CombatUtitQueue>[];
 
     if (ordersList.isNotEmpty) {
       for (final order in ordersList) {
-        final duration = untilDateTime
-            .difference(order.lastTime)
-            .inSeconds;
+        final duration = untilDateTime.difference(order.lastTime).inSeconds;
 
         final endOrderTime = order.lastTime
             .add(Duration(seconds: order.leftTrain * order.durationEach));
@@ -115,9 +135,11 @@ class SettlementServiceImpl extends SettlementService {
         if (completedTroops > 0) {
           // add completed troops from order to result list
           result.addAll(_addCompletedCombatUnit(order, completedTroops));
-          order..leftTrain = order.leftTrain - completedTroops
-          ..lastTime = (order.lastTime.add(
-              Duration(seconds: completedTroops * order.durationEach),));
+          order
+            ..leftTrain = order.leftTrain - completedTroops
+            ..lastTime = (order.lastTime.add(
+              Duration(seconds: completedTroops * order.durationEach),
+            ));
         }
         newOrdersList.add(order);
       }
@@ -154,8 +176,9 @@ class SettlementServiceImpl extends SettlementService {
   }
 
   @override
-  Future<Settlement?> addConstructionTask({required Settlement settlement,
-    required NewConstructionRequest request}) {
+  Future<Settlement?> addConstructionTask(
+      {required Settlement settlement,
+      required NewConstructionRequest request}) {
     final constructionTasks = settlement.constructionTasks;
     // should be replaced with concrete Duration for particular task
     const mockDuration = Duration(minutes: 1);
@@ -166,8 +189,8 @@ class SettlementServiceImpl extends SettlementService {
         when: constructionTasks.isEmpty
             ? DateTime.now().add(mockDuration)
             : constructionTasks[constructionTasks.length - 1]
-            .executionTime
-            .add(mockDuration));
+                .executionTime
+                .add(mockDuration));
     settlement.addConstructionTask(newTask);
     return updateSettlement(
       settlement: settlement,
@@ -175,8 +198,9 @@ class SettlementServiceImpl extends SettlementService {
   }
 
   @override
-  Future<Settlement?> orderCombatUnits({required Settlement settlement,
-    required OrderCombatUnitRequest request}) async {
+  Future<Settlement?> orderCombatUnits(
+      {required Settlement settlement,
+      required OrderCombatUnitRequest request}) async {
     final ordersList = settlement.combatUnitQueue;
 
     DateTime lastTime;
@@ -199,5 +223,21 @@ class SettlementServiceImpl extends SettlementService {
 
     settlement.addCombatUnitOrder(order);
     return updateSettlement(settlement: settlement);
+  }
+
+  @override
+  Future<bool> sendUnits(
+      {required String fromId, required SendUnitsRequest request,}) async {
+    final movement = Movement(
+        id: ObjectId(),
+        from: fromId,
+        to: request.to,
+        when: DateTime.now().add(const Duration(seconds: 60)),);
+    return _settlementRepository.sendUnits(movement);
+  }
+
+  @override
+  Future<List<Movement>> getMovementsBeforeNow() async {
+    return _settlementRepository.getMovementsBeforeNow();
   }
 }

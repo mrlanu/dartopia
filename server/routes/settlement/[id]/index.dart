@@ -11,7 +11,7 @@ import '../../../services/settlements_service.dart';
 
 FutureOr<Response> onRequest(RequestContext context, String id) async {
   final settlementService = context.read<SettlementService>();
-  final settlement = await settlementService.recalculateState(settlementId: id);
+  final settlement = await settlementService.tryToGetSettlement(settlementId: id);
 
   if (settlement == null) {
     return Response(

@@ -12,6 +12,8 @@ abstract class SettlementRepository {
 
   //movements
   Future<List<Movement>> getAllMovementsBySettlementId(String id);
+  Future<List<Movement>> getMovementsBeforeNow();
+  Future<bool> sendUnits(Movement movement);
 }
 
 class SettlementRepositoryMongoImpl implements SettlementRepository {
@@ -64,4 +66,19 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
           .find(where.eq('from', id).or(where.eq('to', id)))
           .map(Movement.fromMap)
           .toList();
+
+  @override
+  Future<bool> sendUnits(Movement movement) async {
+    final result = await _mongoService.db
+        .collection('movements')
+        .insertOne(movement.toMap());
+    return result.document == null;
+  }
+
+  @override
+  Future<List<Movement>> getMovementsBeforeNow() => _mongoService.db
+        .collection('movements')
+        .find(where.lte('when', DateTime.now()))
+        .map(Movement.fromMap)
+        .toList();
 }

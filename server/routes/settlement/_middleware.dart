@@ -19,7 +19,7 @@ Handler middleware(Handler handler) {
     (handler) {
       return (context) async {
         if (context.request.method == HttpMethod.get) {
-          await _checkAutomation(context.request.url.toString());
+          await _checkAutomation();
         }
         final response = await handler(context);
         return response;
@@ -28,10 +28,10 @@ Handler middleware(Handler handler) {
   ).use(provider<SettlementService>((_) => _settlementService));
 }
 
-Future<void> _checkAutomation(String s) async {
+Future<void> _checkAutomation() async {
   final file = File(filePath);
   if (!file.existsSync()) {
-    print('Automation started by ID: ${s}');
+    print('Automation started');
     file.createSync();
     await Isolate.run(_performAutomation);
   } else {
@@ -50,11 +50,13 @@ Future<void> _performAutomation() async {
   await MongoService.instance.initializeMongo();
 
   //simulate some heavy calculation
-  for (var i = 0; i < 5; i++) {
+  /*for (var i = 0; i < 5; i++) {
    _computeFactorial(35435);
-  }
+  }*/
 
-  await automationMain();
+  //await automationMain();
+
+  await Automation().main();
 
   File(filePath).deleteSync();
   stopwatch.stop();
