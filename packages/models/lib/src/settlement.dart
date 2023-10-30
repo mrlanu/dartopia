@@ -13,11 +13,11 @@ class Settlement {
     this.name = 'New village',
     this.storage = const [500.0, 500.0, 500.0, 500.0],
     this.buildings = const [
+      BuildingRecord(id: 0, level: 1),
       BuildingRecord(id: 1, level: 1),
       BuildingRecord(id: 2, level: 1),
       BuildingRecord(id: 3, level: 1),
       BuildingRecord(id: 4, level: 1),
-      BuildingRecord(id: 5, level: 1),
     ],
     this.army = const [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     this.constructionTasks = const [],
@@ -77,7 +77,11 @@ class Settlement {
     // Filter buildings based on specific `id` values (1, 2, 3, 4).
     final resourceBuilding = buildings
         .where(
-          (b) => b.id == 1 || b.id == 2 || b.id == 3 || b.id == 4,
+          (b) =>
+          b.id == BuildingId.WOODCUTTER.index ||
+              b.id == BuildingId.CLAY_PIT.index ||
+              b.id == BuildingId.IRON_MINE.index||
+              b.id == BuildingId.CROPLAND.index,
         )
         .toList();
 
@@ -89,9 +93,10 @@ class Settlement {
 
     // Calculate the total production for each building type.
     final reducedMap = groupedBuildings.map((key, value) {
-      // here I used simple multiplication by 10,
-      // should be changed to actual benefit from Building specification
-      final sum = value.fold(0, (a, b) => a + b.level * 12);
+      final sum = value.fold(0, (a, b) {
+        final benefit = buildingSpecefication[b.id].benefit(b.level);
+        return a + benefit;
+      });
       return MapEntry(key, sum);
     });
 
@@ -113,6 +118,7 @@ class Settlement {
   void calculateProducedGoods({DateTime? toDateTime}) {
     toDateTime ??= DateTime.now();
     final producePerHour = calculateProducePerHour();
+    print('P/H: $producePerHour');
     final durationSinceLastModified =
         toDateTime.difference(lastModified).inSeconds;
     final divider = durationSinceLastModified / 3600;
