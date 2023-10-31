@@ -1,0 +1,51 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../village/bloc/village_bloc.dart';
+import '../../models/buildings_consts.dart';
+import '../widgets/building_card.dart';
+
+class Empty extends StatefulWidget {
+  const Empty({super.key});
+
+  @override
+  State<Empty> createState() => _EmptyState();
+}
+
+class _EmptyState extends State<Empty> {
+  late PageController _pageController;
+  int _currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(viewportFraction: 0.9);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final buildingsList = buildingsMap.values
+        .toList()
+        //remove last one (Empty)
+        .getRange(0, buildingsMap.values.toList().length - 1)
+        .toList();
+    return PageView.builder(
+      controller: _pageController,
+      onPageChanged: (value) {
+        setState(() {
+          _currentPage = value % buildingsList.length;
+        });
+      },
+      itemBuilder: (context, index) {
+        return Center(child: BlocBuilder<VillageBloc, VillageState>(
+          builder: (context, state) {
+            return BuildingCard(
+                buildingModel: buildingsList[index % buildingsList.length],
+                storage: state.storage,
+                buildingList: state.buildingList);
+          },
+        ));
+      },
+    );
+  }
+}
