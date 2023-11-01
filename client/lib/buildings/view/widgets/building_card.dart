@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:models/models.dart';
 
-import '../../models/building_model.dart';
+import '../../models/building_view_model.dart';
 import '../../models/buildings_consts.dart';
 
 class BuildingCard extends StatelessWidget {
-  final BuildingModel buildingModel;
+  final Building specification;
   final List<double> storage;
-  final List<BuildingModel> buildingList;
+  final List<BuildingViewModel> buildingList;
 
   const BuildingCard(
       {super.key,
-      required this.buildingModel,
+      required this.specification,
       required this.storage,
       required this.buildingList});
 
@@ -29,7 +30,7 @@ class BuildingCard extends StatelessWidget {
                 //width: size.width * 0.9,
                 child: Column(
                   children: [
-                    Align(alignment: Alignment.topLeft, child: Text(buildingModel.name, style: Theme.of(context).textTheme.titleLarge,)),
+                    Align(alignment: Alignment.topLeft, child: Text(specification.name, style: Theme.of(context).textTheme.titleLarge,)),
                     const SizedBox(height: 10),
                     Align(
                       alignment: Alignment.topLeft,
@@ -38,7 +39,7 @@ class BuildingCard extends StatelessWidget {
                         height: 120,
                         child: Text(
                             overflow: TextOverflow.clip,
-                            buildingModel.description),
+                            specification.description),
                       ),
                     ),
                     const Divider(),
@@ -50,9 +51,9 @@ class BuildingCard extends StatelessWidget {
                           height: 40,
                         ),
                         Text(
-                          '${buildingModel.cost[0]}',
+                          '${specification.cost[0]}',
                           style: TextStyle(
-                              color: buildingModel.cost[0] > storage[0]
+                              color: specification.cost[0] > storage[0]
                                   ? Colors.red
                                   : null),
                         )
@@ -64,9 +65,9 @@ class BuildingCard extends StatelessWidget {
                           height: 40,
                         ),
                         Text(
-                          '${buildingModel.cost[1]}',
+                          '${specification.cost[1]}',
                           style: TextStyle(
-                              color: buildingModel.cost[1] > storage[1]
+                              color: specification.cost[1] > storage[1]
                                   ? Colors.red
                                   : null),
                         )
@@ -78,9 +79,9 @@ class BuildingCard extends StatelessWidget {
                           height: 40,
                         ),
                         Text(
-                          '${buildingModel.cost[2]}',
+                          '${specification.cost[2]}',
                           style: TextStyle(
-                              color: buildingModel.cost[2] > storage[2]
+                              color: specification.cost[2] > storage[2]
                                   ? Colors.red
                                   : null),
                         )
@@ -92,9 +93,9 @@ class BuildingCard extends StatelessWidget {
                           height: 40,
                         ),
                         Text(
-                          '${buildingModel.cost[3]}',
+                          '${specification.cost[3]}',
                           style: TextStyle(
-                              color: buildingModel.cost[3] > storage[3]
+                              color: specification.cost[3] > storage[3]
                                   ? Colors.red
                                   : null),
                         )
@@ -112,12 +113,12 @@ class BuildingCard extends StatelessWidget {
                     Row(
                       children: [
                         const SizedBox(width: 10),
-                        ...buildingModel.buildingsReq
+                        ...specification.requirementBuildings
                             .map((e) => Text(
                                 overflow: TextOverflow.clip,
-                                '${buildingsMap[e.$1]!.name} lvl ${e.$2}  ',
+                                '${buildingSpecefication[e.id]!.name} lvl ${e.level}  ',
                                 style: TextStyle(
-                                    color: _isBuildingExistInVillage(e.$1, e.$2)
+                                    color: _isBuildingExistInVillage(e.id, e.level)
                                         ? null
                                         : Colors.red)))
                             .toList()
@@ -147,7 +148,7 @@ class BuildingCard extends StatelessWidget {
             top: 40,
             child: Image.asset(
               fit: BoxFit.cover,
-              buildingModel.imagePath,
+              specification.imagePath,
               width: 100,
               height: 100,
             ),
@@ -157,12 +158,12 @@ class BuildingCard extends StatelessWidget {
 
   bool _isMatchRequirements() {
     for (var i = 0; i < 4; i++) {
-      if (storage[i] < buildingModel.cost[i]) {
+      if (storage[i] < specification.cost[i]) {
         return false;
       }
     }
-    for ((BuildingId, int) bR in buildingModel.buildingsReq) {
-      if (!_isBuildingExistInVillage(bR.$1, bR.$2)) {
+    for (var bR in specification.requirementBuildings) {
+      if (!_isBuildingExistInVillage(bR.id, bR.level)) {
         return false;
       }
     }

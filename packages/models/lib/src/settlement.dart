@@ -44,6 +44,25 @@ class Settlement {
             .toList(),
         lastModified = map['lastModified'] as DateTime;
 
+  Settlement.fromResponse(Map<String, dynamic> map)
+      : id = ObjectId.parse(map['_id'] as String),
+        name = map['name'] as String,
+        userId = map['userId'] as String,
+        storage = (map['storage'] as List<dynamic>)
+            .map((e) => (e as num).toDouble())
+            .toList(),
+        buildings = (map['buildings'] as List<dynamic>)
+            .map((e) => BuildingRecord.fromMap(e as Map<String, dynamic>))
+            .toList(),
+        army = (map['army'] as List<dynamic>).map((e) => e as int).toList(),
+        constructionTasks = (map['constructionTasks'] as List<dynamic>)
+            .map((e) => ConstructionTask.fromMap(e as Map<String, dynamic>))
+            .toList(),
+        combatUnitQueue = (map['combatUnitQueue'] as List<dynamic>)
+            .map((e) => CombatUtitQueue.fromMap(e as Map<String, dynamic>))
+            .toList(),
+        lastModified = DateTime.parse(map['lastModified'] as String);
+
   ObjectId id;
   final String userId;
   String name;
@@ -94,8 +113,8 @@ class Settlement {
     // Calculate the total production for each building type.
     final reducedMap = groupedBuildings.map((key, value) {
       final sum = value.fold(0, (a, b) {
-        final benefit = buildingSpecefication[b.id].benefit(b.level);
-        return a + benefit;
+        final benefit = buildingSpecefication[BuildingId.values[b.id]]!.benefit(b.level);
+        return a + benefit.toInt();
       });
       return MapEntry(key, sum);
     });
@@ -167,7 +186,7 @@ class Settlement {
 
   /// Converting a Settlement to a ResponseBody representation.
   Map<String, dynamic> toResponseBody() => <String, dynamic>{
-        'id': id.$oid,
+        '_id': id,
         'name': name,
         'userId': userId,
         'storage': storage,

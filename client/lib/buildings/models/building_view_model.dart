@@ -1,30 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:models/models.dart';
 
-import 'buildings_consts.dart';
-
-class BuildingModel {
+class BuildingViewModel {
   final BuildingId id;
   final String name;
   final String description;
   final String imagePath;
   final int level;
-  final double k;
   final List<int> cost;
-  final List<(BuildingId, int)> buildingsReq;
-  final Widget? widget;
+  final List<RequirementBuilding> requirementBuildings;
+  final Widget widget;
 
-  BuildingModel(
+  BuildingViewModel(
       {required this.id,
       required this.name,
       this.level = 0,
       required this.description,
       required this.imagePath,
-      required this.k,
       required this.cost,
-      this.buildingsReq = const [],
-      this.widget});
+      this.requirementBuildings = const [],
+      required this.widget});
 
-  BuildingModel copyWith(
+  BuildingViewModel copyWith(
       {BuildingId? id,
       String? name,
       String? description,
@@ -32,16 +29,15 @@ class BuildingModel {
       int? level,
       double? k,
       List<int>? cost,
-      List<(BuildingId, int)>? buildingsReq}) {
-    return BuildingModel(
+      List<RequirementBuilding>? requirementBuildings}) {
+    return BuildingViewModel(
         id: id ?? this.id,
         name: name ?? this.name,
         description: description ?? this.description,
         imagePath: imagePath ?? this.imagePath,
         level: level ?? this.level,
-        k: k ?? this.k,
         cost: cost ?? this.cost,
-        buildingsReq: buildingsReq ?? this.buildingsReq,
+        requirementBuildings: requirementBuildings ?? this.requirementBuildings,
         widget: widget);
   }
 }

@@ -1,4 +1,5 @@
-import '../models/buildings_consts.dart';
+
+import 'package:models/models.dart';
 
 abstract class BuildingsRepository {
   Future<List<BuildingModelRepo>> fetchBuildings();
@@ -7,18 +8,10 @@ abstract class BuildingsRepository {
 class BuildingsRepositoryImpl extends BuildingsRepository{
   @override
   Future<List<BuildingModelRepo>> fetchBuildings() async {
-    return buildings;
+    return [];
   }
 
 }
-
-List<BuildingModelRepo> buildings = [
-  BuildingModelRepo(id: BuildingId.MAIN, level: 1),
-  BuildingModelRepo(id: BuildingId.BARRACKS, level: 1),
-  BuildingModelRepo(id: BuildingId.EMPTY, level: 1),
-  BuildingModelRepo(id: BuildingId.GRAIN_MILL, level: 1),
-  BuildingModelRepo(id: BuildingId.GRANARY, level: 1),
-];
 
 class BuildingModelRepo {
   final BuildingId id;

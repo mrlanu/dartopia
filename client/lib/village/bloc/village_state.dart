@@ -5,24 +5,24 @@ enum VillageStatus { loading, empty, success, failure }
 class VillageState extends Equatable {
   final VillageModel? villageModel;
   final List<double> storage;
-  final List<BuildingModel> buildingList;
+  final List<BuildingViewModel> buildingViewModelList;
   final VillageStatus status;
 
   const VillageState(
       {this.status = VillageStatus.loading,
       this.villageModel,
       this.storage = const [0, 0, 0, 0],
-      this.buildingList = const []});
+      this.buildingViewModelList = const []});
 
   VillageState copyWith(
       {VillageStatus? status,
       VillageModel? villageModel,
-      List<BuildingModel>? buildingList,
+      List<BuildingViewModel>? buildingViewModelList,
       List<double>? storage}) {
     return VillageState(
         status: status ?? this.status,
         villageModel: villageModel ?? this.villageModel,
-        buildingList: buildingList ?? this.buildingList,
+        buildingViewModelList: buildingViewModelList ?? this.buildingViewModelList,
         storage: storage ?? this.storage);
   }
 

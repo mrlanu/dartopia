@@ -80,14 +80,14 @@ class _BuildingsViewState extends State<BuildingsView>
                       child: Column(
                         children: [
                           Text(
-                            state.buildingList[currentBuildingIndex].name,
+                            state.buildingViewModelList[currentBuildingIndex].name,
                             style: font.copyWith(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
                                 color: black),
                           ),
                           Text(
-                            'level: ${state.buildingList[currentBuildingIndex].level}',
+                            'level: ${state.buildingViewModelList[currentBuildingIndex].level}',
                             overflow: TextOverflow.clip,
                             style: font.copyWith(
                                 fontSize: 14, color: black.withOpacity(0.8)),
@@ -104,7 +104,7 @@ class _BuildingsViewState extends State<BuildingsView>
                         child: AnimatedSwitcher(
                             duration: const Duration(milliseconds: 500),
                             child: state
-                                .buildingList[currentBuildingIndex].widget),
+                                .buildingViewModelList[currentBuildingIndex].widget),
                       ),
                       SizedBox(
                         height: 180,
@@ -117,7 +117,7 @@ class _BuildingsViewState extends State<BuildingsView>
                               onPageChanged: (value) {
                                 setState(() {
                                   currentBuildingIndex =
-                                      value % state.buildingList.length;
+                                      value % state.buildingViewModelList.length;
                                   titleController!.forward(from: 0);
                                 });
                               },
@@ -128,8 +128,8 @@ class _BuildingsViewState extends State<BuildingsView>
                                           (pageOffsetBuilding! - index).abs() *
                                               40),
                                   child: BuildingPicture(
-                                      buildingModel: state.buildingList[
-                                          index % state.buildingList.length]),
+                                      buildingModel: state.buildingViewModelList[
+                                          index % state.buildingViewModelList.length]),
                                 );
                               },
                             ),

@@ -1,13 +1,17 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
+import 'package:models/models.dart';
 
-import '../../buildings/models/building_model.dart';
+import '../../buildings/models/building_view_model.dart';
 import '../../buildings/models/buildings_consts.dart';
 import '../../buildings/repository/buildings_repository.dart';
+import '../../consts/api.dart';
 import '../models/village_model.dart';
+import 'package:http/http.dart' as http;
 
 part 'village_event.dart';
 
@@ -27,26 +31,29 @@ class VillageBloc extends Bloc<VillageEvent, VillageState> {
   Future<void> _onVillageFetchRequested(
       VillageFetchRequested event, Emitter<VillageState> emit) async {
     emit(state.copyWith(status: VillageStatus.loading));
-    await Future<void>.delayed(const Duration(seconds: 1));
-    List<BuildingModelRepo> buildings = [
-      BuildingModelRepo(id: BuildingId.MAIN, level: 3),
-      BuildingModelRepo(id: BuildingId.BARRACKS, level: 1),
-      BuildingModelRepo(id: BuildingId.EMPTY, level: 1),
-      BuildingModelRepo(id: BuildingId.GRAIN_MILL, level: 1),
-      BuildingModelRepo(id: BuildingId.GRANARY, level: 1),
-    ];
-    final village = VillageModel(
-        id: event.villageId,
-        name: 'My Village',
-        buildings: buildings,
-        storage: const [100, 100, 100, 100]);
-    final buildingModelList = village.buildings
-        .map((b) => buildingsMap[b.id]!.copyWith(level: b.level))
-        .toList();
+
+    final url = Uri.http(baseURL, '/settlement/6541b8ce582211d8f224e539');
+    final response = await http.get(url);
+    final map = json.decode(response.body) as Map<String, dynamic>;
+    final settlement = Settlement.fromResponse(map);
+
+    final buildingViewModelList = settlement.buildings.map((buildingRecord) {
+      final specification = buildingSpecefication[BuildingId.values[buildingRecord.id]]!;
+      final widget = buildingWidgetsMap[specification.id]!;
+      final buildingView = BuildingViewModel(
+          id: specification.id,
+          name: specification.name,
+          level: buildingRecord.level,
+          description: specification.description,
+          imagePath: specification.imagePath,
+          cost: specification.cost,
+          widget: widget);
+      return buildingView;
+    }).toList();
     emit(state.copyWith(
         status: VillageStatus.success,
-        villageModel: village,
-        storage: village.storage,
-        buildingList: buildingModelList));
+        //villageModel: village,
+        storage: settlement.storage,
+        buildingViewModelList: buildingViewModelList));
   }
 }

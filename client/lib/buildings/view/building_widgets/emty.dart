@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:models/models.dart';
 
 import '../../../village/bloc/village_bloc.dart';
 import '../../models/buildings_consts.dart';
@@ -24,25 +25,25 @@ class _EmptyState extends State<Empty> {
 
   @override
   Widget build(BuildContext context) {
-    final buildingsList = buildingsMap.values
+    final allBuildingList = buildingSpecefication.values
         .toList()
         //remove last one (Empty)
-        .getRange(0, buildingsMap.values.toList().length - 1)
+        .getRange(0, buildingSpecefication.values.toList().length - 1)
         .toList();
     return PageView.builder(
       controller: _pageController,
       onPageChanged: (value) {
         setState(() {
-          _currentPage = value % buildingsList.length;
+          _currentPage = value % allBuildingList.length;
         });
       },
       itemBuilder: (context, index) {
         return Center(child: BlocBuilder<VillageBloc, VillageState>(
           builder: (context, state) {
             return BuildingCard(
-                buildingModel: buildingsList[index % buildingsList.length],
+                specification: allBuildingList[index % allBuildingList.length],
                 storage: state.storage,
-                buildingList: state.buildingList);
+                buildingList: state.buildingViewModelList);
           },
         ));
       },

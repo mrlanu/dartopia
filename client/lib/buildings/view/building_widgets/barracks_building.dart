@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:models/models.dart';
 
 import '../../../village/bloc/village_bloc.dart';
 import '../../models/buildings_consts.dart';
@@ -14,9 +15,9 @@ class BarracksBuilding extends StatelessWidget {
       builder: (context, state) {
         return Center(
             child: BuildingCard(
-                buildingModel: buildingsMap[BuildingId.BARRACKS]!,
+                specification: buildingSpecefication[BuildingId.BARRACKS]!,
                 storage: state.storage,
-                buildingList: state.buildingList));
+                buildingList: state.buildingViewModelList));
       },
     );
   }

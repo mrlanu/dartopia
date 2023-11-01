@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../models/building_model.dart';
+import '../../models/building_view_model.dart';
 
 class BuildingPicture extends StatelessWidget {
   const BuildingPicture({
@@ -10,7 +10,7 @@ class BuildingPicture extends StatelessWidget {
     required this.buildingModel,
   });
 
-  final BuildingModel buildingModel;
+  final BuildingViewModel buildingModel;
   final double width;
   final double height;
 

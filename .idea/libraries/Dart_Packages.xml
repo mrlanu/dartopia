@@ -40,6 +40,7 @@
         <entry key="basic_utils">
           <value>
             <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/basic_utils-5.7.0/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/basic_utils-5.6.1/lib" />
             </list>
           </value>
@@ -189,13 +190,6 @@
           <value>
             <list>
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/crypto-3.0.3/lib" />
-            </list>
-          </value>
-        </entry>
-        <entry key="cupertino_icons">
-          <value>
-            <list>
-              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/cupertino_icons-1.0.6/lib" />
             </list>
           </value>
         </entry>
@@ -469,6 +463,7 @@
         <entry key="mongo_dart_query">
           <value>
             <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/mongo_dart_query-4.0.5/lib" />
               <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/mongo_dart_query-4.0.4/lib" />
             </list>
           </value>
@@ -892,6 +887,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/args-2.4.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/async-2.11.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/basic_utils-5.6.1/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/basic_utils-5.7.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/bloc-8.1.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/bloc_concurrency-0.2.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/boolean_selector-2.1.1/lib" />
@@ -914,7 +910,6 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/convert-3.1.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/coverage-1.6.4/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/crypto-3.0.3/lib" />
-      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/cupertino_icons-1.0.6/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/dart_frog-1.0.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/dart_frog_auth-1.1.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/dart_jsonwebtoken-2.12.0/lib" />
@@ -953,6 +948,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/mocktail-1.0.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/mongo_dart-0.9.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/mongo_dart_query-4.0.4/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/mongo_dart_query-4.0.5/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/nested-1.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/node_preamble-2.0.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dev/package_config-2.1.0/lib" />
