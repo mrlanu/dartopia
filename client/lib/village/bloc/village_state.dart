@@ -3,29 +3,26 @@ part of 'village_bloc.dart';
 enum VillageStatus { loading, empty, success, failure }
 
 class VillageState extends Equatable {
-  final VillageModel? villageModel;
-  final List<double> storage;
+  final Settlement? settlement;
   final List<BuildingViewModel> buildingViewModelList;
   final VillageStatus status;
 
   const VillageState(
       {this.status = VillageStatus.loading,
-      this.villageModel,
-      this.storage = const [0, 0, 0, 0],
+      this.settlement,
       this.buildingViewModelList = const []});
 
   VillageState copyWith(
       {VillageStatus? status,
-      VillageModel? villageModel,
+      Settlement? settlement,
       List<BuildingViewModel>? buildingViewModelList,
       List<double>? storage}) {
     return VillageState(
         status: status ?? this.status,
-        villageModel: villageModel ?? this.villageModel,
-        buildingViewModelList: buildingViewModelList ?? this.buildingViewModelList,
-        storage: storage ?? this.storage);
+        settlement: settlement ?? this.settlement,
+        buildingViewModelList: buildingViewModelList ?? this.buildingViewModelList,);
   }
 
   @override
-  List<Object?> get props => [status, villageModel, storage];
+  List<Object?> get props => [status, settlement];
 }

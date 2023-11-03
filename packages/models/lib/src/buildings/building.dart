@@ -144,6 +144,36 @@ final buildingSpecefication = <BuildingId, Building>{
       description:
       'The main building of the village builders live. higher level of the main building , the faster under construction.',
       imagePath: 'assets/images/buildings/main.png',),
+  BuildingId.GRANARY: Building(
+      id: BuildingId.GRANARY,
+      name: 'Granary',
+      cost: [80, 100, 70, 20],
+      time: Time.withA(3475),
+      benefit: getCapacity,
+      k: 1.28,
+      upkeep: 1,
+      culture: 1,
+      description:
+      'Crop produced by your croplands is stored in the granary. By increasing its level, you increase the granarys capacity.',
+      imagePath: 'assets/images/buildings/granary.png',
+      requirementBuildings: [
+        RequirementBuilding(id: BuildingId.MAIN, level: 1),
+      ],),
+  BuildingId.WAREHOUSE: Building(
+      id: BuildingId.WAREHOUSE,
+      name: 'Warehouse',
+      cost: [130, 160,  90,  40],
+      time: Time.withA(3875),
+      benefit: getCapacity,
+      k: 1.28,
+      upkeep: 1,
+      culture: 1,
+      description:
+      'The resources wood, clay and iron are stored in your warehouse. By increasing its level you increase your warehouses capacity.',
+      imagePath: 'assets/images/buildings/warehouse.png',
+      requirementBuildings: [
+        RequirementBuilding(id: BuildingId.MAIN, level: 1),
+      ],),
   BuildingId.BARRACKS: Building(
       id: BuildingId.BARRACKS,
       name: 'Barracks',
@@ -306,6 +336,11 @@ final productions = [
   2, 5, 9, 15, 22, 33, 50, 70, 100, 145, 200, 280, 375, 495, 635, //
   800, 1000, 1300, 1600, 2000, 2450, 3050,
 ];
+
+double getCapacity(int level) {
+  final number = pow(1.2, level) * 2120 - 1320;
+  return 100.0 * (number / 100.0).round();
+}
 
 double getProduction(int level) {
   return productions[level].toDouble();

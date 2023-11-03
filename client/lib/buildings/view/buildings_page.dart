@@ -1,4 +1,5 @@
 import 'package:dartopia/buildings/view/widgets/building_picture.dart';
+import 'package:dartopia/storage_bar/view/storage_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -66,7 +67,7 @@ class _BuildingsViewState extends State<BuildingsView>
           return state.status == VillageStatus.loading
               ? const Scaffold(body: Center(child: CircularProgressIndicator()))
               : Scaffold(
-                  backgroundColor: background,
+                  backgroundColor: background2,
                   appBar: AppBar(
                     centerTitle: true,
                     backgroundColor: transparent,
@@ -99,8 +100,11 @@ class _BuildingsViewState extends State<BuildingsView>
                   drawer: const Drawer(),
                   body: Column(
                     children: [
+                      const SizedBox(height: 3,),
+                      StorageBar(settlement: state.settlement!,),
+                      const SizedBox(height: 3,),
                       SizedBox(
-                        height: size.height * 0.64,
+                        height: size.height * 0.54,
                         child: AnimatedSwitcher(
                             duration: const Duration(milliseconds: 500),
                             child: state

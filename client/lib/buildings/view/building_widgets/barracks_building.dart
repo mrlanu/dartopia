@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:models/models.dart';
 
 import '../../../village/bloc/village_bloc.dart';
-import '../../models/buildings_consts.dart';
 import '../widgets/building_card.dart';
 
 class BarracksBuilding extends StatelessWidget {
@@ -16,7 +15,7 @@ class BarracksBuilding extends StatelessWidget {
         return Center(
             child: BuildingCard(
                 specification: buildingSpecefication[BuildingId.BARRACKS]!,
-                storage: state.storage,
+                storage: state.settlement!.storage,
                 buildingList: state.buildingViewModelList));
       },
     );

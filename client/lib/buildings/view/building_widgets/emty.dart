@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:models/models.dart';
 
 import '../../../village/bloc/village_bloc.dart';
-import '../../models/buildings_consts.dart';
 import '../widgets/building_card.dart';
 
 class Empty extends StatefulWidget {
@@ -42,7 +41,7 @@ class _EmptyState extends State<Empty> {
           builder: (context, state) {
             return BuildingCard(
                 specification: allBuildingList[index % allBuildingList.length],
-                storage: state.storage,
+                storage: state.settlement!.storage,
                 buildingList: state.buildingViewModelList);
           },
         ));

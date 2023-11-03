@@ -19,6 +19,7 @@ dependencies:
   models:
     path: ../packages/models
   http: ^1.1.0
+  percent_indicator: ^4.2.3
 
 dev_dependencies:
   flutter_test:

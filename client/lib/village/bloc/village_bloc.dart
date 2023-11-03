@@ -4,17 +4,14 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
+import 'package:http/http.dart' as http;
 import 'package:models/models.dart';
 
 import '../../buildings/models/building_view_model.dart';
 import '../../buildings/models/buildings_consts.dart';
-import '../../buildings/repository/buildings_repository.dart';
 import '../../consts/api.dart';
-import '../models/village_model.dart';
-import 'package:http/http.dart' as http;
 
 part 'village_event.dart';
-
 part 'village_state.dart';
 
 class VillageBloc extends Bloc<VillageEvent, VillageState> {
@@ -52,7 +49,7 @@ class VillageBloc extends Bloc<VillageEvent, VillageState> {
     }).toList();
     emit(state.copyWith(
         status: VillageStatus.success,
-        //villageModel: village,
+        settlement: settlement,
         storage: settlement.storage,
         buildingViewModelList: buildingViewModelList));
   }

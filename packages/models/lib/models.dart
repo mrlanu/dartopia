@@ -9,6 +9,7 @@ export 'src/empty_task.dart';
 export 'src/executable_task.dart';
 export 'src/movement.dart';
 export 'src/requests/requests.dart';
+export 'src/resources/resources.dart';
 export 'src/settlement.dart';
 export 'src/unit_ready_task.dart';
 export 'src/user.dart';
