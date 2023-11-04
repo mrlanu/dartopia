@@ -24,13 +24,13 @@ class _StorageBarState extends State<StorageBar> {
     _settlement = widget.settlement;
     final producePerHour = _settlement.calculateProducePerHour();
     _timers.add(_startTimer(
-        milliseconds: 360000 ~/ producePerHour[0], resource: Resource.WOOD));
+        milliseconds: 3600000 ~/ producePerHour[0], resource: Resource.WOOD));
     _timers.add(_startTimer(
-        milliseconds: 360000 ~/ producePerHour[1], resource: Resource.CLAY));
+        milliseconds: 3600000 ~/ producePerHour[1], resource: Resource.CLAY));
     _timers.add(_startTimer(
-        milliseconds: 360000 ~/ producePerHour[2], resource: Resource.IRON));
+        milliseconds: 3600000 ~/ producePerHour[2], resource: Resource.IRON));
     _timers.add(_startTimer(
-        milliseconds: 360000 ~/ producePerHour[3], resource: Resource.CROP));
+        milliseconds: 3600000 ~/ producePerHour[3], resource: Resource.CROP));
   }
 
   @override
