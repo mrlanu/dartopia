@@ -27,7 +27,7 @@ class VillageBloc extends Bloc<VillageEvent, VillageState> {
       VillageFetchRequested event, Emitter<VillageState> emit) async {
     emit(state.copyWith(status: VillageStatus.loading));
 
-    final url = Uri.http(baseURL, '/settlement/654a6251f8cab210a84af452');
+    final url = Uri.http(baseURL, '/settlement/654aad4658eb7c06e4a33b8d');
     final response = await http.get(url);
     final map = json.decode(response.body) as Map<String, dynamic>;
     final settlement = Settlement.fromResponse(map);

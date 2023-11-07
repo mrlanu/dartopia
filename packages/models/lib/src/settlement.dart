@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:models/models.dart';
 
-import 'package:models/src/construction_task.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
 /// The `Settlement` class
@@ -13,7 +12,13 @@ class Settlement {
     this.name = 'New village',
     this.storage = const [500.0, 500.0, 500.0, 500.0],
     this.buildings = const [
-      [0, 0, 1],[1, 1, 1],[2, 2, 1],[3, 3, 1], //[position, ID, level]
+      //------------------FIELDS----------------
+      [0, 0, 0],[1, 0, 0],[2, 0, 1],[3, 0, 0], // lumber
+      [4, 1, 0],[5, 1, 0],[6, 1, 1],[7, 1, 0], // clay
+      [8, 2, 0],[9, 2, 0],[10, 2, 1],[11, 2, 0], // iron
+      [12, 3, 0],[13, 3, 0],[14, 3, 0],[15, 3, 1],[16, 3, 0],[17, 3, 0], // crop
+      //------------------BUILDINGS----------------
+      [18, 5, 1],
     ],
     this.army = const [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     this.constructionTasks = const [],
