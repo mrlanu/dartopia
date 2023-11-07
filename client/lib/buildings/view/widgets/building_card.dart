@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:models/models.dart';
 
 import '../../models/building_view_model.dart';
-import '../../models/buildings_consts.dart';
 
 class BuildingCard extends StatelessWidget {
   final Building specification;

@@ -132,6 +132,7 @@ class _BuildingsViewState extends State<BuildingsView>
                                           (pageOffsetBuilding! - index).abs() *
                                               40),
                                   child: BuildingPicture(
+                                    key: UniqueKey(),
                                       buildingModel: state.buildingViewModelList[
                                           index % state.buildingViewModelList.length]),
                                 );

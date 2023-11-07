@@ -97,7 +97,7 @@ class Settlement {
     final resourceBuilding = buildings
         .where(
           (b) =>
-          b.id == BuildingId.WOODCUTTER.index ||
+          b.id == BuildingId.LUMBER.index ||
               b.id == BuildingId.CLAY_PIT.index ||
               b.id == BuildingId.IRON_MINE.index||
               b.id == BuildingId.CROPLAND.index,

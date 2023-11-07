@@ -2,7 +2,7 @@ import 'dart:core';
 import 'dart:math';
 
 enum BuildingId {
-  WOODCUTTER, CLAY_PIT, IRON_MINE, CROPLAND, BARRACKS, MAIN, BRICKYARD, IRON_FOUNDRY,
+  LUMBER, CLAY_PIT, IRON_MINE, CROPLAND, BARRACKS, MAIN, BRICKYARD, IRON_FOUNDRY,
   GRAIN_MILL, BAKERY, WAREHOUSE, GRANARY, ARMORY, BLACKSMITH, ARENA, SAWMILL,
   RALLY_POINT, MARKETPLACE, EMBASSY, STABLES, WORKSHOP, ACADEMY, CRANNY,
   TOWN_HALL, RESIDENCE, PALACE, TRADE_OFFICE, GREAT_BARRACKS, GREAT_STABLES,
@@ -88,8 +88,8 @@ class RequirementBuilding {
 }
 
 final buildingSpecefication = <BuildingId, Building>{
-  BuildingId.WOODCUTTER: Building(
-    id: BuildingId.WOODCUTTER,
+  BuildingId.LUMBER: Building(
+    id: BuildingId.LUMBER,
     name: 'Wood cutter',
     cost: [40, 100, 50, 60],
     time: Time(1780 / 3, 1.6, 1000 / 3),
@@ -206,7 +206,7 @@ final buildingSpecefication = <BuildingId, Building>{
   BuildingId.EMPTY: Building(
       id: BuildingId.EMPTY,
       name: 'Empty',
-      cost: [],
+      cost: [0, 0, 0, 0],
       time: Time(1450 / 3, 1.6, 1000 / 3),
       benefit: (val) => 1,
       imagePath: 'assets/images/buildings/empty.png',
