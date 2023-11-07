@@ -1,7 +1,9 @@
+import 'package:dartopia/buildings/view/building_widgets/building_widgets_map.dart';
 import 'package:dartopia/buildings/view/widgets/building_picture.dart';
 import 'package:dartopia/storage_bar/view/storage_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:models/models.dart';
 
 import '../../consts/consts.dart';
 import '../../village/bloc/village_bloc.dart';
@@ -14,8 +16,7 @@ class BuildingsPage extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) =>
-          VillageBloc()
+          create: (context) => VillageBloc()
             ..add(const VillageFetchRequested(villageId: 'villageId')),
         )
       ],
@@ -64,6 +65,11 @@ class _BuildingsViewState extends State<BuildingsView>
     return SafeArea(
       child: BlocBuilder<VillageBloc, VillageState>(
         builder: (context, state) {
+          Building? specification;
+          if (state.status == VillageStatus.success) {
+            specification =
+                buildingSpecefication[state.buildingRecords[currentBuildingIndex][1]];
+          }
           return state.status == VillageStatus.loading
               ? const Scaffold(body: Center(child: CircularProgressIndicator()))
               : Scaffold(
@@ -81,14 +87,14 @@ class _BuildingsViewState extends State<BuildingsView>
                       child: Column(
                         children: [
                           Text(
-                            state.buildingViewModelList[currentBuildingIndex].name,
+                            specification!.name,
                             style: font.copyWith(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
                                 color: black),
                           ),
                           Text(
-                            'level: ${state.buildingViewModelList[currentBuildingIndex].level}',
+                            'level: ${state.buildingRecords[currentBuildingIndex][2]}',
                             overflow: TextOverflow.clip,
                             style: font.copyWith(
                                 fontSize: 14, color: black.withOpacity(0.8)),
@@ -100,15 +106,20 @@ class _BuildingsViewState extends State<BuildingsView>
                   drawer: const Drawer(),
                   body: Column(
                     children: [
-                      const SizedBox(height: 3,),
-                      StorageBar(settlement: state.settlement!,),
-                      const SizedBox(height: 3,),
+                      const SizedBox(
+                        height: 3,
+                      ),
+                      StorageBar(
+                        settlement: state.settlement!,
+                      ),
+                      const SizedBox(
+                        height: 3,
+                      ),
                       SizedBox(
                         height: size.height * 0.54,
                         child: AnimatedSwitcher(
                             duration: const Duration(milliseconds: 500),
-                            child: state
-                                .buildingViewModelList[currentBuildingIndex].widget),
+                            child: buildingWidgetsMap[specification.id]),
                       ),
                       SizedBox(
                         height: 180,
@@ -121,7 +132,7 @@ class _BuildingsViewState extends State<BuildingsView>
                               onPageChanged: (value) {
                                 setState(() {
                                   currentBuildingIndex =
-                                      value % state.buildingViewModelList.length;
+                                      value % state.buildingRecords.length;
                                   titleController!.forward(from: 0);
                                 });
                               },
@@ -132,9 +143,10 @@ class _BuildingsViewState extends State<BuildingsView>
                                           (pageOffsetBuilding! - index).abs() *
                                               40),
                                   child: BuildingPicture(
-                                    key: UniqueKey(),
-                                      buildingModel: state.buildingViewModelList[
-                                          index % state.buildingViewModelList.length]),
+                                      key: UniqueKey(),
+                                      buildingRecord: state.buildingRecords[
+                                          index %
+                                              state.buildingRecords.length]),
                                 );
                               },
                             ),

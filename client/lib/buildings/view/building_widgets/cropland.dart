@@ -15,9 +15,9 @@ class Cropland extends StatelessWidget {
       builder: (context, state) {
         return Column(
           children: [
-            ...state.fieldsViewModelList
-                .where((f) => f.id == BuildingId.CROPLAND)
-                .map((e) => FieldViewTile(fieldModel: e))
+            ...state.settlement!.buildings
+                .where((bR) => bR[1] == 3)
+                .map((e) => FieldViewTile(buildingRecord: e))
                 .toList()
           ],
         );

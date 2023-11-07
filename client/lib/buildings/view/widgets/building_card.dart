@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:models/models.dart';
 
-import '../../models/building_view_model.dart';
-
 class BuildingCard extends StatelessWidget {
   final Building specification;
   final List<double> storage;
-  final List<BuildingViewModel> buildingList;
+  final List<List<int>> buildingRecords;
 
   const BuildingCard(
       {super.key,
       required this.specification,
       required this.storage,
-      required this.buildingList});
+      required this.buildingRecords});
 
   @override
   Widget build(BuildContext context) {
@@ -115,9 +113,9 @@ class BuildingCard extends StatelessWidget {
                         ...specification.requirementBuildings
                             .map((e) => Text(
                                 overflow: TextOverflow.clip,
-                                '${buildingSpecefication[e.id]!.name} lvl ${e.level}  ',
+                                '${specification.name} lvl ${e[1]}  ',
                                 style: TextStyle(
-                                    color: _isBuildingExistInVillage(e.id, e.level)
+                                    color: _isBuildingExistInVillage(e[0], e[1])
                                         ? null
                                         : Colors.red)))
                             .toList()
@@ -162,16 +160,16 @@ class BuildingCard extends StatelessWidget {
       }
     }
     for (var bR in specification.requirementBuildings) {
-      if (!_isBuildingExistInVillage(bR.id, bR.level)) {
+      if (!_isBuildingExistInVillage(bR[0], bR[1])) {
         return false;
       }
     }
     return true;
   }
 
-  bool _isBuildingExistInVillage(BuildingId id, int level) {
-    return buildingList
-        .where((element) => element.id == id && level <= element.level)
+  bool _isBuildingExistInVillage(int id, int level) {
+    return buildingRecords
+        .where((bR) => bR[1] == id && level <= bR[2])
         .isNotEmpty;
   }
 }

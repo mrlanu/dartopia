@@ -13,11 +13,7 @@ class Settlement {
     this.name = 'New village',
     this.storage = const [500.0, 500.0, 500.0, 500.0],
     this.buildings = const [
-      BuildingRecord(id: 0, level: 1),
-      BuildingRecord(id: 1, level: 1),
-      BuildingRecord(id: 2, level: 1),
-      BuildingRecord(id: 3, level: 1),
-      BuildingRecord(id: 4, level: 1),
+      [0, 0, 1],[1, 1, 1],[2, 2, 1],[3, 3, 1], //[position, ID, level]
     ],
     this.army = const [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     this.constructionTasks = const [],
@@ -33,8 +29,9 @@ class Settlement {
             .map((e) => (e as num).toDouble())
             .toList(),
         buildings = (map['buildings'] as List<dynamic>)
-            .map((e) => BuildingRecord.fromMap(e as Map<String, dynamic>))
-            .toList(),
+            .map(
+                (b) => (b as List<dynamic>).map((e) => e as int).toList(),
+        ).toList(),
         army = (map['army'] as List<dynamic>).map((e) => e as int).toList(),
         constructionTasks = (map['constructionTasks'] as List<dynamic>)
             .map((e) => ConstructionTask.fromMap(e as Map<String, dynamic>))
@@ -52,8 +49,9 @@ class Settlement {
             .map((e) => (e as num).toDouble())
             .toList(),
         buildings = (map['buildings'] as List<dynamic>)
-            .map((e) => BuildingRecord.fromMap(e as Map<String, dynamic>))
-            .toList(),
+            .map(
+              (b) => (b as List<dynamic>).map((e) => e as int).toList(),
+        ).toList(),
         army = (map['army'] as List<dynamic>).map((e) => e as int).toList(),
         constructionTasks = (map['constructionTasks'] as List<dynamic>)
             .map((e) => ConstructionTask.fromMap(e as Map<String, dynamic>))
@@ -67,7 +65,7 @@ class Settlement {
   final String userId;
   String name;
   List<double> storage;
-  List<BuildingRecord> buildings;
+  List<List<int>> buildings;
   List<int> army;
   List<ConstructionTask> constructionTasks;
   List<CombatUtitQueue> combatUnitQueue;
@@ -96,24 +94,19 @@ class Settlement {
     // Filter buildings based on specific `id` values (1, 2, 3, 4).
     final resourceBuilding = buildings
         .where(
-          (b) =>
-          b.id == BuildingId.LUMBER.index ||
-              b.id == BuildingId.CLAY_PIT.index ||
-              b.id == BuildingId.IRON_MINE.index||
-              b.id == BuildingId.CROPLAND.index,
-        )
+          (b) => b[1] == 0 || b[1] == 1 || b[1] == 2|| b[1] == 3,)
         .toList();
 
     // Group the filtered buildings by `id`.
     final groupedBuildings = groupBy(
       resourceBuilding,
-      (BuildingRecord b) => b.id,
+      (List<int> b) => b[1],
     );
 
     // Calculate the total production for each building type.
     final reducedMap = groupedBuildings.map((key, value) {
       final sum = value.fold(0, (a, b) {
-        final benefit = buildingSpecefication[BuildingId.values[b.id]]!.benefit(b.level);
+        final benefit = buildingSpecefication[key]!.benefit(b[2]);
         return a + benefit.toInt();
       });
       return MapEntry(key, sum);
@@ -177,7 +170,7 @@ class Settlement {
         'name': name,
         'userId': userId,
         'storage': storage,
-        'buildings': buildings.map((b) => b.toMap()).toList(),
+        'buildings': buildings,
         'army': army.map((a) => a).toList(),
         'constructionTasks': constructionTasks.map((c) => c.toMap()).toList(),
         'combatUnitQueue': combatUnitQueue.map((c) => c.toMap()).toList(),
@@ -190,7 +183,7 @@ class Settlement {
         'name': name,
         'userId': userId,
         'storage': storage,
-        'buildings': buildings.map((b) => b.toMap()).toList(),
+        'buildings': buildings,
         'army': army.map((a) => a).toList(),
         'constructionTasks':
             constructionTasks.map((c) => c.toResponseBody()).toList(),
@@ -205,7 +198,7 @@ class Settlement {
     String? name,
     String? userId,
     List<double>? storage,
-    List<BuildingRecord>? buildings,
+    List<List<int>>? buildings,
     List<int>? army,
     List<ConstructionTask>? constructionTasks,
     List<CombatUtitQueue>? combatUnitQueue,
@@ -222,34 +215,5 @@ class Settlement {
       combatUnitQueue: combatUnitQueue ?? this.combatUnitQueue,
       lastModified: lastModified ?? this.lastModified,
     );
-  }
-}
-
-/// The `BuildingRecord` class is used to create records
-/// for buildings in Settlement class
-class BuildingRecord {
-  /// Creates a new `BuildingRecord` with the specified `id` and `level`.
-  const BuildingRecord({required this.id, required this.level});
-
-  /// Creates a new `BuildingRecord` from a map representation.
-  BuildingRecord.fromMap(Map<String, dynamic> map)
-      : id = map['id'] as int,
-        level = map['level'] as int;
-
-  /// The unique identifier for the building type.
-  final int id;
-
-  /// The current level of the building.
-  final int level;
-
-  /// Converting a BuildingRecord to a map representation.
-  Map<String, dynamic> toMap() => <String, dynamic>{
-        'id': id,
-        'level': level,
-      };
-
-  /// Returns a new `BuildingRecord` instance with the specified updates.
-  BuildingRecord copyWith({int? id, int? level}) {
-    return BuildingRecord(id: id ?? this.id, level: level ?? this.level);
   }
 }

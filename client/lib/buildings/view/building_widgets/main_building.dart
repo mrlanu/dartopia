@@ -14,8 +14,8 @@ class MainBuilding extends StatelessWidget {
       builder: (context, state) {
         return Center(
             child: BuildingCard(
-          specification: buildingSpecefication[BuildingId.MAIN]!,
-          storage: state.settlement!.storage, buildingList: state.buildingViewModelList,
+          specification: buildingSpecefication[4]!,
+          storage: state.settlement!.storage, buildingRecords: state.buildingRecords,
         ));
       },
     );

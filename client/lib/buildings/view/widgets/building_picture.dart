@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-
-import '../../models/building_view_model.dart';
+import 'package:models/models.dart';
 
 class BuildingPicture extends StatelessWidget {
   const BuildingPicture({
     super.key,
     this.width = 90.0,
     this.height = 90.0,
-    required this.buildingModel,
+    required this.buildingRecord,
   });
 
-  final BuildingViewModel buildingModel;
+  final List<int> buildingRecord;
   final double width;
   final double height;
 
@@ -19,7 +18,7 @@ class BuildingPicture extends StatelessWidget {
     return Center(
       child: Image.asset(
         fit: BoxFit.cover,
-        buildingModel.imagePath,
+        buildingSpecefication[buildingRecord[1]]!.imagePath,
         width: width,
         height: height,
       ),

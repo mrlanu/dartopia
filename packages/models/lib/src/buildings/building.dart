@@ -1,16 +1,8 @@
 import 'dart:core';
 import 'dart:math';
 
-enum BuildingId {
-  LUMBER, CLAY_PIT, IRON_MINE, CROPLAND, BARRACKS, MAIN, BRICKYARD, IRON_FOUNDRY,
-  GRAIN_MILL, BAKERY, WAREHOUSE, GRANARY, ARMORY, BLACKSMITH, ARENA, SAWMILL,
-  RALLY_POINT, MARKETPLACE, EMBASSY, STABLES, WORKSHOP, ACADEMY, CRANNY,
-  TOWN_HALL, RESIDENCE, PALACE, TRADE_OFFICE, GREAT_BARRACKS, GREAT_STABLES,
-  CITY_WALL, EARTH_WALL, PALISADE, EMPTY,
-}
-
 class Building {
-  final BuildingId id;
+  final int id;
   final String name;
   final List<int> cost;
   final Time time;
@@ -20,7 +12,7 @@ class Building {
   final int culture;
   final int maxLevel;
   final String description;
-  final List<RequirementBuilding> requirementBuildings;
+  final List<List<int>> requirementBuildings;
   final bool isMulti;
   final String imagePath;
 
@@ -80,16 +72,9 @@ class Time {
   }
 }
 
-class RequirementBuilding {
-  final BuildingId id;
-  final int level;
-
-  RequirementBuilding({required this.id, required this.level});
-}
-
-final buildingSpecefication = <BuildingId, Building>{
-  BuildingId.LUMBER: Building(
-    id: BuildingId.LUMBER,
+final buildingSpecefication = <int, Building>{
+  0: Building(
+    id: 0,
     name: 'Wood cutter',
     cost: [40, 100, 50, 60],
     time: Time(1780 / 3, 1.6, 1000 / 3),
@@ -99,8 +84,8 @@ final buildingSpecefication = <BuildingId, Building>{
     culture: 1,
     imagePath: 'assets/images/buildings/wood.png',
   ),
-  BuildingId.CLAY_PIT: Building(
-    id: BuildingId.CLAY_PIT,
+  1: Building(
+    id: 1,
     name: 'Clay pit',
     cost: [80, 40, 80, 50],
     time: Time(1660 / 3, 1.6, 1000 / 3),
@@ -110,8 +95,8 @@ final buildingSpecefication = <BuildingId, Building>{
     culture: 1,
     imagePath: 'assets/images/buildings/clay_2.png',
   ),
-  BuildingId.IRON_MINE: Building(
-    id: BuildingId.IRON_MINE,
+  2: Building(
+    id: 2,
     name: 'Iron mine',
     cost: [100, 80, 30, 60],
     time: Time(2350 / 3, 1.6, 1000 / 3),
@@ -121,8 +106,8 @@ final buildingSpecefication = <BuildingId, Building>{
     culture: 1,
     imagePath: 'assets/images/buildings/iron_2.png',
   ),
-  BuildingId.CROPLAND: Building(
-    id: BuildingId.CROPLAND,
+  3: Building(
+    id: 3,
     name: 'Crop land',
     cost: [70, 90, 70, 20],
     time: Time(1450 / 3, 1.6, 1000 / 3),
@@ -132,8 +117,8 @@ final buildingSpecefication = <BuildingId, Building>{
     culture: 1,
     imagePath: 'assets/images/buildings/crop_2.png',
   ),
-  BuildingId.MAIN: Building(
-      id: BuildingId.MAIN,
+  4: Building(
+      id: 4,
       name: 'Main',
       cost: [70, 40, 60, 20],
       time: Time.withA(3875),
@@ -144,8 +129,8 @@ final buildingSpecefication = <BuildingId, Building>{
       description:
       'The main building of the village builders live. higher level of the main building , the faster under construction.',
       imagePath: 'assets/images/buildings/main.png',),
-  BuildingId.GRANARY: Building(
-      id: BuildingId.GRANARY,
+  5: Building(
+      id: 5,
       name: 'Granary',
       cost: [80, 100, 70, 20],
       time: Time.withA(3475),
@@ -156,11 +141,9 @@ final buildingSpecefication = <BuildingId, Building>{
       description:
       'Crop produced by your croplands is stored in the granary. By increasing its level, you increase the granarys capacity.',
       imagePath: 'assets/images/buildings/granary.png',
-      requirementBuildings: [
-        RequirementBuilding(id: BuildingId.MAIN, level: 1),
-      ],),
-  BuildingId.WAREHOUSE: Building(
-      id: BuildingId.WAREHOUSE,
+      requirementBuildings: [[5, 1]],),
+  6: Building(
+      id: 6,
       name: 'Warehouse',
       cost: [130, 160,  90,  40],
       time: Time.withA(3875),
@@ -171,11 +154,9 @@ final buildingSpecefication = <BuildingId, Building>{
       description:
       'The resources wood, clay and iron are stored in your warehouse. By increasing its level you increase your warehouses capacity.',
       imagePath: 'assets/images/buildings/warehouse.png',
-      requirementBuildings: [
-        RequirementBuilding(id: BuildingId.MAIN, level: 1),
-      ],),
-  BuildingId.BARRACKS: Building(
-      id: BuildingId.BARRACKS,
+      requirementBuildings: [[5,1]],),
+  7: Building(
+      id: 7,
       name: 'Barracks',
       cost: [210, 140, 260, 120],
       time: Time.withA(3875),
@@ -186,12 +167,9 @@ final buildingSpecefication = <BuildingId, Building>{
       description:
       'In the barracks infantry can be trained troops . With the development of the barracks reduced training time soldiers.',
       imagePath: 'assets/images/buildings/barracks_v.png',
-      requirementBuildings: [
-        RequirementBuilding(id: BuildingId.MAIN, level: 3),
-        RequirementBuilding(id: BuildingId.RALLY_POINT, level: 1),
-      ],),
-  BuildingId.RALLY_POINT: Building(
-      id: BuildingId.RALLY_POINT,
+      requirementBuildings: [[5, 3], [16, 1],],),
+  8: Building(
+      id: 8,
       name: 'Rally point',
       cost: [110, 160, 90, 70],
       time: Time.withA(3875),
@@ -203,8 +181,8 @@ final buildingSpecefication = <BuildingId, Building>{
       culture: 1,
       imagePath: 'assets/images/buildings/rally_point.png',),
   // SHOULD BE LAST ONE
-  BuildingId.EMPTY: Building(
-      id: BuildingId.EMPTY,
+  99: Building(
+      id: 99,
       name: 'Empty',
       cost: [0, 0, 0, 0],
       time: Time(1450 / 3, 1.6, 1000 / 3),

@@ -6,12 +6,10 @@ import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:http/http.dart' as http;
 import 'package:models/models.dart';
-
-import '../../buildings/models/building_view_model.dart';
-import '../../buildings/view/building_widgets/building_widgets_map.dart';
 import '../../consts/api.dart';
 
 part 'village_event.dart';
+
 part 'village_state.dart';
 
 class VillageBloc extends Bloc<VillageEvent, VillageState> {
@@ -29,88 +27,23 @@ class VillageBloc extends Bloc<VillageEvent, VillageState> {
       VillageFetchRequested event, Emitter<VillageState> emit) async {
     emit(state.copyWith(status: VillageStatus.loading));
 
-    final url = Uri.http(baseURL, '/settlement/6541b8ce582211d8f224e539');
+    final url = Uri.http(baseURL, '/settlement/654a6251f8cab210a84af452');
     final response = await http.get(url);
     final map = json.decode(response.body) as Map<String, dynamic>;
     final settlement = Settlement.fromResponse(map);
 
-    final buildingViewModelList = _mapToBuildingViewModels(
-        settlement: settlement, filter: FilterBuilding.BUILDINGS);
-    buildingViewModelList.addAll(_getEachField());
-    final fieldViewModelList = _mapToBuildingViewModels(
-        settlement: settlement, filter: FilterBuilding.FIELDS)
-      ..sort(
-        (a, b) => a.level.compareTo(b.level),
-      );
+    final buildingRecords = <List<int>>[[0, 0, 0],[1, 1, 0],[2, 2, 0],[3, 3, 0]];
+
+    final buildingsExceptFields = settlement.buildings
+        .where((bR) => bR[1] != 0 && bR[1] != 1 && bR[1] != 2 && bR[1] != 3)
+        .toList();
+
+    buildingRecords.addAll(buildingsExceptFields);
+
     emit(state.copyWith(
         status: VillageStatus.success,
         settlement: settlement,
         storage: settlement.storage,
-        buildingViewModelList: buildingViewModelList,
-        fieldsViewModelList: fieldViewModelList));
+        buildingRecords: buildingRecords));
   }
-
-  List<BuildingViewModel> _mapToBuildingViewModels(
-      {required Settlement settlement,
-      FilterBuilding filter = FilterBuilding.ALL}) {
-    final filteredRecords = switch (filter) {
-      FilterBuilding.ALL => settlement.buildings,
-      FilterBuilding.BUILDINGS => settlement.buildings
-          .where((b) =>
-              b.id != BuildingId.LUMBER.index &&
-              b.id != BuildingId.CLAY_PIT.index &&
-              b.id != BuildingId.IRON_MINE.index &&
-              b.id != BuildingId.CROPLAND.index)
-          .toList(),
-      FilterBuilding.FIELDS => settlement.buildings
-          .where((b) =>
-              b.id == BuildingId.LUMBER.index ||
-              b.id == BuildingId.CLAY_PIT.index ||
-              b.id == BuildingId.IRON_MINE.index ||
-              b.id == BuildingId.CROPLAND.index)
-          .toList(),
-    };
-    final buildingViewModelList = filteredRecords.map((buildingRecord) {
-      final specification =
-          buildingSpecefication[BuildingId.values[buildingRecord.id]]!;
-      final widget = buildingWidgetsMap[specification.id]!;
-      final buildingView = BuildingViewModel(
-          id: specification.id,
-          name: specification.name,
-          level: buildingRecord.level,
-          description: specification.description,
-          imagePath: specification.imagePath,
-          costToNextLevel:
-              specification.getResourcesToNextLevel(buildingRecord.level),
-          timeToNextLevel: specification.time.valueOf(buildingRecord.level),
-          widget: widget);
-      return buildingView;
-    }).toList();
-    return buildingViewModelList;
-  }
-
-  List<BuildingViewModel> _getEachField() {
-    final result = <BuildingViewModel>[];
-    for (var i = 0; i < 4; i++) {
-      final specification = buildingSpecefication[BuildingId.values[i]]!;
-      final widget = buildingWidgetsMap[specification.id]!;
-      final field = BuildingViewModel(
-          id: specification.id,
-          name: specification.name,
-          level: 0,
-          description: specification.description,
-          imagePath: specification.imagePath,
-          costToNextLevel: [],
-          timeToNextLevel: 0,
-          widget: widget);
-      result.add(field);
-    }
-    return result;
-  }
-}
-
-enum FilterBuilding {
-  ALL,
-  BUILDINGS,
-  FIELDS,
 }

@@ -50,21 +50,21 @@ class _StorageBarState extends State<StorageBar> {
         children: [
           _barBuilder(itemsList: [
             _itemBuilder(
-                buildingId: BuildingId.WAREHOUSE,
+                buildingId: 6,
                 amount: _settlement.storage[0].toInt(),
                 pngName: 'lumber'),
             _itemBuilder(
-                buildingId: BuildingId.WAREHOUSE,
+                buildingId: 6,
                 amount: _settlement.storage[1].toInt(),
                 pngName: 'clay'),
             _itemBuilder(
-                buildingId: BuildingId.WAREHOUSE,
+                buildingId: 6,
                 amount: _settlement.storage[2].toInt(),
                 pngName: 'iron'),
           ], backgroundColor: storageBar),
           _barBuilder(itemsList: [
             _itemBuilder(
-                buildingId: BuildingId.GRANARY,
+                buildingId: 5,
                 amount: _settlement.storage[3].toInt(),
                 pngName: 'crop'),
           ], backgroundColor: storageBar)
@@ -73,12 +73,12 @@ class _StorageBarState extends State<StorageBar> {
     );
   }
 
-  int _getMaxCapacity(BuildingId buildingId) {
+  int _getMaxCapacity(int buildingId) {
     final building =
-        _settlement.buildings.where((b) => b.id == buildingId.index).toList();
+        _settlement.buildings.where((b) => b[1] == buildingId).toList();
     if (building.isNotEmpty) {
       return buildingSpecefication[buildingId]!
-          .benefit(building[0].level)
+          .benefit(building[0][2])
           .toInt();
     }
     return 750;
@@ -129,7 +129,7 @@ class _StorageBarState extends State<StorageBar> {
   }
 
   Widget _itemBuilder(
-      {required BuildingId buildingId,
+      {required int buildingId,
       required int amount,
       required String pngName}) {
     return Row(

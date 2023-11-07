@@ -1,26 +1,26 @@
 import 'package:flutter/cupertino.dart';
-import 'package:models/models.dart';
 
 import '../view.dart';
 
-Map<BuildingId, Widget> buildingWidgetsMap = {
-  BuildingId.LUMBER: const Lumber(key: ValueKey(BuildingId.LUMBER)),
-  BuildingId.CLAY_PIT: const ClayPit(key: ValueKey(BuildingId.CLAY_PIT)),
-  BuildingId.IRON_MINE: const IronMine(key: ValueKey(BuildingId.IRON_MINE)),
-  BuildingId.CROPLAND: const Cropland(key: ValueKey(BuildingId.CROPLAND)),
-  BuildingId.MAIN: const MainBuilding(key: ValueKey(BuildingId.MAIN)),
-  BuildingId.ACADEMY: const SizedBox(height: 100, width: 100, key: ValueKey(BuildingId.ACADEMY)),
-  BuildingId.BAKERY: const SizedBox(height: 100, width: 100, key: ValueKey(BuildingId.BAKERY)),
-  BuildingId.BARRACKS: const BarracksBuilding(key: ValueKey(BuildingId.BARRACKS)),
-  BuildingId.CRANNY: const SizedBox(height: 100, width: 100, key: ValueKey(BuildingId.CRANNY),),
-  BuildingId.EMBASSY: const SizedBox(height: 100, width: 100, key: ValueKey(BuildingId.EMBASSY)),
-  BuildingId.GRAIN_MILL: const SizedBox(height: 100, width: 100, key: ValueKey(BuildingId.GRAIN_MILL)),
-  BuildingId.GRANARY: const SizedBox(height: 100, width: 100, key: ValueKey(BuildingId.GRANARY)),
-  BuildingId.MARKETPLACE: const SizedBox(height: 100, width: 100, key: ValueKey(BuildingId.MARKETPLACE)),
-  BuildingId.RALLY_POINT: const SizedBox(height: 100, width: 100, key: ValueKey(BuildingId.RALLY_POINT)),
-  BuildingId.WAREHOUSE: const SizedBox(height: 100, width: 100, key: ValueKey(BuildingId.WAREHOUSE)),
+Map<int, Widget> buildingWidgetsMap = {
+  0: const Lumber(key: ValueKey(0)),
+  1: const ClayPit(key: ValueKey(1)),
+  2: const IronMine(key: ValueKey(2)),
+  3: const Cropland(key: ValueKey(3)),
+  4: const MainBuilding(key: ValueKey(4)),
+  5: const SizedBox(height: 100, width: 100, key: ValueKey(5)),
+  6: const SizedBox(height: 100, width: 100, key: ValueKey(6)),
+  7: const BarracksBuilding(key: ValueKey(7)),
+  8: const SizedBox(height: 100, width: 100, key: ValueKey(8)),
+  /*9: const SizedBox(height: 100, width: 100, key: ValueKey(BuildingId.ACADEMY)),
+  10: const SizedBox(height: 100, width: 100, key: ValueKey(BuildingId.BAKERY)),
+  11: const SizedBox(height: 100, width: 100, key: ValueKey(BuildingId.CRANNY),),
+  12: const SizedBox(height: 100, width: 100, key: ValueKey(BuildingId.EMBASSY)),
+  13: const SizedBox(height: 100, width: 100, key: ValueKey(BuildingId.GRAIN_MILL)),
+  14: const SizedBox(height: 100, width: 100, key: ValueKey(BuildingId.MARKETPLACE)),*/
+
   // SHOULD BE LAST ONE
-  BuildingId.EMPTY: const Empty(key: ValueKey('HUY')),
+  99: const Empty(key: ValueKey('HUY')),
 };
 
 /*Map<BuildingId, Widget Function(Key key)> buildingWidgetsMap = {

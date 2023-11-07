@@ -42,7 +42,7 @@ class _EmptyState extends State<Empty> {
             return BuildingCard(
                 specification: allBuildingList[index % allBuildingList.length],
                 storage: state.settlement!.storage,
-                buildingList: state.buildingViewModelList);
+                buildingRecords: state.buildingRecords);
           },
         ));
       },

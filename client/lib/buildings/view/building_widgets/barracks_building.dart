@@ -14,9 +14,9 @@ class BarracksBuilding extends StatelessWidget {
       builder: (context, state) {
         return Center(
             child: BuildingCard(
-                specification: buildingSpecefication[BuildingId.BARRACKS]!,
+                specification: buildingSpecefication[7]!,
                 storage: state.settlement!.storage,
-                buildingList: state.buildingViewModelList));
+                buildingRecords: state.buildingRecords));
       },
     );
   }

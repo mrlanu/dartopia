@@ -51,8 +51,7 @@ class ConstructionTask extends Equatable implements Executable {
   void execute(Settlement settlement) {
     print('Inside Construction task execute method. Task ID: $id');
     // upgrade building
-    settlement.buildings[position] =
-        settlement.buildings[position].copyWith(level: toLevel);
+    settlement.buildings[position][2] = settlement.buildings[position][2] + 1;
     // remove executed Task
     settlement.constructionTasks.remove(this);
   }
