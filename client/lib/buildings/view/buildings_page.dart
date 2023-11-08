@@ -1,3 +1,4 @@
+import 'package:dartopia/bottom_navbar/bottom_navbar.dart';
 import 'package:dartopia/buildings/view/building_widgets/building_widgets_map.dart';
 import 'package:dartopia/buildings/view/widgets/building_picture.dart';
 import 'package:dartopia/storage_bar/view/storage_bar.dart';
@@ -104,6 +105,7 @@ class _BuildingsViewState extends State<BuildingsView>
                     ),
                   ),
                   drawer: const Drawer(),
+                  bottomNavigationBar: const BottomNavBar(),
                   body: Column(
                     children: [
                       const SizedBox(
@@ -122,7 +124,7 @@ class _BuildingsViewState extends State<BuildingsView>
                             child: buildingWidgetsMap[specification.id]),
                       ),
                       SizedBox(
-                        height: 180,
+                        height: 140,
                         width: size.width,
                         child: Stack(
                           alignment: Alignment.center,
@@ -151,11 +153,11 @@ class _BuildingsViewState extends State<BuildingsView>
                               },
                             ),
                             Positioned(
-                              bottom: 35,
+                              bottom: 15,
                               child: ClipPath(
                                 clipper: CustomClip(),
                                 child: Container(
-                                  height: 35,
+                                  height: 30,
                                   width: 350,
                                   color: black.withOpacity(0.35),
                                 ),
