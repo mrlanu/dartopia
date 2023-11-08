@@ -31,11 +31,11 @@ class _BottomNavBarState extends State<BottomNavBar> {
   Widget build(BuildContext context) {
     return Theme(
       data: Theme.of(context).copyWith(
-        //splashColor: Colors.transparent,
+        splashColor: Colors.transparent,
         highlightColor: Colors.transparent,
       ),
       child: BottomNavigationBar(
-        backgroundColor: bottomNavBarBackground,
+        //backgroundColor: bottomNavBarBackground,
         currentIndex: _selectedTab.index,
         onTap: (value) {
           setState(() {
@@ -45,8 +45,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
         elevation: 0,
         showSelectedLabels: false,
         showUnselectedLabels: false,
-        selectedItemColor: bottomNavBarSelectedItem,
-        unselectedItemColor: bottomNavBarItem,
+        //selectedItemColor: bottomNavBarSelectedItem,
+        //unselectedItemColor: bottomNavBarItem,
         type: BottomNavigationBarType.fixed,
         items: [
           _buildBottomNavigationBarItem(

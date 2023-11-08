@@ -61,13 +61,13 @@ class _StorageBarState extends State<StorageBar> {
                 buildingId: 6,
                 amount: _settlement.storage[2].toInt(),
                 pngName: 'iron'),
-          ], backgroundColor: storageBar),
+          ]),
           _barBuilder(itemsList: [
             _itemBuilder(
                 buildingId: 5,
                 amount: _settlement.storage[3].toInt(),
                 pngName: 'crop'),
-          ], backgroundColor: storageBar)
+          ],)
         ],
       ),
     );
@@ -112,18 +112,14 @@ class _StorageBarState extends State<StorageBar> {
 
   Widget _barBuilder(
       {required List<Widget> itemsList,
-      Color backgroundColor = Colors.white70}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 4.0),
-      // margin: const EdgeInsets.symmetric(vertical: 4.0),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(6.0),
-        //border: Border.all(color: Colors.black),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [...itemsList],
+      Color backgroundColor = Colors.grey}) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 4.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [...itemsList],
+        ),
       ),
     );
   }

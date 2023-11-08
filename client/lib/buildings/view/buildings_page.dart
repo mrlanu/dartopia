@@ -4,6 +4,7 @@ import 'package:dartopia/buildings/view/widgets/building_picture.dart';
 import 'package:dartopia/storage_bar/view/storage_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:models/models.dart';
 
 import '../../consts/consts.dart';
@@ -68,16 +69,21 @@ class _BuildingsViewState extends State<BuildingsView>
         builder: (context, state) {
           Building? specification;
           if (state.status == VillageStatus.success) {
-            specification =
-                buildingSpecefication[state.buildingRecords[currentBuildingIndex][1]];
+            specification = buildingSpecefication[
+                state.buildingRecords[currentBuildingIndex][1]];
           }
           return state.status == VillageStatus.loading
               ? const Scaffold(body: Center(child: CircularProgressIndicator()))
               : Scaffold(
-                  backgroundColor: background2,
+                  backgroundColor: background,
                   appBar: AppBar(
                     centerTitle: true,
-                    backgroundColor: transparent,
+                    actions: [
+                      IconButton(
+                          onPressed: () {},
+                          icon: const FaIcon(FontAwesomeIcons.gear))
+                    ],
+                    //backgroundColor: transparent,
                     elevation: 0,
                     title: AnimatedSwitcher(
                       duration: const Duration(milliseconds: 100),
@@ -117,14 +123,14 @@ class _BuildingsViewState extends State<BuildingsView>
                       const SizedBox(
                         height: 3,
                       ),
-                      SizedBox(
-                        height: size.height * 0.54,
+                      Expanded(
                         child: AnimatedSwitcher(
                             duration: const Duration(milliseconds: 500),
                             child: buildingWidgetsMap[specification.id]),
                       ),
+                      Divider(),
                       SizedBox(
-                        height: 140,
+                        height: 135,
                         width: size.width,
                         child: Stack(
                           alignment: Alignment.center,
@@ -153,7 +159,7 @@ class _BuildingsViewState extends State<BuildingsView>
                               },
                             ),
                             Positioned(
-                              bottom: 15,
+                              bottom: 10,
                               child: ClipPath(
                                 clipper: CustomClip(),
                                 child: Container(
