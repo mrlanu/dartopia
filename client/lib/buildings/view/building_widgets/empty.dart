@@ -25,9 +25,8 @@ class _EmptyState extends State<Empty> {
   @override
   Widget build(BuildContext context) {
     final allBuildingList = buildingSpecefication.values
-        .toList()
-        //remove last one (Empty)
-        .getRange(0, buildingSpecefication.values.toList().length - 1)
+        .where((sp) =>
+            sp.id != 0 && sp.id != 1 && sp.id != 2 && sp.id != 3 && sp.id != 99)
         .toList();
     return PageView.builder(
       controller: _pageController,
