@@ -1,13 +1,19 @@
+import 'package:dartopia/village/bloc/village_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:models/models.dart';
 
+import '../../../utils/time_formatter.dart';
+
 class BuildingCard extends StatelessWidget {
+  final int position;
   final Building specification;
   final List<double> storage;
   final List<List<int>> buildingRecords;
 
   const BuildingCard(
       {super.key,
+      required this.position,
       required this.specification,
       required this.storage,
       required this.buildingRecords});
@@ -27,7 +33,12 @@ class BuildingCard extends StatelessWidget {
                 //width: size.width * 0.9,
                 child: Column(
                   children: [
-                    Align(alignment: Alignment.topLeft, child: Text(specification.name, style: Theme.of(context).textTheme.titleLarge,)),
+                    Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          specification.name,
+                          style: Theme.of(context).textTheme.titleLarge,
+                        )),
                     const SizedBox(height: 10),
                     Align(
                       alignment: Alignment.topLeft,
@@ -110,15 +121,16 @@ class BuildingCard extends StatelessWidget {
                     Row(
                       children: [
                         const SizedBox(width: 10),
-                        ...specification.requirementBuildings
-                            .map((e) => Text(
-                                overflow: TextOverflow.clip,
-                                '${specification.name} lvl ${e[1]}  ',
-                                style: TextStyle(
-                                    color: _isBuildingExistInVillage(e[0], e[1])
-                                        ? null
-                                        : Colors.red)))
-                            .toList()
+                        ...specification.requirementBuildings.map((e) {
+                          final building = buildingSpecefication[e[0]]!;
+                          return Text(
+                              overflow: TextOverflow.clip,
+                              '${building.name} lvl ${e[1]}  ',
+                              style: TextStyle(
+                                  color: _isBuildingExistInVillage(e[0], e[1])
+                                      ? null
+                                      : Colors.red));
+                        }).toList()
                       ],
                     ),
                     const Divider(),
@@ -130,10 +142,20 @@ class BuildingCard extends StatelessWidget {
                           width: 50,
                           height: 50,
                         ),
-                        const Text('00:09:00'),
+                        Text('${formatTime(specification.time.valueOf(1))}'),
                         const SizedBox(width: 20),
                         FilledButton(
-                            onPressed: _isMatchRequirements() ? () {} : null,
+                            onPressed: _isMatchRequirements()
+                                ? () {
+                                    final request = ConstructionRequest(
+                                        buildingId: specification.id,
+                                        position: position,
+                                        toLevel: 1);
+                                    context.read<VillageBloc>().add(
+                                        BuildingUpgradeRequested(
+                                            request: request));
+                                  }
+                                : null,
                             child: const Text('Build')),
                       ],
                     )

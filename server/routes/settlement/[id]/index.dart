@@ -37,7 +37,7 @@ FutureOr<Response> onRequest(RequestContext context, String id) async {
 Future<Response> _get(RequestContext context, Settlement settlement) async {
   print('Response has been sent for ID: ${settlement.id}');
   return Response.json(
-      body: settlement.toResponseBody(),);
+      body: settlement.toJson(),);
 }
 
 Future<Response> _put(

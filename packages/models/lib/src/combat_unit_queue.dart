@@ -31,7 +31,7 @@ class CombatUtitQueue extends Equatable{
         'durationEach': durationEach,
       };
 
-  Map<String, dynamic> toResponseBody() => <String, dynamic>{
+  Map<String, dynamic> toJson() => <String, dynamic>{
         'id': id,
         'lastTime': lastTime.toIso8601String(),
         'unitId': unitId,

@@ -6,7 +6,9 @@ import '../view.dart';
 
 
 class Cropland extends StatelessWidget {
-  const Cropland({super.key});
+  const Cropland({super.key, required this.position});
+
+  final int position;
 
   @override
   Widget build(BuildContext context) {

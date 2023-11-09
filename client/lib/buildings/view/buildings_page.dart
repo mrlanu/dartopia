@@ -2,6 +2,7 @@ import 'package:dartopia/bottom_navbar/bottom_navbar.dart';
 import 'package:dartopia/buildings/view/building_widgets/building_widgets_map.dart';
 import 'package:dartopia/buildings/view/widgets/building_picture.dart';
 import 'package:dartopia/storage_bar/view/storage_bar.dart';
+import 'package:dartopia/village/repository/village_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -15,14 +16,18 @@ class BuildingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => VillageBloc()
-            ..add(const VillageFetchRequested(villageId: 'villageId')),
-        )
-      ],
-      child: const BuildingsView(),
+    return RepositoryProvider(
+      create: (context) => VillageRepositoryImpl(),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => VillageBloc(
+                villageRepository: context.read<VillageRepositoryImpl>())
+              ..add(const VillageFetchRequested(villageId: 'villageId')),
+          )
+        ],
+        child: const BuildingsView(),
+      ),
     );
   }
 }
@@ -126,7 +131,8 @@ class _BuildingsViewState extends State<BuildingsView>
                       Expanded(
                         child: AnimatedSwitcher(
                             duration: const Duration(milliseconds: 500),
-                            child: buildingWidgetsMap[specification.id]),
+                            child: buildingWidgetsMap[specification.id]!(
+                                currentBuildingIndex + 15)), //12 is a offset
                       ),
                       Divider(),
                       SizedBox(

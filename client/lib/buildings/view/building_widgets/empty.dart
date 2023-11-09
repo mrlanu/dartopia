@@ -6,7 +6,9 @@ import '../../../village/bloc/village_bloc.dart';
 import '../widgets/building_card.dart';
 
 class Empty extends StatefulWidget {
-  const Empty({super.key});
+  const Empty({super.key, required this.position});
+
+  final int position;
 
   @override
   State<Empty> createState() => _EmptyState();
@@ -32,13 +34,14 @@ class _EmptyState extends State<Empty> {
       controller: _pageController,
       onPageChanged: (value) {
         setState(() {
-          _currentPage = value % allBuildingList.length;
+          //_currentPage = value % allBuildingList.length;
         });
       },
       itemBuilder: (context, index) {
         return Center(child: BlocBuilder<VillageBloc, VillageState>(
           builder: (context, state) {
             return BuildingCard(
+                position: widget.position,
                 specification: allBuildingList[index % allBuildingList.length],
                 storage: state.settlement!.storage,
                 buildingRecords: state.buildingRecords);

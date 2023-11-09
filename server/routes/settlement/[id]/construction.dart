@@ -34,15 +34,15 @@ FutureOr<Response> onRequest(RequestContext context, String id) async {
 
 Future<Response> _post(RequestContext context, Settlement settlement) async {
   final settlementService = context.read<SettlementService>();
-  final taskRequest = NewConstructionRequest.fromMap(
-    await context.request.json() as Map<String, dynamic>,
+  final taskRequest = ConstructionRequest.fromJson(
+      await context.request.json() as Map<String, dynamic>
   );
   final result = await settlementService.addConstructionTask(
       settlement: settlement, request: taskRequest,);
   return Response.json(
     statusCode:
         result != null ? HttpStatus.created : HttpStatus.internalServerError,
-    body: result?.toResponseBody(),
+    body: result?.toJson(),
   );
 }
 

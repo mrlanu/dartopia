@@ -13,4 +13,13 @@ final class VillageFetchRequested extends VillageEvent {
   List<Object?> get props => [villageId];
 }
 
+final class BuildingUpgradeRequested extends VillageEvent {
+  final ConstructionRequest request;
+
+  const BuildingUpgradeRequested({required this.request});
+
+  @override
+  List<Object?> get props => [request];
+}
+
 

@@ -6,7 +6,8 @@ import '../repositories/settlement_repository.dart';
 abstract class SettlementService {
   Future<Settlement?> tryToGetSettlement({required String settlementId});
 
-  Future<Settlement?> recalculateState({required String settlementId,
+  Future<Settlement?> recalculateState({
+    required String settlementId,
     DateTime? untilDateTime,
   });
 
@@ -24,7 +25,7 @@ abstract class SettlementService {
 
   Future<Settlement?> addConstructionTask(
       {required Settlement settlement,
-      required NewConstructionRequest request});
+      required ConstructionRequest request});
 
   Future<Settlement?> orderCombatUnits(
       {required Settlement settlement,
@@ -44,7 +45,7 @@ class SettlementServiceImpl extends SettlementService {
   @override
   Future<Settlement?> tryToGetSettlement({required String settlementId}) async {
     //if settlement has any movements before DateTime.now()
-    if(await _hasMovementsBeforeNow(settlementId)) {
+    if (await _hasMovementsBeforeNow(settlementId)) {
       return null;
     }
     return recalculateState(settlementId: settlementId);
@@ -56,7 +57,7 @@ class SettlementServiceImpl extends SettlementService {
     DateTime? untilDateTime,
   }) async {
     untilDateTime ??= DateTime.now();
-    
+
     final settlement = await _settlementRepository.getById(settlementId);
 
     final executableTaskList = <Executable>[
@@ -73,7 +74,7 @@ class SettlementServiceImpl extends SettlementService {
 
   Future<bool> _hasMovementsBeforeNow(String settlementId) async {
     final movements =
-    await _settlementRepository.getAllMovementsBySettlementId(settlementId);
+        await _settlementRepository.getAllMovementsBySettlementId(settlementId);
     return movements.any((element) => element.when.isBefore(DateTime.now()));
   }
 
@@ -178,23 +179,34 @@ class SettlementServiceImpl extends SettlementService {
   @override
   Future<Settlement?> addConstructionTask(
       {required Settlement settlement,
-      required NewConstructionRequest request}) {
+      required ConstructionRequest request,}) {
     final constructionTasks = settlement.constructionTasks;
-    // should be replaced with concrete Duration for particular task
-    const mockDuration = Duration(minutes: 1);
-    final newTask = ConstructionTask(
-        id: const Uuid().v4(),
-        position: request.position,
-        toLevel: request.toLevel,
-        when: constructionTasks.isEmpty
-            ? DateTime.now().add(mockDuration)
-            : constructionTasks[constructionTasks.length - 1]
-                .executionTime
-                .add(mockDuration));
-    settlement.addConstructionTask(newTask);
-    return updateSettlement(
-      settlement: settlement,
+    final specification = buildingSpecefication[request.buildingId]!;
+    final canBeUpgraded = specification.canBeUpgraded(
+      storage: settlement.storage,
+      existingBuildings: settlement.buildings,
+      toLevel: request.toLevel,
     );
+    if (canBeUpgraded) {
+      final upgradeDuration =
+          Duration(seconds: specification.time.valueOf(request.toLevel));
+      print('DURATION of construction: $upgradeDuration');
+      final newTask = ConstructionTask(
+          id: const Uuid().v4(),
+          buildingId: request.buildingId,
+          position: request.position,
+          toLevel: request.toLevel,
+          when: constructionTasks.isEmpty
+              ? DateTime.now().add(upgradeDuration)
+              : constructionTasks[constructionTasks.length - 1]
+                  .executionTime
+                  .add(upgradeDuration),);
+      settlement.addConstructionTask(newTask);
+      return updateSettlement(
+        settlement: settlement,
+      );
+    }
+    return Future(() => null);
   }
 
   @override
@@ -226,13 +238,16 @@ class SettlementServiceImpl extends SettlementService {
   }
 
   @override
-  Future<bool> sendUnits(
-      {required String fromId, required SendUnitsRequest request,}) async {
+  Future<bool> sendUnits({
+    required String fromId,
+    required SendUnitsRequest request,
+  }) async {
     final movement = Movement(
-        id: ObjectId(),
-        from: fromId,
-        to: request.to,
-        when: DateTime.now().add(const Duration(seconds: 60)),);
+      id: ObjectId(),
+      from: fromId,
+      to: request.to,
+      when: DateTime.now().add(const Duration(seconds: 60)),
+    );
     return _settlementRepository.sendUnits(movement);
   }
 

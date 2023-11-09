@@ -42,7 +42,7 @@ Future<Response> _post(RequestContext context, Settlement settlement) async {
   return Response.json(
     statusCode:
     result != null ? HttpStatus.created : HttpStatus.internalServerError,
-    body: result?.toResponseBody(),
+    body: result?.toJson(),
   );
 }
 

@@ -53,6 +53,33 @@ class Building {
   int _round(double v, double n) {
     return ((v / n) * n).round();
   }
+
+  bool canBeUpgraded(
+      {required List<double> storage,
+      required List<List<int>> existingBuildings,
+      required int toLevel,}) {
+    for (var i = 0; i < 4; i++) {
+      if (storage[i] < getResourcesToNextLevel(toLevel)[i]) {
+        return false;
+      }
+    }
+    for (final bR in requirementBuildings) {
+      if (!_isBuildingExistInVillage(
+          building: bR, existingBuildings: existingBuildings,)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool _isBuildingExistInVillage({
+    required List<int> building,
+    required List<List<int>> existingBuildings,
+  }) {
+    return existingBuildings
+        .where((bR) => bR[1] == building[1] && building[1] <= bR[2])
+        .isNotEmpty;
+  }
 }
 
 class Time {
@@ -118,79 +145,92 @@ final buildingSpecefication = <int, Building>{
     imagePath: 'assets/images/buildings/crop_2.png',
   ),
   4: Building(
-      id: 4,
-      name: 'Main',
-      cost: [70, 40, 60, 20],
-      time: Time.withA(3875),
-      benefit: mbLike,
-      k: 1.28,
-      upkeep: 2,
-      culture: 2,
-      description:
-      'The main building of the village builders live. higher level of the main building , the faster under construction.',
-      imagePath: 'assets/images/buildings/main.png',),
+    id: 4,
+    name: 'Main',
+    cost: [70, 40, 60, 20],
+    time: Time.withA(3875),
+    benefit: mbLike,
+    k: 1.28,
+    upkeep: 2,
+    culture: 2,
+    description:
+        'The main building of the village builders live. higher level of the main building , the faster under construction.',
+    imagePath: 'assets/images/buildings/main.png',
+  ),
   5: Building(
-      id: 5,
-      name: 'Granary',
-      cost: [80, 100, 70, 20],
-      time: Time.withA(3475),
-      benefit: getCapacity,
-      k: 1.28,
-      upkeep: 1,
-      culture: 1,
-      description:
-      'Crop produced by your croplands is stored in the granary. By increasing its level, you increase the granarys capacity.',
-      imagePath: 'assets/images/buildings/granary.png',
-      requirementBuildings: [[5, 1]],),
+    id: 5,
+    name: 'Granary',
+    cost: [80, 100, 70, 20],
+    time: Time.withA(3475),
+    benefit: getCapacity,
+    k: 1.28,
+    upkeep: 1,
+    culture: 1,
+    description:
+        'Crop produced by your croplands is stored in the granary. By increasing its level, you increase the granarys capacity.',
+    imagePath: 'assets/images/buildings/granary.png',
+    requirementBuildings: [
+      [4, 1],
+    ],
+  ),
   6: Building(
-      id: 6,
-      name: 'Warehouse',
-      cost: [130, 160,  90,  40],
-      time: Time.withA(3875),
-      benefit: getCapacity,
-      k: 1.28,
-      upkeep: 1,
-      culture: 1,
-      description:
-      'The resources wood, clay and iron are stored in your warehouse. By increasing its level you increase your warehouses capacity.',
-      imagePath: 'assets/images/buildings/warehouse.png',
-      requirementBuildings: [[5,1]],),
+    id: 6,
+    name: 'Warehouse',
+    cost: [130, 160, 90, 40],
+    time: Time.withA(3875),
+    benefit: getCapacity,
+    k: 1.28,
+    upkeep: 1,
+    culture: 1,
+    description:
+        'The resources wood, clay and iron are stored in your warehouse. By increasing its level you increase your warehouses capacity.',
+    imagePath: 'assets/images/buildings/warehouse.png',
+    requirementBuildings: [
+      [4, 1],
+    ],
+  ),
   7: Building(
-      id: 7,
-      name: 'Barracks',
-      cost: [210, 140, 260, 120],
-      time: Time.withA(3875),
-      benefit: train,
-      k: 1.28,
-      upkeep: 4,
-      culture: 1,
-      description:
-      'In the barracks infantry can be trained troops . With the development of the barracks reduced training time soldiers.',
-      imagePath: 'assets/images/buildings/barracks_v.png',
-      requirementBuildings: [[5, 3], [16, 1],],),
+    id: 7,
+    name: 'Barracks',
+    cost: [210, 140, 260, 120],
+    time: Time.withA(3875),
+    benefit: train,
+    k: 1.28,
+    upkeep: 4,
+    culture: 1,
+    description:
+        'In the barracks infantry can be trained troops . With the development of the barracks reduced training time soldiers.',
+    imagePath: 'assets/images/buildings/barracks_v.png',
+    requirementBuildings: [
+      [4, 3],
+      [8, 1],
+    ],
+  ),
   8: Building(
-      id: 8,
-      name: 'Rally point',
-      cost: [110, 160, 90, 70],
-      time: Time.withA(3875),
-      benefit: speedBuild,
-      description:
-      'In the collection point of your soldiers are going to the village. From here you can send reinforcements to organize a raid or conquer.',
-      k: 1.28,
-      upkeep: 1,
-      culture: 1,
-      imagePath: 'assets/images/buildings/rally_point.png',),
+    id: 8,
+    name: 'Rally point',
+    cost: [110, 160, 90, 70],
+    time: Time.withA(3875),
+    benefit: speedBuild,
+    description:
+        'In the collection point of your soldiers are going to the village. From here you can send reinforcements to organize a raid or conquer.',
+    k: 1.28,
+    upkeep: 1,
+    culture: 1,
+    imagePath: 'assets/images/buildings/rally_point.png',
+  ),
   // SHOULD BE LAST ONE
   99: Building(
-      id: 99,
-      name: 'Empty',
-      cost: [0, 0, 0, 0],
-      time: Time(1450 / 3, 1.6, 1000 / 3),
-      benefit: (val) => 1,
-      imagePath: 'assets/images/buildings/empty.png',
-      k: 0,
-      upkeep: 0,
-      culture: 0,),
+    id: 99,
+    name: 'Empty',
+    cost: [0, 0, 0, 0],
+    time: Time(1450 / 3, 1.6, 1000 / 3),
+    benefit: (val) => 1,
+    imagePath: 'assets/images/buildings/empty.png',
+    k: 0,
+    upkeep: 0,
+    culture: 0,
+  ),
 };
 
 /*Map<BuildingId, BuildingModel> buildingsMap = {
@@ -324,7 +364,7 @@ double getProduction(int level) {
   return productions[level].toDouble();
 }
 
-double train(int level){
+double train(int level) {
   return pow(0.9, level - 1).toDouble();
 }
 
@@ -332,6 +372,6 @@ double speedBuild(int level) {
   return level.toDouble();
 }
 
-double mbLike(int level){
+double mbLike(int level) {
   return pow(0.964, level - 1).toDouble();
 }

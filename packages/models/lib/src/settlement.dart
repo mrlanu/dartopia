@@ -18,7 +18,7 @@ class Settlement {
       [8, 2, 0],[9, 2, 0],[10, 2, 1],[11, 2, 0], // iron
       [12, 3, 0],[13, 3, 0],[14, 3, 0],[15, 3, 1],[16, 3, 0],[17, 3, 0], // crop
       //------------------BUILDINGS----------------
-      [18, 5, 1],[19,99,0],
+      [18, 4, 1],[20,99,0],[21,99,0],[22,99,0],[23,99,0],[24,99,0],[25,99,0],
     ],
     this.army = const [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     this.constructionTasks = const [],
@@ -46,7 +46,7 @@ class Settlement {
             .toList(),
         lastModified = map['lastModified'] as DateTime;
 
-  Settlement.fromResponse(Map<String, dynamic> map)
+  Settlement.fromJson(Map<String, dynamic> map)
       : id = ObjectId.parse(map['_id'] as String),
         name = map['name'] as String,
         userId = map['userId'] as String,
@@ -59,7 +59,7 @@ class Settlement {
         ).toList(),
         army = (map['army'] as List<dynamic>).map((e) => e as int).toList(),
         constructionTasks = (map['constructionTasks'] as List<dynamic>)
-            .map((e) => ConstructionTask.fromMap(e as Map<String, dynamic>))
+            .map((e) => ConstructionTask.fromJson(e as Map<String, dynamic>))
             .toList(),
         combatUnitQueue = (map['combatUnitQueue'] as List<dynamic>)
             .map((e) => CombatUtitQueue.fromMap(e as Map<String, dynamic>))
@@ -183,7 +183,7 @@ class Settlement {
       };
 
   /// Converting a Settlement to a ResponseBody representation.
-  Map<String, dynamic> toResponseBody() => <String, dynamic>{
+  Map<String, dynamic> toJson() => <String, dynamic>{
         '_id': id,
         'name': name,
         'userId': userId,
@@ -191,9 +191,9 @@ class Settlement {
         'buildings': buildings,
         'army': army.map((a) => a).toList(),
         'constructionTasks':
-            constructionTasks.map((c) => c.toResponseBody()).toList(),
+            constructionTasks.map((c) => c.toJson()).toList(),
         'combatUnitQueue':
-            combatUnitQueue.map((c) => c.toResponseBody()).toList(),
+            combatUnitQueue.map((c) => c.toJson()).toList(),
         'lastModified': lastModified.toIso8601String(),
       };
 
