@@ -24,8 +24,7 @@ abstract class SettlementService {
   });
 
   Future<Settlement?> addConstructionTask(
-      {required Settlement settlement,
-      required ConstructionRequest request});
+      {required Settlement settlement, required ConstructionRequest request});
 
   Future<Settlement?> orderCombatUnits(
       {required Settlement settlement,
@@ -177,9 +176,10 @@ class SettlementServiceImpl extends SettlementService {
   }
 
   @override
-  Future<Settlement?> addConstructionTask(
-      {required Settlement settlement,
-      required ConstructionRequest request,}) {
+  Future<Settlement?> addConstructionTask({
+    required Settlement settlement,
+    required ConstructionRequest request,
+  }) {
     final constructionTasks = settlement.constructionTasks;
     final specification = buildingSpecefication[request.buildingId]!;
     final canBeUpgraded = specification.canBeUpgraded(
@@ -191,17 +191,20 @@ class SettlementServiceImpl extends SettlementService {
       final upgradeDuration =
           Duration(seconds: specification.time.valueOf(request.toLevel));
       final newTask = ConstructionTask(
-          id: const Uuid().v4(),
-          buildingId: request.buildingId,
-          position: request.position,
-          toLevel: request.toLevel,
-          when: constructionTasks.isEmpty
-              ? DateTime.now().add(upgradeDuration)
-              : constructionTasks[constructionTasks.length - 1]
-                  .executionTime
-                  .add(upgradeDuration),);
-      settlement.addConstructionTask(newTask);
-      settlement.buildings[request.position] = [request.position, 100, 0];
+        buildingId: request.buildingId,
+        position: request.position,
+        toLevel: request.toLevel,
+        when: constructionTasks.isEmpty
+            ? DateTime.now().add(upgradeDuration)
+            : constructionTasks[constructionTasks.length - 1]
+                .executionTime
+                .add(upgradeDuration),
+      );
+      settlement
+        ..spendResources(specification.getResourcesToNextLevel(request.toLevel))
+        ..addConstructionTask(newTask)
+        ..changeBuilding(
+          position: request.position, buildingId: 100, level: request.toLevel,);
       return updateSettlement(
         settlement: settlement,
       );

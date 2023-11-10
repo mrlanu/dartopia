@@ -13,12 +13,36 @@ class Settlement {
     this.storage = const [500.0, 500.0, 500.0, 500.0],
     this.buildings = const [
       //------------------FIELDS----------------
-      [0, 0, 0],[1, 0, 0],[2, 0, 1],[3, 0, 0], // lumber
-      [4, 1, 0],[5, 1, 0],[6, 1, 1],[7, 1, 0], // clay
-      [8, 2, 0],[9, 2, 0],[10, 2, 1],[11, 2, 0], // iron
-      [12, 3, 0],[13, 3, 0],[14, 3, 0],[15, 3, 1],[16, 3, 0],[17, 3, 0], // crop
+      [0, 0, 0],
+      [1, 0, 0],
+      [2, 0, 1],
+      [3, 0, 0],
+      // lumber
+      [4, 1, 0],
+      [5, 1, 0],
+      [6, 1, 1],
+      [7, 1, 0],
+      // clay
+      [8, 2, 0],
+      [9, 2, 0],
+      [10, 2, 1],
+      [11, 2, 0],
+      // iron
+      [12, 3, 0],
+      [13, 3, 0],
+      [14, 3, 0],
+      [15, 3, 1],
+      [16, 3, 0],
+      [17, 3, 0],
+      // crop
       //------------------BUILDINGS----------------
-      [18, 4, 1],[19,99,0],[20,99,0],[21,99,0],[22,99,0],[23,99,0],[24,99,0],
+      [18, 4, 1],
+      [19, 99, 0],
+      [20, 99, 0],
+      [21, 99, 0],
+      [22, 99, 0],
+      [23, 99, 0],
+      [24, 99, 0],
     ],
     this.army = const [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     this.constructionTasks = const [],
@@ -35,8 +59,9 @@ class Settlement {
             .toList(),
         buildings = (map['buildings'] as List<dynamic>)
             .map(
-                (b) => (b as List<dynamic>).map((e) => e as int).toList(),
-        ).toList(),
+              (b) => (b as List<dynamic>).map((e) => e as int).toList(),
+            )
+            .toList(),
         army = (map['army'] as List<dynamic>).map((e) => e as int).toList(),
         constructionTasks = (map['constructionTasks'] as List<dynamic>)
             .map((e) => ConstructionTask.fromMap(e as Map<String, dynamic>))
@@ -56,7 +81,8 @@ class Settlement {
         buildings = (map['buildings'] as List<dynamic>)
             .map(
               (b) => (b as List<dynamic>).map((e) => e as int).toList(),
-        ).toList(),
+            )
+            .toList(),
         army = (map['army'] as List<dynamic>).map((e) => e as int).toList(),
         constructionTasks = (map['constructionTasks'] as List<dynamic>)
             .map((e) => ConstructionTask.fromJson(e as Map<String, dynamic>))
@@ -99,7 +125,8 @@ class Settlement {
     // Filter buildings based on specific `id` values (1, 2, 3, 4).
     final resourceBuilding = buildings
         .where(
-          (b) => b[1] == 0 || b[1] == 1 || b[1] == 2|| b[1] == 3,)
+          (b) => b[1] == 0 || b[1] == 1 || b[1] == 2 || b[1] == 3,
+        )
         .toList();
 
     // Group the filtered buildings by `id`.
@@ -165,6 +192,21 @@ class Settlement {
     }
   }
 
+  /// Subtract given amount of each resource from the Settlement's storage
+  void spendResources(List<int> resources){
+    final result = <double>[];
+    for (var i = 0; i < storage.length; i++) {
+      result.add(storage[i] - resources[i]);
+    }
+    storage = result;
+  }
+
+  /// Changing the BuildingRecord on given position.
+  void changeBuilding(
+      {required int position, required int buildingId, required int level}) {
+    buildings[position] = [position, buildingId, level];
+  }
+
   double _getWarehouseCapacity() => 2000;
 
   double _getGranaryCapacity() => 2000;
@@ -190,10 +232,8 @@ class Settlement {
         'storage': storage,
         'buildings': buildings,
         'army': army.map((a) => a).toList(),
-        'constructionTasks':
-            constructionTasks.map((c) => c.toJson()).toList(),
-        'combatUnitQueue':
-            combatUnitQueue.map((c) => c.toJson()).toList(),
+        'constructionTasks': constructionTasks.map((c) => c.toJson()).toList(),
+        'combatUnitQueue': combatUnitQueue.map((c) => c.toJson()).toList(),
         'lastModified': lastModified.toIso8601String(),
       };
 

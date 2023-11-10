@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:models/models.dart';
+import 'package:mongo_dart/mongo_dart.dart';
 
 class ConstructionTask extends Equatable implements Executable {
   final String id;
@@ -9,11 +10,12 @@ class ConstructionTask extends Equatable implements Executable {
   final DateTime when;
 
   ConstructionTask(
-      {required this.id,
+      {String? id,
       required this.buildingId,
       required this.position,
       required this.toLevel,
-      required this.when});
+      required this.when})
+      : id = id ?? const Uuid().v4();
 
   ConstructionTask.fromMap(Map<String, dynamic> map)
       : id = map['id'] as String,
@@ -63,10 +65,9 @@ class ConstructionTask extends Equatable implements Executable {
 
   @override
   void execute(Settlement settlement) {
-    print('Inside Construction task execute method. Task ID: $id');
     // upgrade building
-    settlement.buildings[position][1] = buildingId;
-    settlement.buildings[position][2] = settlement.buildings[position][2] + 1;
+    settlement.changeBuilding(
+        position: position, buildingId: buildingId, level: toLevel,);
     // remove executed Task
     settlement.constructionTasks.remove(this);
   }
