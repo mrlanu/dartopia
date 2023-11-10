@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:dartopia/consts/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:models/models.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';

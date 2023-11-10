@@ -1,8 +1,6 @@
 import 'package:dartopia/village/view/village_page.dart';
 import 'package:flutter/material.dart';
 
-import 'buildings/view/buildings_page.dart';
-
 void main() {
   runApp(const MyApp());
 }
