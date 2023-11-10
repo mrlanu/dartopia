@@ -231,6 +231,17 @@ final buildingSpecefication = <int, Building>{
     upkeep: 0,
     culture: 0,
   ),
+  100: Building(
+    id: 100,
+    name: 'Construction',
+    cost: [0, 0, 0, 0],
+    time: Time(1450 / 3, 1.6, 1000 / 3),
+    benefit: (val) => 1,
+    imagePath: 'assets/images/buildings/construction.png',
+    k: 0,
+    upkeep: 0,
+    culture: 0,
+  ),
 };
 
 /*Map<BuildingId, BuildingModel> buildingsMap = {

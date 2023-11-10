@@ -190,7 +190,6 @@ class SettlementServiceImpl extends SettlementService {
     if (canBeUpgraded) {
       final upgradeDuration =
           Duration(seconds: specification.time.valueOf(request.toLevel));
-      print('DURATION of construction: $upgradeDuration');
       final newTask = ConstructionTask(
           id: const Uuid().v4(),
           buildingId: request.buildingId,
@@ -202,6 +201,7 @@ class SettlementServiceImpl extends SettlementService {
                   .executionTime
                   .add(upgradeDuration),);
       settlement.addConstructionTask(newTask);
+      settlement.buildings[request.position] = [request.position, 100, 0];
       return updateSettlement(
         settlement: settlement,
       );

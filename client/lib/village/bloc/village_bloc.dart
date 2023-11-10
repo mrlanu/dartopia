@@ -24,9 +24,34 @@ class VillageBloc extends Bloc<VillageEvent, VillageState> {
 
   Future<void> _onEvent(VillageEvent event, Emitter<VillageState> emit) async {
     return switch (event) {
+      final VillageUpdated e => _onVillageUpdated(e, emit),
       final VillageFetchRequested e => _onVillageFetchRequested(e, emit),
       final BuildingUpgradeRequested e => _onBuildingUpgradeRequested(e, emit),
+      final VillageBuildingIndexChanged e =>
+        _onVillageBuildingIndexChanged(e, emit),
     };
+  }
+
+  Future<void> _onVillageUpdated(
+      VillageUpdated event, Emitter<VillageState> emit) async {
+    final buildingRecords = <List<int>>[
+      [0, 0, 0],
+      [1, 1, 0],
+      [2, 2, 0],
+      [3, 3, 0]
+    ];
+
+    final buildingsExceptFields = event.settlement.buildings
+        .where((bR) => bR[1] != 0 && bR[1] != 1 && bR[1] != 2 && bR[1] != 3)
+        .toList();
+
+    buildingRecords.addAll(buildingsExceptFields);
+
+    emit(state.copyWith(
+        status: VillageStatus.success,
+        settlement: event.settlement,
+        storage: event.settlement.storage,
+        buildingRecords: buildingRecords));
   }
 
   Future<void> _onVillageFetchRequested(
@@ -38,24 +63,7 @@ class VillageBloc extends Bloc<VillageEvent, VillageState> {
     final map = json.decode(response.body) as Map<String, dynamic>;
     final settlement = Settlement.fromJson(map);
 
-    final buildingRecords = <List<int>>[
-      [0, 0, 0],
-      [1, 1, 0],
-      [2, 2, 0],
-      [3, 3, 0]
-    ];
-
-    final buildingsExceptFields = settlement.buildings
-        .where((bR) => bR[1] != 0 && bR[1] != 1 && bR[1] != 2 && bR[1] != 3)
-        .toList();
-
-    buildingRecords.addAll(buildingsExceptFields);
-
-    emit(state.copyWith(
-        status: VillageStatus.success,
-        settlement: settlement,
-        storage: settlement.storage,
-        buildingRecords: buildingRecords));
+    add(VillageUpdated(settlement: settlement));
   }
 
   Future<void> _onBuildingUpgradeRequested(
@@ -63,10 +71,11 @@ class VillageBloc extends Bloc<VillageEvent, VillageState> {
     emit(state.copyWith(status: VillageStatus.loading));
     final settlement =
         await _villageRepository.upgradeBuilding(request: event.request);
+    add(VillageUpdated(settlement: settlement!));
+  }
 
-    emit(state.copyWith(
-      status: VillageStatus.success,
-      settlement: settlement,
-    ));
+  Future<void> _onVillageBuildingIndexChanged(
+      VillageBuildingIndexChanged event, Emitter<VillageState> emit) async {
+    emit(state.copyWith(buildingIndex: event.index));
   }
 }

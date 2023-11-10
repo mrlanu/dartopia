@@ -151,9 +151,11 @@ class BuildingCard extends StatelessWidget {
                                         buildingId: specification.id,
                                         position: position,
                                         toLevel: 1);
-                                    context.read<VillageBloc>().add(
-                                        BuildingUpgradeRequested(
-                                            request: request));
+                                    context.read<VillageBloc>()
+                                      ..add(VillageBuildingIndexChanged(
+                                          index: position - 14))
+                                      ..add(BuildingUpgradeRequested(
+                                          request: request));
                                   }
                                 : null,
                             child: const Text('Build')),

@@ -4,6 +4,15 @@ sealed class VillageEvent extends Equatable {
   const VillageEvent();
 }
 
+final class VillageUpdated extends VillageEvent {
+  final Settlement settlement;
+
+  const VillageUpdated({required this.settlement});
+
+  @override
+  List<Object?> get props => [settlement];
+}
+
 final class VillageFetchRequested extends VillageEvent {
   final String villageId;
 
@@ -20,6 +29,15 @@ final class BuildingUpgradeRequested extends VillageEvent {
 
   @override
   List<Object?> get props => [request];
+}
+
+final class VillageBuildingIndexChanged extends VillageEvent {
+  final int index;
+
+  const VillageBuildingIndexChanged({required this.index});
+
+  @override
+  List<Object?> get props => [index];
 }
 
 

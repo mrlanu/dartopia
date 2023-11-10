@@ -1,3 +1,4 @@
+import 'package:dartopia/village/view/village_page.dart';
 import 'package:flutter/material.dart';
 
 import 'buildings/view/buildings_page.dart';
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      home: const BuildingsPage(),
+      home: const VillagePage(),
     );
   }
 }

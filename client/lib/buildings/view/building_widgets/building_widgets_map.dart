@@ -21,6 +21,7 @@ Map<int, Widget Function(int position)> buildingWidgetsMap = {
 
   // SHOULD BE LAST ONE
   99: (position) => Empty(key: ValueKey('99 $position'), position: position),
+  100: (position) => SizedBox(height: 100, width: 100, key: ValueKey('100 $position')),
 };
 
 /*Map<BuildingId, Widget Function(Key key)> buildingWidgetsMap = {
