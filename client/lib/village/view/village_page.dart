@@ -6,7 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../buildings/buildings.dart';
 import '../cubit/navigation_cubit.dart';
-import '../repository/village_repository.dart';
+import '../repository/settlement_repository.dart';
 
 class VillagePage extends StatelessWidget {
   const VillagePage({super.key});
@@ -14,7 +14,7 @@ class VillagePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RepositoryProvider(
-      create: (context) => VillageRepositoryImpl(),
+      create: (context) => SettlementRepositoryImpl(),
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
@@ -22,8 +22,8 @@ class VillagePage extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) => BuildingsBloc(
-                villageRepository: context.read<VillageRepositoryImpl>())
-              ..add(const VillageFetchRequested(villageId: 'villageId')),
+                settlementRepository: context.read<SettlementRepositoryImpl>())
+              ..add(const SettlementSubscriptionRequested()),
           )
         ],
         child: const VillageView(),

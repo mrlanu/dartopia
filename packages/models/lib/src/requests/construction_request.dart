@@ -1,9 +1,10 @@
+import 'package:equatable/equatable.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'construction_request.g.dart';
 
 @JsonSerializable()
-class ConstructionRequest {
+class ConstructionRequest extends Equatable{
   final int buildingId;
   final int position;
   final int toLevel;
@@ -28,5 +29,8 @@ class ConstructionRequest {
       _$ConstructionRequestFromJson(json);
 
   Map<String, dynamic> toJson() => _$ConstructionRequestToJson(this);
+
+  @override
+  List<Object?> get props => [buildingId, position, toLevel];
 
 }

@@ -28,5 +28,5 @@ class BuildingsState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [status, settlement, buildingIndex];
+  List<Object?> get props => [status, settlement, buildingIndex, buildingRecords];
 }
