@@ -1,5 +1,4 @@
 import 'package:dartopia/buildings/view/building_widgets/building_widgets_map.dart';
-import 'package:dartopia/buildings/view/widgets/building_picture.dart';
 import 'package:dartopia/storage_bar/view/storage_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,14 +6,14 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:models/models.dart';
 
 import '../../consts/consts.dart';
-import '../../village/bloc/village_bloc.dart';
+import '../buildings.dart';
 
 class BuildingsPage extends StatelessWidget {
   const BuildingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<VillageBloc, VillageState>(builder: (context, state) {
+    return BlocBuilder<BuildingsBloc, BuildingsState>(builder: (context, state) {
       return state.status == VillageStatus.loading
           ? const Scaffold(body: Center(child: CircularProgressIndicator()))
           : BuildingsView(
@@ -75,40 +74,9 @@ class _BuildingsViewState extends State<BuildingsView>
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     final specification =
-        buildingSpecefication[widget.buildingRecords[currentBuildingIndex][1]];
+        buildingSpecefication[widget.buildingRecords[currentBuildingIndex][1]]!;
     return Scaffold(
       backgroundColor: background,
-      appBar: AppBar(
-        centerTitle: true,
-        actions: [
-          IconButton(
-              onPressed: () {}, icon: const FaIcon(FontAwesomeIcons.gear))
-        ],
-        //backgroundColor: transparent,
-        elevation: 0,
-        title: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 100),
-          transitionBuilder: (child, animation) {
-            return SlideTransition(position: _offsetTitle, child: child);
-          },
-          child: Column(
-            children: [
-              Text(
-                specification!.name,
-                style: font.copyWith(
-                    fontSize: 24, fontWeight: FontWeight.bold, color: black),
-              ),
-              Text(
-                'level: ${widget.buildingRecords[currentBuildingIndex][2]}',
-                overflow: TextOverflow.clip,
-                style:
-                    font.copyWith(fontSize: 14, color: black.withOpacity(0.8)),
-              )
-            ],
-          ),
-        ),
-      ),
-      drawer: const Drawer(),
       body: Column(
         children: [
           const SizedBox(
@@ -171,6 +139,37 @@ class _BuildingsViewState extends State<BuildingsView>
       ),
     );
   }
+
+  PreferredSizeWidget _buildAppBar(Building building) => AppBar(
+        centerTitle: true,
+        actions: [
+          IconButton(
+              onPressed: () {}, icon: const FaIcon(FontAwesomeIcons.gear))
+        ],
+        //backgroundColor: transparent,
+        elevation: 0,
+        /*title: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 100),
+          transitionBuilder: (child, animation) {
+            return SlideTransition(position: _offsetTitle, child: child);
+          },
+          child: Column(
+            children: [
+              Text(
+                building.name,
+                style: font.copyWith(
+                    fontSize: 24, fontWeight: FontWeight.bold, color: black),
+              ),
+              Text(
+                'level: ${widget.buildingRecords[currentBuildingIndex][2]}',
+                overflow: TextOverflow.clip,
+                style:
+                    font.copyWith(fontSize: 14, color: black.withOpacity(0.8)),
+              )
+            ],
+          ),
+        ),*/
+      );
 }
 
 class CustomClip extends CustomClipper<Path> {

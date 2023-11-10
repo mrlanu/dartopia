@@ -1,9 +1,9 @@
-import 'package:dartopia/village/bloc/village_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:models/models.dart';
 
 import '../../../utils/time_formatter.dart';
+import '../../buildings.dart';
 
 class BuildingCard extends StatelessWidget {
   final int position;
@@ -151,7 +151,7 @@ class BuildingCard extends StatelessWidget {
                                         buildingId: specification.id,
                                         position: position,
                                         toLevel: 1);
-                                    context.read<VillageBloc>()
+                                    context.read<BuildingsBloc>()
                                       ..add(VillageBuildingIndexChanged(
                                           index: position - 14))
                                       ..add(BuildingUpgradeRequested(

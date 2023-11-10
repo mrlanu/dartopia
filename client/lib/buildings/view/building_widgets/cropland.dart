@@ -1,8 +1,7 @@
-import 'package:dartopia/village/bloc/village_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../view.dart';
+import '../../buildings.dart';
 
 
 class Cropland extends StatelessWidget {
@@ -12,7 +11,7 @@ class Cropland extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<VillageBloc, VillageState>(
+    return BlocBuilder<BuildingsBloc, BuildingsState>(
       builder: (context, state) {
         return SingleChildScrollView(
           child: Column(

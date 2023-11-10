@@ -1,10 +1,10 @@
-part of 'village_bloc.dart';
+part of 'buildings_bloc.dart';
 
-sealed class VillageEvent extends Equatable {
-  const VillageEvent();
+sealed class BuildingsEvent extends Equatable {
+  const BuildingsEvent();
 }
 
-final class VillageUpdated extends VillageEvent {
+final class VillageUpdated extends BuildingsEvent {
   final Settlement settlement;
 
   const VillageUpdated({required this.settlement});
@@ -13,7 +13,7 @@ final class VillageUpdated extends VillageEvent {
   List<Object?> get props => [settlement];
 }
 
-final class VillageFetchRequested extends VillageEvent {
+final class VillageFetchRequested extends BuildingsEvent {
   final String villageId;
 
   const VillageFetchRequested({required this.villageId});
@@ -22,7 +22,7 @@ final class VillageFetchRequested extends VillageEvent {
   List<Object?> get props => [villageId];
 }
 
-final class BuildingUpgradeRequested extends VillageEvent {
+final class BuildingUpgradeRequested extends BuildingsEvent {
   final ConstructionRequest request;
 
   const BuildingUpgradeRequested({required this.request});
@@ -31,7 +31,7 @@ final class BuildingUpgradeRequested extends VillageEvent {
   List<Object?> get props => [request];
 }
 
-final class VillageBuildingIndexChanged extends VillageEvent {
+final class VillageBuildingIndexChanged extends BuildingsEvent {
   final int index;
 
   const VillageBuildingIndexChanged({required this.index});

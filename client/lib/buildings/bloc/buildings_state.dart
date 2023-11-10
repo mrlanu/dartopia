@@ -1,26 +1,26 @@
-part of 'village_bloc.dart';
+part of 'buildings_bloc.dart';
 
 enum VillageStatus { loading, empty, success, failure }
 
-class VillageState extends Equatable {
+class BuildingsState extends Equatable {
   final Settlement? settlement;
   final VillageStatus status;
   final List<List<int>> buildingRecords;
   final int buildingIndex; // current index in buildings carousel
 
-  const VillageState(
+  const BuildingsState(
       {this.status = VillageStatus.loading,
       this.settlement,
       this.buildingRecords = const [],
       this.buildingIndex = 0});
 
-  VillageState copyWith(
+  BuildingsState copyWith(
       {VillageStatus? status,
       Settlement? settlement,
       List<double>? storage,
       List<List<int>>? buildingRecords,
       int? buildingIndex}) {
-    return VillageState(
+    return BuildingsState(
         status: status ?? this.status,
         settlement: settlement ?? this.settlement,
         buildingRecords: buildingRecords ?? this.buildingRecords,

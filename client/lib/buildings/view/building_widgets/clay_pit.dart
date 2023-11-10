@@ -1,9 +1,7 @@
-import 'package:dartopia/village/bloc/village_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:models/models.dart';
 
-import '../view.dart';
+import '../../buildings.dart';
 
 
 class ClayPit extends StatelessWidget {
@@ -11,7 +9,7 @@ class ClayPit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<VillageBloc, VillageState>(
+    return BlocBuilder<BuildingsBloc, BuildingsState>(
       builder: (context, state) {
         return Column(
           children: [

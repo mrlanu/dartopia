@@ -7,22 +7,22 @@ import 'package:equatable/equatable.dart';
 import 'package:http/http.dart' as http;
 import 'package:models/models.dart';
 import '../../consts/api.dart';
-import '../repository/village_repository.dart';
+import '../../village/repository/village_repository.dart';
 
-part 'village_event.dart';
+part 'buildings_event.dart';
 
-part 'village_state.dart';
+part 'buildings_state.dart';
 
-class VillageBloc extends Bloc<VillageEvent, VillageState> {
-  VillageBloc({required VillageRepository villageRepository})
+class BuildingsBloc extends Bloc<BuildingsEvent, BuildingsState> {
+  BuildingsBloc({required VillageRepository villageRepository})
       : _villageRepository = villageRepository,
-        super(const VillageState()) {
-    on<VillageEvent>(_onEvent, transformer: sequential());
+        super(const BuildingsState()) {
+    on<BuildingsEvent>(_onEvent, transformer: sequential());
   }
 
   final VillageRepository _villageRepository;
 
-  Future<void> _onEvent(VillageEvent event, Emitter<VillageState> emit) async {
+  Future<void> _onEvent(BuildingsEvent event, Emitter<BuildingsState> emit) async {
     return switch (event) {
       final VillageUpdated e => _onVillageUpdated(e, emit),
       final VillageFetchRequested e => _onVillageFetchRequested(e, emit),
@@ -33,7 +33,7 @@ class VillageBloc extends Bloc<VillageEvent, VillageState> {
   }
 
   Future<void> _onVillageUpdated(
-      VillageUpdated event, Emitter<VillageState> emit) async {
+      VillageUpdated event, Emitter<BuildingsState> emit) async {
     final buildingRecords = <List<int>>[
       [0, 0, 0],
       [1, 1, 0],
@@ -55,7 +55,7 @@ class VillageBloc extends Bloc<VillageEvent, VillageState> {
   }
 
   Future<void> _onVillageFetchRequested(
-      VillageFetchRequested event, Emitter<VillageState> emit) async {
+      VillageFetchRequested event, Emitter<BuildingsState> emit) async {
     emit(state.copyWith(status: VillageStatus.loading));
 
     final url = Uri.http(baseURL, '/settlement/654c444d5676e7ca48ca25fb');
@@ -67,7 +67,7 @@ class VillageBloc extends Bloc<VillageEvent, VillageState> {
   }
 
   Future<void> _onBuildingUpgradeRequested(
-      BuildingUpgradeRequested event, Emitter<VillageState> emit) async {
+      BuildingUpgradeRequested event, Emitter<BuildingsState> emit) async {
     emit(state.copyWith(status: VillageStatus.loading));
     final settlement =
         await _villageRepository.upgradeBuilding(request: event.request);
@@ -75,7 +75,7 @@ class VillageBloc extends Bloc<VillageEvent, VillageState> {
   }
 
   Future<void> _onVillageBuildingIndexChanged(
-      VillageBuildingIndexChanged event, Emitter<VillageState> emit) async {
+      VillageBuildingIndexChanged event, Emitter<BuildingsState> emit) async {
     emit(state.copyWith(buildingIndex: event.index));
   }
 }
