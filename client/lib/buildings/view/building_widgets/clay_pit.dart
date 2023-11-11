@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../buildings.dart';
 
-
 class ClayPit extends StatelessWidget {
   const ClayPit({super.key});
 
@@ -15,7 +14,10 @@ class ClayPit extends StatelessWidget {
           children: [
             ...state.settlement!.buildings
                 .where((bR) => bR[1] == 1)
-                .map((e) => FieldViewTile(buildingRecord: e))
+                .map((e) => FieldViewTile(
+                      buildingRecord: e,
+                      storage: state.settlement!.storage,
+                    ))
                 .toList()
           ],
         );

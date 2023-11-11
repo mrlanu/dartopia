@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 import '../../buildings.dart';
-
 
 class IronMine extends StatelessWidget {
   const IronMine({super.key});
@@ -16,7 +14,10 @@ class IronMine extends StatelessWidget {
           children: [
             ...state.settlement!.buildings
                 .where((bR) => bR[1] == 2)
-                .map((e) => FieldViewTile(buildingRecord: e))
+                .map((e) => FieldViewTile(
+                      buildingRecord: e,
+                      storage: state.settlement!.storage,
+                    ))
                 .toList()
           ],
         );

@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../buildings.dart';
 
-
 class Cropland extends StatelessWidget {
   const Cropland({super.key, required this.position});
 
@@ -18,7 +17,10 @@ class Cropland extends StatelessWidget {
             children: [
               ...state.settlement!.buildings
                   .where((bR) => bR[1] == 3)
-                  .map((e) => FieldViewTile(buildingRecord: e))
+                  .map((e) => FieldViewTile(
+                        buildingRecord: e,
+                        storage: state.settlement!.storage,
+                      ))
                   .toList()
             ],
           ),
