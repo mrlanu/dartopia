@@ -18,9 +18,36 @@ class _StorageBarState extends State<StorageBar> {
   final List<Timer> _timers = [];
 
   @override
+  void didUpdateWidget(covariant StorageBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.settlement != oldWidget.settlement) {
+      for (var element in _timers) {
+        element.cancel();
+      }
+      _timers.clear();
+      setState(() {
+        _settlement = widget.settlement;
+      });
+      _startCounting();
+    }
+  }
+
+  @override
   void initState() {
     super.initState();
     _settlement = widget.settlement;
+    _startCounting();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    for (var element in _timers) {
+      element.cancel();
+    }
+  }
+
+  void _startCounting() {
     final producePerHour = _settlement.calculateProducePerHour();
     _timers.add(_startTimer(
         milliseconds: 3600000 ~/ producePerHour[0], resource: Resource.WOOD));
@@ -30,14 +57,6 @@ class _StorageBarState extends State<StorageBar> {
         milliseconds: 3600000 ~/ producePerHour[2], resource: Resource.IRON));
     _timers.add(_startTimer(
         milliseconds: 3600000 ~/ producePerHour[3], resource: Resource.CROP));
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    for (var element in _timers) {
-      element.cancel();
-    }
   }
 
   @override

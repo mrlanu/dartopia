@@ -11,6 +11,13 @@ final class SettlementSubscriptionRequested extends BuildingsEvent {
   List<Object?> get props => [];
 }
 
+final class SettlementFetchRequested extends BuildingsEvent {
+  const SettlementFetchRequested();
+
+  @override
+  List<Object?> get props => [];
+}
+
 final class BuildingUpgradeRequested extends BuildingsEvent {
   final ConstructionRequest request;
 

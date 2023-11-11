@@ -3,10 +3,10 @@ import 'package:flutter/cupertino.dart';
 import '../view.dart';
 
 Map<int, Widget Function(int position)> buildingWidgetsMap = {
-  0: (position) => Lumber(key: ValueKey('0 $position')),
-  1: (position) => ClayPit(key: ValueKey('1 $position')),
-  2: (position) => IronMine(key: ValueKey('2 $position')),
-  3: (position) => Cropland(key: ValueKey('3 $position'), position: position),
+  0: (position) => Field(key: ValueKey('0 $position'), position: position),
+  1: (position) => Field(key: ValueKey('1 $position'), position: position),
+  2: (position) => Field(key: ValueKey('2 $position'), position: position),
+  3: (position) => Field(key: ValueKey('3 $position'), position: position),
   4: (position) => MainBuilding(key: ValueKey('4 $position')),
   5: (position) => SizedBox(height: 100, width: 100, key: ValueKey('5 $position')),
   6: (position) => SizedBox(height: 100, width: 100, key: ValueKey('6 $position')),

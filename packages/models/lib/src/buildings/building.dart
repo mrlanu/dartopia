@@ -59,7 +59,6 @@ class Building {
       required List<List<int>> existingBuildings,
       required int toLevel,}) {
     for (var i = 0; i < 4; i++) {
-      final res = getResourcesToNextLevel(toLevel)[i];
       if (storage[i] < getResourcesToNextLevel(toLevel)[i]) {
         return false;
       }

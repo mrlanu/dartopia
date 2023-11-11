@@ -17,6 +17,7 @@ class BuildingsBloc extends Bloc<BuildingsEvent, BuildingsState> {
       : _villageRepository = settlementRepository,
         super(const BuildingsState()) {
     on<SettlementSubscriptionRequested>(_onSubscriptionRequested);
+    on<SettlementFetchRequested>(_onSettlementFetchRequested);
     on<BuildingIndexChanged>(_onVillageBuildingIndexChanged);
     on<BuildingUpgradeRequested>(_onBuildingUpgradeRequested);
   }
@@ -47,12 +48,15 @@ class BuildingsBloc extends Bloc<BuildingsEvent, BuildingsState> {
     );
   }
 
+  Future<void> _onSettlementFetchRequested(
+      SettlementFetchRequested event, Emitter<BuildingsState> emi) async {
+    await _villageRepository.fetchSettlement(settlementId);
+  }
+
   Future<void> _onBuildingUpgradeRequested(
       BuildingUpgradeRequested event, Emitter<BuildingsState> emit) async {
-    emit(state.copyWith(status: VillageStatus.loading));
     await _villageRepository.upgradeBuilding(
         settlementId: settlementId, request: event.request);
-    emit(state.copyWith(status: VillageStatus.success));
   }
 
   Future<void> _onVillageBuildingIndexChanged(

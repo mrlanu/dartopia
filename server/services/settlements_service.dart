@@ -202,9 +202,11 @@ class SettlementServiceImpl extends SettlementService {
       );
       settlement
         ..spendResources(specification.getResourcesToNextLevel(request.toLevel))
-        ..addConstructionTask(newTask)
-        ..changeBuilding(
+        ..addConstructionTask(newTask);
+      if(settlement.buildings[request.position][1] == 99){
+        settlement.changeBuilding(
           position: request.position, buildingId: 100, level: request.toLevel,);
+      }
       return updateSettlement(
         settlement: settlement,
       );

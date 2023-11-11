@@ -1,7 +1,7 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+const offsetForFieldsCarousel = 14;
 
 const transparent = Color(0x00000000);
 const black = Color(0xFF000000);

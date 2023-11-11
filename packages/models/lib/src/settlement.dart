@@ -1,10 +1,11 @@
 import 'package:collection/collection.dart';
+import 'package:equatable/equatable.dart';
 import 'package:models/models.dart';
 
 import 'package:mongo_dart/mongo_dart.dart';
 
 /// The `Settlement` class
-class Settlement {
+class Settlement extends Equatable {
   /// Creates a new `Settlement`.
   Settlement({
     required this.id,
@@ -261,4 +262,7 @@ class Settlement {
       lastModified: lastModified ?? this.lastModified,
     );
   }
+
+  @override
+  List<Object?> get props => [storage, buildings, constructionTasks];
 }

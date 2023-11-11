@@ -13,7 +13,8 @@ class BuildingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BuildingsBloc, BuildingsState>(builder: (context, state) {
+    return BlocBuilder<BuildingsBloc, BuildingsState>(
+        builder: (context, state) {
       return state.status == VillageStatus.loading
           ? const Scaffold(body: Center(child: CircularProgressIndicator()))
           : BuildingsView(
@@ -92,7 +93,8 @@ class _BuildingsViewState extends State<BuildingsView>
             child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 500),
                 child: buildingWidgetsMap[specification.id]!(
-                    currentBuildingIndex + 14)), //12 is a offset
+                    currentBuildingIndex +
+                        offsetForFieldsCarousel)), //12 is a offset
           ),
           const Divider(),
           SizedBox(
