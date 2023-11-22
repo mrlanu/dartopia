@@ -104,6 +104,7 @@ class _BuildingsViewState extends State<BuildingsView>
               alignment: Alignment.center,
               children: [
                 PageView.builder(
+                  itemCount: widget.buildingRecords.length,
                   controller: buildingsPageController,
                   onPageChanged: (value) {
                     setState(() {

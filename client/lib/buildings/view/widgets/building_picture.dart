@@ -37,7 +37,7 @@ class BuildingPicture extends StatelessWidget {
                       : Theme.of(context).textTheme.titleSmall,
                 ),
               ))
-            : Container(),
+            : const SizedBox(),
       ]),
     );
   }
