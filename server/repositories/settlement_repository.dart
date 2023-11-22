@@ -5,11 +5,8 @@ import '../services/mongo_service.dart';
 
 abstract class SettlementRepository {
   Future<Settlement?> saveSettlement(Settlement settlement);
-
   Future<Settlement?> updateSettlement(Settlement settlement);
-
   Future<Settlement?> getById(String id);
-
   //movements
   Future<List<Movement>> getAllMovementsBySettlementId(String id);
   Future<List<Movement>> getMovementsBeforeNow();

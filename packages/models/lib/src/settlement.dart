@@ -183,18 +183,26 @@ class Settlement extends Equatable {
 
   void castStorage() {
     for (var i = 0; i < storage.length - 1; i++) {
-      if (storage[i] > _getWarehouseCapacity()) {
-        storage[i] = _getWarehouseCapacity();
+      if (storage[i] > getMaxCapacity(6)) {
+        storage[i] = getMaxCapacity(6);
       }
       // cast crop
-      if (storage[3] > _getGranaryCapacity()) {
-        storage[3] = _getGranaryCapacity();
+      if (storage[3] > getMaxCapacity(5)) {
+        storage[3] = getMaxCapacity(5);
       }
     }
   }
 
+  double getMaxCapacity(int buildingId) {
+    final storages = buildings
+        .where((b) => b[1] == buildingId)
+        .map((e) => buildingSpecefication[6]!.benefit(e[2]))
+        .toList();
+    return storages.isEmpty ? 800 : storages.reduce((a, b) => a + b);
+  }
+
   /// Subtract given amount of each resource from the Settlement's storage
-  void spendResources(List<int> resources){
+  void spendResources(List<int> resources) {
     final result = <double>[];
     for (var i = 0; i < storage.length; i++) {
       result.add(storage[i] - resources[i]);
@@ -207,10 +215,6 @@ class Settlement extends Equatable {
       {required int position, required int buildingId, required int level}) {
     buildings[position] = [position, buildingId, level];
   }
-
-  double _getWarehouseCapacity() => 2000;
-
-  double _getGranaryCapacity() => 2000;
 
   /// Converting a BuildingRecord to a map representation.
   Map<String, dynamic> toMap() => <String, dynamic>{

@@ -68,38 +68,29 @@ class _StorageBarState extends State<StorageBar> {
         children: [
           _barBuilder(itemsList: [
             _itemBuilder(
-                buildingId: 6,
                 amount: _settlement.storage[0].toInt(),
+                maxCapacity: _settlement.getMaxCapacity(6).toInt(),
                 pngName: 'lumber'),
             _itemBuilder(
-                buildingId: 6,
                 amount: _settlement.storage[1].toInt(),
+                maxCapacity: _settlement.getMaxCapacity(6).toInt(),
                 pngName: 'clay'),
             _itemBuilder(
-                buildingId: 6,
                 amount: _settlement.storage[2].toInt(),
+                maxCapacity: _settlement.getMaxCapacity(6).toInt(),
                 pngName: 'iron'),
           ]),
-          _barBuilder(itemsList: [
-            _itemBuilder(
-                buildingId: 5,
-                amount: _settlement.storage[3].toInt(),
-                pngName: 'crop'),
-          ],)
+          _barBuilder(
+            itemsList: [
+              _itemBuilder(
+                  amount: _settlement.storage[3].toInt(),
+                  maxCapacity: _settlement.getMaxCapacity(5).toInt(),
+                  pngName: 'crop'),
+            ],
+          )
         ],
       ),
     );
-  }
-
-  int _getMaxCapacity(int buildingId) {
-    final building =
-        _settlement.buildings.where((b) => b[1] == buildingId).toList();
-    if (building.isNotEmpty) {
-      return buildingSpecefication[buildingId]!
-          .benefit(building[0][2])
-          .toInt();
-    }
-    return 750;
   }
 
   Timer _startTimer({required Resource resource, required int milliseconds}) =>
@@ -129,8 +120,7 @@ class _StorageBarState extends State<StorageBar> {
       });
 
   Widget _barBuilder(
-      {required List<Widget> itemsList,
-      Color backgroundColor = Colors.grey}) {
+      {required List<Widget> itemsList, Color backgroundColor = Colors.grey}) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 4.0),
@@ -143,8 +133,8 @@ class _StorageBarState extends State<StorageBar> {
   }
 
   Widget _itemBuilder(
-      {required int buildingId,
-      required int amount,
+      {required int amount,
+      required int maxCapacity,
       required String pngName}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -153,9 +143,7 @@ class _StorageBarState extends State<StorageBar> {
         Column(
           children: [
             Text(
-              amount > _getMaxCapacity(buildingId)
-                  ? _getMaxCapacity(buildingId).toString()
-                  : amount.toString(),
+              amount > maxCapacity ? maxCapacity.toString() : amount.toString(),
               style: const TextStyle(color: Colors.black, fontSize: 15),
             ),
             Stack(
@@ -168,14 +156,12 @@ class _StorageBarState extends State<StorageBar> {
                   animation: false,
                   width: 60.0,
                   lineHeight: 10.0,
-                  percent: amount <= _getMaxCapacity(buildingId)
-                      ? amount / _getMaxCapacity(buildingId)
-                      : 1.0,
-                  progressColor: _getColor(amount, _getMaxCapacity(buildingId)),
+                  percent: amount <= maxCapacity ? amount / maxCapacity : 1.0,
+                  progressColor: _getColor(amount, maxCapacity),
                 ),
                 Positioned(
                   child: Text(
-                    _getMaxCapacity(buildingId).toString(),
+                    maxCapacity.toString(),
                     style: const TextStyle(color: Colors.black, fontSize: 10),
                   ),
                 ),

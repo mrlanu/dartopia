@@ -117,9 +117,13 @@ class _BuildingsViewState extends State<BuildingsView>
                       padding: EdgeInsets.only(
                           bottom: (pageOffsetBuilding! - index).abs() * 40),
                       child: BuildingPicture(
-                          key: UniqueKey(),
-                          buildingRecord: widget.buildingRecords[
-                              index % widget.buildingRecords.length]),
+                        key: UniqueKey(),
+                        buildingRecord: widget.buildingRecords[
+                            index % widget.buildingRecords.length],
+                        prodPerHour: index < 4
+                            ? widget.settlement.calculateProducePerHour()[index]
+                            : null,
+                      ),
                     );
                   },
                 ),
