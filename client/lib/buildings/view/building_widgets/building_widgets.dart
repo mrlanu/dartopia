@@ -5,4 +5,4 @@ export 'field.dart';
 export 'building_container.dart';
 export 'warehouse.dart';
 export 'granary.dart';
-export 'building_widgets_map.dart';
+export 'building_widgets_factory.dart';
