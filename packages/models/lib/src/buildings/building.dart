@@ -56,18 +56,19 @@ class Building {
 
   bool canBeUpgraded(
       {required List<double> storage,
-      required List<List<int>> existingBuildings,
-      required int toLevel,}) {
+      required int toLevel, List<List<int>>? existingBuildings,}) {
     for (var i = 0; i < 4; i++) {
       if (storage[i] < getResourcesToNextLevel(toLevel)[i]) {
         return false;
       }
     }
-    for (final bR in requirementBuildings) {
-      if (!_isBuildingExistInVillage(
-          building: bR, existingBuildings: existingBuildings,)) {
-        return false;
-      }
+    if (existingBuildings != null) {
+      for (final bR in requirementBuildings) {
+            if (!_isBuildingExistInVillage(
+                building: bR, existingBuildings: existingBuildings,)) {
+              return false;
+            }
+          }
     }
     return true;
   }
@@ -146,7 +147,7 @@ final buildingSpecefication = <int, Building>{
   ),
   4: Building(
     id: 4,
-    name: 'Main',
+    name: 'Main building',
     cost: [70, 40, 60, 20],
     time: Time.withA(3875),
     benefit: mbLike,

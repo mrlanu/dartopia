@@ -1,3 +1,4 @@
+import 'package:dartopia/consts/images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:models/models.dart';
@@ -54,7 +55,7 @@ class BuildingCard extends StatelessWidget {
                     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                       Row(children: [
                         Image.asset(
-                          'assets/images/resources/lumber.png',
+                          DartopiaImages.lumber,
                           width: 40,
                           height: 40,
                         ),
@@ -68,7 +69,7 @@ class BuildingCard extends StatelessWidget {
                       ]),
                       Row(children: [
                         Image.asset(
-                          'assets/images/resources/clay.png',
+                          DartopiaImages.clay,
                           width: 40,
                           height: 40,
                         ),
@@ -82,7 +83,7 @@ class BuildingCard extends StatelessWidget {
                       ]),
                       Row(children: [
                         Image.asset(
-                          'assets/images/resources/iron.png',
+                          DartopiaImages.iron,
                           width: 40,
                           height: 40,
                         ),
@@ -96,7 +97,7 @@ class BuildingCard extends StatelessWidget {
                       ]),
                       Row(children: [
                         Image.asset(
-                          'assets/images/resources/crop.png',
+                          DartopiaImages.crop,
                           width: 40,
                           height: 40,
                         ),
@@ -138,7 +139,7 @@ class BuildingCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image.asset(
-                          'assets/images/resources/clock.png',
+                          DartopiaImages.clock,
                           width: 50,
                           height: 50,
                         ),

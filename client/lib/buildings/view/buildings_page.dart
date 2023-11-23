@@ -1,8 +1,6 @@
-import 'package:dartopia/buildings/view/building_widgets/building_widgets_map.dart';
 import 'package:dartopia/storage_bar/view/storage_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:models/models.dart';
 
 import '../../consts/consts.dart';
@@ -45,7 +43,6 @@ class _BuildingsViewState extends State<BuildingsView>
     with TickerProviderStateMixin {
   late int currentBuildingIndex;
   late PageController buildingsPageController;
-  AnimationController? titleController;
   double viewPortFractionTopping = 0.3;
   late double? pageOffsetBuilding;
 
@@ -61,21 +58,13 @@ class _BuildingsViewState extends State<BuildingsView>
           pageOffsetBuilding = buildingsPageController.page;
         });
       });
-    titleController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 300))
-      ..forward();
     super.initState();
   }
-
-  late final Animation<Offset> _offsetTitle = Tween<Offset>(
-          begin: const Offset(0.0, 0.5), end: const Offset(0, 0))
-      .animate(CurvedAnimation(parent: titleController!, curve: Curves.linear));
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    final specification =
-        buildingSpecefication[widget.buildingRecords[currentBuildingIndex][1]]!;
+    final currentBuildingRecord = widget.buildingRecords[currentBuildingIndex];
     return Scaffold(
       backgroundColor: background,
       body: Column(
@@ -92,9 +81,7 @@ class _BuildingsViewState extends State<BuildingsView>
           Expanded(
             child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 500),
-                child: buildingWidgetsMap[specification.id]!(
-                    currentBuildingIndex +
-                        offsetForFieldsCarousel)), //12 is a offset
+                child: BuildingWidgetsFactory.get(currentBuildingRecord)), //12 is a offset
           ),
           const Divider(),
           SizedBox(
@@ -110,7 +97,6 @@ class _BuildingsViewState extends State<BuildingsView>
                     setState(() {
                       currentBuildingIndex =
                           value % widget.buildingRecords.length;
-                      titleController!.forward(from: 0);
                     });
                   },
                   itemBuilder: (context, index) {
@@ -147,36 +133,6 @@ class _BuildingsViewState extends State<BuildingsView>
     );
   }
 
-  PreferredSizeWidget _buildAppBar(Building building) => AppBar(
-        centerTitle: true,
-        actions: [
-          IconButton(
-              onPressed: () {}, icon: const FaIcon(FontAwesomeIcons.gear))
-        ],
-        //backgroundColor: transparent,
-        elevation: 0,
-        /*title: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 100),
-          transitionBuilder: (child, animation) {
-            return SlideTransition(position: _offsetTitle, child: child);
-          },
-          child: Column(
-            children: [
-              Text(
-                building.name,
-                style: font.copyWith(
-                    fontSize: 24, fontWeight: FontWeight.bold, color: black),
-              ),
-              Text(
-                'level: ${widget.buildingRecords[currentBuildingIndex][2]}',
-                overflow: TextOverflow.clip,
-                style:
-                    font.copyWith(fontSize: 14, color: black.withOpacity(0.8)),
-              )
-            ],
-          ),
-        ),*/
-      );
 }
 
 class CustomClip extends CustomClipper<Path> {

@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:models/models.dart';
 
 import '../../buildings.dart';
-import '../widgets/building_card.dart';
 
 class BarracksBuilding extends StatelessWidget {
   const BarracksBuilding({super.key});

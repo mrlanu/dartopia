@@ -5,9 +5,9 @@ import 'package:models/models.dart';
 import '../../buildings.dart';
 
 class Empty extends StatefulWidget {
-  const Empty({super.key, required this.position});
+  const Empty({super.key, required this.buildingRecord});
 
-  final int position;
+  final List<int> buildingRecord;
 
   @override
   State<Empty> createState() => _EmptyState();
@@ -40,7 +40,7 @@ class _EmptyState extends State<Empty> {
         return Center(child: BlocBuilder<BuildingsBloc, BuildingsState>(
           builder: (context, state) {
             return BuildingCard(
-                position: widget.position,
+                position: widget.buildingRecord[0],
                 specification: allBuildingList[index % allBuildingList.length],
                 storage: state.settlement!.storage,
                 buildingRecords: state.buildingRecords);

@@ -1,4 +1,5 @@
 import 'package:dartopia/buildings/bloc/buildings_bloc.dart';
+import 'package:dartopia/consts/images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:models/models.dart';
@@ -103,26 +104,26 @@ class FieldViewTile extends StatelessWidget {
           children: [
             _resItemBuilder(
                 cost: cost,
-                assetPath: 'assets/images/resources/lumber.png',
+                assetPath: DartopiaImages.lumber,
                 itemPosition: 0),
             _resItemBuilder(
                 cost: cost,
-                assetPath: 'assets/images/resources/clay.png',
+                assetPath: DartopiaImages.clay,
                 itemPosition: 1),
             _resItemBuilder(
                 cost: cost,
-                assetPath: 'assets/images/resources/iron.png',
+                assetPath: DartopiaImages.iron,
                 itemPosition: 2),
             _resItemBuilder(
                 cost: cost,
-                assetPath: 'assets/images/resources/crop.png',
+                assetPath: DartopiaImages.crop,
                 itemPosition: 3),
           ],
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/images/resources/clock.png', height: 11),
+            Image.asset(DartopiaImages.clock, height: 11),
             const SizedBox(
               width: 3,
             ),

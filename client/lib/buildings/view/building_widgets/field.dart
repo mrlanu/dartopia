@@ -1,13 +1,12 @@
-import 'package:dartopia/consts/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../buildings.dart';
 
 class Field extends StatelessWidget {
-  const Field({super.key, required this.position});
+  const Field({super.key, required this.buildingRecord});
 
-  final int position;
+  final List<int> buildingRecord;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +16,7 @@ class Field extends StatelessWidget {
           child: Column(
             children: [
               ...state.settlement!.buildings
-                  .where((bR) => bR[1] == position - offsetForFieldsCarousel)
+                  .where((bR) => bR[1] == buildingRecord[1])
                   .map((e) {
                 final upgradingTask = state.settlement!.constructionTasks
                     .where((task) =>
