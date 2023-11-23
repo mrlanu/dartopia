@@ -19,16 +19,15 @@ class BuildingWidgetsFactory {
     6: (bR) => Warehouse(key: _getUniqueKey(bR), buildingRecord: bR),
     7: (bR) => BarracksBuilding(key: _getUniqueKey(bR)),
     8: (bR) => SizedBox(key: _getUniqueKey(bR), height: 100, width: 100),
+
+    99: (bR) => Empty(key: _getUniqueKey(bR), buildingRecord: bR),
+    100: (bR) => Construction(key: _getUniqueKey(bR), buildingRecord: bR),
     /*9: const SizedBox(height: 100, width: 100, key: ValueKey(BuildingId.ACADEMY)),
   10: const SizedBox(height: 100, width: 100, key: ValueKey(BuildingId.BAKERY)),
   11: const SizedBox(height: 100, width: 100, key: ValueKey(BuildingId.CRANNY),),
   12: const SizedBox(height: 100, width: 100, key: ValueKey(BuildingId.EMBASSY)),
   13: const SizedBox(height: 100, width: 100, key: ValueKey(BuildingId.GRAIN_MILL)),
   14: const SizedBox(height: 100, width: 100, key: ValueKey(BuildingId.MARKETPLACE)),*/
-
-    // SHOULD BE LAST ONE
-    99: (bR) => Empty(key: _getUniqueKey(bR), buildingRecord: bR),
-    100: (bR) => SizedBox(height: 100, width: 100, key: ValueKey('100 ${bR[0]}')),
   };
 
   static ValueKey _getUniqueKey(List<int> bR) {

@@ -6,3 +6,4 @@ export 'building_container.dart';
 export 'warehouse.dart';
 export 'granary.dart';
 export 'building_widgets_factory.dart';
+export 'construction.dart';
