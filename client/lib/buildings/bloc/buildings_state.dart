@@ -12,7 +12,7 @@ class BuildingsState extends Equatable {
       {this.status = VillageStatus.loading,
       this.settlement,
       this.buildingRecords = const [],
-      this.buildingIndex = 0});
+      this.buildingIndex = 7});
 
   BuildingsState copyWith(
       {VillageStatus? status,
