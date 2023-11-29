@@ -11,5 +11,6 @@ export 'src/movement.dart';
 export 'src/requests/requests.dart';
 export 'src/resources/resources.dart';
 export 'src/settlement.dart';
+export 'src/side_brief.dart';
 export 'src/unit_ready_task.dart';
 export 'src/user.dart';

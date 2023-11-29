@@ -22,6 +22,7 @@ dependencies:
   percent_indicator: ^4.2.3
   font_awesome_flutter: ^10.6.0
   rxdart: ^0.27.7
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:

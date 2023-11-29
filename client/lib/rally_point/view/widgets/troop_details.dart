@@ -1,15 +1,17 @@
 import 'package:dartopia/consts/images.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:models/models.dart';
+
+import '../../../../../utils/countdown.dart';
 
 class TroopDetails extends StatelessWidget {
   const TroopDetails(
       {super.key,
-      this.troops = const [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      this.arrivalTime,
+      required this.movement,
       this.backgroundColor = Colors.white70});
 
-  final List<int> troops;
-  final DateTime? arrivalTime;
+  final Movement movement;
   final Color backgroundColor;
 
   @override
@@ -17,27 +19,28 @@ class TroopDetails extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: LayoutBuilder(
-        builder: (context, constraints) => ListView(
+        builder: (context, constraints) => Column(
           children: [
-            _firstRow(constraints.maxWidth, Colors.green),
+            _firstRow(constraints.maxWidth),
             _secondRow(constraints.maxWidth),
             _thirdRow(constraints.maxWidth),
-            _forthRow(constraints.maxWidth, Colors.grey, arrivalTime),
+            _forthRow(constraints.maxWidth,
+                const Color.fromRGBO(215, 215, 215, 1.0), movement.when),
           ],
         ),
       ),
     );
   }
 
-  Widget _firstRow(double maxWidth, Color backgroundColor) {
+  Widget _firstRow(double maxWidth) {
     return Row(
       children: [
         Container(
           width: maxWidth * 0.3,
           height: 22,
           decoration: BoxDecoration(
-            color: backgroundColor,
-            border: Border(
+            color: _getBackgroundColor(),
+            border: const Border(
               top: BorderSide(color: Colors.black),
               bottom: BorderSide(color: Colors.black),
               left: BorderSide(color: Colors.black),
@@ -45,25 +48,56 @@ class TroopDetails extends StatelessWidget {
               // Skip the right side border
             ),
           ),
-          child: Center(child: Text('Peppa\'s village')),
+          child: Center(child: Text(movement.from.playerName)),
         ),
         Expanded(
           child: Container(
             height: 22,
             decoration: BoxDecoration(
-              color: backgroundColor,
-              border: Border(
+              color: _getBackgroundColor(),
+              border: const Border(
                 top: BorderSide(color: Colors.black),
                 bottom: BorderSide(color: Colors.black),
                 right: BorderSide(color: Colors.black),
                 // Skip the right side border
               ),
             ),
-            child: Center(child: Text('Own troops')),
+            child: movement.isMoving
+                ? Center(
+                    child: Text(
+                        overflow: TextOverflow.ellipsis,
+                        '${movement.from.villageName} ${_getMissionName()} ${movement.to.villageName} (${movement.to.coordinates[0]}|${movement.to.coordinates[1]})'))
+                : movement.mission == Mission.home
+                    ? const Center(child: Text('Own troops'))
+                    : Center(
+                        child: Text(
+                            overflow: TextOverflow.ellipsis,
+                            '${movement.from.villageName} ${_getMissionName()} ${movement.to.villageName} (${movement.to.coordinates[0]}|${movement.to.coordinates[1]})'),
+                      ),
           ),
         ),
       ],
     );
+  }
+
+  String _getMissionName() {
+    return switch (movement.mission) {
+      Mission.attack => 'attacks',
+      Mission.home => 'home',
+      Mission.back => 'backs',
+      Mission.caught => 'caught',
+      Mission.raid => 'raids',
+      Mission.reinforcement => 'reinforces',
+    };
+  }
+
+  Color _getBackgroundColor() {
+    return switch (movement.mission) {
+      Mission.attack || Mission.raid => const Color.fromRGBO(252, 209, 209, 1.0),
+      Mission.home => const Color.fromRGBO(250, 238, 178, 1.0),
+      Mission.reinforcement => const Color.fromRGBO(202, 246, 179, 1.0),
+      _ => const Color.fromRGBO(252, 209, 209, 1.0),
+    };
   }
 
   Widget _secondRow(double maxWidth) {
@@ -74,16 +108,18 @@ class TroopDetails extends StatelessWidget {
           height: 22,
           decoration: BoxDecoration(
             color: backgroundColor,
-            border: Border(
+            border: const Border(
               bottom: BorderSide(color: Colors.black),
               left: BorderSide(color: Colors.black),
               right: BorderSide(color: Colors.black),
               // Skip the right side border
             ),
           ),
-          child: Center(child: Text('(-96 | -93)')),
+          child: Center(
+              child: Text(
+                  '${movement.from.coordinates[0]} | ${movement.from.coordinates[1]}')),
         ),
-        ...troops
+        ...movement.units
             .asMap()
             .entries
             .map((e) => Container(
@@ -91,7 +127,7 @@ class TroopDetails extends StatelessWidget {
                   height: 22,
                   decoration: BoxDecoration(
                     color: backgroundColor,
-                    border: Border(
+                    border: const Border(
                       bottom: BorderSide(color: Colors.black),
                       right: BorderSide(color: Colors.black),
                       // Skip the right side border
@@ -105,7 +141,7 @@ class TroopDetails extends StatelessWidget {
                         color: backgroundColor,
                         image: DecorationImage(
                           alignment: Alignment(-1.0 + 0.224 * e.key, 0.0),
-                          image: AssetImage(DartopiaImages.troops),
+                          image: const AssetImage(DartopiaImages.troops),
                           // Replace with your actual image path
                           fit: BoxFit.cover,
                         ),
@@ -126,28 +162,32 @@ class TroopDetails extends StatelessWidget {
           height: 22,
           decoration: BoxDecoration(
             color: backgroundColor,
-            border: Border(
+            border: const Border(
               bottom: BorderSide(color: Colors.black),
               left: BorderSide(color: Colors.black),
               right: BorderSide(color: Colors.black),
               // Skip the right side border
             ),
           ),
-          child: Center(child: Text('Troops')),
+          child: const Center(child: Text('Troops')),
         ),
-        ...troops
+        ...movement.units
             .map((e) => Container(
                   width: (maxWidth - maxWidth * 0.3) / 10,
                   height: 22,
                   decoration: BoxDecoration(
                     color: backgroundColor,
-                    border: Border(
+                    border: const Border(
                       bottom: BorderSide(color: Colors.black),
                       right: BorderSide(color: Colors.black),
                       // Skip the right side border
                     ),
                   ),
-                  child: Center(child: Text('$e')),
+                  child: Center(
+                      child: Text(
+                    '$e',
+                    overflow: TextOverflow.ellipsis,
+                  )),
                 ))
             .toList(),
       ],
@@ -163,52 +203,63 @@ class TroopDetails extends StatelessWidget {
           height: 22,
           decoration: BoxDecoration(
             color: backgroundColor,
-            border: Border(
+            border: const Border(
               bottom: BorderSide(color: Colors.black),
               left: BorderSide(color: Colors.black),
               right: BorderSide(color: Colors.black),
               // Skip the right side border
             ),
           ),
-          child: arrivalTime == null
-              ? Center(child: Text('Maintanance'))
-              : Center(child: Text('Arrival')),
+          child: movement.isMoving
+              ? const Center(child: Text('Arrival'))
+              : const Center(child: Text('Maintenance')),
         ),
         Expanded(
           child: Container(
-            height: 22,
-            decoration: BoxDecoration(
-              color: backgroundColor,
-              border: Border(
-                bottom: BorderSide(color: Colors.black),
-                right: BorderSide(color: Colors.black),
-                // Skip the right side border
-              ),
-            ),
-            child: arrivalTime == null
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('6'),
-                      Image.asset(
-                        DartopiaImages.crop,
-                        width: 16,
-                        height: 16,
-                      ),
-                      Text('hour'),
-                    ],
-                  )
-                : Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0.0),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('in 00:45:07'),
-                        Text('at 13:20:09'),
-                      ],
-                    ),
+              height: 22,
+              decoration: BoxDecoration(
+                color: backgroundColor,
+                border: const Border(
+                  bottom: BorderSide(color: Colors.black),
+                  right: BorderSide(color: Colors.black),
+                  // Skip the right side border
                 ),
-          ),
+              ),
+              child: movement.isMoving
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 0.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              const Text('in '),
+                              CountdownTimer(
+                                startValue: movement.when
+                                    .difference(DateTime.now())
+                                    .inSeconds,
+                                onFinish: () {},
+                              ),
+                            ],
+                          ),
+                          Text(
+                              'at ${DateFormat('HH:mm:ss').format(movement.when.subtract(const Duration(hours: 6)))}'),
+                        ],
+                      ),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('6'),
+                        Image.asset(
+                          DartopiaImages.crop,
+                          width: 16,
+                          height: 16,
+                        ),
+                        const Text('hour'),
+                      ],
+                    )),
         ),
       ],
     );

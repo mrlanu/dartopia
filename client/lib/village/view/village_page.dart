@@ -2,9 +2,10 @@ import 'package:dartopia/bottom_navbar/bottom_navbar.dart';
 import 'package:dartopia/buildings/view/buildings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../buildings/buildings.dart';
+import '../../common/common.dart';
+import '../../rally_point/rally_point.dart';
 import '../cubit/navigation_cubit.dart';
 import '../repository/settlement_repository.dart';
 
@@ -13,17 +14,31 @@ class VillagePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider(
-      create: (context) => SettlementRepositoryImpl(),
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider(
+          create: (context) => SettlementRepositoryImpl(),
+        ),
+        RepositoryProvider(
+          create: (context) => TroopMovementsRepositoryImpl(),
+        ),
+      ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
             create: (context) => NavigationCubit(),
           ),
           BlocProvider(
-            create: (context) => BuildingsBloc(
+            create: (context) =>
+            BuildingsBloc(
                 settlementRepository: context.read<SettlementRepositoryImpl>())
               ..add(const SettlementSubscriptionRequested()),
+          ),
+          BlocProvider(
+            create: (context) =>
+            MovementsBloc(
+                movementsRepository: context.read<TroopMovementsRepositoryImpl>())
+              ..add(const MovementsSubscriptionRequested()),
           )
         ],
         child: const VillageView(),
@@ -38,11 +53,11 @@ class VillageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final selectedTab =
-        context.select((NavigationCubit cubit) => cubit.state.tab);
+    context.select((NavigationCubit cubit) => cubit.state.tab);
 
     return SafeArea(
       child: Scaffold(
-          appBar: _buildAppBar(),
+          appBar: buildAppBar(),
           drawer: const Drawer(),
           body: IndexedStack(
             index: selectedTab.index,
@@ -51,15 +66,4 @@ class VillageView extends StatelessWidget {
           bottomNavigationBar: const BottomNavBar()),
     );
   }
-
-  PreferredSizeWidget _buildAppBar() => AppBar(
-        centerTitle: true,
-        title: const Text(''),
-        actions: [
-          IconButton(
-              onPressed: () {}, icon: const FaIcon(FontAwesomeIcons.gear))
-        ],
-        //backgroundColor: transparent,
-        elevation: 0,
-      );
 }

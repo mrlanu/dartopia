@@ -3,20 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:models/models.dart';
 
-import '../../../utils/countdown.dart';
-import '../../../utils/time_formatter.dart';
+import '../../../../utils/countdown.dart';
+import '../../../../utils/time_formatter.dart';
 import '../../buildings.dart';
 
 class BuildingContainer extends StatelessWidget {
   final List<int> buildingRecord;
   final bool enterable;
+  final Function()? onEnter;
   final Widget Function(Settlement settlement, List<int> buildingRecord)? child;
 
   const BuildingContainer(
       {super.key,
       required this.buildingRecord,
       this.child,
-      this.enterable = false});
+      this.enterable = false,
+      this.onEnter});
 
   @override
   Widget build(BuildContext context) {
@@ -85,8 +87,8 @@ class BuildingContainer extends StatelessWidget {
                                 width: 50,
                                 height: 50,
                               ),
-                              Text(
-                                  '${formatTime(specification.time.valueOf(buildingRecord[2] + 1))}'),
+                              Text(FormatUtil.formatTime(specification.time
+                                  .valueOf(buildingRecord[2] + 1))),
                             ])
                           : Column(
                               children: [
@@ -129,7 +131,9 @@ class BuildingContainer extends StatelessWidget {
                       enterable
                           ? IconButton.outlined(
                               color: Colors.green,
-                              onPressed: () {},
+                              onPressed: () {
+                                onEnter!();
+                              },
                               icon: const Icon(Icons.input))
                           : const SizedBox(),
                     ],

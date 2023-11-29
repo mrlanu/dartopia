@@ -18,7 +18,7 @@ class BuildingWidgetsFactory {
     5: (bR) => Granary(key: _getUniqueKey(bR), buildingRecord: bR),
     6: (bR) => Warehouse(key: _getUniqueKey(bR), buildingRecord: bR),
     7: (bR) => BarracksBuilding(key: _getUniqueKey(bR)),
-    8: (bR) => TroopDetails(key: _getUniqueKey(bR), arrivalTime: DateTime.now()),
+    8: (bR) => RallyPoint(key: _getUniqueKey(bR), buildingRecord: bR,),
 
     99: (bR) => Empty(key: _getUniqueKey(bR), buildingRecord: bR),
     100: (bR) => Construction(key: _getUniqueKey(bR), buildingRecord: bR),

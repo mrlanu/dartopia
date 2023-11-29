@@ -7,21 +7,15 @@ import 'package:models/models.dart';
 import '../../../services/settlements_service.dart';
 
 FutureOr<Response> onRequest(RequestContext context, String id) async {
-  /*final settlementService = context.read<SettlementService>();
+  final settlementService = context.read<SettlementService>();
   final settlement = await settlementService.recalculateState(settlementId: id);
-
-  if (settlement == null) {
-    return Response(
-      statusCode: HttpStatus.notFound,
-      body: 'Settlement with id: $id Not found',
-    );
-  }*/
 
   switch (context.request.method) {
     case HttpMethod.post:
       return _post(context, id);
-    case HttpMethod.delete:
     case HttpMethod.get:
+      return _get(context, settlement!);
+    case HttpMethod.delete:
     case HttpMethod.put:
     case HttpMethod.head:
     case HttpMethod.options:
@@ -35,10 +29,17 @@ Future<Response> _post(RequestContext context, String settlementId) async {
   final request = SendUnitsRequest.fromMap(
     await context.request.json() as Map<String, dynamic>,
   );
-  final result = await settlementService.sendUnits(fromId: settlementId, request: request);
+  final result =
+      await settlementService.sendUnits(fromId: settlementId, request: request);
   return Response.json(
-    statusCode:
-    result ? HttpStatus.created : HttpStatus.internalServerError,
+    statusCode: result ? HttpStatus.created : HttpStatus.internalServerError,
     body: 'Units has been sent.',
   );
+}
+
+Future<Response> _get(RequestContext context, Settlement settlement) async {
+  final settlementService = context.read<SettlementService>();
+  final movements = await settlementService.getMovementsBySettlementId(
+      settlement: settlement,);
+  return Response.json(body: movements);
 }

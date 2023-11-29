@@ -60,7 +60,7 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
   Future<List<Movement>> getAllMovementsBySettlementId(String id) =>
       _mongoService.db
           .collection('movements')
-          .find(where.eq('from', id).or(where.eq('to', id)))
+          .find(where.eq('from.villageId', id).or(where.eq('to.villageId', id)))
           .map(Movement.fromMap)
           .toList();
 

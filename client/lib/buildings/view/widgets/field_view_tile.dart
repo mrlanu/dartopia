@@ -128,7 +128,7 @@ class FieldViewTile extends StatelessWidget {
               width: 3,
             ),
             Text(
-              '${formatTime(time)}',
+              FormatUtil.formatTime(time),
               style: const TextStyle(fontSize: 13),
             )
           ],

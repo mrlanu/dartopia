@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:models/models.dart';
 
-import 'building_container.dart';
+import '../view.dart';
+
 
 class Warehouse extends StatelessWidget {
   const Warehouse({super.key, required this.buildingRecord});
@@ -13,7 +14,6 @@ class Warehouse extends StatelessWidget {
     return BuildingContainer(
       key: ValueKey('${buildingRecord[1]} ${buildingRecord[0]}'),
       buildingRecord: buildingRecord,
-      enterable: true,
       child: (settlement, buildingRecord) {
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,

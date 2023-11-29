@@ -4,6 +4,8 @@ import 'package:mongo_dart/mongo_dart.dart';
 import '../repositories/settlement_repository.dart';
 
 abstract class SettlementService {
+  Future<Settlement?> fetchSettlementById({required String settlementId});
+
   Future<Settlement?> tryToGetSettlement({required String settlementId});
 
   Future<Settlement?> recalculateState({
@@ -32,6 +34,10 @@ abstract class SettlementService {
 
   Future<List<Movement>> getMovementsBeforeNow();
 
+  Future<List<Movement>> getMovementsBySettlementId({
+    required Settlement settlement,
+  });
+
   Future<bool> sendUnits(
       {required String fromId, required SendUnitsRequest request});
 }
@@ -40,6 +46,12 @@ class SettlementServiceImpl extends SettlementService {
   SettlementServiceImpl({required SettlementRepository settlementRepository})
       : _settlementRepository = settlementRepository;
   final SettlementRepository _settlementRepository;
+
+  @override
+  Future<Settlement?> fetchSettlementById(
+      {required String settlementId}) async {
+    return _settlementRepository.getById(settlementId);
+  }
 
   @override
   Future<Settlement?> tryToGetSettlement({required String settlementId}) async {
@@ -203,9 +215,12 @@ class SettlementServiceImpl extends SettlementService {
       settlement
         ..spendResources(specification.getResourcesToNextLevel(request.toLevel))
         ..addConstructionTask(newTask);
-      if(settlement.buildings[request.position][1] == 99){
+      if (settlement.buildings[request.position][1] == 99) {
         settlement.changeBuilding(
-          position: request.position, buildingId: 100, level: request.toLevel,);
+          position: request.position,
+          buildingId: 100,
+          level: request.toLevel,
+        );
       }
       return updateSettlement(
         settlement: settlement,
@@ -247,11 +262,26 @@ class SettlementServiceImpl extends SettlementService {
     required String fromId,
     required SendUnitsRequest request,
   }) async {
+    final sender = await fetchSettlementById(settlementId: fromId);
+    final receiver = await fetchSettlementById(settlementId: request.to);
+    final fromSide = SideBrief(
+      villageId: sender!.id.$oid,
+      villageName: sender.name,
+      playerName: sender.userId,
+      coordinates: [90, 90],
+    );
+    final toSide = SideBrief(
+      villageId: receiver!.id.$oid,
+      villageName: receiver.name,
+      playerName: receiver.userId,
+      coordinates: [77, 55],
+    );
     final movement = Movement(
       id: ObjectId(),
-      from: fromId,
-      to: request.to,
-      when: DateTime.now().add(const Duration(seconds: 60)),
+      from: fromSide,
+      to: toSide,
+      when: DateTime.now().add(const Duration(hours: 2)),
+      mission: request.mission,
     );
     return _settlementRepository.sendUnits(movement);
   }
@@ -259,5 +289,39 @@ class SettlementServiceImpl extends SettlementService {
   @override
   Future<List<Movement>> getMovementsBeforeNow() async {
     return _settlementRepository.getMovementsBeforeNow();
+  }
+
+  @override
+  Future<List<Movement>> getMovementsBySettlementId({
+    required Settlement settlement,
+  }) async {
+    final homeLegion = _buildHomeLegion(settlement);
+    final movements = await _settlementRepository
+        .getAllMovementsBySettlementId(settlement.id.$oid);
+    movements.add(homeLegion);
+    return movements;
+  }
+
+  Movement _buildHomeLegion(Settlement settlement) {
+    final fromSide = SideBrief(
+      villageId: settlement.id.$oid,
+      villageName: settlement.name,
+      playerName: settlement.userId,
+      coordinates: [90, 90],
+    );
+    final toSide = SideBrief(
+      villageId: settlement.id.$oid,
+      villageName: settlement.name,
+      playerName: settlement.userId,
+      coordinates: [90, 90],
+    );
+    return Movement(
+      id: ObjectId(),
+      isMoving: false,
+      from: fromSide,
+      to: toSide,
+      when: DateTime.now(),
+      mission: Mission.home,
+    );
   }
 }

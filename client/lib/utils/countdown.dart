@@ -47,6 +47,6 @@ class _CountdownTimerState extends State<CountdownTimer> {
 
   @override
   Widget build(BuildContext context) {
-    return Text('${formatTime(timeResume)}', style: widget.textStyle,);
+    return Text(FormatUtil.formatTime(timeResume), style: widget.textStyle,);
   }
 }

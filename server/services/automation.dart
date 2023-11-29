@@ -1,4 +1,3 @@
-import 'package:models/models.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
 import '../repositories/settlement_repository.dart';
@@ -20,11 +19,11 @@ class Automation {
     for (final m in movements) {
       print('Perform attacks...');
       final offense = await _settlementService.recalculateState(
-        settlementId: m.from,
+        settlementId: m.from.villageId,
         untilDateTime: m.when,
       );
       final defense = await _settlementService.recalculateState(
-        settlementId: m.to,
+        settlementId: m.to.villageId,
         untilDateTime: m.when,
       );
       await _settlementService.updateSettlement(

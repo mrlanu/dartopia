@@ -143,7 +143,7 @@ class BuildingCard extends StatelessWidget {
                           width: 50,
                           height: 50,
                         ),
-                        Text('${formatTime(specification.time.valueOf(1))}'),
+                        Text(FormatUtil.formatTime(specification.time.valueOf(1))),
                         const SizedBox(width: 20),
                         FilledButton(
                             onPressed: _isMatchRequirements()
