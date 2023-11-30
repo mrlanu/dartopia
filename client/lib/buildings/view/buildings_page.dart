@@ -65,74 +65,71 @@ class _BuildingsViewState extends State<BuildingsView>
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     final currentBuildingRecord = widget.buildingRecords[currentBuildingIndex];
-    return Scaffold(
-      backgroundColor: background,
-      body: Column(
-        children: [
-          const SizedBox(
-            height: 3,
-          ),
-          StorageBar(
-            settlement: widget.settlement,
-          ),
-          const SizedBox(
-            height: 3,
-          ),
-          Expanded(
-            child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 500),
-                child: BuildingWidgetsFactory.get(currentBuildingRecord)), //12 is a offset
-          ),
-          const Divider(),
-          SizedBox(
-            height: 140,
-            width: size.width,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                PageView.builder(
-                  itemCount: widget.buildingRecords.length,
-                  controller: buildingsPageController,
-                  onPageChanged: (value) {
-                    setState(() {
-                      currentBuildingIndex =
-                          value % widget.buildingRecords.length;
-                    });
-                  },
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: EdgeInsets.only(
-                          bottom: (pageOffsetBuilding! - index).abs() * 40),
-                      child: BuildingPicture(
-                        key: UniqueKey(),
-                        buildingRecord: widget.buildingRecords[
-                            index % widget.buildingRecords.length],
-                        prodPerHour: index < 4
-                            ? widget.settlement.calculateProducePerHour()[index]
-                            : null,
-                      ),
-                    );
-                  },
-                ),
-                Positioned(
-                  bottom: 10,
-                  child: ClipPath(
-                    clipper: CustomClip(),
-                    child: Container(
-                      height: 30,
-                      width: 350,
-                      color: black.withOpacity(0.35),
+    return Column(
+      children: [
+        const SizedBox(
+          height: 3,
+        ),
+        StorageBar(
+          settlement: widget.settlement,
+        ),
+        const SizedBox(
+          height: 3,
+        ),
+        Expanded(
+          child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 500),
+              child: BuildingWidgetsFactory.get(
+                  currentBuildingRecord)), //12 is a offset
+        ),
+        const Divider(),
+        SizedBox(
+          height: 140,
+          width: size.width,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              PageView.builder(
+                itemCount: widget.buildingRecords.length,
+                controller: buildingsPageController,
+                onPageChanged: (value) {
+                  setState(() {
+                    currentBuildingIndex =
+                        value % widget.buildingRecords.length;
+                  });
+                },
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsets.only(
+                        bottom: (pageOffsetBuilding! - index).abs() * 40),
+                    child: BuildingPicture(
+                      key: UniqueKey(),
+                      buildingRecord: widget.buildingRecords[
+                          index % widget.buildingRecords.length],
+                      prodPerHour: index < 4
+                          ? widget.settlement.calculateProducePerHour()[index]
+                          : null,
                     ),
+                  );
+                },
+              ),
+              Positioned(
+                bottom: 10,
+                child: ClipPath(
+                  clipper: CustomClip(),
+                  child: Container(
+                    height: 30,
+                    width: 350,
+                    color: black.withOpacity(0.35),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
-
 }
 
 class CustomClip extends CustomClipper<Path> {

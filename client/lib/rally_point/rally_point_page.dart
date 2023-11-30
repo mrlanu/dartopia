@@ -1,7 +1,7 @@
 import 'package:dartopia/common/common.dart';
+import 'package:dartopia/consts/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'rally_point.dart';
 
@@ -11,7 +11,8 @@ class RallyPointPage extends StatelessWidget {
   final List<int> buildingRecord;
 
   static Route<void> route(
-      {required List<int> buildingRecord, required MovementsBloc movementsBloc}) {
+      {required List<int> buildingRecord,
+      required MovementsBloc movementsBloc}) {
     return MaterialPageRoute(builder: (context) {
       return MultiBlocProvider(
         providers: [
@@ -50,69 +51,62 @@ class RallyPointView extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: background,
         appBar: buildAppBar(),
         body: BlocBuilder<MovementsBloc, MovementsState>(
           builder: (context, state) {
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  state.movements[MovementLocation.incoming]!.isNotEmpty ?
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: Text(
-                      'Incoming troops (${state.movements[MovementLocation
-                          .incoming]!.length})',
-                      style: Theme
-                          .of(context)
-                          .textTheme
-                          .titleMedium,
+            return state.status == MovementsStatus.initial ||
+                    state.status == MovementsStatus.initial
+                ? const Center(child: CircularProgressIndicator())
+                : SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        state.movements[MovementLocation.incoming]!.isNotEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: Text(
+                                  'Incoming troops (${state.movements[MovementLocation.incoming]!.length})',
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
+                                ),
+                              )
+                            : Container(),
+                        ...state.movements[MovementLocation.incoming]!
+                            .map((move) => TroopDetails(
+                                  movement: move,
+                                ))
+                            .toList(),
+                        state.movements[MovementLocation.outgoing]!.isNotEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: Text(
+                                  'Outgoing troops (${state.movements[MovementLocation.outgoing]!.length})',
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
+                                ),
+                              )
+                            : Container(),
+                        ...state.movements[MovementLocation.outgoing]!
+                            .map((move) => TroopDetails(
+                                  movement: move,
+                                ))
+                            .toList(),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text(
+                            'Troops in this village and its oases (${state.movements[MovementLocation.home]!.length})',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ),
+                        ...state.movements[MovementLocation.home]!
+                            .map((move) => TroopDetails(
+                                  movement: move,
+                                ))
+                            .toList(),
+                      ],
                     ),
-                  ) : Container(),
-                  ...state.movements[MovementLocation.incoming]!
-                      .map((move) =>
-                      TroopDetails(
-                        movement: move,
-                      ))
-                      .toList(),
-                  state.movements[MovementLocation.outgoing]!.isNotEmpty ?
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: Text(
-                      'Outgoing troops (${state.movements[MovementLocation
-                          .outgoing]!.length})',
-                      style: Theme
-                          .of(context)
-                          .textTheme
-                          .titleMedium,
-                    ),
-                  ) : Container(),
-                  ...state.movements[MovementLocation.outgoing]!
-                      .map((move) =>
-                      TroopDetails(
-                        movement: move,
-                      ))
-                      .toList(),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: Text(
-                      'Troops in this village and its oases (${state
-                          .movements[MovementLocation.home]!.length})',
-                      style: Theme
-                          .of(context)
-                          .textTheme
-                          .titleMedium,
-                    ),
-                  ),
-                  ...state.movements[MovementLocation.home]!
-                      .map((move) =>
-                      TroopDetails(
-                        movement: move,
-                      ))
-                      .toList(),
-                ],
-              ),
-            );
+                  );
           },
         ),
       ),

@@ -23,10 +23,9 @@ class MovementsBloc extends Bloc<MovementsEvent, MovementsState> {
       Emitter<MovementsState> emit,) async {
     if (state.status == MovementsStatus.initial) {
       movementsRepository.fetchMovements(settlementId);
-      emit(state.copyWith(status: MovementsStatus.loading));
     }
     await emit.forEach<List<Movement>?>(
-      movementsRepository.getMovements(),
+      movementsRepository.getMovements().skip(1),
       onData: (movements) {
         final movementsMap = _sortMovementsByLocation(movements!);
         return state.copyWith(

@@ -1,5 +1,6 @@
 import 'package:dartopia/bottom_navbar/bottom_navbar.dart';
 import 'package:dartopia/buildings/view/buildings_page.dart';
+import 'package:dartopia/consts/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -29,15 +30,14 @@ class VillagePage extends StatelessWidget {
             create: (context) => NavigationCubit(),
           ),
           BlocProvider(
-            create: (context) =>
-            BuildingsBloc(
+            create: (context) => BuildingsBloc(
                 settlementRepository: context.read<SettlementRepositoryImpl>())
               ..add(const SettlementSubscriptionRequested()),
           ),
           BlocProvider(
-            create: (context) =>
-            MovementsBloc(
-                movementsRepository: context.read<TroopMovementsRepositoryImpl>())
+            create: (context) => MovementsBloc(
+                movementsRepository:
+                    context.read<TroopMovementsRepositoryImpl>())
               ..add(const MovementsSubscriptionRequested()),
           )
         ],
@@ -53,10 +53,11 @@ class VillageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final selectedTab =
-    context.select((NavigationCubit cubit) => cubit.state.tab);
+        context.select((NavigationCubit cubit) => cubit.state.tab);
 
     return SafeArea(
       child: Scaffold(
+          backgroundColor: background,
           appBar: buildAppBar(),
           drawer: const Drawer(),
           body: IndexedStack(
