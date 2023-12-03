@@ -12,6 +12,8 @@ abstract class WorldRepository {
       int fromY,
       int toY,
   );
+
+  Future<bool> dropWorld();
 }
 
 class WorldRepositoryMongoImpl implements WorldRepository {
@@ -21,11 +23,9 @@ class WorldRepositoryMongoImpl implements WorldRepository {
   final MongoService _mongoService;
 
   @override
-  Future<void> saveWorld(List<MapTile> world) async {
-    await _mongoService.db
+  Future<void> saveWorld(List<MapTile> world) => _mongoService.db
         .collection('world')
         .insertMany(world.map((e) => e.toMap()).toList());
-  }
 
   @override
   Future<List<MapTile>> getPartOfWorldBetweenCoordinates(
@@ -44,4 +44,7 @@ class WorldRepositoryMongoImpl implements WorldRepository {
           )
           .map(MapTile.fromMap)
           .toList();
+
+  @override
+  Future<bool> dropWorld() => _mongoService.db.dropCollection('world');
 }

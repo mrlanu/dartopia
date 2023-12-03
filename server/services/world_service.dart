@@ -25,10 +25,24 @@ class WorldServiceImpl implements WorldService {
 
   @override
   Future<void> createWorld() async {
+    await _dropWorld();
     _createBlueprint(Config.worldWidth, Config.worldHeight);
-    _insertOases();
+    _insertOases(Config.oasesAmount);
     await _worldRepository.saveWorld(tiles);
   }
+
+  @override
+  Future<List<MapTile>> getPartOfWorldBetweenCoordinates(
+      int fromX,
+      int toX,
+      int fromY,
+      int toY,
+      ) async {
+    return _worldRepository.getPartOfWorldBetweenCoordinates(
+        fromX, toX, fromY, toY,);
+  }
+
+  Future<bool> _dropWorld() => _worldRepository.dropWorld();
 
   void _createBlueprint(int xLength, int yLength) {
     for (var y = 1; y < yLength + 1; y++) {
@@ -46,8 +60,8 @@ class WorldServiceImpl implements WorldService {
     }
   }
 
-  void _insertOases() {
-    for (var i = 0; i < Config.oasesAmount; i++) {
+  void _insertOases(int amount) {
+    for (var i = 0; i < amount; i++) {
       final emptySpots = tiles.where((tile) => tile.empty).toList();
       final randomNumber = _getRandomNumber(0, emptySpots.length - 1);
       final emptySpot = emptySpots[randomNumber];
@@ -70,16 +84,5 @@ class WorldServiceImpl implements WorldService {
   int _getRandomNumber(int min, int max) {
     final random = Random();
     return min + random.nextInt((max - min) + 1);
-  }
-
-  @override
-  Future<List<MapTile>> getPartOfWorldBetweenCoordinates(
-    int fromX,
-    int toX,
-    int fromY,
-    int toY,
-  ) async {
-    return _worldRepository.getPartOfWorldBetweenCoordinates(
-        fromX, toX, fromY, toY);
   }
 }
