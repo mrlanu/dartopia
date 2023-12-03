@@ -13,3 +13,6 @@ const bottomNavBarItem = Color(0xFF262626);
 const bottomNavBarSelectedItem = Color(0xFFFFFFFF);
 final font = GoogleFonts.ptSerif(color: black);
 
+const worldWidth = 50;
+const mapWidth = 7; // should be odd number
+

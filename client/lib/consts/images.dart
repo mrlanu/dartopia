@@ -8,4 +8,5 @@ class DartopiaImages {
   static const String clock = 'assets/images/resources/clock.png';
 
   static const String troops = 'assets/images/troops/gaul.png';
+  static const String tiles = 'assets/images/resources/tiles.png';
 }

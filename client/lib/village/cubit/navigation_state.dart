@@ -4,7 +4,7 @@ enum NavTab { buildings, map }
 
 final class NavigationState extends Equatable {
   const NavigationState({
-    this.tab = NavTab.buildings,
+    this.tab = NavTab.map,
   });
 
   final NavTab tab;
