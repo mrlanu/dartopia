@@ -45,7 +45,7 @@ class WorldServiceImpl implements WorldService {
   Future<bool> _dropWorld() => _worldRepository.dropWorld();
 
   void _createBlueprint(int xLength, int yLength) {
-    for (var y = 1; y < yLength + 1; y++) {
+    for (var y = yLength; y > 0; y--) {
       for (var x = 1; x < xLength + 1; x++) {
         tiles.add(
           MapTile(
