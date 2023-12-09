@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
 
-import '../../repositories/settlement_repository.dart';
 import '../../services/settlements_service.dart';
 
 FutureOr<Response> onRequest(RequestContext context) async {
@@ -22,16 +21,22 @@ FutureOr<Response> onRequest(RequestContext context) async {
 }
 
 Future<Response> _get(RequestContext context) async {
-  final dataSource = context.read<SettlementRepository>();
-  //final todos = await dataSource.readAll();
-  return Response.json(body: []);
+  final settlementService = context.read<SettlementService>();
+  final request = context.request;
+  final params = request.uri.queryParameters;
+  final x = params['x'] ?? '0';
+  final y = params['y'] ?? '0';
+  final tileDetails = await settlementService.getTileDetailsByCoordinates(
+      x: int.parse(x), y: int.parse(y),);
+  return Response.json(body: tileDetails);
 }
 
 Future<Response> _post(RequestContext context) async {
   final settlementService = context.read<SettlementService>();
   final requestBody = await context.request.json() as Map<String, dynamic>;
   final result = await settlementService.foundNewSettlement(
-      userId: requestBody['userId']! as String,);
+    userId: requestBody['userId']! as String,
+  );
 
   return Response.json(
     statusCode:

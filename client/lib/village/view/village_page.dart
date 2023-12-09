@@ -63,7 +63,7 @@ class VillageView extends StatelessWidget {
           drawer: const Drawer(),
           body: IndexedStack(
             index: selectedTab.index,
-            children: const [BuildingsPage(), WorldMapPage(), Scaffold()],
+            children: [const BuildingsPage(), WorldMapPage(), const Scaffold()],
           ),
           bottomNavigationBar: const BottomNavBar()),
     );

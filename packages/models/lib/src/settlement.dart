@@ -10,6 +10,8 @@ class Settlement extends Equatable {
   Settlement({
     required this.id,
     required this.userId,
+    required this.x,
+    required this.y,
     this.name = 'New village',
     this.storage = const [500.0, 500.0, 500.0, 500.0],
     this.buildings = const [
@@ -54,6 +56,8 @@ class Settlement extends Equatable {
   Settlement.fromMap(Map<String, dynamic> map)
       : id = map['_id'] as ObjectId,
         name = map['name'] as String,
+        x = map['x'] as int,
+        y = map['y'] as int,
         userId = map['userId'] as String,
         storage = (map['storage'] as List<dynamic>)
             .map((e) => (e as num).toDouble())
@@ -75,6 +79,8 @@ class Settlement extends Equatable {
   Settlement.fromJson(Map<String, dynamic> map)
       : id = ObjectId.parse(map['_id'] as String),
         name = map['name'] as String,
+        x = map['x'] as int,
+        y = map['y'] as int,
         userId = map['userId'] as String,
         storage = (map['storage'] as List<dynamic>)
             .map((e) => (e as num).toDouble())
@@ -96,6 +102,8 @@ class Settlement extends Equatable {
   ObjectId id;
   final String userId;
   String name;
+  int x;
+  int y;
   List<double> storage;
   List<List<int>> buildings;
   List<int> army;
@@ -163,7 +171,6 @@ class Settlement extends Equatable {
   void calculateProducedGoods({DateTime? toDateTime}) {
     toDateTime ??= DateTime.now();
     final producePerHour = calculateProducePerHour();
-    print('P/H: $producePerHour');
     final durationSinceLastModified =
         toDateTime.difference(lastModified).inSeconds;
     final divider = durationSinceLastModified / 3600;
@@ -220,6 +227,8 @@ class Settlement extends Equatable {
   Map<String, dynamic> toMap() => <String, dynamic>{
         '_id': id,
         'name': name,
+        'x': x,
+        'y': y,
         'userId': userId,
         'storage': storage,
         'buildings': buildings,
@@ -233,6 +242,8 @@ class Settlement extends Equatable {
   Map<String, dynamic> toJson() => <String, dynamic>{
         '_id': id,
         'name': name,
+        'x': x,
+        'y': y,
         'userId': userId,
         'storage': storage,
         'buildings': buildings,
@@ -246,6 +257,8 @@ class Settlement extends Equatable {
   Settlement copyWith({
     ObjectId? id,
     String? name,
+    int? x,
+    int? y,
     String? userId,
     List<double>? storage,
     List<List<int>>? buildings,
@@ -257,6 +270,8 @@ class Settlement extends Equatable {
     return Settlement(
       id: id ?? this.id,
       name: name ?? this.name,
+      x: x ?? this.x,
+      y: y ?? this.y,
       userId: userId ?? this.userId,
       storage: storage ?? this.storage,
       buildings: buildings ?? this.buildings,

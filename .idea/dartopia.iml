@@ -6,12 +6,6 @@
       <excludeFolder url="file://$MODULE_DIR$/client/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/client/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/client/build" />
-      <excludeFolder url="file://$MODULE_DIR$/server/.dart_tool" />
-      <excludeFolder url="file://$MODULE_DIR$/server/.pub" />
-      <excludeFolder url="file://$MODULE_DIR$/server/build" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/models/.dart_tool" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/models/.pub" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/models/build" />
       <excludeFolder url="file://$MODULE_DIR$/client/linux/flutter/ephemeral/.plugin_symlinks/path_provider_linux/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/client/linux/flutter/ephemeral/.plugin_symlinks/path_provider_linux/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/client/linux/flutter/ephemeral/.plugin_symlinks/path_provider_linux/build" />
@@ -24,6 +18,12 @@
       <excludeFolder url="file://$MODULE_DIR$/client/windows/flutter/ephemeral/.plugin_symlinks/path_provider_windows/example/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/client/windows/flutter/ephemeral/.plugin_symlinks/path_provider_windows/example/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/client/windows/flutter/ephemeral/.plugin_symlinks/path_provider_windows/example/build" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/models/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/models/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/models/build" />
+      <excludeFolder url="file://$MODULE_DIR$/server/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/server/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/server/build" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

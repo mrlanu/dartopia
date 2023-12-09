@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="2908424d-9142-47c7-89aa-eee6c5f37d75" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/cubit/send_troops_cubit.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/cubit/send_troops_state.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/form.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/hz.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/send_troops_form.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/models/lib/src/responses/responses.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/packages/models/lib/src/responses/tile_details.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dartopia.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dartopia.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/lib/buildings/view/building_widgets/rally_point.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/buildings/view/building_widgets/rally_point.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/lib/rally_point/rally_point.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/rally_point/rally_point.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/lib/rally_point/rally_point_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/rally_point/rally_point_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/lib/rally_point/view/widgets/widgets.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/rally_point/view/widgets/widgets.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/lib/village/cubit/navigation_state.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/village/cubit/navigation_state.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/lib/village/view/village_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/village/view/village_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/lib/world_map/repository/world_repository.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/world_map/repository/world_repository.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/lib/world_map/view/widgets/map_tile.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/world_map/view/widgets/map_tile.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/lib/world_map/view/world_map_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/world_map/view/world_map_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/models/lib/models.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/models/lib/models.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/models/lib/src/map_tile.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/models/lib/src/responses/map_tile.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/models/lib/src/settlement.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/models/lib/src/settlement.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/repositories/settlement_repository.dart" beforeDir="false" afterPath="$PROJECT_DIR$/server/repositories/settlement_repository.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/routes/settlement/index.dart" beforeDir="false" afterPath="$PROJECT_DIR$/server/routes/settlement/index.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/services/settlements_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/server/services/settlements_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/services/world_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/server/services/world_service.dart" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <execution />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="/bin/php" />
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 3
+}]]></component>
+  <component name="ProjectId" id="2ZHqaKhuPevXFen7MGrfOE7e0aj" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="sortByType" value="true" />
+    <option name="sortKey" value="BY_TYPE" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "dart.analysis.tool.window.visible": "false",
+    "io.flutter.reload.alreadyRun": "true",
+    "last_opened_file_path": "/home/mrlanu/development/dart/dartopia/client/lib/rally_point/send_troops_form",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "AndroidSdkUpdater",
+    "show.migrate.to.gradle.popup": "false",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/client/lib/rally_point/send_troops_form" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="main.dart" type="FlutterRunConfigurationType" factoryName="Flutter" temporary="true" nameIsGenerated="true">
+      <option name="filePath" value="$PROJECT_DIR$/client/lib/main.dart" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Flutter.main.dart" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2908424d-9142-47c7-89aa-eee6c5f37d75" name="Changes" comment="" />
+      <created>1702089414924</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1702089414924</updated>
+      <workItem from="1702089416398" duration="609000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+</project>

@@ -5,11 +5,21 @@ import '../services/mongo_service.dart';
 
 abstract class SettlementRepository {
   Future<Settlement?> saveSettlement(Settlement settlement);
+
   Future<Settlement?> updateSettlement(Settlement settlement);
+
   Future<Settlement?> getById(String id);
+
+  Future<TileDetails> getTileDetailsByCoordinates({
+    required int x,
+    required int y,
+  });
+
   //movements
   Future<List<Movement>> getAllMovementsBySettlementId(String id);
+
   Future<List<Movement>> getMovementsBeforeNow();
+
   Future<bool> sendUnits(Movement movement);
 }
 
@@ -33,6 +43,26 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
   }
 
   @override
+  Future<TileDetails> getTileDetailsByCoordinates({
+    required int x,
+    required int y,
+  }) async {
+    final doc = await _mongoService.db
+        .collection('settlements')
+        .findOne(where.eq('x', x).and(where.eq('y', y)));
+    final settlement = Settlement.fromMap(doc!);
+    final tileDetails = TileDetails(
+        id: settlement.id.$oid,
+        playerName: settlement.userId,
+        name: settlement.name,
+        x: settlement.x,
+        y: settlement.y,
+        population: 100,
+        distance: 3,);
+    return tileDetails;
+  }
+
+  @override
   Future<Settlement?> saveSettlement(Settlement settlement) async {
     final result = await _mongoService.db
         .collection('settlements')
@@ -47,8 +77,9 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
   @override
   Future<Settlement?> updateSettlement(Settlement settlement) async {
     final result = await _mongoService.db.collection('settlements').replaceOne(
-        where.id(settlement.id),
-        settlement.copyWith(lastModified: DateTime.now()).toMap(),);
+          where.id(settlement.id),
+          settlement.copyWith(lastModified: DateTime.now()).toMap(),
+        );
     if (result.isSuccess) {
       return settlement;
     } else {
@@ -74,8 +105,8 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
 
   @override
   Future<List<Movement>> getMovementsBeforeNow() => _mongoService.db
-        .collection('movements')
-        .find(where.lte('when', DateTime.now()))
-        .map(Movement.fromMap)
-        .toList();
+      .collection('movements')
+      .find(where.lte('when', DateTime.now()))
+      .map(Movement.fromMap)
+      .toList();
 }

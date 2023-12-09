@@ -28,18 +28,23 @@ class WorldServiceImpl implements WorldService {
     await _dropWorld();
     _createBlueprint(Config.worldWidth, Config.worldHeight);
     _insertOases(Config.oasesAmount);
+    _insertSomeVillages(); //just for development purpose, should be removed later
     await _worldRepository.saveWorld(tiles);
   }
 
   @override
   Future<List<MapTile>> getPartOfWorldBetweenCoordinates(
-      int fromX,
-      int toX,
-      int fromY,
-      int toY,
-      ) async {
+    int fromX,
+    int toX,
+    int fromY,
+    int toY,
+  ) async {
     return _worldRepository.getPartOfWorldBetweenCoordinates(
-        fromX, toX, fromY, toY,);
+      fromX,
+      toX,
+      fromY,
+      toY,
+    );
   }
 
   Future<bool> _dropWorld() => _worldRepository.dropWorld();
@@ -70,12 +75,17 @@ class WorldServiceImpl implements WorldService {
         ..removeAt(index)
         ..insert(
           index,
-          emptySpot.copyWith(empty: false, tileNumber: _getRandomOases()),
+          emptySpot.copyWith(
+            ownerId: 'Nature',
+            empty: false,
+            name: 'Oasis',
+            tileNumber: _getRandomOasis(),
+          ),
         );
     }
   }
 
-  int _getRandomOases() {
+  int _getRandomOasis() {
     final oases = [3, 5, 7, 17, 19, 27, 29, 41, 43];
     final random = Random();
     return oases[random.nextInt(oases.length)];
@@ -84,5 +94,32 @@ class WorldServiceImpl implements WorldService {
   int _getRandomNumber(int min, int max) {
     final random = Random();
     return min + random.nextInt((max - min) + 1);
+  }
+
+  void _insertSomeVillages() {
+    final myTile =
+        tiles.firstWhere((tile) => tile.corX == 25 && tile.corY == 25);
+    final index = tiles.indexOf(myTile);
+    tiles
+      ..removeAt(index)
+      ..insert(
+          index,
+          myTile.copyWith(
+              ownerId: '654eaeb5693f198560bc1e5a',
+              name: 'New village',
+              empty: false,
+              tileNumber: 56,),);
+    final myTile2 =
+    tiles.firstWhere((tile) => tile.corX == 27 && tile.corY == 27);
+    final index2 = tiles.indexOf(myTile2);
+    tiles
+      ..removeAt(index2)
+      ..insert(
+        index2,
+        myTile2.copyWith(
+          ownerId: '654eaeb5693f198560bc1e5b',
+          name: 'Test',
+          empty: false,
+          tileNumber: 56,),);
   }
 }

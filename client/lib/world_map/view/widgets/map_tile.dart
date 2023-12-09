@@ -1,7 +1,13 @@
+import 'package:dartopia/world_map/repository/world_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:ui' as ui;
 
 import 'package:models/models.dart';
+
+import '../../../rally_point/bloc/movements_bloc.dart';
+import '../../../rally_point/rally_point_page.dart';
 
 class MapTileWidget extends StatelessWidget {
   final MapTile tile;
@@ -11,9 +17,87 @@ class MapTileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      child: CustomPaint(
-        painter: TilePainter(image: image, tileNumber: tile.tileNumber),
+    return GestureDetector(
+      onTap: () {
+        print('ONE TAP on: ${tile.id.$oid}');
+      },
+      onDoubleTap: () {
+        tile.tileNumber == 56 ? _openDialog(context) : null;
+      },
+      child: SizedBox(
+        child: CustomPaint(
+          painter: TilePainter(image: image, tileNumber: tile.tileNumber),
+        ),
+      ),
+    );
+  }
+
+  Future<String?> _openDialog(BuildContext context) {
+    return showDialog<String>(
+        context: context,
+        builder: (_) {
+          final height = MediaQuery.of(context).size.height * 0.5;
+          return Center(
+            child: Dialog(
+              insetPadding: const EdgeInsets.all(10),
+              child: SizedBox(
+                height: height,
+                child: Center(
+                  child: FutureBuilder(
+                    future: context
+                        .read<WorldRepository>()
+                        .fetchTileDetails(tile.corX, tile.corY),
+                    builder: (_, snapshot) {
+                      return snapshot.connectionState == ConnectionState.done
+                          ? _buildDialogBody(snapshot.data!, context)
+                          : SizedBox(
+                              height: height,
+                              child: const Center(
+                                  child: CircularProgressIndicator()));
+                    },
+                  ),
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
+  Widget _buildDialogBody(TileDetails tileDetails, BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Text(
+            '${tileDetails.name} (${tileDetails.x}|${tileDetails.y})',
+            style: textTheme.titleLarge,
+          ),
+          const Divider(),
+          Text('Player name: ${tileDetails.playerName}',
+              style: textTheme.titleMedium),
+          Text(
+            'Population: ${tileDetails.population}',
+            style: textTheme.titleMedium,
+          ),
+          Text(
+            'Distance: ${tileDetails.distance}',
+            style: textTheme.titleMedium,
+          ),
+          IconButton.outlined(
+              iconSize: 30,
+              color: Colors.green,
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).push(RallyPointPage.route(
+                    movementsBloc: context.read<MovementsBloc>(),
+                    tabIndex: 1,
+                    x: tile.corX,
+                    y: tile.corY));
+              },
+              icon: const FaIcon(FontAwesomeIcons.khanda)),
+        ],
       ),
     );
   }
@@ -32,8 +116,8 @@ class TilePainter extends CustomPainter {
     final Rect srcRect = Rect.fromPoints(coordinates.$1, coordinates.$2);
 
     // Specify the destination Rect to define where to draw the portion on the canvas
-    final Rect destRect =
-    Rect.fromPoints(const Offset(0.0, 0.0), Offset(size.width, size.height));
+    final Rect destRect = Rect.fromPoints(
+        const Offset(0.0, 0.0), Offset(size.width, size.height));
 
     // Draw the portion of the image onto the canvas
     canvas.drawImageRect(image, srcRect, destRect, Paint());
@@ -52,7 +136,7 @@ class TilePainter extends CustomPainter {
 
     // Calculate top-left and bottom-right coordinates of the tile
     Offset topLeft =
-    Offset(column * tileSize.toDouble(), row * tileSize.toDouble());
+        Offset(column * tileSize.toDouble(), row * tileSize.toDouble());
     Offset bottomRight = Offset(
         (column + 1) * tileSize.toDouble(), (row + 1) * tileSize.toDouble());
 

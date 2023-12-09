@@ -11,14 +11,19 @@ import '../../consts/images.dart';
 import '../world_map.dart';
 
 class WorldMapPage extends StatelessWidget {
-  const WorldMapPage({super.key});
+  WorldMapPage({super.key});
+
+  final WorldRepository worldRepo = WorldRepositoryImpl();
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => WorldBloc(worldRepository: WorldRepositoryImpl())
-        ..add(WorldFetched()),
-      child: const WorldView(),
+    return RepositoryProvider(
+      create: (context) => worldRepo,
+      child: BlocProvider(
+        create: (context) =>
+            WorldBloc(worldRepository: worldRepo)..add(WorldFetched()),
+        child: const WorldView(),
+      ),
     );
   }
 }
@@ -38,7 +43,7 @@ class WorldView extends StatelessWidget {
               return state.status == WorldStatus.success &&
                       snapshot.connectionState == ConnectionState.done
                   ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         _buildXAxis(context, state.currentX),
                         Row(
