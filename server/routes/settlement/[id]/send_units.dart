@@ -32,7 +32,7 @@ FutureOr<Response> onRequest(RequestContext context, String id) async {
 
 Future<Response> _post(RequestContext context, String settlementId) async {
   final settlementService = context.read<SettlementService>();
-  final request = SendUnitsRequest.fromMap(
+  final request = SendTroopsRequest.fromMap(
     await context.request.json() as Map<String, dynamic>,
   );
   final result = await settlementService.sendUnits(fromId: settlementId, request: request);

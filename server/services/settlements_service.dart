@@ -44,7 +44,7 @@ abstract class SettlementService {
   });
 
   Future<bool> sendUnits(
-      {required String fromId, required SendUnitsRequest request});
+      {required String fromId, required SendTroopsRequest request});
 }
 
 class SettlementServiceImpl extends SettlementService {
@@ -276,7 +276,7 @@ class SettlementServiceImpl extends SettlementService {
   @override
   Future<bool> sendUnits({
     required String fromId,
-    required SendUnitsRequest request,
+    required SendTroopsRequest request,
   }) async {
     final sender = await fetchSettlementById(settlementId: fromId);
     final receiver = await fetchSettlementById(settlementId: request.to);

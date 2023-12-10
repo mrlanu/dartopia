@@ -16,7 +16,9 @@ class BottomNavBar extends StatelessWidget {
       child: BlocBuilder<NavigationCubit, NavigationState>(
         builder: (context, state) {
           return BottomNavigationBar(
-            //backgroundColor: bottomNavBarBackground,
+            backgroundColor: Color.fromRGBO(36, 126, 38, 1.0),
+            unselectedItemColor: Colors.white38,
+            selectedItemColor: Colors.white,
             currentIndex: state.tab.index,
             onTap: (value) {
               context.read<NavigationCubit>().setTab(NavTab.values[value]);

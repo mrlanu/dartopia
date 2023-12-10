@@ -9,9 +9,11 @@ class TroopDetails extends StatelessWidget {
   const TroopDetails(
       {super.key,
       required this.movement,
+      this.isEstimate = false,
       this.backgroundColor = Colors.white70});
 
   final Movement movement;
+  final bool isEstimate; // used in confirm_send_troops form
   final Color backgroundColor;
 
   @override
@@ -24,7 +26,7 @@ class TroopDetails extends StatelessWidget {
             _firstRow(constraints.maxWidth),
             _secondRow(constraints.maxWidth),
             _thirdRow(constraints.maxWidth),
-            _forthRow(constraints.maxWidth,
+            _forthRow(isEstimate, constraints.maxWidth,
                 const Color.fromRGBO(215, 215, 215, 1.0), movement.when),
           ],
         ),
@@ -93,7 +95,9 @@ class TroopDetails extends StatelessWidget {
 
   Color _getBackgroundColor() {
     return switch (movement.mission) {
-      Mission.attack || Mission.raid => const Color.fromRGBO(252, 209, 209, 1.0),
+      Mission.attack ||
+      Mission.raid =>
+        const Color.fromRGBO(252, 209, 209, 1.0),
       Mission.home => const Color.fromRGBO(250, 238, 178, 1.0),
       Mission.reinforcement => const Color.fromRGBO(202, 246, 179, 1.0),
       _ => const Color.fromRGBO(252, 209, 209, 1.0),
@@ -194,7 +198,7 @@ class TroopDetails extends StatelessWidget {
     );
   }
 
-  Widget _forthRow(
+  Widget _forthRow(bool isEstimate,
       double maxWidth, Color backgroundColor, DateTime? arrivalTime) {
     return Row(
       children: [
@@ -225,7 +229,9 @@ class TroopDetails extends StatelessWidget {
                   // Skip the right side border
                 ),
               ),
-              child: movement.isMoving
+              child: isEstimate ?
+              const Text('Estimate') :
+              movement.isMoving
                   ? Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8.0, vertical: 0.0),

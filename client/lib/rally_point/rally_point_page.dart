@@ -1,30 +1,38 @@
+import 'package:dartopia/buildings/buildings.dart';
 import 'package:dartopia/common/common.dart';
 import 'package:dartopia/consts/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:models/models.dart';
 
 import 'rally_point.dart';
 
 class RallyPointPage extends StatelessWidget {
-  const RallyPointPage(
-      {super.key, required this.tabIndex, required this.x, required this.y});
+  const RallyPointPage({super.key, required this.tabIndex, this.tileDetails});
 
   final int tabIndex;
-  final int x;
-  final int y;
+  final TileDetails? tileDetails;
 
   static Route<void> route(
-      {required MovementsBloc movementsBloc,
+      {required BuildingsBloc buildingsBloc, // for getting current settlement info
+      required MovementsBloc movementsBloc,
+      required TroopMovementsRepository troopMovementsRepository,
       int tabIndex = 1,
-      int x = 0,
-      int y = 0}) {
+      TileDetails? tileDetails}) {
     return MaterialPageRoute(builder: (context) {
-      return MultiBlocProvider(
-        providers: [
-          BlocProvider.value(value: movementsBloc),
-        ],
-        child: RallyPointPage(tabIndex: tabIndex, x: x, y: y),
+      return RepositoryProvider.value(
+        value: troopMovementsRepository,
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider.value(value: buildingsBloc),
+            BlocProvider.value(value: movementsBloc),
+          ],
+          child: RallyPointPage(
+            tabIndex: tabIndex,
+            tileDetails: tileDetails,
+          ),
+        ),
       );
     });
   }
@@ -33,22 +41,17 @@ class RallyPointPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return RallyPointView(
       initialTabIndex: tabIndex,
-      x: x,
-      y: y,
+      tileDetails: tileDetails,
     );
   }
 }
 
 class RallyPointView extends StatefulWidget {
   const RallyPointView(
-      {super.key,
-      required this.initialTabIndex,
-      required this.x,
-      required this.y});
+      {super.key, required this.initialTabIndex, this.tileDetails});
 
   final int initialTabIndex;
-  final int x;
-  final int y;
+  final TileDetails? tileDetails;
 
   @override
   State<RallyPointView> createState() => _RallyPointViewState();
@@ -71,7 +74,7 @@ class _RallyPointViewState extends State<RallyPointView> {
         appBar: buildAppBar(),
         body: IndexedStack(index: currentIndex, children: [
           _movementsTab(),
-          _sendTroopsTab(widget.x, widget.y),
+          _sendTroopsTab(widget.tileDetails),
         ]),
         bottomNavigationBar: _buildBottomBar(),
       ),
@@ -135,11 +138,12 @@ class _RallyPointViewState extends State<RallyPointView> {
     );
   }
 
-  Widget _sendTroopsTab(int x, int y) {
-    return SendTroopsForm(
-      x: x,
-      y: y,
-    );
+  Widget _sendTroopsTab(TileDetails? tileDetails) {
+    return SendTroopsForm(tileDetails: tileDetails, onConfirm: () {
+      setState(() {
+        currentIndex = 0;
+      });
+    },);
   }
 
   Widget _buildBottomBar() {
@@ -149,7 +153,9 @@ class _RallyPointViewState extends State<RallyPointView> {
           highlightColor: Colors.transparent,
         ),
         child: BottomNavigationBar(
-          //backgroundColor: bottomNavBarBackground,
+          backgroundColor: const Color.fromRGBO(36, 126, 38, 1.0),
+          unselectedItemColor: Colors.white38,
+          selectedItemColor: Colors.white,
           currentIndex: currentIndex,
           onTap: (value) {
             setState(() {
@@ -162,11 +168,10 @@ class _RallyPointViewState extends State<RallyPointView> {
           type: BottomNavigationBarType.fixed,
           items: [
             _buildBottomNavigationBarItem(
-                label: 'buildings',
-                icon: const FaIcon(FontAwesomeIcons.houseChimney)),
+                label: 'buildings', icon: const FaIcon(FontAwesomeIcons.eye)),
             _buildBottomNavigationBarItem(
                 label: 'map',
-                icon: const FaIcon(FontAwesomeIcons.mapLocationDot)),
+                icon: const FaIcon(FontAwesomeIcons.locationCrosshairs)),
           ],
         ));
   }

@@ -28,6 +28,20 @@ class Movement {
       this.units = const [0, 5, 0, 0, 0, 0, 0, 0, 0, 0],
       required this.mission});
 
+  Movement.sendConfirmation(
+      {required List<int> units,
+      required int mission,
+      required SideBrief from,
+      required SideBrief to,
+      required double distance})
+      : id = ObjectId(),
+        isMoving = true,
+        from = from,
+        to = to,
+        when = DateTime.now().add(Duration(minutes: 5)),
+        units = units,
+        mission = Mission.raid;
+
   Movement.fromMap(Map<String, dynamic> map)
       : id = map['_id'] as ObjectId,
         isMoving = map['isMoving'] as bool,

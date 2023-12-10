@@ -1,3 +1,4 @@
+import 'package:dartopia/buildings/buildings.dart';
 import 'package:dartopia/rally_point/rally_point.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,6 +17,8 @@ class RallyPoint extends StatelessWidget {
       buildingRecord: buildingRecord,
       enterable: true,
       onEnter: () => Navigator.of(context).push(RallyPointPage.route(
+          troopMovementsRepository: context.read<TroopMovementsRepository>(),
+          buildingsBloc: context.read<BuildingsBloc>(),
           movementsBloc: context.read<MovementsBloc>())),
       child: (settlement, buildingRecord) {
         return const Column(

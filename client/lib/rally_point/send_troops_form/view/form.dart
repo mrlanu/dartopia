@@ -1,14 +1,16 @@
 import 'package:dartopia/rally_point/rally_point.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:models/models.dart';
 
-import '../../consts/images.dart';
+import '../../../consts/images.dart';
 
 class SendTroopsForm extends StatelessWidget {
-  const SendTroopsForm({super.key, this.x, this.y});
+  const SendTroopsForm({super.key, this.tileDetails, required this.onConfirm});
 
-  final int? x;
-  final int? y;
+  final TileDetails? tileDetails;
+  final Function() onConfirm;
+
 
   @override
   Widget build(BuildContext context) {
@@ -16,10 +18,11 @@ class SendTroopsForm extends StatelessWidget {
       builder: (context, state) {
         return state.movements[MovementLocation.home]!.isNotEmpty
             ? BlocProvider(
-                create: (context) => SendTroopsCubit()
-                  ..setX(x ?? 0)
-                  ..setY(y ?? 0),
-                child: const SendTroopsFormView(),
+                create: (context) => SendTroopsCubit(
+                    troopMovementsRepository:
+                        context.read<TroopMovementsRepository>())
+                  ..setTileDetails(tileDetails),
+                child: SendTroopsFormView(onConfirm: onConfirm),
               )
             : Container();
       },
@@ -28,57 +31,71 @@ class SendTroopsForm extends StatelessWidget {
 }
 
 class SendTroopsFormView extends StatelessWidget {
-  const SendTroopsFormView({super.key});
+  const SendTroopsFormView({super.key, required this.onConfirm});
+  final Function() onConfirm;
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 5),
+        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5),
         child: Card(
+          elevation: 5,
           child: BlocBuilder<SendTroopsCubit, SendTroopsState>(
             builder: (context, state) {
-              return Form(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    _buildCoordinates(state.x, state.y, context),
-                    const Divider(),
-                    GridView.count(
-                      padding:
-                          const EdgeInsets.only(left: 40, top: 10, bottom: 10),
-                      crossAxisCount: 2,
-                      childAspectRatio: (5 / 1),
-                      shrinkWrap: true,
-                      scrollDirection: Axis.vertical,
-                      children: [
-                        ...state.units
-                            .asMap()
-                            .entries
-                            .map((e) => Padding(
-                                padding: const EdgeInsets.all(1.0),
-                                child: _buildField(
-                                    e.key, state.units[e.key], context)))
-                            .toList(),
-                      ],
-                    ),
-                    const Divider(),
-                    _buildTargets(
-                        state.target1, state.target2, state.options, context),
-                    const Divider(),
-                    _buildRadioGroup(state.kind, context),
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: IconButton.outlined(
-                          color: Colors.green,
-                          onPressed: () {
-                            context.read<SendTroopsCubit>().submitForm();
-                          },
-                          icon: const Icon(Icons.arrow_forward)),
-                    ),
-                  ],
-                ),
-              );
+              return state.status == SendTroopsStatus.selecting ||
+                      state.status == SendTroopsStatus.processing
+                  ? Form(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          _buildCoordinates(state.tileDetails?.x ?? 0,
+                              state.tileDetails?.y ?? 0, context),
+                          const Divider(),
+                          GridView.count(
+                            padding: const EdgeInsets.only(
+                                left: 40, top: 5, bottom: 5),
+                            crossAxisCount: 2,
+                            childAspectRatio: (4 / 1),
+                            shrinkWrap: true,
+                            scrollDirection: Axis.vertical,
+                            children: [
+                              ...state.units
+                                  .asMap()
+                                  .entries
+                                  .map((e) => Padding(
+                                      padding: const EdgeInsets.all(1.0),
+                                      child: _buildField(
+                                          e.key, state.units[e.key], context)))
+                                  .toList(),
+                            ],
+                          ),
+                          const Divider(),
+                          _buildTargets(state.target1, state.target2,
+                              state.options, context),
+                          const Divider(),
+                          _buildRadioGroup(state.kind, context),
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: IconButton.outlined(
+                                color: Colors.green,
+                                onPressed: () {
+                                  context.read<SendTroopsCubit>().submitForm();
+                                },
+                                icon:
+                                    state.status == SendTroopsStatus.processing
+                                        ? const SizedBox(
+                                            width: 24,
+                                            height: 24,
+                                            child: CircularProgressIndicator())
+                                        : const Icon(
+                                            Icons.arrow_forward,
+                                          )),
+                          ),
+                        ],
+                      ),
+                    )
+                  : ConfirmSendTroops(onConfirm: onConfirm,);
             },
           ),
         ),
@@ -103,7 +120,9 @@ class SendTroopsFormView extends StatelessWidget {
                 width: width * 0.15,
                 child: TextFormField(
                   initialValue: x.toString(),
-                  onChanged: (value) {},
+                  onChanged: (value) {
+                    context.read<SendTroopsCubit>().setX(int.tryParse(value)?? 0);
+                  },
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     contentPadding: EdgeInsets.only(left: 10),
@@ -123,7 +142,9 @@ class SendTroopsFormView extends StatelessWidget {
                 width: width * 0.15,
                 child: TextFormField(
                   initialValue: y.toString(),
-                  onChanged: (value) {},
+                  onChanged: (value) {
+                    context.read<SendTroopsCubit>().setY(int.tryParse(value)?? 0);
+                  },
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     contentPadding: EdgeInsets.only(left: 10),
@@ -141,41 +162,45 @@ class SendTroopsFormView extends StatelessWidget {
   Widget _buildField(int index, int amount, BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final cubit = context.read<SendTroopsCubit>();
-    return Row(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(right: 10),
-          child: Container(
-            width: 24,
-            height: 24,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                alignment: Alignment(-1.0 + 0.224 * index, 0.0),
-                image: const AssetImage(DartopiaImages.troops),
-                // Replace with your actual image path
-                fit: BoxFit.cover,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 5.0),
+      child: Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  alignment: Alignment(-1.0 + 0.224 * index, 0.0),
+                  image: const AssetImage(DartopiaImages.troops),
+                  // Replace with your actual image path
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           ),
-        ),
-        SizedBox(
-          width: width * 0.15,
-          child: TextFormField(
-            onChanged: (value) {
-              cubit.setUnit(index, int.parse(value));
-            },
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              contentPadding: EdgeInsets.only(left: 5),
-              border: OutlineInputBorder(),
+          SizedBox(
+            width: width * 0.15,
+            child: TextFormField(
+              initialValue: amount.toString(),
+              onChanged: (value) {
+                cubit.setUnit(index, int.tryParse(value)?? 0);
+              },
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                contentPadding: EdgeInsets.only(left: 5),
+                border: OutlineInputBorder(),
+              ),
             ),
           ),
-        ),
-        const SizedBox(
-          width: 5,
-        ),
-        SizedBox(width: width * 0.15, child: Text('/ $amount')),
-      ],
+          const SizedBox(
+            width: 5,
+          ),
+          SizedBox(width: width * 0.15, child: Text('/ $amount')),
+        ],
+      ),
     );
   }
 
@@ -235,7 +260,7 @@ class SendTroopsFormView extends StatelessWidget {
       List<String> options, BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

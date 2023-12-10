@@ -12,17 +12,21 @@ import '../cubit/navigation_cubit.dart';
 import '../repository/settlement_repository.dart';
 
 class VillagePage extends StatelessWidget {
-  const VillagePage({super.key});
+  VillagePage({super.key});
+
+  final SettlementRepository _settlementRepository = SettlementRepositoryImpl();
+  final TroopMovementsRepository _movementsRepository =
+      TroopMovementsRepositoryImpl();
 
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider(
-          create: (context) => SettlementRepositoryImpl(),
+          create: (context) => _settlementRepository,
         ),
         RepositoryProvider(
-          create: (context) => TroopMovementsRepositoryImpl(),
+          create: (context) => _movementsRepository,
         ),
       ],
       child: MultiBlocProvider(
@@ -32,14 +36,13 @@ class VillagePage extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) => BuildingsBloc(
-                settlementRepository: context.read<SettlementRepositoryImpl>())
+                settlementRepository: context.read<SettlementRepository>())
               ..add(const SettlementSubscriptionRequested()),
           ),
           BlocProvider(
-            create: (context) => MovementsBloc(
-                movementsRepository:
-                    context.read<TroopMovementsRepositoryImpl>())
-              ..add(const MovementsSubscriptionRequested()),
+            create: (context) =>
+                MovementsBloc(movementsRepository: _movementsRepository)
+                  ..add(const MovementsSubscriptionRequested()),
           )
         ],
         child: const VillageView(),

@@ -4,35 +4,28 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2908424d-9142-47c7-89aa-eee6c5f37d75" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/cubit/send_troops_cubit.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/cubit/send_troops_state.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/form.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/hz.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/send_troops_form.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/models/lib/src/responses/responses.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/packages/models/lib/src/responses/tile_details.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dartopia.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dartopia.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="2908424d-9142-47c7-89aa-eee6c5f37d75" name="Changes" comment="feat: add send troops form">
+      <change afterPath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/view/confirm_send_troops.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/lib/bottom_navbar/bottom_navbar.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/bottom_navbar/bottom_navbar.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/lib/buildings/view/building_widgets/rally_point.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/buildings/view/building_widgets/rally_point.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/lib/rally_point/rally_point.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/rally_point/rally_point.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/lib/common/app_bar/app_bar.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/common/app_bar/app_bar.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/main.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/lib/rally_point/rally_point_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/rally_point/rally_point_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/lib/rally_point/view/widgets/widgets.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/rally_point/view/widgets/widgets.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/lib/village/cubit/navigation_state.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/village/cubit/navigation_state.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/lib/rally_point/repository/troop_movements_repo.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/rally_point/repository/troop_movements_repo.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/cubit/send_troops_cubit.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/cubit/send_troops_cubit.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/cubit/send_troops_state.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/cubit/send_troops_state.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/form.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/view/form.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/send_troops_form.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/send_troops_form.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/lib/rally_point/view/widgets/troop_details.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/rally_point/view/widgets/troop_details.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/lib/village/view/village_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/village/view/village_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/lib/world_map/repository/world_repository.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/world_map/repository/world_repository.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/lib/world_map/view/widgets/map_tile.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/world_map/view/widgets/map_tile.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/lib/world_map/view/world_map_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/world_map/view/world_map_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/models/lib/models.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/models/lib/models.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/models/lib/src/map_tile.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/models/lib/src/responses/map_tile.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/models/lib/src/settlement.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/models/lib/src/settlement.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/repositories/settlement_repository.dart" beforeDir="false" afterPath="$PROJECT_DIR$/server/repositories/settlement_repository.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/routes/settlement/index.dart" beforeDir="false" afterPath="$PROJECT_DIR$/server/routes/settlement/index.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/models/lib/src/movement.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/models/lib/src/movement.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/models/lib/src/requests/requests.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/models/lib/src/requests/requests.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/models/lib/src/requests/send_units_request.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/models/lib/src/requests/send_troops_request.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/routes/settlement/[id]/movements.dart" beforeDir="false" afterPath="$PROJECT_DIR$/server/routes/settlement/[id]/movements.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/routes/settlement/[id]/send_units.dart" beforeDir="false" afterPath="$PROJECT_DIR$/server/routes/settlement/[id]/send_units.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/services/settlements_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/server/services/settlements_service.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/services/world_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/server/services/world_service.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,6 +79,9 @@
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/client/lib/rally_point/send_troops_form" />
     </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/view" />
+    </key>
   </component>
   <component name="RunManager">
     <configuration name="main.dart" type="FlutterRunConfigurationType" factoryName="Flutter" temporary="true" nameIsGenerated="true">
@@ -106,8 +102,17 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1702089414924</updated>
-      <workItem from="1702089416398" duration="609000" />
+      <workItem from="1702089416398" duration="15054000" />
     </task>
+    <task id="LOCAL-00001" summary="feat: add send troops form">
+      <option name="closed" value="true" />
+      <created>1702090253901</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1702090253901</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -115,5 +120,18 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="feat: add send troops form" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: add send troops form" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="Dart">
+          <url>file://$PROJECT_DIR$/client/lib/rally_point/send_troops_form/view/form.dart</url>
+          <line>16</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

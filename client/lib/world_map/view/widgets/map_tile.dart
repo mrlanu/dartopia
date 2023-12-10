@@ -1,3 +1,5 @@
+import 'package:dartopia/buildings/buildings.dart';
+import 'package:dartopia/rally_point/rally_point.dart';
 import 'package:dartopia/world_map/repository/world_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -5,9 +7,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:ui' as ui;
 
 import 'package:models/models.dart';
-
-import '../../../rally_point/bloc/movements_bloc.dart';
-import '../../../rally_point/rally_point_page.dart';
 
 class MapTileWidget extends StatelessWidget {
   final MapTile tile;
@@ -92,9 +91,11 @@ class MapTileWidget extends StatelessWidget {
                 Navigator.of(context).pop();
                 Navigator.of(context).push(RallyPointPage.route(
                     movementsBloc: context.read<MovementsBloc>(),
+                    troopMovementsRepository:
+                        context.read<TroopMovementsRepository>(),
+                    buildingsBloc: context.read<BuildingsBloc>(),
                     tabIndex: 1,
-                    x: tile.corX,
-                    y: tile.corY));
+                    tileDetails: tileDetails));
               },
               icon: const FaIcon(FontAwesomeIcons.khanda)),
         ],

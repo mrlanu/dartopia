@@ -1,17 +1,26 @@
 import 'package:bloc/bloc.dart';
+import 'package:dartopia/rally_point/rally_point.dart';
 import 'package:equatable/equatable.dart';
+import 'package:models/models.dart';
 
 part 'send_troops_state.dart';
 
 class SendTroopsCubit extends Cubit<SendTroopsState> {
-  SendTroopsCubit() : super(const SendTroopsState());
+  SendTroopsCubit({required this.troopMovementsRepository})
+      : super(const SendTroopsState());
 
-  void setX(int x) {
+  final TroopMovementsRepository troopMovementsRepository;
+
+  void setX(int x){
     emit(state.copyWith(x: x));
   }
 
-  void setY(int y) {
+  void setY(int y){
     emit(state.copyWith(y: y));
+  }
+
+  void setTileDetails(TileDetails? tileDetails) {
+    emit(state.copyWith(tileDetails: tileDetails));
   }
 
   void setUnits(List<int> units) {
@@ -32,9 +41,25 @@ class SendTroopsCubit extends Cubit<SendTroopsState> {
     emit(state.copyWith(kind: kind));
   }
 
-  void submitForm() {
-    // Access state.numbers to get the list of numbers
-    print(state.units);
-    // Add your form submission logic here
+  void setStatus(SendTroopsStatus status) {
+    emit(state.copyWith(status: status));
+  }
+
+  Future<void> submitForm() async {
+    emit(state.copyWith(status: SendTroopsStatus.processing));
+    await Future.delayed(const Duration(seconds: 1));
+    if (state.tileDetails == null) {
+      final tile =
+          await troopMovementsRepository.fetchTileDetails(state.x, state.y);
+      emit(state.copyWith(
+          status: SendTroopsStatus.confirming, tileDetails: tile));
+    } else {
+      emit(state.copyWith(status: SendTroopsStatus.confirming));
+    }
+  }
+
+  Future<void> sendTroops() async {
+    final request = SendTroopsRequest(to: state.tileDetails!.id, units: state.units, mission: Mission.raid);
+    await troopMovementsRepository.sendTroops(request, '654eaeb5693f198560bc1e5a');
   }
 }
