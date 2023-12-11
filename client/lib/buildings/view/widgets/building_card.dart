@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:models/models.dart';
 
+import '../../../settlement/settlement.dart';
 import '../../../utils/time_formatter.dart';
 import '../../buildings.dart';
 
@@ -152,7 +153,7 @@ class BuildingCard extends StatelessWidget {
                                         buildingId: specification.id,
                                         position: position,
                                         toLevel: 1);
-                                    context.read<BuildingsBloc>()
+                                    context.read<SettlementBloc>()
                                       ..add(BuildingIndexChanged(
                                           index: position - 14))
                                       ..add(BuildingUpgradeRequested(

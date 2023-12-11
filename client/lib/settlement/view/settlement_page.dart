@@ -5,14 +5,12 @@ import 'package:dartopia/world_map/world_map.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../buildings/buildings.dart';
 import '../../common/common.dart';
 import '../../rally_point/rally_point.dart';
-import '../cubit/navigation_cubit.dart';
-import '../repository/settlement_repository.dart';
+import '../settlement.dart';
 
-class VillagePage extends StatelessWidget {
-  VillagePage({super.key});
+class SettlementPage extends StatelessWidget {
+  SettlementPage({super.key});
 
   final SettlementRepository _settlementRepository = SettlementRepositoryImpl();
   final TroopMovementsRepository _movementsRepository =
@@ -31,13 +29,11 @@ class VillagePage extends StatelessWidget {
       ],
       child: MultiBlocProvider(
         providers: [
+          BlocProvider(create: (context) => NavigationCubit()),
           BlocProvider(
-            create: (context) => NavigationCubit(),
-          ),
-          BlocProvider(
-            create: (context) => BuildingsBloc(
+            create: (context) => SettlementBloc(
                 settlementRepository: context.read<SettlementRepository>())
-              ..add(const SettlementSubscriptionRequested()),
+              ..add(const ListOfSettlementsRequested(userId: 'Nata')),
           ),
           BlocProvider(
             create: (context) =>
@@ -45,14 +41,14 @@ class VillagePage extends StatelessWidget {
                   ..add(const MovementsSubscriptionRequested()),
           )
         ],
-        child: const VillageView(),
+        child: const SettlementView(),
       ),
     );
   }
 }
 
-class VillageView extends StatelessWidget {
-  const VillageView({super.key});
+class SettlementView extends StatelessWidget {
+  const SettlementView({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -10,10 +10,6 @@ import '../../services/settlements_service.dart';
 
 const filePath = 'lock.lock';
 
-final _settlementRepository = SettlementRepositoryMongoImpl();
-final _settlementService =
-    SettlementServiceImpl(settlementRepository: _settlementRepository);
-
 Handler middleware(Handler handler) {
   return handler.use(
     (handler) {
@@ -25,7 +21,7 @@ Handler middleware(Handler handler) {
         return response;
       };
     },
-  ).use(provider<SettlementService>((_) => _settlementService));
+  );
 }
 
 Future<void> _checkAutomation() async {

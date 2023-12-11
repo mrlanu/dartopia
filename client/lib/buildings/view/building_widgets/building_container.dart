@@ -5,7 +5,7 @@ import 'package:models/models.dart';
 
 import '../../../../utils/countdown.dart';
 import '../../../../utils/time_formatter.dart';
-import '../../buildings.dart';
+import '../../../settlement/settlement.dart';
 
 class BuildingContainer extends StatelessWidget {
   final List<int> buildingRecord;
@@ -22,7 +22,7 @@ class BuildingContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BuildingsBloc, BuildingsState>(
+    return BlocBuilder<SettlementBloc, SettlementState>(
       builder: (context, state) {
         final specification = buildingSpecefication[buildingRecord[1]]!;
         final storage = state.settlement!.storage;
@@ -104,7 +104,7 @@ class BuildingContainer extends StatelessWidget {
                                       .inSeconds,
                                   onFinish: () {
                                     context
-                                        .read<BuildingsBloc>()
+                                        .read<SettlementBloc>()
                                         .add(const SettlementFetchRequested());
                                   },
                                 ),
@@ -121,7 +121,7 @@ class BuildingContainer extends StatelessWidget {
                                       buildingId: specification.id,
                                       position: buildingRecord[0],
                                       toLevel: buildingRecord[2] + 1);
-                                  context.read<BuildingsBloc>().add(
+                                  context.read<SettlementBloc>().add(
                                       BuildingUpgradeRequested(
                                           request: request));
                                 }

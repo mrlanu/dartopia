@@ -4,6 +4,9 @@ import 'package:mongo_dart/mongo_dart.dart';
 import '../services/mongo_service.dart';
 
 abstract class SettlementRepository {
+  Future<List<ShortSettlementInfo>> getSettlementsIdByUserId(
+      {required String userId});
+
   Future<Settlement?> saveSettlement(Settlement settlement);
 
   Future<Settlement?> updateSettlement(Settlement settlement);
@@ -30,6 +33,22 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
   final MongoService _mongoService;
 
   @override
+  Future<List<ShortSettlementInfo>> getSettlementsIdByUserId({
+    required String userId,
+  }) =>
+      _mongoService.db
+          .collection('settlements')
+          .find(where.eq('userId', userId))
+          .map(Settlement.fromMap)
+          .map((s) => ShortSettlementInfo(
+              isCapital: true,
+              settlementId: s.id.$oid,
+              name: s.name,
+              x: s.x,
+              y: s.y),)
+          .toList();
+
+  @override
   Future<Settlement?> getById(String id) async {
     final objectId = ObjectId.parse(id);
     final document = await _mongoService.db
@@ -52,13 +71,14 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
         .findOne(where.eq('x', x).and(where.eq('y', y)));
     final settlement = Settlement.fromMap(doc!);
     final tileDetails = TileDetails(
-        id: settlement.id.$oid,
-        playerName: settlement.userId,
-        name: settlement.name,
-        x: settlement.x,
-        y: settlement.y,
-        population: 100,
-        distance: 3,);
+      id: settlement.id.$oid,
+      playerName: settlement.userId,
+      name: settlement.name,
+      x: settlement.x,
+      y: settlement.y,
+      population: 100,
+      distance: 3,
+    );
     return tileDetails;
   }
 

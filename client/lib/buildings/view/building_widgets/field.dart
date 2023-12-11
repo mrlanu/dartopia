@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../settlement/settlement.dart';
 import '../../buildings.dart';
 
 class Field extends StatelessWidget {
@@ -10,7 +11,7 @@ class Field extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BuildingsBloc, BuildingsState>(
+    return BlocBuilder<SettlementBloc, SettlementState>(
       builder: (context, state) {
         return SingleChildScrollView(
           child: Column(

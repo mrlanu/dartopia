@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:models/models.dart';
 
 import '../../consts/consts.dart';
+import '../../settlement/settlement.dart';
 import '../buildings.dart';
 
 class BuildingsPage extends StatelessWidget {
@@ -11,9 +12,9 @@ class BuildingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BuildingsBloc, BuildingsState>(
+    return BlocBuilder<SettlementBloc, SettlementState>(
         builder: (context, state) {
-      return state.status == VillageStatus.loading
+      return state.status == SettlementStatus.loading
           ? const Scaffold(body: Center(child: CircularProgressIndicator()))
           : BuildingsView(
               startBuildingIndex: state.buildingIndex,

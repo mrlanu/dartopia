@@ -1,9 +1,9 @@
-import 'package:dartopia/buildings/bloc/buildings_bloc.dart';
 import 'package:dartopia/consts/images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:models/models.dart';
 
+import '../../../settlement/settlement.dart';
 import '../../../utils/countdown.dart';
 import '../../../utils/utils.dart';
 
@@ -66,7 +66,7 @@ class FieldViewTile extends StatelessWidget {
                           buildingId: buildingRecord[1],
                           position: buildingRecord[0],
                           toLevel: buildingRecord[2] + 1);
-                      context.read<BuildingsBloc>().add(
+                      context.read<SettlementBloc>().add(
                           BuildingUpgradeRequested(request: request));
                     } : null,
                     icon: const Icon(Icons.update)),
@@ -90,7 +90,7 @@ class FieldViewTile extends StatelessWidget {
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         CountdownTimer(startValue: duration, onFinish: () {
-          context.read<BuildingsBloc>().add(const SettlementFetchRequested());
+          context.read<SettlementBloc>().add(const SettlementFetchRequested());
         },),
       ],
     );

@@ -1,4 +1,3 @@
-import 'package:dartopia/buildings/buildings.dart';
 import 'package:dartopia/rally_point/rally_point.dart';
 import 'package:dartopia/world_map/repository/world_repository.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +6,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:ui' as ui;
 
 import 'package:models/models.dart';
+
+import '../../../settlement/settlement.dart';
 
 class MapTileWidget extends StatelessWidget {
   final MapTile tile;
@@ -93,7 +94,7 @@ class MapTileWidget extends StatelessWidget {
                     movementsBloc: context.read<MovementsBloc>(),
                     troopMovementsRepository:
                         context.read<TroopMovementsRepository>(),
-                    buildingsBloc: context.read<BuildingsBloc>(),
+                    buildingsBloc: context.read<SettlementBloc>(),
                     tabIndex: 1,
                     tileDetails: tileDetails));
               },

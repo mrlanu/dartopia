@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:models/models.dart';
 
+import '../../../settlement/settlement.dart';
 import '../../buildings.dart';
 
 class MainBuilding extends StatelessWidget {
@@ -9,7 +10,7 @@ class MainBuilding extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BuildingsBloc, BuildingsState>(
+    return BlocBuilder<SettlementBloc, SettlementState>(
       builder: (context, state) {
         return Center(
             child: BuildingCard(

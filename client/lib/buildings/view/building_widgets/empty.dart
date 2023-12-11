@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:models/models.dart';
 
+import '../../../settlement/settlement.dart';
 import '../../buildings.dart';
 
 class Empty extends StatefulWidget {
@@ -37,7 +38,7 @@ class _EmptyState extends State<Empty> {
         });
       },
       itemBuilder: (context, index) {
-        return Center(child: BlocBuilder<BuildingsBloc, BuildingsState>(
+        return Center(child: BlocBuilder<SettlementBloc, SettlementState>(
           builder: (context, state) {
             return BuildingCard(
                 position: widget.buildingRecord[0],

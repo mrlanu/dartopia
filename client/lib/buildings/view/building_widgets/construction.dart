@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:models/models.dart';
 
+import '../../../settlement/settlement.dart';
 import '../../../utils/countdown.dart';
-import '../../buildings.dart';
 
 class Construction extends StatelessWidget {
   final List<int> buildingRecord;
@@ -12,7 +12,7 @@ class Construction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BuildingsBloc, BuildingsState>(
+    return BlocBuilder<SettlementBloc, SettlementState>(
       builder: (context, state) {
         final upgradingTask = state.settlement!.constructionTasks
             .where((task) => task.position == buildingRecord[0])
@@ -48,7 +48,7 @@ class Construction extends StatelessWidget {
                                 .inSeconds,
                             onFinish: () {
                               context
-                                  .read<BuildingsBloc>()
+                                  .read<SettlementBloc>()
                                   .add(const SettlementFetchRequested());
                             },
                             textStyle: Theme.of(context).textTheme.titleLarge,

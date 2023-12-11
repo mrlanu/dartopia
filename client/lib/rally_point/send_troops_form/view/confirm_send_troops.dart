@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:models/models.dart';
 
+import '../../../settlement/settlement.dart';
+
 class ConfirmSendTroops extends StatelessWidget {
   const ConfirmSendTroops({super.key, required this.onConfirm});
 
@@ -17,7 +19,7 @@ class ConfirmSendTroops extends StatelessWidget {
         child: BlocBuilder<SendTroopsCubit, SendTroopsState>(
           builder: (context, state) {
             final currentSettlement =
-                context.read<BuildingsBloc>().state.settlement!;
+                context.read<SettlementBloc>().state.settlement!;
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

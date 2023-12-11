@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:models/models.dart';
 
+import '../settlement/settlement.dart';
 import 'rally_point.dart';
 
 class RallyPointPage extends StatelessWidget {
@@ -15,7 +16,7 @@ class RallyPointPage extends StatelessWidget {
   final TileDetails? tileDetails;
 
   static Route<void> route(
-      {required BuildingsBloc buildingsBloc, // for getting current settlement info
+      {required SettlementBloc buildingsBloc, // for getting current settlement info
       required MovementsBloc movementsBloc,
       required TroopMovementsRepository troopMovementsRepository,
       int tabIndex = 1,
