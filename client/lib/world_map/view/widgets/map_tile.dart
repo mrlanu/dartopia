@@ -94,7 +94,7 @@ class MapTileWidget extends StatelessWidget {
                     movementsBloc: context.read<MovementsBloc>(),
                     troopMovementsRepository:
                         context.read<TroopMovementsRepository>(),
-                    buildingsBloc: context.read<SettlementBloc>(),
+                    settlementBloc: context.read<SettlementBloc>(),
                     tabIndex: 1,
                     tileDetails: tileDetails));
               },

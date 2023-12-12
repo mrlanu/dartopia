@@ -283,5 +283,5 @@ class Settlement extends Equatable {
   }
 
   @override
-  List<Object?> get props => [storage, buildings, constructionTasks];
+  List<Object?> get props => [id, storage, buildings, constructionTasks];
 }

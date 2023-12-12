@@ -1,4 +1,3 @@
-import 'package:dartopia/buildings/buildings.dart';
 import 'package:dartopia/common/common.dart';
 import 'package:dartopia/consts/consts.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +15,7 @@ class RallyPointPage extends StatelessWidget {
   final TileDetails? tileDetails;
 
   static Route<void> route(
-      {required SettlementBloc buildingsBloc, // for getting current settlement info
+      {required SettlementBloc settlementBloc, // for getting current settlement info
       required MovementsBloc movementsBloc,
       required TroopMovementsRepository troopMovementsRepository,
       int tabIndex = 1,
@@ -26,7 +25,7 @@ class RallyPointPage extends StatelessWidget {
         value: troopMovementsRepository,
         child: MultiBlocProvider(
           providers: [
-            BlocProvider.value(value: buildingsBloc),
+            BlocProvider.value(value: settlementBloc),
             BlocProvider.value(value: movementsBloc),
           ],
           child: RallyPointPage(

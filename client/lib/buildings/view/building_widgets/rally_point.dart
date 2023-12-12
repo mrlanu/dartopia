@@ -19,7 +19,7 @@ class RallyPoint extends StatelessWidget {
       enterable: true,
       onEnter: () => Navigator.of(context).push(RallyPointPage.route(
           troopMovementsRepository: context.read<TroopMovementsRepository>(),
-          buildingsBloc: context.read<SettlementBloc>(),
+          settlementBloc: context.read<SettlementBloc>(),
           movementsBloc: context.read<MovementsBloc>())),
       child: (settlement, buildingRecord) {
         return const Column(

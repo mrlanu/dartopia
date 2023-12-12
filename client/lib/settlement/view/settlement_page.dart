@@ -60,9 +60,21 @@ class SettlementView extends StatelessWidget {
           backgroundColor: background,
           appBar: buildAppBar(),
           drawer: const Drawer(),
-          body: IndexedStack(
-            index: selectedTab.index,
-            children: [const BuildingsPage(), WorldMapPage(), const Scaffold()],
+          body: BlocListener<SettlementBloc, SettlementState>(
+            listenWhen: (previous, current) =>
+                previous.settlement != current.settlement,
+            listener: (context, state) {
+              context.read<MovementsBloc>().add(MovementsFetchRequested(
+                  settlementId: state.settlement!.id.$oid));
+            },
+            child: IndexedStack(
+              index: selectedTab.index,
+              children: [
+                const BuildingsPage(),
+                WorldMapPage(),
+                const Scaffold()
+              ],
+            ),
           ),
           bottomNavigationBar: const BottomNavBar()),
     );

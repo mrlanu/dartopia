@@ -11,11 +11,11 @@ class SendTroopsCubit extends Cubit<SendTroopsState> {
 
   final TroopMovementsRepository troopMovementsRepository;
 
-  void setX(int x){
+  void setX(int x) {
     emit(state.copyWith(x: x));
   }
 
-  void setY(int y){
+  void setY(int y) {
     emit(state.copyWith(y: y));
   }
 
@@ -47,7 +47,6 @@ class SendTroopsCubit extends Cubit<SendTroopsState> {
 
   Future<void> submitForm() async {
     emit(state.copyWith(status: SendTroopsStatus.processing));
-    await Future.delayed(const Duration(seconds: 1));
     if (state.tileDetails == null) {
       final tile =
           await troopMovementsRepository.fetchTileDetails(state.x, state.y);
@@ -58,8 +57,10 @@ class SendTroopsCubit extends Cubit<SendTroopsState> {
     }
   }
 
-  Future<void> sendTroops() async {
-    final request = SendTroopsRequest(to: state.tileDetails!.id, units: state.units, mission: Mission.raid);
-    await troopMovementsRepository.sendTroops(request, '654eaeb5693f198560bc1e5a');
+  Future<void> sendTroops({required String currentSettlementId}) async {
+    final request = SendTroopsRequest(
+        to: state.tileDetails!.id, units: state.units, mission: Mission.raid);
+    await troopMovementsRepository.sendTroops(
+        request, currentSettlementId);
   }
 }

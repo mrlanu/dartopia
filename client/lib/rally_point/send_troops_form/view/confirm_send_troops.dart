@@ -1,4 +1,3 @@
-import 'package:dartopia/buildings/buildings.dart';
 import 'package:dartopia/rally_point/rally_point.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -92,10 +91,18 @@ class ConfirmSendTroops extends StatelessWidget {
                       IconButton.outlined(
                           color: Colors.green,
                           onPressed: () async {
-                            await context.read<SendTroopsCubit>().sendTroops();
-                            context.read<MovementsBloc>().add(
-                                const MovementsFetchRequested(
-                                    settlementId: '654eaeb5693f198560bc1e5a'));
+                            final movBloc = context.read<MovementsBloc>();
+                            final settlementId = context
+                                .read<SettlementBloc>()
+                                .state
+                                .settlement!
+                                .id
+                                .$oid;
+                            await context
+                                .read<SendTroopsCubit>()
+                                .sendTroops(currentSettlementId: settlementId);
+                            movBloc.add(MovementsFetchRequested(
+                                settlementId: settlementId));
                             onConfirm();
                           },
                           icon: const Icon(
