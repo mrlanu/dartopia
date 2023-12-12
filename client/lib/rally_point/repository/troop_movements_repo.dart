@@ -22,14 +22,14 @@ class TroopMovementsRepositoryImpl implements TroopMovementsRepository {
 
   @override
   Future<void> sendTroops(SendTroopsRequest request, String fromSettlementId) async {
-    final url = Uri.http(baseURL, 'settlement/$fromSettlementId/send_units');
-    final response = await http.post(url, body: json.encode(request));
+    final url = Uri.http(Api.baseURL, Api.sendTroops(fromSettlementId));
+    await http.post(url, body: json.encode(request));
   }
 
 
   @override
   Future<void> fetchMovements(String settlementId) async {
-    final url = Uri.http(baseURL, 'settlement/$settlementId/movements');
+    final url = Uri.http(Api.baseURL, Api.fetchMovements(settlementId));
     final response = await http.get(url);
     final movementsList = json.decode(response.body) as List<dynamic>;
     final movements = movementsList
@@ -40,7 +40,7 @@ class TroopMovementsRepositoryImpl implements TroopMovementsRepository {
 
   @override
   Future<TileDetails> fetchTileDetails(int x, int y,) async {
-    final url = Uri.http(baseURL, 'settlement', {
+    final url = Uri.http(Api.baseURL, 'settlement', {
       'x': x.toString(),
       'y': y.toString(),
     });

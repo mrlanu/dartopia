@@ -13,7 +13,7 @@ abstract class WorldRepository {
 class WorldRepositoryImpl implements WorldRepository {
   @override
   Future<List<MapTile>> fetchPartOfWorld(int fromX, int toX, int fromY, int toY) async {
-    final url = Uri.http(baseURL, 'world', {
+    final url = Uri.http(Api.baseURL, 'world', {
       'fromX': fromX.toString(),
       'toX': toX.toString(),
       'fromY': fromY.toString(),
@@ -29,7 +29,7 @@ class WorldRepositoryImpl implements WorldRepository {
 
   @override
   Future<TileDetails> fetchTileDetails(int x, int y,) async {
-    final url = Uri.http(baseURL, 'settlement', {
+    final url = Uri.http(Api.baseURL, 'settlement', {
       'x': x.toString(),
       'y': y.toString(),
     });

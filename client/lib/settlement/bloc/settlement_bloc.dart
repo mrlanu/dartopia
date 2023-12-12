@@ -43,7 +43,7 @@ class SettlementBloc extends Bloc<SettlementEvent, SettlementState> {
           return _settlementUpdated(settlement).copyWith(
               status: SettlementStatus.success, settlement: settlement);
         } else {
-          _villageRepository.fetchSettlement(state.settlementList[0].settlementId);
+          _villageRepository.fetchSettlementById(state.settlementList[0].settlementId);
           return state.copyWith(status: SettlementStatus.loading);
         }
       },
@@ -55,7 +55,7 @@ class SettlementBloc extends Bloc<SettlementEvent, SettlementState> {
 
   Future<void> _onSettlementFetchRequested(
       SettlementFetchRequested event, Emitter<SettlementState> emi) async {
-    await _villageRepository.fetchSettlement(state.settlementList[0].settlementId);
+    await _villageRepository.fetchSettlementById(state.settlementList[0].settlementId);
   }
 
   Future<void> _onBuildingUpgradeRequested(
