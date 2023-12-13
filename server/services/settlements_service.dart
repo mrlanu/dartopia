@@ -7,7 +7,8 @@ import '../config/config.dart';
 import '../repositories/settlement_repository.dart';
 
 abstract class SettlementService {
-  Future<List<ShortSettlementInfo>> getSettlementsIdByUserId({required String userId});
+  Future<List<ShortSettlementInfo>> getSettlementsIdByUserId(
+      {required String userId,});
 
   Future<Settlement?> fetchSettlementById({required String settlementId});
 
@@ -58,7 +59,8 @@ class SettlementServiceImpl extends SettlementService {
   final SettlementRepository _settlementRepository;
 
   @override
-  Future<List<ShortSettlementInfo>> getSettlementsIdByUserId({required String userId}) =>
+  Future<List<ShortSettlementInfo>> getSettlementsIdByUserId(
+          {required String userId}) =>
       _settlementRepository.getSettlementsIdByUserId(userId: userId);
 
   @override
@@ -295,19 +297,25 @@ class SettlementServiceImpl extends SettlementService {
       villageId: sender!.id.$oid,
       villageName: sender.name,
       playerName: sender.userId,
-      coordinates: [90, 90],
+      coordinates: [sender.x, sender.y],
     );
     final toSide = SideBrief(
       villageId: receiver!.id.$oid,
       villageName: receiver.name,
       playerName: receiver.userId,
-      coordinates: [77, 55],
+      coordinates: [receiver.x, receiver.y],
     );
     final movement = Movement(
       id: ObjectId(),
+      units: request.units,
       from: fromSide,
       to: toSide,
-      when: DateTime.now().add(const Duration(hours: 2)),
+      when: _getArrivalTime(
+          _getDistance(toSide.coordinates[0], toSide.coordinates[1],
+              fromSide.coordinates[0], fromSide.coordinates[1],),
+          7,), // should be changed for real speed of slowest unit
+      // in units,
+      // and change in the confirm_send_troops on the client as well
       mission: request.mission,
     );
     return _settlementRepository.sendUnits(movement);
@@ -350,5 +358,18 @@ class SettlementServiceImpl extends SettlementService {
       when: DateTime.now(),
       mission: Mission.home,
     );
+  }
+
+  DateTime _getArrivalTime(double distance, int speed) {
+    final hours = distance / speed;
+    final seconds = (hours * 3600).round();
+    final arrivalDateTime = DateTime.now().add(Duration(seconds: seconds));
+    return arrivalDateTime;
+  }
+
+  double _getDistance(int x, int y, int fromX, int fromY) {
+    final legX = pow(x - fromX, 2);
+    final legY = pow(y - fromY, 2);
+    return sqrt(legX + legY);
   }
 }

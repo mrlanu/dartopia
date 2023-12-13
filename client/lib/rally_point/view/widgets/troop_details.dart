@@ -1,9 +1,8 @@
 import 'package:dartopia/consts/images.dart';
+import 'package:dartopia/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:models/models.dart';
-
-import '../../../../../utils/countdown.dart';
 
 class TroopDetails extends StatelessWidget {
   const TroopDetails(
@@ -198,8 +197,8 @@ class TroopDetails extends StatelessWidget {
     );
   }
 
-  Widget _forthRow(bool isEstimate,
-      double maxWidth, Color backgroundColor, DateTime? arrivalTime) {
+  Widget _forthRow(bool isEstimate, double maxWidth, Color backgroundColor,
+      DateTime? arrivalTime) {
     return Row(
       children: [
         Container(
@@ -229,43 +228,58 @@ class TroopDetails extends StatelessWidget {
                   // Skip the right side border
                 ),
               ),
-              child: isEstimate ?
-              const Text('Estimate') :
-              movement.isMoving
-                  ? Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8.0, vertical: 0.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
+              child: isEstimate // USED on send troops confirmation form
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                            ' in ${FormatUtil.formatTime(movement.when.difference(DateTime.now()).inSeconds)}'),
+                        Row(
+                          children: [
+                            const Text('at '),
+                            CountUp(startTime: movement.when),
+                            const SizedBox(
+                              width: 6,
+                            )
+                          ],
+                        ),
+                      ],
+                    )
+                  : movement.isMoving
+                      ? Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0, vertical: 0.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text('in '),
-                              CountdownTimer(
-                                startValue: movement.when
-                                    .difference(DateTime.now())
-                                    .inSeconds,
-                                onFinish: () {},
+                              Row(
+                                children: [
+                                  const Text('in '),
+                                  CountdownTimer(
+                                    startValue: movement.when
+                                        .difference(DateTime.now())
+                                        .inSeconds,
+                                    onFinish: () {},
+                                  ),
+                                ],
                               ),
+                              Text(
+                                  'at ${DateFormat('HH:mm:ss').format(movement.when.subtract(const Duration(hours: 6)))}'),
                             ],
                           ),
-                          Text(
-                              'at ${DateFormat('HH:mm:ss').format(movement.when.subtract(const Duration(hours: 6)))}'),
-                        ],
-                      ),
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text('6'),
-                        Image.asset(
-                          DartopiaImages.crop,
-                          width: 16,
-                          height: 16,
-                        ),
-                        const Text('hour'),
-                      ],
-                    )),
+                        )
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text('6'),
+                            Image.asset(
+                              DartopiaImages.crop,
+                              width: 16,
+                              height: 16,
+                            ),
+                            const Text('hour'),
+                          ],
+                        )),
         ),
       ],
     );

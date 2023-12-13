@@ -31,14 +31,14 @@ class Movement {
   Movement.sendConfirmation(
       {required List<int> units,
       required int mission,
+      required DateTime when,
       required SideBrief from,
-      required SideBrief to,
-      required double distance})
+      required SideBrief to,})
       : id = ObjectId(),
         isMoving = true,
         from = from,
         to = to,
-        when = DateTime.now().add(Duration(minutes: 5)),
+        when = when,
         units = units,
         mission = Mission.raid;
 

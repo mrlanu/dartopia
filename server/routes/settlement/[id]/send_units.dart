@@ -35,10 +35,10 @@ Future<Response> _post(RequestContext context, String settlementId) async {
   final request = SendTroopsRequest.fromMap(
     await context.request.json() as Map<String, dynamic>,
   );
-  final result = await settlementService.sendUnits(fromId: settlementId, request: request);
+  final result =
+      await settlementService.sendUnits(fromId: settlementId, request: request);
   return Response.json(
-    statusCode:
-    result ? HttpStatus.created : HttpStatus.internalServerError,
+    statusCode: result ? HttpStatus.created : HttpStatus.internalServerError,
     body: 'Units has been sent.',
   );
 }

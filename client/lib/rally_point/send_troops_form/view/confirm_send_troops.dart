@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dartopia/rally_point/rally_point.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -52,7 +54,16 @@ class ConfirmSendTroops extends StatelessWidget {
                     movement: Movement.sendConfirmation(
                         mission: 1,
                         units: state.units,
-                        distance: 1,
+                        when: _getArrivalTime(
+                            _getDistance(
+                              state.tileDetails!.x,
+                              state.tileDetails!.y,
+                              currentSettlement.x,
+                              currentSettlement.y,
+                            ),
+                            7), // should be changed for real speed of slowest unit
+                        // in units,
+                        // and change in the settlementService on the server as well
                         from: SideBrief(
                             villageId: currentSettlement.id.$oid,
                             coordinates: [
@@ -117,5 +128,18 @@ class ConfirmSendTroops extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  DateTime _getArrivalTime(double distance, int speed) {
+    final double hours = distance / speed;
+    final int seconds = (hours * 3600).round();
+    DateTime arrivalDateTime = DateTime.now().add(Duration(seconds: seconds));
+    return arrivalDateTime;
+  }
+
+  double _getDistance(int x, int y, int fromX, int fromY) {
+    var legX = pow(x - fromX, 2);
+    var legY = pow(y - fromY, 2);
+    return sqrt(legX + legY);
   }
 }

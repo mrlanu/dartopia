@@ -3,10 +3,8 @@ import 'dart:isolate';
 
 import 'package:dart_frog/dart_frog.dart';
 
-import '../../repositories/settlement_repository.dart';
 import '../../services/automation.dart';
 import '../../services/mongo_service.dart';
-import '../../services/settlements_service.dart';
 
 const filePath = 'lock.lock';
 
