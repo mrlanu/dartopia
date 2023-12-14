@@ -1,6 +1,8 @@
 import 'package:dartopia/consts/images.dart';
+import 'package:dartopia/settlement/bloc/settlement_bloc.dart';
 import 'package:dartopia/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:models/models.dart';
 
@@ -26,7 +28,7 @@ class TroopDetails extends StatelessWidget {
             _secondRow(constraints.maxWidth),
             _thirdRow(constraints.maxWidth),
             _forthRow(isEstimate, constraints.maxWidth,
-                const Color.fromRGBO(215, 215, 215, 1.0), movement.when),
+                const Color.fromRGBO(215, 215, 215, 1.0), movement.when, context),
           ],
         ),
       ),
@@ -198,7 +200,7 @@ class TroopDetails extends StatelessWidget {
   }
 
   Widget _forthRow(bool isEstimate, double maxWidth, Color backgroundColor,
-      DateTime? arrivalTime) {
+      DateTime? arrivalTime, BuildContext context) {
     return Row(
       children: [
         Container(
@@ -229,57 +231,71 @@ class TroopDetails extends StatelessWidget {
                 ),
               ),
               child: isEstimate // USED on send troops confirmation form
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                            ' in ${FormatUtil.formatTime(movement.when.difference(DateTime.now()).inSeconds)}'),
-                        Row(
-                          children: [
-                            const Text('at '),
-                            CountUp(startTime: movement.when),
-                            const SizedBox(
-                              width: 6,
-                            )
-                          ],
-                        ),
-                      ],
-                    )
+                  ? _buildRowForEstimateArrival()
                   : movement.isMoving
-                      ? Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0, vertical: 0.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  const Text('in '),
-                                  CountdownTimer(
-                                    startValue: movement.when
-                                        .difference(DateTime.now())
-                                        .inSeconds,
-                                    onFinish: () {},
-                                  ),
-                                ],
-                              ),
-                              Text(
-                                  'at ${DateFormat('HH:mm:ss').format(movement.when.subtract(const Duration(hours: 6)))}'),
-                            ],
-                          ),
-                        )
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text('6'),
-                            Image.asset(
-                              DartopiaImages.crop,
-                              width: 16,
-                              height: 16,
-                            ),
-                            const Text('hour'),
-                          ],
-                        )),
+                      ? _buildRowForMovingUnits(context)
+                      : _buildRowForStaticUnits()),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRowForMovingUnits(BuildContext context){
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+          horizontal: 8.0, vertical: 0.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              const Text('in '),
+              CountdownTimer(
+                startValue: movement.when
+                    .difference(DateTime.now())
+                    .inSeconds,
+                onFinish: () {
+                  context.read<SettlementBloc>().add(const SettlementFetchRequested());
+                },
+              ),
+            ],
+          ),
+          Text(
+              'at ${DateFormat('HH:mm:ss').format(movement.when.subtract(const Duration(hours: 6)))}'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRowForStaticUnits(){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text('6'),
+        Image.asset(
+          DartopiaImages.crop,
+          width: 16,
+          height: 16,
+        ),
+        const Text('hour'),
+      ],
+    );
+  }
+
+  Widget _buildRowForEstimateArrival(){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+            ' in ${FormatUtil.formatTime(movement.when.difference(DateTime.now()).inSeconds)}'),
+        Row(
+          children: [
+            const Text('at '),
+            CountUp(startTime: movement.when),
+            const SizedBox(
+              width: 6,
+            )
+          ],
         ),
       ],
     );

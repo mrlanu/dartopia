@@ -313,7 +313,7 @@ class SettlementServiceImpl extends SettlementService {
       when: _getArrivalTime(
           _getDistance(toSide.coordinates[0], toSide.coordinates[1],
               fromSide.coordinates[0], fromSide.coordinates[1],),
-          7,), // should be changed for real speed of slowest unit
+          300,), // should be changed for real speed of slowest unit
       // in units,
       // and change in the confirm_send_troops on the client as well
       mission: request.mission,

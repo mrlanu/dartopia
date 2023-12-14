@@ -4,14 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2908424d-9142-47c7-89aa-eee6c5f37d75" name="Changes" comment="refactor(client): api">
-      <change afterPath="$PROJECT_DIR$/client/lib/utils/count_up.dart" afterDir="false" />
+    <list default="true" id="2908424d-9142-47c7-89aa-eee6c5f37d75" name="Changes" comment="refactor(client): send troops confirmation">
+      <change afterPath="$PROJECT_DIR$/server/utils/dartopia_logger.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/view/confirm_send_troops.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/view/confirm_send_troops.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/lib/rally_point/view/widgets/troop_details.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/rally_point/view/widgets/troop_details.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/lib/utils/utils.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/utils/utils.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/models/lib/src/movement.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/models/lib/src/movement.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/routes/settlement/[id]/send_units.dart" beforeDir="false" afterPath="$PROJECT_DIR$/server/routes/settlement/[id]/send_units.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/server/pubspec.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/routes/settlement/_middleware.dart" beforeDir="false" afterPath="$PROJECT_DIR$/server/routes/settlement/_middleware.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/services/settlements_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/server/services/settlements_service.dart" afterDir="false" />
     </list>
@@ -43,29 +42,29 @@
     <option name="sortByType" value="true" />
     <option name="sortKey" value="BY_TYPE" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Dart Command Line App.main.dart.executor": "Run",
-    "Flutter.main.dart.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "dart.analysis.tool.window.visible": "false",
-    "io.flutter.reload.alreadyRun": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/mrlanu/development/dart/dartopia/server/routes/settlement/[id]",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "show.migrate.to.gradle.popup": "false",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Dart Command Line App.main.dart.executor&quot;: &quot;Run&quot;,
+    &quot;Flutter.main.dart.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;io.flutter.reload.alreadyRun&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/mrlanu/development/dart/dartopia&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/server/routes/settlement/[id]" />
@@ -100,7 +99,13 @@
       <workItem from="1702257071922" duration="6405000" />
       <workItem from="1702420033555" duration="914000" />
       <workItem from="1702421395893" duration="60000" />
-      <workItem from="1702421463456" duration="7317000" />
+      <workItem from="1702421463456" duration="9138000" />
+      <workItem from="1702518187345" duration="55000" />
+      <workItem from="1702518260806" duration="8000" />
+      <workItem from="1702518274596" duration="993000" />
+      <workItem from="1702519504262" duration="868000" />
+      <workItem from="1702523503929" duration="16000" />
+      <workItem from="1702523528984" duration="5252000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add send troops form">
       <option name="closed" value="true" />
@@ -142,7 +147,15 @@
       <option name="project" value="LOCAL" />
       <updated>1702419468999</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="refactor(client): send troops confirmation">
+      <option name="closed" value="true" />
+      <created>1702490281680</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1702490281680</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -155,7 +168,8 @@
     <MESSAGE value="refactor(client): some imports" />
     <MESSAGE value="refactor(client): hardcoded settlementId" />
     <MESSAGE value="refactor(client): api" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor(client): api" />
+    <MESSAGE value="refactor(client): send troops confirmation" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor(client): send troops confirmation" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

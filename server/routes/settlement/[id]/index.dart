@@ -5,6 +5,7 @@ import 'package:dart_frog/dart_frog.dart';
 import 'package:models/models.dart';
 
 import '../../../services/settlements_service.dart';
+import '../../../utils/my_logger.dart';
 
 
 
@@ -34,7 +35,7 @@ FutureOr<Response> onRequest(RequestContext context, String id) async {
 }
 
 Future<Response> _get(RequestContext context, Settlement settlement) async {
-  print('Response has been sent for ID: ${settlement.id}');
+  //MyLogger.info('Response has been sent for ID: ${settlement.id}');
   return Response.json(
       body: settlement.toJson(),);
 }

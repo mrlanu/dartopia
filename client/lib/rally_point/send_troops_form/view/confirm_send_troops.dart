@@ -61,7 +61,7 @@ class ConfirmSendTroops extends StatelessWidget {
                               currentSettlement.x,
                               currentSettlement.y,
                             ),
-                            7), // should be changed for real speed of slowest unit
+                            300), // should be changed for real speed of slowest unit
                         // in units,
                         // and change in the settlementService on the server as well
                         from: SideBrief(

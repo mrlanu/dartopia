@@ -1,4 +1,5 @@
 import 'package:mongo_dart/mongo_dart.dart';
+
 import '../config/config.dart';
 
 class MongoService {
@@ -16,7 +17,7 @@ class MongoService {
   Future<void> initializeMongo() async {
     _db = Db(Config.mongoDBUrl);
     await _db.open();
-    print('MongoDB connection opened.');
+    //MyLogger.debug('MongoDB connection opened.');
   }
 
   Db get db => _db;
@@ -24,7 +25,7 @@ class MongoService {
   Future<void> closeDb() async {
     if (_db.isConnected == true) {
       await _db.close();
-      print('MongoDB connection closed.');
+      //MyLogger.debug('MongoDB connection closed.');
     }
   }
 

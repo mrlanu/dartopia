@@ -5,6 +5,7 @@ import 'package:dart_frog/dart_frog.dart';
 
 import '../../services/automation.dart';
 import '../../services/mongo_service.dart';
+import '../../utils/my_logger.dart';
 
 const filePath = 'lock.lock';
 
@@ -12,8 +13,11 @@ Handler middleware(Handler handler) {
   return handler.use(
     (handler) {
       return (context) async {
+        MyLogger.debug(
+            'Got request: ${context.request.method.value} '
+                '${context.request.uri.path}',);
         if (context.request.method == HttpMethod.get) {
-          await _checkAutomation();
+          await _checkAutomation(context.request.uri.path);
         }
         final response = await handler(context);
         return response;
@@ -22,10 +26,10 @@ Handler middleware(Handler handler) {
   );
 }
 
-Future<void> _checkAutomation() async {
+Future<void> _checkAutomation(String initiatorId) async {
   final file = File(filePath);
   if (!file.existsSync()) {
-    print('Automation started');
+    MyLogger.debug('Automation started by $initiatorId');
     file.createSync();
     await Isolate.run(_performAutomation);
   } else {
@@ -43,25 +47,9 @@ Future<void> _performAutomation() async {
   final stopwatch = Stopwatch()..start();
   await MongoService.instance.initializeMongo();
 
-  //simulate some heavy calculation
-  /*for (var i = 0; i < 5; i++) {
-   _computeFactorial(35435);
-  }*/
-
-  //await automationMain();
-
   await Automation().main();
-
   File(filePath).deleteSync();
   stopwatch.stop();
-  print(
-      'Automation completed. Elapsed time: ${stopwatch.elapsedMilliseconds} ms');
-}
-
-BigInt _computeFactorial(int n) {
-  var tempResult = BigInt.one;
-  for (var i = n; i > 0; i--) {
-    tempResult = tempResult * BigInt.from(i);
-  }
-  return tempResult;
+  MyLogger.debug('Automation completed. Elapsed time: '
+      '${stopwatch.elapsedMilliseconds} ms');
 }
