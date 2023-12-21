@@ -11,9 +11,8 @@ part 'world_event.dart';
 part 'world_state.dart';
 
 class WorldBloc extends Bloc<WorldEvent, WorldState> {
-  WorldBloc({required this.worldRepository})
-      : super(const WorldState()) {
-    on<WorldFetched>(_onWorldFetched);
+  WorldBloc({required this.worldRepository}) : super(const WorldState()) {
+    on<WorldFetchRequested>(_onWorldFetchRequested);
     on<CenterRequested>(
       _centerRequested,
     );
@@ -34,15 +33,14 @@ class WorldBloc extends Bloc<WorldEvent, WorldState> {
   final WorldRepository worldRepository;
 
   Future<void> _centerRequested(
-      CenterRequested event,
-      Emitter<WorldState> emit,
-      ) async {
-    final tiles = await _fetchTiles(worldWidth ~/ 2, worldWidth ~/ 2);
+    CenterRequested event,
+    Emitter<WorldState> emit,
+  ) async {
+    final tiles = await _fetchTiles(state.initX, state.initY);
     emit(
       state.copyWith(
-        status: WorldStatus.success,
-        currentX: worldWidth ~/ 2,
-        currentY: worldWidth ~/ 2,
+        currentX: state.initX,
+        currentY: state.initY,
         tiles: tiles,
       ),
     );
@@ -116,14 +114,18 @@ class WorldBloc extends Bloc<WorldEvent, WorldState> {
     );
   }
 
-  Future<void> _onWorldFetched(
-    WorldFetched event,
+  Future<void> _onWorldFetchRequested(
+    WorldFetchRequested event,
     Emitter<WorldState> emit,
   ) async {
-    final tiles = await _fetchTiles(state.currentX, state.currentY);
+    final tiles = await _fetchTiles(event.x, event.y);
     emit(
       state.copyWith(
         status: WorldStatus.success,
+        initX: event.x,
+        initY: event.y,
+        currentX: event.x,
+        currentY: event.y,
         tiles: tiles,
       ),
     );

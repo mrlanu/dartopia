@@ -1,6 +1,7 @@
 import 'package:mongo_dart/mongo_dart.dart';
 
 import '../repositories/settlement_repository.dart';
+import '../utils/my_logger.dart';
 import 'mongo_service.dart';
 import 'settlements_service.dart';
 
@@ -16,8 +17,8 @@ class Automation {
     final mongo = MongoService.instance;
     final movements = await _settlementService.getMovementsBeforeNow();
 
+    MyLogger.debug('Perform attacks: ${movements.length}');
     for (final m in movements) {
-      print('Perform attacks...');
       final offense = await _settlementService.recalculateState(
         settlementId: m.from.villageId,
         untilDateTime: m.when,
@@ -34,7 +35,8 @@ class Automation {
         settlement: defense!
             .copyWith(storage: defense.storage.map((e) => e - 100).toList()),
       );
-      print('Attack from ${m.from} to ${m.to} has been performed');
+      MyLogger.debug('Attack from ${m.from.villageId} '
+          'to ${m.to.villageId} has been performed');
       await mongo.db.collection('movements').deleteOne(where.id(m.id));
     }
 

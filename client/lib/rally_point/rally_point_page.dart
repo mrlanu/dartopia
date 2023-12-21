@@ -18,7 +18,7 @@ class RallyPointPage extends StatelessWidget {
       {required SettlementBloc settlementBloc, // for getting current settlement info
       required MovementsBloc movementsBloc,
       required TroopMovementsRepository troopMovementsRepository,
-      int tabIndex = 1,
+      int tabIndex = 0,
       TileDetails? tileDetails}) {
     return MaterialPageRoute(builder: (context) {
       return RepositoryProvider.value(
@@ -39,6 +39,8 @@ class RallyPointPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settlementId = context.read<SettlementBloc>().state.settlement!.id.$oid;
+    context.read<MovementsBloc>().add(MovementsFetchRequested(settlementId: settlementId));
     return RallyPointView(
       initialTabIndex: tabIndex,
       tileDetails: tileDetails,

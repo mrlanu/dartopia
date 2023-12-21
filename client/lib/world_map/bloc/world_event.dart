@@ -22,6 +22,11 @@ final class YDecremented extends WorldEvent {
   YDecremented();
 }
 
-final class WorldFetched extends WorldEvent {
-  WorldFetched();
+final class WorldFetchRequested extends WorldEvent {
+  WorldFetchRequested({required this.x, required this.y});
+  final int x;
+  final int y;
+
+  @override
+  List<Object> get props => [x, y];
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dartopia/consts/consts.dart';
+import 'package:dartopia/settlement/bloc/settlement_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,11 +18,13 @@ class WorldMapPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentSettlement = context.read<SettlementBloc>().state.settlement!;
     return RepositoryProvider(
       create: (context) => worldRepo,
       child: BlocProvider(
-        create: (context) =>
-            WorldBloc(worldRepository: worldRepo)..add(WorldFetched()),
+        create: (context) => WorldBloc(worldRepository: worldRepo)
+          ..add(WorldFetchRequested(
+              x: currentSettlement.x, y: currentSettlement.y)),
         child: const WorldView(),
       ),
     );

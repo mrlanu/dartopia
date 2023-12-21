@@ -51,35 +51,7 @@ class ConfirmSendTroops extends StatelessWidget {
                 ),
                 TroopDetails(
                     isEstimate: true,
-                    movement: Movement.sendConfirmation(
-                        mission: 1,
-                        units: state.units,
-                        when: _getArrivalTime(
-                            _getDistance(
-                              state.tileDetails!.x,
-                              state.tileDetails!.y,
-                              currentSettlement.x,
-                              currentSettlement.y,
-                            ),
-                            300), // should be changed for real speed of slowest unit
-                        // in units,
-                        // and change in the settlementService on the server as well
-                        from: SideBrief(
-                            villageId: currentSettlement.id.$oid,
-                            coordinates: [
-                              currentSettlement.x,
-                              currentSettlement.y
-                            ],
-                            playerName: currentSettlement.userId,
-                            villageName: currentSettlement.name),
-                        to: SideBrief(
-                            villageId: state.tileDetails!.id,
-                            villageName: state.tileDetails!.name,
-                            playerName: state.tileDetails!.playerName,
-                            coordinates: [
-                              state.tileDetails!.x,
-                              state.tileDetails!.y
-                            ]))),
+                    movement: _createMovement(state, currentSettlement)),
                 const Divider(),
                 Padding(
                   padding: const EdgeInsets.all(12.0),
@@ -128,6 +100,38 @@ class ConfirmSendTroops extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Movement _createMovement(SendTroopsState state, Settlement currentSettlement){
+    return Movement.sendConfirmation(
+        mission: state.kind,
+        units: state.units,
+        when: _getArrivalTime(
+            _getDistance(
+              state.tileDetails!.x,
+              state.tileDetails!.y,
+              currentSettlement.x,
+              currentSettlement.y,
+            ),
+            300), // should be changed for real speed of slowest unit
+        // in units,
+        // and change in the settlementService on the server as well
+        from: SideBrief(
+            villageId: currentSettlement.id.$oid,
+            coordinates: [
+              currentSettlement.x,
+              currentSettlement.y
+            ],
+            playerName: currentSettlement.userId,
+            villageName: currentSettlement.name),
+        to: SideBrief(
+            villageId: state.tileDetails!.id,
+            villageName: state.tileDetails!.name,
+            playerName: state.tileDetails!.playerName,
+            coordinates: [
+              state.tileDetails!.x,
+              state.tileDetails!.y
+            ]));
   }
 
   DateTime _getArrivalTime(double distance, int speed) {
