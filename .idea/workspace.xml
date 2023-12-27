@@ -6,14 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="2908424d-9142-47c7-89aa-eee6c5f37d75" name="Changes" comment="refactor(client): send troops confirmation">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/cubit/send_troops_cubit.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/cubit/send_troops_cubit.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/cubit/send_troops_state.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/cubit/send_troops_state.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/view/confirm_send_troops.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/view/confirm_send_troops.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/view/form.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/view/form.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/lib/rally_point/view/widgets/troop_details.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/rally_point/view/widgets/troop_details.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/models/lib/src/movement.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/models/lib/src/movement.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/services/automation.dart" beforeDir="false" afterPath="$PROJECT_DIR$/server/services/automation.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/services/settlements_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/server/services/settlements_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/lib/buildings/view/building_widgets/rally_point.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/buildings/view/building_widgets/rally_point.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -110,7 +103,7 @@
       <workItem from="1702863546259" duration="2508000" />
       <workItem from="1703118346703" duration="350000" />
       <workItem from="1703528093785" duration="1590000" />
-      <workItem from="1703648789121" duration="4026000" />
+      <workItem from="1703648789121" duration="10462000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add send troops form">
       <option name="closed" value="true" />
@@ -160,7 +153,15 @@
       <option name="project" value="LOCAL" />
       <updated>1702490281680</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="refactor(client): send troops confirmation">
+      <option name="closed" value="true" />
+      <created>1703711790694</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1703711790694</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
