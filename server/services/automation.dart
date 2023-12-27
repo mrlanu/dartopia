@@ -37,7 +37,7 @@ class Automation {
       );
       MyLogger.debug('Attack from ${m.from.villageId} '
           'to ${m.to.villageId} has been performed');
-      await mongo.db.collection('movements').deleteOne(where.id(m.id));
+      await mongo.db.collection('movements').deleteOne(where.id(m.id!));
     }
 
     await mongo.closeDb();

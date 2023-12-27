@@ -11,7 +11,7 @@ class SendTroopsState extends Equatable {
       this.units = const [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       this.target1,
       this.target2,
-      this.kind = 2});
+      this.mission = Mission.reinforcement});
 
   final SendTroopsStatus status;
   final int x;
@@ -20,7 +20,7 @@ class SendTroopsState extends Equatable {
   final List<int> units;
   final String? target1;
   final String? target2;
-  final int kind;
+  final Mission mission;
 
   List<String> get options => ['option 1', 'option 2', 'option 3'];
 
@@ -32,7 +32,7 @@ class SendTroopsState extends Equatable {
     String? target1,
     String? target2,
     List<int>? units,
-    int? kind,
+    Mission? mission,
   }) {
     return SendTroopsState(
       status: status ?? this.status,
@@ -42,11 +42,11 @@ class SendTroopsState extends Equatable {
       target1: target1 ?? this.target1,
       target2: target2 ?? this.target2,
       units: units ?? this.units,
-      kind: kind ?? this.kind,
+      mission: mission ?? this.mission,
     );
   }
 
   @override
   List<Object?> get props =>
-      [status, x, y, tileDetails, units, target1, target2, kind];
+      [status, x, y, tileDetails, units, target1, target2, mission];
 }

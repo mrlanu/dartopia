@@ -27,8 +27,12 @@ class TroopDetails extends StatelessWidget {
             _firstRow(constraints.maxWidth),
             _secondRow(constraints.maxWidth),
             _thirdRow(constraints.maxWidth),
-            _forthRow(isEstimate, constraints.maxWidth,
-                const Color.fromRGBO(215, 215, 215, 1.0), movement.when, context),
+            _forthRow(
+                isEstimate,
+                constraints.maxWidth,
+                const Color.fromRGBO(215, 215, 215, 1.0),
+                movement.when,
+                context),
           ],
         ),
       ),
@@ -39,7 +43,7 @@ class TroopDetails extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: maxWidth * 0.3,
+          width: maxWidth * 0.2,
           height: 22,
           decoration: BoxDecoration(
             color: _getBackgroundColor(),
@@ -51,7 +55,11 @@ class TroopDetails extends StatelessWidget {
               // Skip the right side border
             ),
           ),
-          child: Center(child: Text(movement.from.playerName)),
+          child: Center(
+              child: Text(
+            movement.from.playerName,
+            overflow: TextOverflow.ellipsis,
+          )),
         ),
         Expanded(
           child: Container(
@@ -109,7 +117,7 @@ class TroopDetails extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: maxWidth * 0.3,
+          width: maxWidth * 0.2,
           height: 22,
           decoration: BoxDecoration(
             color: backgroundColor,
@@ -128,7 +136,7 @@ class TroopDetails extends StatelessWidget {
             .asMap()
             .entries
             .map((e) => Container(
-                  width: (maxWidth - maxWidth * 0.3) / 10,
+                  width: (maxWidth - maxWidth * 0.2) / 10,
                   height: 22,
                   decoration: BoxDecoration(
                     color: backgroundColor,
@@ -163,7 +171,7 @@ class TroopDetails extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: maxWidth * 0.3,
+          width: maxWidth * 0.2,
           height: 22,
           decoration: BoxDecoration(
             color: backgroundColor,
@@ -178,7 +186,7 @@ class TroopDetails extends StatelessWidget {
         ),
         ...movement.units
             .map((e) => Container(
-                  width: (maxWidth - maxWidth * 0.3) / 10,
+                  width: (maxWidth - maxWidth * 0.2) / 10,
                   height: 22,
                   decoration: BoxDecoration(
                     color: backgroundColor,
@@ -204,7 +212,7 @@ class TroopDetails extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: maxWidth * 0.3,
+          width: maxWidth * 0.2,
           height: 22,
           decoration: BoxDecoration(
             color: backgroundColor,
@@ -240,10 +248,9 @@ class TroopDetails extends StatelessWidget {
     );
   }
 
-  Widget _buildRowForMovingUnits(BuildContext context){
+  Widget _buildRowForMovingUnits(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-          horizontal: 8.0, vertical: 0.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -251,11 +258,11 @@ class TroopDetails extends StatelessWidget {
             children: [
               const Text('in '),
               CountdownTimer(
-                startValue: movement.when
-                    .difference(DateTime.now())
-                    .inSeconds,
+                startValue: movement.when.difference(DateTime.now()).inSeconds,
                 onFinish: () {
-                  context.read<SettlementBloc>().add(const SettlementFetchRequested());
+                  context
+                      .read<SettlementBloc>()
+                      .add(const SettlementFetchRequested());
                 },
               ),
             ],
@@ -267,7 +274,7 @@ class TroopDetails extends StatelessWidget {
     );
   }
 
-  Widget _buildRowForStaticUnits(){
+  Widget _buildRowForStaticUnits() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -282,7 +289,7 @@ class TroopDetails extends StatelessWidget {
     );
   }
 
-  Widget _buildRowForEstimateArrival(){
+  Widget _buildRowForEstimateArrival() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

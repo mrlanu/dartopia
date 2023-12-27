@@ -6,13 +6,14 @@
   <component name="ChangeListManager">
     <list default="true" id="2908424d-9142-47c7-89aa-eee6c5f37d75" name="Changes" comment="refactor(client): send troops confirmation">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/lib/rally_point/rally_point_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/rally_point/rally_point_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/lib/settlement/view/settlement_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/settlement/view/settlement_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/lib/world_map/bloc/world_bloc.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/world_map/bloc/world_bloc.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/lib/world_map/bloc/world_event.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/world_map/bloc/world_event.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/lib/world_map/bloc/world_state.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/world_map/bloc/world_state.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/lib/world_map/view/world_map_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/world_map/view/world_map_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/cubit/send_troops_cubit.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/cubit/send_troops_cubit.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/cubit/send_troops_state.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/cubit/send_troops_state.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/view/confirm_send_troops.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/view/confirm_send_troops.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/view/form.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/rally_point/send_troops_form/view/form.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/lib/rally_point/view/widgets/troop_details.dart" beforeDir="false" afterPath="$PROJECT_DIR$/client/lib/rally_point/view/widgets/troop_details.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/models/lib/src/movement.dart" beforeDir="false" afterPath="$PROJECT_DIR$/packages/models/lib/src/movement.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/services/automation.dart" beforeDir="false" afterPath="$PROJECT_DIR$/server/services/automation.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/services/settlements_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/server/services/settlements_service.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -108,6 +109,8 @@
       <workItem from="1702523528984" duration="5252000" />
       <workItem from="1702863546259" duration="2508000" />
       <workItem from="1703118346703" duration="350000" />
+      <workItem from="1703528093785" duration="1590000" />
+      <workItem from="1703648789121" duration="4026000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add send troops form">
       <option name="closed" value="true" />
@@ -163,6 +166,17 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="feat: add send troops form" />
@@ -180,16 +194,6 @@
           <url>file://$PROJECT_DIR$/client/lib/rally_point/rally_point_page.dart</url>
           <line>88</line>
           <option name="timeStamp" value="4" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/client/lib/rally_point/bloc/movements_bloc.dart</url>
-          <line>63</line>
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/client/lib/rally_point/bloc/movements_bloc.dart</url>
-          <line>51</line>
-          <option name="timeStamp" value="6" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

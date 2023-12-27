@@ -102,48 +102,28 @@ class ConfirmSendTroops extends StatelessWidget {
     );
   }
 
-  Movement _createMovement(SendTroopsState state, Settlement currentSettlement){
-    return Movement.sendConfirmation(
-        mission: state.kind,
+  Movement _createMovement(
+      SendTroopsState state, Settlement currentSettlement) {
+    return Movement(
+        mission: state.mission,
         units: state.units,
-        when: _getArrivalTime(
-            _getDistance(
-              state.tileDetails!.x,
-              state.tileDetails!.y,
-              currentSettlement.x,
-              currentSettlement.y,
-            ),
-            300), // should be changed for real speed of slowest unit
+        when: Common.getArrivalTime(
+            x: state.tileDetails!.x,
+            y: state.tileDetails!.y,
+            fromX: currentSettlement.x,
+            fromY: currentSettlement.y,
+            speed: 300), // should be changed for real speed of slowest unit
         // in units,
         // and change in the settlementService on the server as well
         from: SideBrief(
             villageId: currentSettlement.id.$oid,
-            coordinates: [
-              currentSettlement.x,
-              currentSettlement.y
-            ],
+            coordinates: [currentSettlement.x, currentSettlement.y],
             playerName: currentSettlement.userId,
             villageName: currentSettlement.name),
         to: SideBrief(
             villageId: state.tileDetails!.id,
             villageName: state.tileDetails!.name,
             playerName: state.tileDetails!.playerName,
-            coordinates: [
-              state.tileDetails!.x,
-              state.tileDetails!.y
-            ]));
-  }
-
-  DateTime _getArrivalTime(double distance, int speed) {
-    final double hours = distance / speed;
-    final int seconds = (hours * 3600).round();
-    DateTime arrivalDateTime = DateTime.now().add(Duration(seconds: seconds));
-    return arrivalDateTime;
-  }
-
-  double _getDistance(int x, int y, int fromX, int fromY) {
-    var legX = pow(x - fromX, 2);
-    var legY = pow(y - fromY, 2);
-    return sqrt(legX + legY);
+            coordinates: [state.tileDetails!.x, state.tileDetails!.y]));
   }
 }

@@ -11,7 +11,7 @@ enum Mission {
 }
 
 class Movement {
-  final ObjectId id;
+  final ObjectId? id;
   final bool isMoving;
   final SideBrief from;
   final SideBrief to;
@@ -20,27 +20,13 @@ class Movement {
   final Mission mission;
 
   Movement(
-      {required this.id,
+      {this.id,
       this.isMoving = true,
       required this.from,
       required this.to,
       required this.when,
       this.units = const [0, 5, 0, 0, 0, 0, 0, 0, 0, 0],
       required this.mission});
-
-  Movement.sendConfirmation(
-      {required List<int> units,
-      required int mission,
-      required DateTime when,
-      required SideBrief from,
-      required SideBrief to,})
-      : id = ObjectId(),
-        isMoving = true,
-        from = from,
-        to = to,
-        when = when,
-        units = units,
-        mission = Mission.raid;
 
   Movement.fromMap(Map<String, dynamic> map)
       : id = map['_id'] as ObjectId,

@@ -1,5 +1,6 @@
 import 'package:dartopia/rally_point/rally_point.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:models/models.dart';
 
@@ -74,7 +75,7 @@ class SendTroopsFormView extends StatelessWidget {
                           _buildTargets(state.target1, state.target2,
                               state.options, context),
                           const Divider(),
-                          _buildRadioGroup(state.kind, context),
+                          _buildRadioGroup(state.mission, context),
                           Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: IconButton.outlined(
@@ -204,7 +205,7 @@ class SendTroopsFormView extends StatelessWidget {
     );
   }
 
-  Widget _buildRadioGroup(int kind, BuildContext context) {
+  Widget _buildRadioGroup(Mission mission, BuildContext context) {
     final cubit = context.read<SendTroopsCubit>();
     return Column(
       children: [
@@ -216,10 +217,10 @@ class SendTroopsFormView extends StatelessWidget {
               child: ListTile(
                 title: const Text('Attack'),
                 leading: Radio(
-                  value: 0,
-                  groupValue: kind,
+                  value: Mission.attack,
+                  groupValue: mission,
                   onChanged: (value) {
-                    cubit.setKind(value!);
+                    cubit.setMission(value as Mission);
                   },
                 ),
               ),
@@ -229,10 +230,10 @@ class SendTroopsFormView extends StatelessWidget {
               child: ListTile(
                 title: const Text('Raid'),
                 leading: Radio(
-                  value: 1,
-                  groupValue: kind,
+                  value: Mission.raid,
+                  groupValue: mission,
                   onChanged: (value) {
-                    cubit.setKind(value!);
+                    cubit.setMission(value as Mission);
                   },
                 ),
               ),
@@ -244,10 +245,10 @@ class SendTroopsFormView extends StatelessWidget {
           child: ListTile(
             title: const Text('Reinforcement'),
             leading: Radio(
-              value: 2,
-              groupValue: kind,
+              value: Mission.reinforcement,
+              groupValue: mission,
               onChanged: (value) {
-                cubit.setKind(value!);
+                cubit.setMission(value as Mission);
               },
             ),
           ),

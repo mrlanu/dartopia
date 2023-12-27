@@ -7,8 +7,9 @@ import '../config/config.dart';
 import '../repositories/settlement_repository.dart';
 
 abstract class SettlementService {
-  Future<List<ShortSettlementInfo>> getSettlementsIdByUserId(
-      {required String userId,});
+  Future<List<ShortSettlementInfo>> getSettlementsIdByUserId({
+    required String userId,
+  });
 
   Future<Settlement?> fetchSettlementById({required String settlementId});
 
@@ -310,10 +311,12 @@ class SettlementServiceImpl extends SettlementService {
       units: request.units,
       from: fromSide,
       to: toSide,
-      when: _getArrivalTime(
-          _getDistance(toSide.coordinates[0], toSide.coordinates[1],
-              fromSide.coordinates[0], fromSide.coordinates[1],),
-          300,), // should be changed for real speed of slowest unit
+      when: Common.getArrivalTime(
+          x: toSide.coordinates[0],
+          y: toSide.coordinates[1],
+          fromX: fromSide.coordinates[0],
+          fromY: fromSide.coordinates[1],
+          speed: 300,), // should be changed for real speed of slowest unit
       // in units,
       // and change in the confirm_send_troops on the client as well
       mission: request.mission,
@@ -358,18 +361,5 @@ class SettlementServiceImpl extends SettlementService {
       when: DateTime.now(),
       mission: Mission.home,
     );
-  }
-
-  DateTime _getArrivalTime(double distance, int speed) {
-    final hours = distance / speed;
-    final seconds = (hours * 3600).round();
-    final arrivalDateTime = DateTime.now().add(Duration(seconds: seconds));
-    return arrivalDateTime;
-  }
-
-  double _getDistance(int x, int y, int fromX, int fromY) {
-    final legX = pow(x - fromX, 2);
-    final legY = pow(y - fromY, 2);
-    return sqrt(legX + legY);
   }
 }

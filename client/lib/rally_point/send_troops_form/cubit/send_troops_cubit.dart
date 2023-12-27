@@ -37,8 +37,8 @@ class SendTroopsCubit extends Cubit<SendTroopsState> {
     emit(state.copyWith(target1: target));
   }
 
-  void setKind(int kind) {
-    emit(state.copyWith(kind: kind));
+  void setMission(Mission mission) {
+    emit(state.copyWith(mission: mission));
   }
 
   void setStatus(SendTroopsStatus status) {
@@ -59,8 +59,7 @@ class SendTroopsCubit extends Cubit<SendTroopsState> {
 
   Future<void> sendTroops({required String currentSettlementId}) async {
     final request = SendTroopsRequest(
-        to: state.tileDetails!.id, units: state.units, mission: Mission.raid);
-    await troopMovementsRepository.sendTroops(
-        request, currentSettlementId);
+        to: state.tileDetails!.id, units: state.units, mission: state.mission);
+    await troopMovementsRepository.sendTroops(request, currentSettlementId);
   }
 }
