@@ -1,0 +1,11 @@
+flutter_native_splash:
+  color: '#C0D9B6'
+  color_dark: '#C0D9B6'
+  image: assets/images/logo/dartopia_logo.png
+  image_dark: assets/images/logo/dartopia_logo.png
+
+  android_12:
+    color: '#C0D9B6'
+    color_dark: '#C0D9B6'
+    image: assets/images/logo/dartopia_logo.png
+    image_dark: assets/images/logo/dartopia_logo.png
