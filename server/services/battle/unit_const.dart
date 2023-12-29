@@ -1,0 +1,53 @@
+import 'battle.dart';
+class UnitsConst {
+  static final List<List<Unit>> UNITS = [
+    [
+      Unit(unitKind: UnitKind.UNIT, name: "Legionnaire", offense: 40, defenseInfantry: 35, defenseCavalry: 50, velocity: 6, cost: [120, 100, 150, 30], upKeep: 1, time: 2000, capacity: 50, infantry: true, researchTime: 7800, description: ""),
+      Unit(unitKind: UnitKind.UNIT, name: "Praetorian", offense: 30, defenseInfantry: 65, defenseCavalry: 35, velocity: 5, cost: [100, 130, 160, 70], upKeep: 1, time: 2200, capacity: 20, infantry: true, researchTime: 8400, description: ""),
+      Unit(unitKind: UnitKind.UNIT, name: "Imperian", offense: 70, defenseInfantry: 40, defenseCavalry: 25, velocity: 7, cost: [150, 160, 210, 80], upKeep: 1, time: 2400, capacity: 50, infantry: true, researchTime: 9000, description: ""),
+      Unit(unitKind: UnitKind.SPY, name: "Equites Legati", offense: 0, defenseInfantry: 20, defenseCavalry: 10, velocity: 16, cost: [140, 160, 20, 40], upKeep: 2, time: 1700, capacity: 0, infantry: false, researchTime: 6900, description: ""),
+      Unit(unitKind: UnitKind.UNIT, name: "Equites Imperatoris", offense: 120, defenseInfantry: 65, defenseCavalry: 50, velocity: 14, cost: [550, 440, 320, 100], upKeep: 3, time: 3300, capacity: 100, infantry: false, researchTime: 11700, description: ""),
+      Unit(unitKind: UnitKind.UNIT, name: "Equites Caesaris", offense: 180, defenseInfantry: 80, defenseCavalry: 105, velocity: 10, cost: [550, 640, 800, 180], upKeep: 4, time: 4400, capacity: 70, infantry: false, researchTime: 15000, description: ""),
+      Unit(unitKind: UnitKind.RAM, name: "Battering ram", offense: 60, defenseInfantry: 30, defenseCavalry: 75, velocity: 4, cost: [900, 360, 500, 70], upKeep: 3, time: 4600, capacity: 0, infantry: true, researchTime: 15600, description: ""),
+      Unit(unitKind: UnitKind.CAT, name: "Fire Catapult", offense: 75, defenseInfantry: 60, defenseCavalry: 10, velocity: 3, cost: [950, 1350, 600, 90], upKeep: 6, time: 9000, capacity: 0, infantry: true, researchTime: 28800, description: ""),
+      Unit(unitKind: UnitKind.ADMIN, name: "Senator", offense: 50, defenseInfantry: 40, defenseCavalry: 30, velocity: 4, cost: [30750, 27200, 45000, 37500], upKeep: 5, time: 90700, capacity: 0, infantry: true, researchTime: 24475, description: ""),
+      Unit(unitKind: UnitKind.SETTLER, name: "Settler", offense: 0, defenseInfantry: 80, defenseCavalry: 80, velocity: 5, cost: [4600, 4200, 5800, 4400], upKeep: 1, time: 26900, capacity: 3000, infantry: true, researchTime: 0, description: ""),
+    ],
+    [
+      Unit(unitKind: UnitKind.UNIT, name: "Maceman", offense: 40, defenseInfantry: 20, defenseCavalry: 5, velocity: 7, cost: [95, 75, 40, 40], upKeep: 1, time: 900, capacity: 60, infantry: true, researchTime: 4500, description: ""),
+      Unit(unitKind: UnitKind.UNIT, name: "Spearman", offense: 10, defenseInfantry: 35, defenseCavalry: 60, velocity: 7, cost: [145, 70, 85, 40], upKeep: 1, time: 1400, capacity: 40, infantry: true, researchTime: 6300, description: ""),
+      Unit(unitKind: UnitKind.UNIT, name: "Axeman", offense: 60, defenseInfantry: 30, defenseCavalry: 30, velocity: 6, cost: [130, 120, 170, 70], upKeep: 1, time: 1500, capacity: 50, infantry: true, researchTime: 6300, description: ""),
+      Unit(unitKind: UnitKind.SPY, name: "Scout", offense: 0, defenseInfantry: 10, defenseCavalry: 5, velocity: 9, cost: [160, 100, 50, 50], upKeep: 1, time: 1400, capacity: 0, infantry: false, researchTime: 6000, description: ""),
+      Unit(unitKind: UnitKind.UNIT, name: "Paladin", offense: 55, defenseInfantry: 100, defenseCavalry: 40, velocity: 10, cost: [370, 270, 290, 75], upKeep: 2, time: 3000, capacity: 110, infantry: false, researchTime: 10800, description: ""),
+      Unit(unitKind: UnitKind.UNIT, name: "Teutonic Knight", offense: 150, defenseInfantry: 50, defenseCavalry: 75, velocity: 9, cost: [450, 515, 480, 80], upKeep: 3, time: 3700, capacity: 80, infantry: false, researchTime: 12900, description: ""),
+      Unit(unitKind: UnitKind.RAM, name: "Ram", offense: 65, defenseInfantry: 30, defenseCavalry: 80, velocity: 4, cost: [1000, 300, 350, 70], upKeep: 3, time: 4200, capacity: 0, infantry: true, researchTime: 14400, description: ""),
+      Unit(unitKind: UnitKind.CAT, name: "Catapult", offense: 50, defenseInfantry: 60, defenseCavalry: 10, velocity: 3, cost: [900, 1200, 600, 60], upKeep: 6, time: 9000, capacity: 0, infantry: true, researchTime: 28800, description: ""),
+      Unit(unitKind: UnitKind.ADMIN, name: "Chief", offense: 40, defenseInfantry: 60, defenseCavalry: 40, velocity: 4, cost: [35500, 26600, 25000, 27200], upKeep: 4, time: 70500, capacity: 0, infantry: true, researchTime: 19425, description: ""),
+      Unit(unitKind: UnitKind.SETTLER, name: "Settler", offense: 10, defenseInfantry: 80, defenseCavalry: 80, velocity: 5, cost: [5800, 4400, 4600, 5200], upKeep: 1, time: 31000, capacity: 3000, infantry: true, researchTime: 0, description: ""),
+    ],
+    [
+      Unit(unitKind: UnitKind.UNIT, name: "Phalanx", offense: 15, defenseInfantry: 40, defenseCavalry: 50, velocity: 7, cost: [100, 130, 55, 30], upKeep: 1, time: 1300, capacity: 35, infantry: true, researchTime: 5700, description: ""),
+      Unit(unitKind: UnitKind.UNIT, name: "Swordsman", offense: 65, defenseInfantry: 35, defenseCavalry: 20, velocity: 6, cost: [140, 150, 185, 60], upKeep: 1, time: 1800, capacity: 45, infantry: true, researchTime: 7200, description: ""),
+      Unit(unitKind: UnitKind.SPY, name: "Pathfinder", offense: 0, defenseInfantry: 20, defenseCavalry: 10, velocity: 17, cost: [170, 150, 20, 40], upKeep: 2, time: 1700, capacity: 0, infantry: false, researchTime: 6900, description: ""),
+      Unit(unitKind: UnitKind.UNIT, name: "Theutates Thunder", offense: 90, defenseInfantry: 25, defenseCavalry: 40, velocity: 19, cost: [350, 450, 230, 60], upKeep: 2, time: 3100, capacity: 75, infantry: false, researchTime: 11100, description: ""),
+      Unit(unitKind: UnitKind.UNIT, name: "Druidrider", offense: 45, defenseInfantry: 115, defenseCavalry: 55, velocity: 16, cost: [360, 330, 280, 120], upKeep: 2, time: 3200, capacity: 35, infantry: false, researchTime: 11400, description: ""),
+      Unit(unitKind: UnitKind.UNIT, name: "Haeduan", offense: 140, defenseInfantry: 50, defenseCavalry: 165, velocity: 13, cost: [500, 620, 675, 170], upKeep: 3, time: 3900, capacity: 65, infantry: false, researchTime: 13500, description: ""),
+      Unit(unitKind: UnitKind.RAM, name: "Ram", offense: 50, defenseInfantry: 30, defenseCavalry: 105, velocity: 4, cost: [950, 555, 330, 75], upKeep: 3, time: 5000, capacity: 0, infantry: true, researchTime: 16800, description: ""),
+      Unit(unitKind: UnitKind.CAT, name: "Trebuchet", offense: 70, defenseInfantry: 45, defenseCavalry: 10, velocity: 3, cost: [960, 1450, 630, 90], upKeep: 6, time: 9000, capacity: 0, infantry: true, researchTime: 28800, description: ""),
+      Unit(unitKind: UnitKind.ADMIN, name: "Chieftain", offense: 40, defenseInfantry: 50, defenseCavalry: 50, velocity: 5, cost: [30750, 45400, 31000, 37500], upKeep: 4, time: 90700, capacity: 0, infantry: true, researchTime: 24475, description: ""),
+      Unit(unitKind: UnitKind.SETTLER, name: "Settler", offense: 0, defenseInfantry: 80, defenseCavalry: 80, velocity: 5, cost: [4400, 5600, 4200, 3900], upKeep: 1, time: 22700, capacity: 3000, infantry: true, researchTime: 0, description: ""),
+    ],
+    [
+      Unit(unitKind: UnitKind.UNIT, name: "Rat", offense: 10, defenseInfantry: 25, defenseCavalry: 20, velocity: 20, cost: [0, 0, 0, 0], upKeep: 1, time: 0, capacity: 0, infantry: true, researchTime: 0, description: ""),
+      Unit(unitKind: UnitKind.UNIT, name: "Spider", offense: 20, defenseInfantry: 35, defenseCavalry: 40, velocity: 20, cost: [0, 0, 0, 0], upKeep: 1, time: 0, capacity: 0, infantry: true, researchTime: 0, description: ""),
+      Unit(unitKind: UnitKind.UNIT, name: "Serpent", offense: 60, defenseInfantry: 40, defenseCavalry: 60, velocity: 20, cost: [0, 0, 0, 0], upKeep: 1, time: 0, capacity: 0, infantry: true, researchTime: 0, description: ""),
+      Unit(unitKind: UnitKind.UNIT, name: "Bat", offense: 80, defenseInfantry: 66, defenseCavalry: 50, velocity: 20, cost: [0, 0, 0, 0], upKeep: 1, time: 0, capacity: 0, infantry: true, researchTime: 0, description: ""),
+      Unit(unitKind: UnitKind.UNIT, name: "Boar", offense: 50, defenseInfantry: 70, defenseCavalry: 33, velocity: 20, cost: [0, 0, 0, 0], upKeep: 2, time: 0, capacity: 0, infantry: true, researchTime: 0, description: ""),
+      Unit(unitKind: UnitKind.UNIT, name: "Wolf", offense: 100, defenseInfantry: 80, defenseCavalry: 70, velocity: 20, cost: [0, 0, 0, 0], upKeep: 2, time: 0, capacity: 0, infantry: true, researchTime: 0, description: ""),
+      Unit(unitKind: UnitKind.UNIT, name: "Bear", offense: 250, defenseInfantry: 140, defenseCavalry: 200, velocity: 20, cost: [0, 0, 0, 0], upKeep: 3, time: 0, capacity: 0, infantry: true, researchTime: 0, description: ""),
+      Unit(unitKind: UnitKind.UNIT, name: "Crocodile", offense: 450, defenseInfantry: 380, defenseCavalry: 240, velocity: 20, cost: [0, 0, 0, 0], upKeep: 3, time: 0, capacity: 0, infantry: true, researchTime: 0, description: ""),
+      Unit(unitKind: UnitKind.UNIT, name: "Tiger", offense: 200, defenseInfantry: 170, defenseCavalry: 250, velocity: 20, cost: [0, 0, 0, 0], upKeep: 3, time: 0, capacity: 0, infantry: true, researchTime: 0, description: ""),
+      Unit(unitKind: UnitKind.UNIT, name: "Elephant", offense: 600, defenseInfantry: 440, defenseCavalry: 520, velocity: 20, cost: [0, 0, 0, 0], upKeep: 5, time: 0, capacity: 0, infantry: true, researchTime: 0, description: ""),
+    ],
+  ];
+}
