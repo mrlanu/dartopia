@@ -1,5 +1,9 @@
 import 'dart:math';
+import 'package:models/models.dart';
+
 import 'battle.dart';
+
+enum ESide { OFF, DEF }
 
 class Army {
   Army({
@@ -10,7 +14,7 @@ class Army {
     this.party = false,
     this.brew = false,
     this.upgrades = const [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    this.mission = ECombatGroupMission.ATTACK,
+    this.mission = Mission.raid,
     this.targets = const [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   });
 
@@ -19,7 +23,7 @@ class Army {
   final List<Unit> units;
   List<int> numbers;
   final List<int> upgrades;
-  final ECombatGroupMission mission;
+  final Mission mission;
   final List<int> targets;
   final bool party;
   final bool brew;
@@ -144,25 +148,3 @@ class Army {
   }
 }
 
-enum ESide { OFF, DEF }
-
-enum ECombatGroupMission { HOME, BACK, CAUGHT, ATTACK, RAID, REINFORCEMENT }
-
-extension ECombatGroupMissionExtension on ECombatGroupMission {
-  String get name {
-    switch (this) {
-      case ECombatGroupMission.HOME:
-        return 'Own army';
-      case ECombatGroupMission.BACK:
-        return 'Return to home';
-      case ECombatGroupMission.CAUGHT:
-        return 'Caught';
-      case ECombatGroupMission.ATTACK:
-        return 'Attack';
-      case ECombatGroupMission.RAID:
-        return 'Raid';
-      case ECombatGroupMission.REINFORCEMENT:
-        return 'Reinforcement';
-    }
-  }
-}

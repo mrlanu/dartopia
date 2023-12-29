@@ -1,16 +1,7 @@
 import 'battle.dart';
 
 class BattleState {
-
-  BattleState({
-    required this.base,
-    required this.finale,
-    required this.wall,
-    required this.immensity,
-    required this.ratio,
-  });
-
-  BattleState.defaultValues()
+  BattleState()
       : base = BattleSides<double>(0, 0),
         finale = BattleSides<double>(0, 0),
         wall = 0,

@@ -16,4 +16,5 @@ export 'src/responses/responses.dart';
 export 'src/settlement.dart';
 export 'src/side_brief.dart';
 export 'src/unit_ready_task.dart';
+export 'src/units/units.dart';
 export 'src/user.dart';

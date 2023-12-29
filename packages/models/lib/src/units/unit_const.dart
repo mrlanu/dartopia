@@ -1,4 +1,4 @@
-import 'battle.dart';
+import 'units.dart';
 class UnitsConst {
   static final List<List<Unit>> UNITS = [
     [

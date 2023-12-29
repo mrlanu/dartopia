@@ -1,10 +1,12 @@
 import 'dart:math';
+import 'package:models/models.dart';
+
 import 'battle.dart';
 
 class Battle {
   Battle()
       : defArmies = [],
-        battleState = BattleState.defaultValues(),
+        battleState = BattleState(),
         battleResult = BattleResult(),
         fns = Fns();
 
@@ -40,7 +42,7 @@ class Battle {
     battleState.wall = battleField!.wall.level;
     if (offArmy!.isScan()) {
       scan();
-    } else if (offArmy!.mission == ECombatGroupMission.RAID) {
+    } else if (offArmy!.mission == Mission.raid) {
       raid();
     } else {
       normal();

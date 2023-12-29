@@ -2,11 +2,11 @@ import 'dart:math';
 import 'battle.dart';
 
 class Fns {
-  Fns() {
+  Fns(): earlyRamTable = [] {
     generateTable();
   }
 
-  List<List<double>> earlyRamTable = [];
+  final List<List<double>> earlyRamTable;
 
   void generateTable() {
     for (var lvl = 0; lvl <= 20; lvl++) {
@@ -30,7 +30,7 @@ class Fns {
     final infantryPart = roundPercent(off.i / totalOff);
     final cavalryPart = roundPercent(off.c / totalOff);
     final totalDef = def.i * infantryPart + def.c * cavalryPart;
-    return BattleSides.off(totalOff.toDouble(), totalDef);
+    return BattleSides.off(totalOff, totalDef);
   }
 
   double roundPercent(double number) {
@@ -53,7 +53,7 @@ class Fns {
             : popRatio.isFinite
                 ? 0.667
                 : roundP(
-                    1e-3, pow(popRatio, -0.2 * min(ptsRatio, 1)).toDouble());
+                    1e-3, pow(popRatio, -0.2 * min(ptsRatio, 1)).toDouble(),);
   }
 
   static double roundP(double precision, double number) {
@@ -66,8 +66,8 @@ class Fns {
 
   double demolishPoints(
       int catas, int upgLvl, int durability, double ptsRatio, double morale) {
-    final effCatas = (catas / durability).floorToDouble() * morale;
-    return 4 * sigma(ptsRatio) * effCatas * siegeUpgrade(upgLvl);
+    final offCatas = (catas / durability).floorToDouble() * morale;
+    return 4 * sigma(ptsRatio) * offCatas * siegeUpgrade(upgLvl);
   }
 
   double sigma(double x) {

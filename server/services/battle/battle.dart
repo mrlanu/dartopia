@@ -5,7 +5,5 @@ export 'battle_result.dart';
 export 'battle_sides.dart';
 export 'battle_state.dart';
 export 'fns.dart';
-export 'unit.dart';
-export 'unit_kind.dart';
 export 'wall.dart';
 export 'wall_bonus.dart';

@@ -1,19 +1,6 @@
-import 'battle.dart';
+import 'units.dart';
 
 class Unit {
-  final UnitKind unitKind;
-  final String name;
-  final int offense;
-  final int defenseInfantry;
-  final int defenseCavalry;
-  final int velocity;
-  final List<int> cost;
-  final int upKeep;
-  final int time;
-  final int capacity;
-  final bool infantry;
-  final int researchTime;
-  final String description;
 
   const Unit({
     required this.unitKind,
@@ -30,6 +17,19 @@ class Unit {
     required this.researchTime,
     required this.description,
   });
+  final UnitKind unitKind;
+  final String name;
+  final int offense;
+  final int defenseInfantry;
+  final int defenseCavalry;
+  final int velocity;
+  final List<int> cost;
+  final int upKeep;
+  final int time;
+  final int capacity;
+  final bool infantry;
+  final int researchTime;
+  final String description;
 
   // For SPY units
   int getS() {
