@@ -12,8 +12,8 @@ FutureOr<Response> onRequest(RequestContext context, String id) async {
 
   if (settlement == null) {
     return Response(
-        statusCode: HttpStatus.notFound,
-        body: 'Settlement with id: $id Not found',);
+        statusCode: HttpStatus.conflict,
+        body: 'Settlement with id: $id is under calculation',);
   }
 
   switch (context.request.method) {

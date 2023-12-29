@@ -32,17 +32,26 @@ class SettlementRepositoryImpl implements SettlementRepository {
     final response = await http.get(url);
     final responseList = json.decode(response.body) as List<dynamic>;
     final result = responseList
-        .map((e) => ShortSettlementInfo.fromJson(e as Map<String, dynamic>)).toList();
+        .map((e) => ShortSettlementInfo.fromJson(e as Map<String, dynamic>))
+        .toList();
     return result;
   }
 
   @override
   Future<void> fetchSettlementById(String settlementId) async {
     final url = Uri.http(Api.baseURL, Api.fetchSettlementById(settlementId));
-    final response = await http.get(url);
-    final map = json.decode(response.body) as Map<String, dynamic>;
-    final settlement = Settlement.fromJson(map);
-    _settlementStreamController.add(settlement);
+    for (var i = 0; i <= 10; i++) {
+      final response = await http.get(url);
+      if (response.statusCode != 200) {
+        await Future<void>.delayed(const Duration(milliseconds: 200));
+        continue;
+      }else {
+        final map = json.decode(response.body) as Map<String, dynamic>;
+        final settlement = Settlement.fromJson(map);
+        _settlementStreamController.add(settlement);
+        break;
+      }
+    }
   }
 
   @override
