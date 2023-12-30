@@ -22,14 +22,16 @@ class Automation {
     MyLogger.debug('Perform attacks: ${movements.length}');
     for (final m in movements) {
       final strategy = switch (m.mission) {
-        Mission.attack => Attack(
+        Mission.attack || Mission.raid => Attack(
             movement: m,
             mongoService: mongo,
-            settlementService: _settlementService,),
-        Mission.raid => Raid(
+            settlementService: _settlementService,
+          ),
+        Mission.back => BackHome(
             movement: m,
             mongoService: mongo,
-            settlementService: _settlementService,),
+            settlementService: _settlementService,
+          ),
         _ => throw ArgumentError('Invalid option'),
       };
 

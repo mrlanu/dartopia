@@ -1,8 +1,7 @@
 import 'package:dart_frog/dart_frog.dart';
 import 'package:models/models.dart';
 
-import '../../services/automation/troops_missions/attack.dart';
-import '../../services/automation/troops_missions/raid.dart';
+import '../../services/automation/troops_missions/troop_missions.dart';
 import '../../services/battle/battle.dart';
 import '../../services/battle/main_battle.dart';
 import '../../services/mongo_service.dart';
@@ -19,14 +18,15 @@ Future<Response> onRequest(RequestContext context) async {
   MyLogger.debug('Perform attacks: ${movements.length}');
   for (final m in movements) {
     final strategy = switch (m.mission) {
-      Mission.attack => Attack(
+      Mission.attack || Mission.raid => Attack(
         movement: m,
         mongoService: mongo,
         settlementService: settlementService,),
-      Mission.raid => Raid(
+      Mission.back => BackHome(
         movement: m,
         mongoService: mongo,
-        settlementService: settlementService,),
+        settlementService: settlementService,
+      ),
       _ => throw ArgumentError('Invalid option'),
     };
 

@@ -84,7 +84,7 @@ class Attack extends MissionStrategy {
         units: offArmy.numbers,
         plunder: plunder,
         mission: Mission.back,
-        when: movement.when.add(const Duration(minutes: 20)),);
+        when: movement.when.add(const Duration(seconds: 40)),);
 
     await mongoService.db
         .collection('movements')
