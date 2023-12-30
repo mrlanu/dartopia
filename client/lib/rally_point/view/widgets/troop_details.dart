@@ -256,8 +256,12 @@ class TroopDetails extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Text('in '),
+              Text(
+                'in ',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
               CountdownTimer(
+                textStyle: Theme.of(context).textTheme.bodySmall,
                 startValue: movement.when.difference(DateTime.now()).inSeconds,
                 onFinish: () {
                   context
@@ -267,8 +271,13 @@ class TroopDetails extends StatelessWidget {
               ),
             ],
           ),
+          movement.mission == Mission.back
+              ? _buildPlunder(plunder: movement.plunder, context: context)
+              : Container(),
           Text(
-              'at ${DateFormat('HH:mm:ss').format(movement.when.subtract(const Duration(hours: 6)))}'),
+            'at ${DateFormat('HH:mm:ss').format(movement.when.subtract(const Duration(hours: 6)))}',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
         ],
       ),
     );
@@ -306,5 +315,35 @@ class TroopDetails extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Widget _buildPlunder(
+      {required List<int> plunder, required BuildContext context}) {
+    final images = [
+      DartopiaImages.lumber,
+      DartopiaImages.clay,
+      DartopiaImages.iron,
+      DartopiaImages.crop
+    ];
+    return Row(children: [
+      ...plunder
+          .asMap()
+          .entries
+          .map((e) => Row(
+                children: [
+                  Image.asset(
+                    images[e.key],
+                    width: 12,
+                    height: 12,
+                  ),
+                  Text(
+                    '${plunder[e.key]}',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  const SizedBox(width: 2,)
+                ],
+              ))
+          .toList()
+    ]);
   }
 }

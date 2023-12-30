@@ -17,6 +17,7 @@ class Movement {
   final SideBrief to;
   final DateTime when;
   final List<int> units;
+  final List<int> plunder;
   final Mission mission;
 
   Movement(
@@ -26,6 +27,7 @@ class Movement {
       required this.to,
       required this.when,
       this.units = const [0, 5, 0, 0, 0, 0, 0, 0, 0, 0],
+        this.plunder = const [0, 0, 0, 0],
       required this.mission});
 
   Movement.fromMap(Map<String, dynamic> map)
@@ -35,6 +37,7 @@ class Movement {
         to = SideBrief.fromMap(map['to'] as Map<String, dynamic>),
         when = map['when'] as DateTime,
         units = (map['units'] as List<dynamic>).map((u) => u as int).toList(),
+        plunder = (map['plunder'] as List<dynamic>).map((u) => u as int).toList(),
         mission = Mission.values.byName(map['mission'] as String);
 
   Movement.fromJson(Map<String, dynamic> map)
@@ -44,6 +47,7 @@ class Movement {
         to = SideBrief.fromJson(map['to'] as Map<String, dynamic>),
         when = DateTime.parse(map['when'] as String),
         units = (map['units'] as List<dynamic>).map((u) => u as int).toList(),
+        plunder = (map['plunder'] as List<dynamic>).map((u) => u as int).toList(),
         mission = Mission.values.byName(map['mission'] as String);
 
   Map<String, dynamic> toMap() => <String, dynamic>{
@@ -53,6 +57,7 @@ class Movement {
         'to': to.toMap(),
         'when': when,
         'units': units,
+        'plunder': plunder,
         'mission': mission.name,
       };
 
@@ -63,6 +68,7 @@ class Movement {
         'to': to,
         'when': when.toIso8601String(),
         'units': units,
+        'plunder': plunder,
         'mission': mission.name,
       };
 
@@ -73,6 +79,7 @@ class Movement {
     SideBrief? to,
     DateTime? when,
     List<int>? units,
+    List<int>? plunder,
     Mission? mission,
   }) {
     return Movement(
@@ -82,6 +89,7 @@ class Movement {
       to: to ?? this.to,
       when: when ?? this.when,
       units: units ?? this.units,
+      plunder: plunder ?? this.plunder,
       mission: mission ?? this.mission,
     );
   }

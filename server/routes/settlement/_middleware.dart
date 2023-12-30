@@ -3,7 +3,7 @@ import 'dart:isolate';
 
 import 'package:dart_frog/dart_frog.dart';
 
-import '../../services/automation.dart';
+import '../../services/automation/automation.dart';
 import '../../services/mongo_service.dart';
 import '../../utils/my_logger.dart';
 
