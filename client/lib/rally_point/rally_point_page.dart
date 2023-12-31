@@ -9,17 +9,17 @@ import '../settlement/settlement.dart';
 import 'rally_point.dart';
 
 class RallyPointPage extends StatelessWidget {
-  const RallyPointPage({super.key, required this.tabIndex, this.tileDetails});
+  const RallyPointPage({super.key, required this.tabIndex, this.targetCoordinates});
 
   final int tabIndex;
-  final TileDetails? tileDetails;
+  final List<int>? targetCoordinates;
 
   static Route<void> route(
       {required SettlementBloc settlementBloc, // for getting current settlement info
       required MovementsBloc movementsBloc,
       required TroopMovementsRepository troopMovementsRepository,
       int tabIndex = 0,
-      TileDetails? tileDetails}) {
+      List<int>? targetCoordinates}) {
     return MaterialPageRoute(builder: (context) {
       return RepositoryProvider.value(
         value: troopMovementsRepository,
@@ -30,7 +30,7 @@ class RallyPointPage extends StatelessWidget {
           ],
           child: RallyPointPage(
             tabIndex: tabIndex,
-            tileDetails: tileDetails,
+            targetCoordinates: targetCoordinates,
           ),
         ),
       );
@@ -43,17 +43,17 @@ class RallyPointPage extends StatelessWidget {
     context.read<MovementsBloc>().add(MovementsFetchRequested(settlementId: settlementId));
     return RallyPointView(
       initialTabIndex: tabIndex,
-      tileDetails: tileDetails,
+      targetCoordinates: targetCoordinates,
     );
   }
 }
 
 class RallyPointView extends StatefulWidget {
   const RallyPointView(
-      {super.key, required this.initialTabIndex, this.tileDetails});
+      {super.key, required this.initialTabIndex, this.targetCoordinates});
 
   final int initialTabIndex;
-  final TileDetails? tileDetails;
+  final List<int>? targetCoordinates;
 
   @override
   State<RallyPointView> createState() => _RallyPointViewState();
@@ -76,7 +76,7 @@ class _RallyPointViewState extends State<RallyPointView> {
         appBar: buildAppBar(),
         body: IndexedStack(index: currentIndex, children: [
           _movementsTab(),
-          _sendTroopsTab(widget.tileDetails),
+          _sendTroopsTab(widget.targetCoordinates),
         ]),
         bottomNavigationBar: _buildBottomBar(),
       ),
@@ -140,8 +140,8 @@ class _RallyPointViewState extends State<RallyPointView> {
     );
   }
 
-  Widget _sendTroopsTab(TileDetails? tileDetails) {
-    return SendTroopsForm(tileDetails: tileDetails, onConfirm: () {
+  Widget _sendTroopsTab(List<int>? targetCoordinates) {
+    return SendTroopsForm(targetCoordinates: targetCoordinates, onConfirm: () {
       setState(() {
         currentIndex = 0;
       });

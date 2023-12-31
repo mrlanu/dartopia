@@ -8,9 +8,10 @@ import 'package:models/models.dart';
 import '../../../consts/images.dart';
 
 class SendTroopsForm extends StatelessWidget {
-  const SendTroopsForm({super.key, this.tileDetails, required this.onConfirm});
+  const SendTroopsForm(
+      {super.key, this.targetCoordinates, required this.onConfirm});
 
-  final TileDetails? tileDetails;
+  final List<int>? targetCoordinates;
   final Function() onConfirm;
 
   @override
@@ -20,9 +21,11 @@ class SendTroopsForm extends StatelessWidget {
         return state.movements[MovementLocation.home]!.isNotEmpty
             ? BlocProvider(
                 create: (context) => SendTroopsCubit(
-                    troopMovementsRepository:
-                        context.read<TroopMovementsRepository>())
-                  ..setTileDetails(tileDetails),
+                        troopMovementsRepository:
+                            context.read<TroopMovementsRepository>())
+                    ..setTargetCoordinates(
+                        x: targetCoordinates?[0] ?? 0,
+                        y: targetCoordinates?[1] ?? 0),
                 child: SendTroopsFormView(onConfirm: onConfirm),
               )
             : Container();
@@ -45,16 +48,16 @@ class SendTroopsFormView extends StatelessWidget {
           elevation: 5,
           child: BlocBuilder<SendTroopsCubit, SendTroopsState>(
             builder: (context, state) {
-              final availableUnits =
-                  context.read<SettlementBloc>().state.settlement!.units;
+              final currentSettlement =
+                  context.read<SettlementBloc>().state.settlement!;
               return state.status == SendTroopsStatus.selecting ||
                       state.status == SendTroopsStatus.processing
                   ? Form(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          _buildCoordinates(state.tileDetails?.x ?? 0,
-                              state.tileDetails?.y ?? 0, context),
+                          _buildCoordinates(state.targetCoordinates[0],
+                              state.targetCoordinates[1], context),
                           const Divider(),
                           GridView.count(
                             padding: const EdgeInsets.only(
@@ -71,7 +74,7 @@ class SendTroopsFormView extends StatelessWidget {
                                       padding: const EdgeInsets.all(1.0),
                                       child: _buildField(
                                           e.key,
-                                          availableUnits[e.key],
+                                          currentSettlement.units[e.key],
                                           state.units[e.key],
                                           context)))
                                   .toList(),
@@ -87,7 +90,9 @@ class SendTroopsFormView extends StatelessWidget {
                             child: IconButton.outlined(
                                 color: Colors.green,
                                 onPressed: () {
-                                  context.read<SendTroopsCubit>().submitForm();
+                                  context.read<SendTroopsCubit>().submitForm(
+                                      currentSettlementId:
+                                          currentSettlement.id.$oid);
                                 },
                                 icon:
                                     state.status == SendTroopsStatus.processing
@@ -132,7 +137,7 @@ class SendTroopsFormView extends StatelessWidget {
                   onChanged: (value) {
                     context
                         .read<SendTroopsCubit>()
-                        .setX(int.tryParse(value) ?? 0);
+                        .setTargetCoordinates(x: int.tryParse(value) ?? 0);
                   },
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
@@ -156,7 +161,7 @@ class SendTroopsFormView extends StatelessWidget {
                   onChanged: (value) {
                     context
                         .read<SendTroopsCubit>()
-                        .setY(int.tryParse(value) ?? 0);
+                        .setTargetCoordinates(y: int.tryParse(value) ?? 0);
                   },
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
@@ -219,8 +224,7 @@ class SendTroopsFormView extends StatelessWidget {
           const SizedBox(
             width: 5,
           ),
-          SizedBox(
-              width: width * 0.15, child: Text('/ $availableAmount')),
+          SizedBox(width: width * 0.15, child: Text('/ $availableAmount')),
         ],
       ),
     );

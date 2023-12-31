@@ -13,6 +13,10 @@ class Api{
     return '/settlement/$settlementId/construction';
   }
 
+  static String sendTroopsContract(String settlementId){
+    return 'settlement/$settlementId/troops_send_contract';
+  }
+
   static String sendTroops(String settlementId){
     return 'settlement/$settlementId/send_units';
   }

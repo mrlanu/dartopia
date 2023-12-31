@@ -11,16 +11,19 @@ class SendTroopsCubit extends Cubit<SendTroopsState> {
 
   final TroopMovementsRepository troopMovementsRepository;
 
-  void setX(int x) {
-    emit(state.copyWith(x: x));
+  void setTargetCoordinates({int? x, int? y}) {
+    var newCoordinates = [...state.targetCoordinates];
+    if(x != null){
+      newCoordinates[0] = x;
+    }
+    if(y != null){
+      newCoordinates[1] = y;
+    }
+    emit(state.copyWith(targetCoordinates: newCoordinates));
   }
 
-  void setY(int y) {
-    emit(state.copyWith(y: y));
-  }
-
-  void setTileDetails(TileDetails? tileDetails) {
-    emit(state.copyWith(tileDetails: tileDetails));
+  void setContract(TroopsSendContract? contract) {
+    emit(state.copyWith(contract: contract));
   }
 
   void setUnits(List<int> units) {
@@ -45,21 +48,25 @@ class SendTroopsCubit extends Cubit<SendTroopsState> {
     emit(state.copyWith(status: status));
   }
 
-  Future<void> submitForm() async {
+  Future<void> submitForm({required String currentSettlementId}) async {
     emit(state.copyWith(status: SendTroopsStatus.processing));
-    if (state.tileDetails == null) {
-      final tile =
-          await troopMovementsRepository.fetchTileDetails(state.x, state.y);
-      emit(state.copyWith(
-          status: SendTroopsStatus.confirming, tileDetails: tile));
-    } else {
-      emit(state.copyWith(status: SendTroopsStatus.confirming));
-    }
+    final contract = TroopsSendContract(
+        corX: state.targetCoordinates[0],
+        corY: state.targetCoordinates[1],
+        units: state.units,
+        when: DateTime.now());
+    final confirmedContract =
+        await troopMovementsRepository.fetchSendTroopsContract(
+            fromSettlementId: currentSettlementId, contract: contract);
+    emit(state.copyWith(
+        status: SendTroopsStatus.confirming, contract: confirmedContract));
   }
 
   Future<void> sendTroops({required String currentSettlementId}) async {
     final request = SendTroopsRequest(
-        to: state.tileDetails!.id, units: state.units, mission: state.mission);
+        to: state.contract!.settlementId!,
+        units: state.units,
+        mission: state.mission);
     await troopMovementsRepository.sendTroops(request, currentSettlementId);
   }
 }

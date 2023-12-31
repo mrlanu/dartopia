@@ -38,14 +38,14 @@ class ConfirmSendTroops extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    'Target: ${state.tileDetails!.name} (${state.tileDetails!.x}|${state.tileDetails!.y})',
+                    'Target: ${state.contract!.name} (${state.contract!.corX}|${state.contract!.corY})',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    'Player: ${state.tileDetails!.playerName}',
+                    'Player: ${state.contract!.ownerId}',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
@@ -107,35 +107,16 @@ class ConfirmSendTroops extends StatelessWidget {
     return Movement(
         mission: state.mission,
         units: state.units,
-        when: Common.getArrivalTime(
-            x: state.tileDetails!.x,
-            y: state.tileDetails!.y,
-            fromX: currentSettlement.x,
-            fromY: currentSettlement.y,
-            speed: _getSlowestSpeed(state.units)),
-        // should be changed for real speed of slowest unit
-        // in units,
-        // and change in the settlementService on the server as well
+        when: state.contract!.when,
         from: SideBrief(
             villageId: currentSettlement.id.$oid,
             coordinates: [currentSettlement.x, currentSettlement.y],
             playerName: currentSettlement.userId,
             villageName: currentSettlement.name),
         to: SideBrief(
-            villageId: state.tileDetails!.id,
-            villageName: state.tileDetails!.name,
-            playerName: state.tileDetails!.playerName,
-            coordinates: [state.tileDetails!.x, state.tileDetails!.y]));
-  }
-
-  int _getSlowestSpeed(List<int> units){
-    var speed = 1000;
-    for(var i = 0; i < units.length; i++){
-      final unit = UnitsConst.UNITS[2][i];
-      if(units[i] > 0 && unit.velocity < speed){
-        speed = unit.velocity;
-      }
-    }
-    return speed;
+            villageId: state.contract!.settlementId!,
+            villageName: state.contract!.name!,
+            playerName: state.contract!.ownerId!,
+            coordinates: [state.contract!.corX, state.contract!.corY]));
   }
 }

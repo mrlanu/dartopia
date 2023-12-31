@@ -13,6 +13,11 @@ abstract class SettlementRepository {
 
   Future<Settlement?> getById(String id);
 
+  Future<Settlement?> fetchSettlementByCoordinates({
+    required int x,
+    required int y,
+  });
+
   Future<TileDetails> getTileDetailsByCoordinates({
     required int x,
     required int y,
@@ -40,12 +45,14 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
           .collection('settlements')
           .find(where.eq('userId', userId))
           .map(Settlement.fromMap)
-          .map((s) => ShortSettlementInfo(
-              isCapital: true,
-              settlementId: s.id.$oid,
-              name: s.name,
-              x: s.x,
-              y: s.y),)
+          .map(
+            (s) => ShortSettlementInfo(
+                isCapital: true,
+                settlementId: s.id.$oid,
+                name: s.name,
+                x: s.x,
+                y: s.y),
+          )
           .toList();
 
   @override
@@ -54,6 +61,21 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
     final document = await _mongoService.db
         .collection('settlements')
         .findOne(where.id(objectId));
+    if (document != null) {
+      return Settlement.fromMap(document);
+    } else {
+      return null;
+    }
+  }
+
+  @override
+  Future<Settlement?> fetchSettlementByCoordinates({
+    required int x,
+    required int y,
+  }) async {
+    final document = await _mongoService.db
+        .collection('settlements')
+        .findOne(where.eq('x', x).and(where.eq('y', y)));
     if (document != null) {
       return Settlement.fromMap(document);
     } else {

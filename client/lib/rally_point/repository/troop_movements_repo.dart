@@ -8,9 +8,18 @@ import '../../../../../consts/api.dart';
 
 abstract class TroopMovementsRepository {
   Future<void> sendTroops(SendTroopsRequest request, String fromSettlementId);
+
+  Future<TroopsSendContract> fetchSendTroopsContract(
+  {required TroopsSendContract contract, required String fromSettlementId});
+
   Stream<List<Movement>?> getMovements();
+
   Future<void> fetchMovements(String settlementId);
-  Future<TileDetails> fetchTileDetails(int x, int y,);
+
+  Future<TileDetails> fetchTileDetails(
+    int x,
+    int y,
+  );
 }
 
 class TroopMovementsRepositoryImpl implements TroopMovementsRepository {
@@ -21,11 +30,22 @@ class TroopMovementsRepositoryImpl implements TroopMovementsRepository {
       _movementsStreamController.asBroadcastStream();
 
   @override
-  Future<void> sendTroops(SendTroopsRequest request, String fromSettlementId) async {
+  Future<TroopsSendContract> fetchSendTroopsContract(
+      {required TroopsSendContract contract, required String fromSettlementId}) async {
+    final url = Uri.http(Api.baseURL, Api.sendTroopsContract(fromSettlementId));
+    final response = await http.post(url, body: json.encode(contract));
+
+    final map = json.decode(response.body) as Map<String, dynamic>;
+    final confirmedContract = TroopsSendContract.fromJson(map);
+    return confirmedContract;
+  }
+
+  @override
+  Future<void> sendTroops(
+      SendTroopsRequest request, String fromSettlementId) async {
     final url = Uri.http(Api.baseURL, Api.sendTroops(fromSettlementId));
     await http.post(url, body: json.encode(request));
   }
-
 
   @override
   Future<void> fetchMovements(String settlementId) async {
@@ -39,7 +59,10 @@ class TroopMovementsRepositoryImpl implements TroopMovementsRepository {
   }
 
   @override
-  Future<TileDetails> fetchTileDetails(int x, int y,) async {
+  Future<TileDetails> fetchTileDetails(
+    int x,
+    int y,
+  ) async {
     final url = Uri.http(Api.baseURL, 'settlement', {
       'x': x.toString(),
       'y': y.toString(),

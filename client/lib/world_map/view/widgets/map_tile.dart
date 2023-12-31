@@ -96,7 +96,7 @@ class MapTileWidget extends StatelessWidget {
                         context.read<TroopMovementsRepository>(),
                     settlementBloc: context.read<SettlementBloc>(),
                     tabIndex: 1,
-                    tileDetails: tileDetails));
+                    targetCoordinates: [tileDetails.x, tileDetails.y]));
               },
               icon: const FaIcon(FontAwesomeIcons.khanda)),
         ],
