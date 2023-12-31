@@ -321,7 +321,19 @@ class SettlementServiceImpl extends SettlementService {
       // and change in the confirm_send_troops on the client as well
       mission: request.mission,
     );
-    return _settlementRepository.sendUnits(movement);
+    await _settlementRepository.sendUnits(movement);
+    _subtractUnits(request.units, sender);
+    await updateSettlement(settlement: sender);
+    return true;
+  }
+
+  void _subtractUnits(List<int> units, Settlement home) {
+    final homeUnits = home.units;
+    for (var i = 0; i < 10; i++) {
+      var amount = homeUnits[i];
+      amount -= units[i];
+      homeUnits[i] = amount;
+    }
   }
 
   @override
@@ -358,6 +370,7 @@ class SettlementServiceImpl extends SettlementService {
       isMoving: false,
       from: fromSide,
       to: toSide,
+      units: settlement.units,
       when: DateTime.now(),
       mission: Mission.home,
     );

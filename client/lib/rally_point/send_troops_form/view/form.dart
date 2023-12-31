@@ -1,4 +1,5 @@
 import 'package:dartopia/rally_point/rally_point.dart';
+import 'package:dartopia/settlement/bloc/settlement_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,7 +12,6 @@ class SendTroopsForm extends StatelessWidget {
 
   final TileDetails? tileDetails;
   final Function() onConfirm;
-
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +33,7 @@ class SendTroopsForm extends StatelessWidget {
 
 class SendTroopsFormView extends StatelessWidget {
   const SendTroopsFormView({super.key, required this.onConfirm});
+
   final Function() onConfirm;
 
   @override
@@ -44,6 +45,8 @@ class SendTroopsFormView extends StatelessWidget {
           elevation: 5,
           child: BlocBuilder<SendTroopsCubit, SendTroopsState>(
             builder: (context, state) {
+              final availableUnits =
+                  context.read<SettlementBloc>().state.settlement!.units;
               return state.status == SendTroopsStatus.selecting ||
                       state.status == SendTroopsStatus.processing
                   ? Form(
@@ -67,7 +70,10 @@ class SendTroopsFormView extends StatelessWidget {
                                   .map((e) => Padding(
                                       padding: const EdgeInsets.all(1.0),
                                       child: _buildField(
-                                          e.key, state.units[e.key], context)))
+                                          e.key,
+                                          availableUnits[e.key],
+                                          state.units[e.key],
+                                          context)))
                                   .toList(),
                             ],
                           ),
@@ -96,7 +102,9 @@ class SendTroopsFormView extends StatelessWidget {
                         ],
                       ),
                     )
-                  : ConfirmSendTroops(onConfirm: onConfirm,);
+                  : ConfirmSendTroops(
+                      onConfirm: onConfirm,
+                    );
             },
           ),
         ),
@@ -122,7 +130,9 @@ class SendTroopsFormView extends StatelessWidget {
                 child: TextFormField(
                   initialValue: x.toString(),
                   onChanged: (value) {
-                    context.read<SendTroopsCubit>().setX(int.tryParse(value)?? 0);
+                    context
+                        .read<SendTroopsCubit>()
+                        .setX(int.tryParse(value) ?? 0);
                   },
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
@@ -144,7 +154,9 @@ class SendTroopsFormView extends StatelessWidget {
                 child: TextFormField(
                   initialValue: y.toString(),
                   onChanged: (value) {
-                    context.read<SendTroopsCubit>().setY(int.tryParse(value)?? 0);
+                    context
+                        .read<SendTroopsCubit>()
+                        .setY(int.tryParse(value) ?? 0);
                   },
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
@@ -160,7 +172,8 @@ class SendTroopsFormView extends StatelessWidget {
     );
   }
 
-  Widget _buildField(int index, int amount, BuildContext context) {
+  Widget _buildField(
+      int index, int availableAmount, int amount, BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final cubit = context.read<SendTroopsCubit>();
     return Padding(
@@ -187,8 +200,15 @@ class SendTroopsFormView extends StatelessWidget {
             child: TextFormField(
               initialValue: amount.toString(),
               onChanged: (value) {
-                cubit.setUnit(index, int.tryParse(value)?? 0);
+                final intValue = int.tryParse(value) ?? 0;
+                final maxAmount =
+                    intValue > availableAmount ? availableAmount : intValue;
+                cubit.setUnit(index, maxAmount);
               },
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                NumericRangeFormatter(0, availableAmount),
+              ],
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
                 contentPadding: EdgeInsets.only(left: 5),
@@ -199,7 +219,8 @@ class SendTroopsFormView extends StatelessWidget {
           const SizedBox(
             width: 5,
           ),
-          SizedBox(width: width * 0.15, child: Text('/ $amount')),
+          SizedBox(
+              width: width * 0.15, child: Text('/ $availableAmount')),
         ],
       ),
     );
@@ -265,7 +286,7 @@ class SendTroopsFormView extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
+          SizedBox(
             width: width * 0.4,
             child: DropdownButtonFormField<String>(
               decoration: const InputDecoration(
@@ -285,7 +306,7 @@ class SendTroopsFormView extends StatelessWidget {
           SizedBox(
             width: width * 0.02,
           ),
-          Container(
+          SizedBox(
             width: width * 0.4,
             child: DropdownButtonFormField<String>(
               decoration: const InputDecoration(
@@ -305,5 +326,38 @@ class SendTroopsFormView extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class NumericRangeFormatter extends TextInputFormatter {
+  final int minValue;
+  final int maxValue;
+
+  NumericRangeFormatter(this.minValue, this.maxValue);
+
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    try {
+      final int parsedValue = int.parse(newValue.text);
+
+      if (parsedValue < minValue) {
+        return TextEditingValue(
+          text: minValue.toString(),
+          selection:
+              TextSelection.collapsed(offset: minValue.toString().length),
+        );
+      } else if (parsedValue > maxValue) {
+        return TextEditingValue(
+          text: maxValue.toString(),
+          selection:
+              TextSelection.collapsed(offset: maxValue.toString().length),
+        );
+      }
+    } catch (e) {
+      // Handle non-numeric input
+    }
+
+    return newValue;
   }
 }

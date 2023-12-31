@@ -112,7 +112,8 @@ class ConfirmSendTroops extends StatelessWidget {
             y: state.tileDetails!.y,
             fromX: currentSettlement.x,
             fromY: currentSettlement.y,
-            speed: 300), // should be changed for real speed of slowest unit
+            speed: _getSlowestSpeed(state.units)),
+        // should be changed for real speed of slowest unit
         // in units,
         // and change in the settlementService on the server as well
         from: SideBrief(
@@ -125,5 +126,16 @@ class ConfirmSendTroops extends StatelessWidget {
             villageName: state.tileDetails!.name,
             playerName: state.tileDetails!.playerName,
             coordinates: [state.tileDetails!.x, state.tileDetails!.y]));
+  }
+
+  int _getSlowestSpeed(List<int> units){
+    var speed = 1000;
+    for(var i = 0; i < units.length; i++){
+      final unit = UnitsConst.UNITS[2][i];
+      if(units[i] > 0 && unit.velocity < speed){
+        speed = unit.velocity;
+      }
+    }
+    return speed;
   }
 }
