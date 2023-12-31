@@ -53,11 +53,17 @@ class MovementsBloc extends Bloc<MovementsEvent, MovementsState> {
         if (m.mission == Mission.home) {
           result[MovementLocation.home]!.add(m);
         } else if (m.from.villageId == currentSettlementId) {
-          result[MovementLocation.outgoing]!.add(m);
-        } else if (m.to.villageId == currentSettlementId && m.isMoving) {
-          result[MovementLocation.incoming]!.add(m);
-        } else if (m.to.villageId == currentSettlementId && !m.isMoving) {
-          result[MovementLocation.home]!.add(m);
+          if(m.isMoving){
+            result[MovementLocation.outgoing]!.add(m);
+          }else{
+            result[MovementLocation.away]!.add(m);
+          }
+        } else if (m.to.villageId == currentSettlementId) {
+          if(m.isMoving){
+            result[MovementLocation.incoming]!.add(m);
+          }else{
+            result[MovementLocation.home]!.add(m);
+          }
         }
       }
     }

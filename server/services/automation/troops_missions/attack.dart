@@ -8,10 +8,11 @@ import '../../battle/main_battle.dart';
 import 'troop_missions.dart';
 
 class Attack extends MissionStrategy {
-  Attack(
-      {required super.movement,
-      required super.mongoService,
-      required super.settlementService});
+  Attack({
+    required super.movement,
+    required super.mongoService,
+    required super.settlementService,
+  });
 
   @override
   Future<void> handle() async {
@@ -23,6 +24,9 @@ class Attack extends MissionStrategy {
       settlementId: movement.to.villageId,
       untilDateTime: movement.when,
     );
+
+    final reinforcements = await settlementService
+        .getAllStaticForeignMovementsBySettlementId(defenseSettlement!.id.$oid);
 
     final battle = Battle();
 
@@ -39,29 +43,45 @@ class Attack extends MissionStrategy {
       side: ESide.DEF,
       population: 100,
       units: UnitsConst.UNITS[2],
-      numbers: defenseSettlement!.units,
+      numbers: defenseSettlement.units,
     );
+    final reinforcementArmies = reinforcements
+        .map(
+          (m) => Army(
+            side: ESide.DEF,
+            population: 100,
+            units: UnitsConst.UNITS[2],
+            numbers: m.units,
+          ),
+        )
+        .toList();
 
-    final sidesArmy = [ownDef, off];
+    final sidesArmy = [ownDef, ...reinforcementArmies, off];
 
     final battleResults = battle.perform(battleField, sidesArmy);
-    final plunder = _returnOff(sidesArmy[sidesArmy.length - 1], defenseSettlement);
-    sidesArmy.removeAt(sidesArmy.length -1);
-    _updateDef(defenseSettlement, sidesArmy, []);
+    final plunder =
+        _returnOff(sidesArmy[sidesArmy.length - 1], defenseSettlement);
+    sidesArmy.removeAt(sidesArmy.length - 1);
+    await _updateDef(defenseSettlement, sidesArmy, reinforcements);
     await settlementService.updateSettlement(settlement: defenseSettlement);
   }
 
-  void _updateDef(Settlement def, List<Army> sidesArmy, List<int>? defEntities) {
+  Future<void> _updateDef(
+      Settlement def, List<Army> sidesArmy, List<Movement> defEntities,) async {
     def.units = sidesArmy[0].numbers;
-    // start from 1 because there is off army on the front in sidesArmy
-    for (var i = 1; i < sidesArmy.length; i++){
-      /*final currentDef = defEntities.get(i - 1);
-      if (sidesArmy.get(i).getNumbers().stream().reduce(0, Integer::sum) == 0){
-        engineService.getCombatGroupRepository().deleteById(currentDef.getId());
+    // start from 1 because there is own army on the front in sidesArmy
+    for (var i = 1; i < sidesArmy.length; i++) {
+      var currentDef = defEntities[i-1];
+      if (sidesArmy[i].numbers.reduce((a, b) => a + b) == 0){
+        await mongoService.db
+            .collection('movements')
+            .deleteOne(where.id(currentDef.id!));
         continue;
       }
-      currentDef.setUnits(sidesArmy.get(i).getNumbers());
-      engineService.getCombatGroupRepository().save(currentDef);*/
+      currentDef = currentDef.copyWith(units: sidesArmy[i].numbers);
+      await mongoService.db
+          .collection('movements')
+          .replaceOne(where.id(currentDef.id!), currentDef.toMap());
     }
   }
 
@@ -79,17 +99,18 @@ class Attack extends MissionStrategy {
     final plunder = _calculatePlunder(offArmy.numbers, def);
     _subtractStolenResources(plunder, def);
     movement = movement.copyWith(
-        from: movement.to,
-        to: movement.from,
-        units: offArmy.numbers,
-        plunder: plunder,
-        mission: Mission.back,
-        when: movement.when.add(const Duration(seconds: 40)),);
+      from: movement.to,
+      to: movement.from,
+      units: offArmy.numbers,
+      plunder: plunder,
+      mission: Mission.back,
+      when: movement.when.add(const Duration(seconds: 3600)),
+    );
 
     await mongoService.db
         .collection('movements')
         .replaceOne(where.id(movement.id!), movement.toMap());
-    
+
     return plunder;
   }
 

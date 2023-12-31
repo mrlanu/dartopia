@@ -17,6 +17,7 @@ class Automation {
   Future<void> main() async {
     final mongo = MongoService.instance;
     final movements = await _settlementService.getMovementsBeforeNow();
+    print('MOVEMENTS ----------->>>>>>>>>>>> ${movements.length}');
     //final movements = <Movement>[];
 
     MyLogger.debug('Perform attacks: ${movements.length}');
@@ -32,6 +33,11 @@ class Automation {
             mongoService: mongo,
             settlementService: _settlementService,
           ),
+        Mission.reinforcement => Reinforcement(
+          movement: m,
+          mongoService: mongo,
+          settlementService: _settlementService,
+        ),
         _ => throw ArgumentError('Invalid option'),
       };
 

@@ -24,9 +24,14 @@ abstract class SettlementRepository {
   });
 
   //movements
-  Future<List<Movement>> getAllMovementsBySettlementId(String id);
+  Future<List<Movement>> getAllMovementsBySettlementId({
+    required String id,
+    bool? isMoving,
+  });
 
   Future<List<Movement>> getMovementsBeforeNow();
+
+  Future<List<Movement>> getAllStaticForeignMovementsBySettlementId(String id);
 
   Future<bool> sendUnits(Movement movement);
 }
@@ -130,10 +135,36 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
   }
 
   @override
-  Future<List<Movement>> getAllMovementsBySettlementId(String id) =>
+  Future<List<Movement>> getAllMovementsBySettlementId({
+    required String id,
+    bool? isMoving,
+  }) {
+    var selector =
+        where.eq('from.villageId', id).or(where.eq('to.villageId', id));
+    if (isMoving != null && isMoving == true) {
+      selector = where
+          .eq('isMoving', true)
+          .and(where.eq('from.villageId', id).or(where.eq('to.villageId', id)));
+    }
+    if (isMoving != null && isMoving == false) {
+      selector = where
+          .eq('isMoving', false)
+          .and(where.eq('from.villageId', id).or(where.eq('to.villageId', id)));
+    }
+    return _mongoService.db
+        .collection('movements')
+        .find(selector)
+        .map(Movement.fromMap)
+        .toList();
+  }
+
+  @override
+  Future<List<Movement>> getAllStaticForeignMovementsBySettlementId(
+    String id,
+  ) =>
       _mongoService.db
           .collection('movements')
-          .find(where.eq('from.villageId', id).or(where.eq('to.villageId', id)))
+          .find(where.eq('to.villageId', id).and(where.eq('isMoving', false)))
           .map(Movement.fromMap)
           .toList();
 
@@ -148,7 +179,7 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
   @override
   Future<List<Movement>> getMovementsBeforeNow() => _mongoService.db
       .collection('movements')
-      .find(where.lte('when', DateTime.now()))
+      .find(where.eq('isMoving', true).and(where.lte('when', DateTime.now())))
       .map(Movement.fromMap)
       .toList();
 }

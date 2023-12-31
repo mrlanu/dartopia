@@ -18,17 +18,27 @@ Future<Response> onRequest(RequestContext context) async {
   MyLogger.debug('Perform attacks: ${movements.length}');
   for (final m in movements) {
     final strategy = switch (m.mission) {
-      Mission.attack || Mission.raid => Attack(
-        movement: m,
-        mongoService: mongo,
-        settlementService: settlementService,),
-      Mission.back => BackHome(
-        movement: m,
-        mongoService: mongo,
-        settlementService: settlementService,
-      ),
+      Mission.attack || Mission.raid =>
+          Attack(
+            movement: m,
+            mongoService: mongo,
+            settlementService: settlementService,
+          ),
+      Mission.back =>
+          BackHome(
+            movement: m,
+            mongoService: mongo,
+            settlementService: settlementService,
+          ),
+      Mission.reinforcement =>
+          Reinforcement(
+            movement: m,
+            mongoService: mongo,
+            settlementService: settlementService,
+          ),
       _ => throw ArgumentError('Invalid option'),
     };
+
 
     await strategy.handle();
 

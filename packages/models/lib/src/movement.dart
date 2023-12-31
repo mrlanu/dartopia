@@ -96,5 +96,5 @@ class Movement {
 
   @override
   String toString() =>
-      'Movement(id: $id, from: $from, to: $to, when: $when, units: $units, middion: ${mission.name})';
+      'Movement(id: $id, isMoving: $isMoving, from: $from, to: $to, when: $when, units: $units, mission: ${mission.name})';
 }

@@ -42,6 +42,7 @@ class SettlementRepositoryImpl implements SettlementRepository {
     final url = Uri.http(Api.baseURL, Api.fetchSettlementById(settlementId));
     for (var i = 0; i <= 10; i++) {
       final response = await http.get(url);
+      print('RESPONSE: ${response.statusCode}');
       if (response.statusCode != 200) {
         await Future<void>.delayed(const Duration(milliseconds: 200));
         continue;

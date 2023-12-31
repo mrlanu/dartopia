@@ -9,13 +9,15 @@ import '../settlement/settlement.dart';
 import 'rally_point.dart';
 
 class RallyPointPage extends StatelessWidget {
-  const RallyPointPage({super.key, required this.tabIndex, this.targetCoordinates});
+  const RallyPointPage(
+      {super.key, required this.tabIndex, this.targetCoordinates});
 
   final int tabIndex;
   final List<int>? targetCoordinates;
 
   static Route<void> route(
-      {required SettlementBloc settlementBloc, // for getting current settlement info
+      {required SettlementBloc
+          settlementBloc, // for getting current settlement info
       required MovementsBloc movementsBloc,
       required TroopMovementsRepository troopMovementsRepository,
       int tabIndex = 0,
@@ -39,8 +41,11 @@ class RallyPointPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final settlementId = context.read<SettlementBloc>().state.settlement!.id.$oid;
-    context.read<MovementsBloc>().add(MovementsFetchRequested(settlementId: settlementId));
+    final settlementId =
+        context.read<SettlementBloc>().state.settlement!.id.$oid;
+    context
+        .read<MovementsBloc>()
+        .add(MovementsFetchRequested(settlementId: settlementId));
     return RallyPointView(
       initialTabIndex: tabIndex,
       targetCoordinates: targetCoordinates,
@@ -133,6 +138,20 @@ class _RallyPointViewState extends State<RallyPointView> {
                               movement: move,
                             ))
                         .toList(),
+                    state.movements[MovementLocation.away]!.isNotEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Text(
+                              'Armies in other places (${state.movements[MovementLocation.away]!.length})',
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          )
+                        : Container(),
+                    ...state.movements[MovementLocation.away]!
+                        .map((move) => TroopDetails(
+                              movement: move,
+                            ))
+                        .toList(),
                   ],
                 ),
               );
@@ -141,11 +160,14 @@ class _RallyPointViewState extends State<RallyPointView> {
   }
 
   Widget _sendTroopsTab(List<int>? targetCoordinates) {
-    return SendTroopsForm(targetCoordinates: targetCoordinates, onConfirm: () {
-      setState(() {
-        currentIndex = 0;
-      });
-    },);
+    return SendTroopsForm(
+      targetCoordinates: targetCoordinates,
+      onConfirm: () {
+        setState(() {
+          currentIndex = 0;
+        });
+      },
+    );
   }
 
   Widget _buildBottomBar() {
