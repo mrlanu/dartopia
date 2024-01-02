@@ -33,7 +33,7 @@ class SettlementPage extends StatelessWidget {
           BlocProvider(
             create: (context) => SettlementBloc(
                 settlementRepository: context.read<SettlementRepository>())
-              ..add(const ListOfSettlementsRequested(userId: 'Nata')),
+              ..add(const ListOfSettlementsRequested(userId: 'Serhiy')),
           ),
           BlocProvider(
             create: (context) =>

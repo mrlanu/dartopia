@@ -139,17 +139,25 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
     required String id,
     bool? isMoving,
   }) {
-    var selector =
-        where.eq('from.villageId', id).or(where.eq('to.villageId', id));
+    // 'to.villageId' == id || ('from.villageId' == id && 'mission' != 'back')
+    var selector = where
+        .eq('to.villageId', id)
+        .or(where.eq('from.villageId', id).and(where.ne('mission', 'back')));
     if (isMoving != null && isMoving == true) {
-      selector = where
-          .eq('isMoving', true)
-          .and(where.eq('from.villageId', id).or(where.eq('to.villageId', id)));
+      // 'isMoving' == true' &&
+      // (to.villageId' == id || ('from.villageId' == id && 'mission' != 'back'))
+      selector = where.eq('isMoving', true).and(
+            where.eq('to.villageId', id).or(where
+                .eq('from.villageId', id)
+                .and(where.ne('mission', 'back')),),
+          );
     }
     if (isMoving != null && isMoving == false) {
-      selector = where
-          .eq('isMoving', false)
-          .and(where.eq('from.villageId', id).or(where.eq('to.villageId', id)));
+      selector = where.eq('isMoving', false).and(
+            where.eq('to.villageId', id).or(where
+                .eq('from.villageId', id)
+                .and(where.ne('mission', 'back')),),
+          );
     }
     return _mongoService.db
         .collection('movements')

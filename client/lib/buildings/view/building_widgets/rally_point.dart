@@ -44,7 +44,7 @@ class RallyPoint extends StatelessWidget {
             .toList();
         final incomingReinforcements = state
             .movements[MovementLocation.incoming]!
-            .where((m) => m.mission == Mission.reinforcement)
+            .where((m) => m.mission == Mission.reinforcement || m.mission == Mission.back)
             .toList();
         final outgoingReinforcements = state
             .movements[MovementLocation.outgoing]!

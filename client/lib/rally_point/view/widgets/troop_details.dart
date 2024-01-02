@@ -57,7 +57,9 @@ class TroopDetails extends StatelessWidget {
           ),
           child: Center(
               child: Text(
-            movement.from.playerName,
+            movement.mission == Mission.back
+                ? movement.to.villageName
+                : movement.from.villageName,
             overflow: TextOverflow.ellipsis,
           )),
         ),
@@ -77,13 +79,17 @@ class TroopDetails extends StatelessWidget {
                 ? Center(
                     child: Text(
                         overflow: TextOverflow.ellipsis,
-                        '${movement.from.villageName} ${_getMissionName()} ${movement.to.villageName} (${movement.to.coordinates[0]}|${movement.to.coordinates[1]})'))
+                        movement.mission == Mission.back
+                            ? 'Return from ${movement.from.villageName} '
+                                '(${movement.from.coordinates[0]}|${movement.from.coordinates[1]})'
+                            : '${movement.from.playerName} ${_getMissionName()} ${movement.to.villageName} '
+                                '(${movement.to.coordinates[0]}|${movement.to.coordinates[1]})'))
                 : movement.mission == Mission.home
                     ? const Center(child: Text('Own troops'))
                     : Center(
                         child: Text(
                             overflow: TextOverflow.ellipsis,
-                            '${movement.from.villageName} ${_getMissionName()} ${movement.to.villageName} (${movement.to.coordinates[0]}|${movement.to.coordinates[1]})'),
+                            '${movement.from.playerName} ${_getMissionName()} ${movement.to.villageName} (${movement.to.coordinates[0]}|${movement.to.coordinates[1]})'),
                       ),
           ),
         ),
@@ -108,7 +114,9 @@ class TroopDetails extends StatelessWidget {
       Mission.raid =>
         const Color.fromRGBO(252, 209, 209, 1.0),
       Mission.home => const Color.fromRGBO(250, 238, 178, 1.0),
-      Mission.reinforcement => const Color.fromRGBO(202, 246, 179, 1.0),
+      Mission.reinforcement ||
+      Mission.back =>
+        const Color.fromRGBO(202, 246, 179, 1.0),
       _ => const Color.fromRGBO(252, 209, 209, 1.0),
     };
   }
@@ -340,7 +348,9 @@ class TroopDetails extends StatelessWidget {
                     '${plunder[e.key]}',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
-                  const SizedBox(width: 2,)
+                  const SizedBox(
+                    width: 2,
+                  )
                 ],
               ))
           .toList()
