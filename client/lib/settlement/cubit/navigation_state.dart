@@ -1,6 +1,6 @@
 part of 'navigation_cubit.dart';
 
-enum NavTab { buildings, map }
+enum NavTab { buildings, map, charts, reports }
 
 final class NavigationState extends Equatable {
   const NavigationState({

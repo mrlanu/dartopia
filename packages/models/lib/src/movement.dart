@@ -19,6 +19,7 @@ class Movement {
   final List<int> units;
   final List<int> plunder;
   final Mission mission;
+  final Nations nation;
 
   Movement(
       {this.id,
@@ -28,7 +29,7 @@ class Movement {
       required this.when,
       this.units = const [0, 5, 0, 0, 0, 0, 0, 0, 0, 0],
         this.plunder = const [0, 0, 0, 0],
-      required this.mission});
+      required this.mission, this.nation = Nations.gaul});
 
   Movement.fromMap(Map<String, dynamic> map)
       : id = map['_id'] as ObjectId,
@@ -38,7 +39,8 @@ class Movement {
         when = map['when'] as DateTime,
         units = (map['units'] as List<dynamic>).map((u) => u as int).toList(),
         plunder = (map['plunder'] as List<dynamic>).map((u) => u as int).toList(),
-        mission = Mission.values.byName(map['mission'] as String);
+        mission = Mission.values.byName(map['mission'] as String),
+        nation = Nations.values.byName(map['nation'] as String);
 
   Movement.fromJson(Map<String, dynamic> map)
       : id = ObjectId.parse(map['_id'] as String),
@@ -48,7 +50,8 @@ class Movement {
         when = DateTime.parse(map['when'] as String),
         units = (map['units'] as List<dynamic>).map((u) => u as int).toList(),
         plunder = (map['plunder'] as List<dynamic>).map((u) => u as int).toList(),
-        mission = Mission.values.byName(map['mission'] as String);
+        mission = Mission.values.byName(map['mission'] as String),
+        nation = Nations.values.byName(map['nation'] as String);
 
   Map<String, dynamic> toMap() => <String, dynamic>{
         '_id': id,
@@ -59,6 +62,7 @@ class Movement {
         'units': units,
         'plunder': plunder,
         'mission': mission.name,
+        'nation': nation.name,
       };
 
   Map<String, dynamic> toJson() => <String, dynamic>{
@@ -70,6 +74,7 @@ class Movement {
         'units': units,
         'plunder': plunder,
         'mission': mission.name,
+        'nation': nation.name,
       };
 
   Movement copyWith({
@@ -81,6 +86,7 @@ class Movement {
     List<int>? units,
     List<int>? plunder,
     Mission? mission,
+    Nations? nation,
   }) {
     return Movement(
       id: id ?? this.id,
@@ -91,6 +97,7 @@ class Movement {
       units: units ?? this.units,
       plunder: plunder ?? this.plunder,
       mission: mission ?? this.mission,
+      nation: nation ?? this.nation,
     );
   }
 

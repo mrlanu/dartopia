@@ -23,6 +23,6 @@ Handler middleware(Handler handler) {
       })*/
       .use(provider<UserRepository>((_) => _userRepository))
       .use(provider<SettlementService>((_) => _settlementService))
-      .use(provider<Authenticator>((_) => _authenticator));
-      //.use(requestLogger());
+      .use(provider<Authenticator>((_) => _authenticator))
+      .use(requestLogger());
 }

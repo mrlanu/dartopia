@@ -24,5 +24,17 @@ class Api{
   static String fetchMovements(String settlementId){
     return 'settlement/$settlementId/movements';
   }
+
+  static String fetchAllReportsBriefByUserId(String userId){
+    return 'reports';
+  }
+
+  static String fetchReportById(String reportId){
+    return 'reports/$reportId';
+  }
+
+  static String deleteReportById(String reportId){
+    return 'reports/$reportId';
+  }
 }
 

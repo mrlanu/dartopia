@@ -112,11 +112,13 @@ class ConfirmSendTroops extends StatelessWidget {
             villageId: currentSettlement.id.$oid,
             coordinates: [currentSettlement.x, currentSettlement.y],
             playerName: currentSettlement.userId,
+            userId: currentSettlement.userId,
             villageName: currentSettlement.name),
         to: SideBrief(
             villageId: state.contract!.settlementId!,
             villageName: state.contract!.name!,
             playerName: state.contract!.ownerId!,
+            userId: state.contract!.ownerId!,
             coordinates: [state.contract!.corX, state.contract!.corY]));
   }
 }

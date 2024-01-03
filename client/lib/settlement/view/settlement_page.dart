@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../common/common.dart';
 import '../../rally_point/rally_point.dart';
+import '../../reports/reports.dart';
 import '../settlement.dart';
 
 class SettlementPage extends StatelessWidget {
@@ -33,7 +34,7 @@ class SettlementPage extends StatelessWidget {
           BlocProvider(
             create: (context) => SettlementBloc(
                 settlementRepository: context.read<SettlementRepository>())
-              ..add(const ListOfSettlementsRequested(userId: 'Serhiy')),
+              ..add(const ListOfSettlementsRequested(userId: 'Nata')),
           ),
           BlocProvider(
             create: (context) =>
@@ -77,6 +78,8 @@ class SettlementView extends StatelessWidget {
                         children: [
                           const BuildingsPage(),
                           WorldMapPage(),
+                          Container(),
+                          ReportsPage(),
                           const Scaffold()
                         ],
                       );

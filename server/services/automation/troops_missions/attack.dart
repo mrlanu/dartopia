@@ -60,19 +60,29 @@ class Attack extends MissionStrategy {
 
     final battleResults = battle.perform(battleField, sidesArmy);
     final plunder =
-        _returnOff(sidesArmy[sidesArmy.length - 1], defenseSettlement);
+        await _returnOff(sidesArmy[sidesArmy.length - 1], defenseSettlement);
     sidesArmy.removeAt(sidesArmy.length - 1);
     await _updateDef(defenseSettlement, sidesArmy, reinforcements);
     await settlementService.updateSettlement(settlement: defenseSettlement);
+    await _createReports(
+      attacker: offenseSettlement!,
+      defender: defenseSettlement,
+      reinforcement: reinforcements,
+      battleResult: battleResults[0],
+      plunder: plunder,
+    );
   }
 
   Future<void> _updateDef(
-      Settlement def, List<Army> sidesArmy, List<Movement> defEntities,) async {
+    Settlement def,
+    List<Army> sidesArmy,
+    List<Movement> defEntities,
+  ) async {
     def.units = sidesArmy[0].numbers;
     // start from 1 because there is own army on the front in sidesArmy
     for (var i = 1; i < sidesArmy.length; i++) {
-      var currentDef = defEntities[i-1];
-      if (sidesArmy[i].numbers.reduce((a, b) => a + b) == 0){
+      var currentDef = defEntities[i - 1];
+      if (sidesArmy[i].numbers.reduce((a, b) => a + b) == 0) {
         await mongoService.db
             .collection('movements')
             .deleteOne(where.id(currentDef.id!));
@@ -146,5 +156,71 @@ class Attack extends MissionStrategy {
       res -= plunder[i];
       storage[i] = res;
     }
+  }
+
+  Future<void> _createReports({
+    required Settlement attacker,
+    required Settlement defender,
+    required List<Movement> reinforcement,
+    required BattleResult battleResult,
+    required List<int> plunder,
+  }) async {
+    final carry = _calculateCarry(movement.units);
+
+    final ownDef = PlayerInfo(
+      settlementId: defender.id.$oid,
+      settlementName: defender.name,
+      playerName: movement.to.playerName,
+      nation: Nations.gaul,
+      units: battleResult.unitsBeforeBattle![0],
+      casualty: battleResult.casualties![0],
+      carry: 0,
+    );
+
+    final off = PlayerInfo(
+      settlementId: movement.to.villageId,
+      settlementName: movement.to.villageName,
+      playerName: movement.to.playerName,
+      nation: movement.nation,
+      units: battleResult
+          .unitsBeforeBattle![battleResult.unitsBeforeBattle!.length - 1],
+      casualty: battleResult.casualties![battleResult.casualties!.length - 1],
+      carry: carry,
+      bounty: plunder,
+    );
+
+    final defenders = [ownDef];
+
+    for (var i = 0; i < reinforcement.length; i++) {
+      final current = reinforcement[i];
+      defenders.add(
+        PlayerInfo(
+          settlementId: current.id!.$oid,
+          settlementName: current.from.villageName,
+          playerName: current.from.playerName,
+          nation: current.nation,
+          units: battleResult.unitsBeforeBattle![i + 1],
+          casualty: battleResult.casualties![i + 1],
+          carry: 0,
+        ),
+      );
+    }
+
+    final reportOwners = [
+      attacker.userId,
+      defender.userId,
+      ...reinforcement.map((e) => e.from.userId),
+    ];
+    
+    final report = Report(
+      reportOwners: reportOwners,
+      state: List<int>.filled(reportOwners.length, 0),
+      mission: movement.mission,
+      off: off,
+      def: defenders,
+      dateTime: movement.when,
+    );
+
+    await mongoService.db.collection('reports').insertOne(report.toMap());
   }
 }

@@ -315,12 +315,14 @@ class SettlementServiceImpl extends SettlementService {
       villageId: sender!.id.$oid,
       villageName: sender.name,
       playerName: sender.userId,
+      userId: sender.userId,
       coordinates: [sender.x, sender.y],
     );
     final toSide = SideBrief(
       villageId: receiver!.id.$oid,
       villageName: receiver.name,
       playerName: receiver.userId,
+      userId: receiver.userId,
       coordinates: [receiver.x, receiver.y],
     );
     final movement = Movement(
@@ -380,12 +382,14 @@ class SettlementServiceImpl extends SettlementService {
       villageId: settlement.id.$oid,
       villageName: settlement.name,
       playerName: settlement.userId,
+      userId: settlement.userId,
       coordinates: [90, 90],
     );
     final toSide = SideBrief(
       villageId: settlement.id.$oid,
       villageName: settlement.name,
       playerName: settlement.userId,
+      userId: settlement.userId,
       coordinates: [90, 90],
     );
     return Movement(
