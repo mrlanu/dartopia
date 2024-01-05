@@ -1,3 +1,4 @@
+import 'package:dartopia/authentication/bloc/auth_bloc.dart';
 import 'package:dartopia/reports/reports.dart';
 import 'package:dartopia/reports/view/report_page.dart';
 import 'package:flutter/material.dart';
@@ -12,11 +13,12 @@ class ReportsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final token = context.read<AuthBloc>().state.token;
     return RepositoryProvider(
       create: (context) => _reportsRepository,
       child: BlocProvider(
         create: (context) => ReportsBloc(reportsRepository: _reportsRepository)
-          ..add(const ListOfBriefsRequested(userId: 'Nata')),
+          ..add(ListOfBriefsRequested(userId: 'Nata', token: token)),
         child: const ReportsView(),
       ),
     );

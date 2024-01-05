@@ -1,3 +1,4 @@
+import 'package:dartopia/authentication/bloc/auth_bloc.dart';
 import 'package:dartopia/bottom_navbar/bottom_navbar.dart';
 import 'package:dartopia/buildings/view/buildings_page.dart';
 import 'package:dartopia/consts/consts.dart';
@@ -24,6 +25,7 @@ class SettlementPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userId = context.read<AuthBloc>().state.userId;
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider(
@@ -39,7 +41,7 @@ class SettlementPage extends StatelessWidget {
           BlocProvider(
             create: (context) => SettlementBloc(
                 settlementRepository: context.read<SettlementRepository>())
-              ..add(const ListOfSettlementsRequested(userId: 'Nata')),
+              ..add(ListOfSettlementsRequested(userId: userId)),
           ),
           BlocProvider(
             create: (context) =>

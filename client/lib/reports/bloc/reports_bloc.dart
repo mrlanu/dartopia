@@ -27,7 +27,7 @@ class ReportsBloc extends Bloc<ReportsEvent, ReportsState> {
   ) async {
     emit(state.copyWith(status: ReportsStatus.loading));
     final briefs = await _reportsRepository.fetchAllReportsBriefByUserId(
-        userId: event.userId);
+        userId: event.userId, token: event.token);
     emit(state.copyWith(status: ReportsStatus.success, briefs: briefs));
   }
 

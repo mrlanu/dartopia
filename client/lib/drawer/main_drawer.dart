@@ -23,21 +23,24 @@ class _MainDrawerState extends State<MainDrawer> {
               padding: const EdgeInsets.all(20),
               decoration: const BoxDecoration(
                   gradient: LinearGradient(colors: [
-                    Color.fromRGBO(21, 56, 2, 1.0),
-                    Color.fromRGBO(26, 89, 5, 1.0),
-                  ], begin: Alignment.topLeft, end: Alignment.bottomRight)),
-              child: Builder(
-                builder: (context) {
-                  final user = context.read<SettlementBloc>().state.settlement!.userId;
-                  return Center(
-                    child: Container(
+                Color.fromRGBO(21, 56, 2, 1.0),
+                Color.fromRGBO(26, 89, 5, 1.0),
+              ], begin: Alignment.topLeft, end: Alignment.bottomRight)),
+              child: Builder(builder: (context) {
+                final userName = context.read<AuthBloc>().state.userName;
+                return Center(
+                  child: Container(
                       alignment: Alignment.center,
-                        width: double.infinity,
-                        child: Text('Dartopia for $user', style: const TextStyle(color: Colors.white70, fontSize: 25),) /*Image.asset('assets/images/piggy_logo.png',
-                            fit: BoxFit.contain)*/),
-                  );
-                }
-              )),
+                      width: double.infinity,
+                      child: Text(
+                        'Dartopia for $userName',
+                        style: const TextStyle(
+                            color: Colors.white70, fontSize: 25),
+                      ) /*Image.asset('assets/images/piggy_logo.png',
+                            fit: BoxFit.contain)*/
+                      ),
+                );
+              })),
           Expanded(
             child: SingleChildScrollView(
               child: Padding(
@@ -48,8 +51,7 @@ class _MainDrawerState extends State<MainDrawer> {
                       leading: const FaIcon(FontAwesomeIcons.rightFromBracket,
                           color: Colors.green),
                       title: Text('Log out',
-                          style: Theme
-                              .of(context)
+                          style: Theme.of(context)
                               .textTheme
                               .titleLarge!
                               .copyWith(color: Colors.black)),
@@ -66,5 +68,4 @@ class _MainDrawerState extends State<MainDrawer> {
       ),
     );
   }
-
 }

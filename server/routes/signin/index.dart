@@ -34,6 +34,9 @@ Future<Response> _onPost(RequestContext context) async {
   } else {
     return Response.json(
       body: {
+        'name': user.name,
+        'id': user.id,
+        'email': user.email,
         'token': authenticator.generateToken(user: user,),
       },
     );

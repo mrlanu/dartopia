@@ -5,12 +5,13 @@ sealed class ReportsEvent extends Equatable {
 }
 
 final class ListOfBriefsRequested extends ReportsEvent {
-  const ListOfBriefsRequested({required this.userId});
+  const ListOfBriefsRequested({required this.userId, required this.token});
 
   final String userId;
+  final String token;
 
   @override
-  List<Object?> get props => [userId];
+  List<Object?> get props => [userId, token];
 }
 
 final class DeleteReportRequested extends ReportsEvent {
