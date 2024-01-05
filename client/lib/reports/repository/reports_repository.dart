@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:models/models.dart';
 import 'package:http/http.dart' as http;
 
-import '../../consts/api.dart';
 
 abstract class ReportsRepository {
   Future<List<ReportBrief>> fetchAllReportsBriefByUserId({required String userId});
@@ -16,7 +15,12 @@ class ReportsRepositoryImpl implements ReportsRepository{
   @override
   Future<List<ReportBrief>> fetchAllReportsBriefByUserId({required String userId}) async {
     final url = Uri.http(Api.baseURL, Api.fetchAllReportsBriefByUserId(userId), {'userId': userId});
-    final response = await http.get(url);
+    final token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY'
+        '1OTVkNTU2NTk1YzJmZDQwNDQ1NDhlNiIsIm5hbWUiOiJodXkiLCJlbWFpb'
+        'CI6Imh1eUB5YWhvby5jb20iLCJpYXQiOjE3MDQzMTgzMDV9.vBB1r_PQkP3'
+        'NqFHc5KD8_kGsgFVp4LsN1oVfO5Sds7g';
+    final headers = {'Authorization': 'Bearer $token'};
+    final response = await http.get(url, headers: headers);
     final responseList = json.decode(response.body) as List<dynamic>;
     final result = responseList
         .map((e) => ReportBrief.fromJson(e as Map<String, dynamic>))

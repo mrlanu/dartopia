@@ -14,13 +14,6 @@ SettlementServiceImpl(settlementRepository: _settlementRepository);
 
 Handler middleware(Handler handler) {
   return handler
-      /*.use((handler) {
-        return (context) async {
-          await _mongo.initializeMongo();
-          final response = await handler(context);
-          return response;
-        };
-      })*/
       .use(provider<UserRepository>((_) => _userRepository))
       .use(provider<SettlementService>((_) => _settlementService))
       .use(provider<Authenticator>((_) => _authenticator))

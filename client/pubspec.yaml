@@ -18,12 +18,18 @@ dependencies:
   google_fonts: ^6.1.0
   models:
     path: ../packages/models
+  authentication_repository:
+    path: packages/authentication_repository
+  user_repository:
+    path: packages/user_repository
   http: ^1.1.0
   percent_indicator: ^4.2.3
   font_awesome_flutter: ^10.6.0
   rxdart: ^0.27.7
   intl: ^0.18.1
   flutter_native_splash: ^2.3.7
+  formz: ^0.6.1
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:

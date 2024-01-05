@@ -1,6 +1,7 @@
 import 'package:dartopia/bottom_navbar/bottom_navbar.dart';
 import 'package:dartopia/buildings/view/buildings_page.dart';
 import 'package:dartopia/consts/consts.dart';
+import 'package:dartopia/drawer/main_drawer.dart';
 import 'package:dartopia/world_map/world_map.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,6 +13,10 @@ import '../settlement.dart';
 
 class SettlementPage extends StatelessWidget {
   SettlementPage({super.key});
+
+  static Route<void> route() {
+    return MaterialPageRoute<void>(builder: (_) => SettlementPage());
+  }
 
   final SettlementRepository _settlementRepository = SettlementRepositoryImpl();
   final TroopMovementsRepository _movementsRepository =
@@ -60,7 +65,7 @@ class SettlementView extends StatelessWidget {
       child: Scaffold(
           backgroundColor: background,
           appBar: buildAppBar(),
-          drawer: const Drawer(),
+          drawer: const MainDrawer(),
           body: BlocConsumer<SettlementBloc, SettlementState>(
               listenWhen: (previous, current) =>
                   previous.settlement != current.settlement,

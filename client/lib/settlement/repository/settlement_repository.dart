@@ -4,8 +4,6 @@ import 'package:models/models.dart';
 import 'package:http/http.dart' as http;
 import 'package:rxdart/rxdart.dart';
 
-import '../../consts/api.dart';
-
 abstract class SettlementRepository {
   Stream<Settlement?> getSettlement();
 

@@ -1,6 +1,10 @@
 class Api{
   Api._();
   static const baseURL = '10.0.2.2:8080';
+  static String signin(){
+    return '/signin';
+  }
+
   static String fetchSettlementsListByUserId(String userId){
     return '/users/$userId/settlements';
   }
@@ -37,4 +41,3 @@ class Api{
     return 'reports/$reportId';
   }
 }
-

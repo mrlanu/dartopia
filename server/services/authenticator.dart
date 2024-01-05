@@ -37,7 +37,8 @@ class Authenticator {
       },
     );
 
-    return jwt.sign(SecretKey(Config.jwtSecret));
+    return jwt.sign(SecretKey(Config.jwtSecret),
+        expiresIn: const Duration(hours: 24),);
   }
 
   Future<User?> verifyToken(String token) async {
@@ -50,6 +51,7 @@ class Authenticator {
       final payloadData = payload.payload as Map<String, dynamic>;
 
       final email = payloadData['email'] as String;
+
       return _findByEmail(email: email);
     } catch (e) {
       return Future(() => null);

@@ -4,8 +4,6 @@ import 'package:models/models.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:http/http.dart' as http;
 
-import '../../../../../consts/api.dart';
-
 abstract class TroopMovementsRepository {
   Future<void> sendTroops(SendTroopsRequest request, String fromSettlementId);
 
