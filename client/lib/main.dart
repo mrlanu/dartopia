@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'login/login.dart';
+import 'authentication/authentication.dart';
 import 'splash/splash.dart';
 
 void main() async {

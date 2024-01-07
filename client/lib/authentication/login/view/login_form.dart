@@ -24,11 +24,13 @@ class LoginForm extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _UsernameInput(),
+            _EmailInput(),
             const Padding(padding: EdgeInsets.all(12)),
             _PasswordInput(),
             const Padding(padding: EdgeInsets.all(12)),
             _LoginButton(),
+            const Padding(padding: EdgeInsets.all(12)),
+            const SignUpButton()
           ],
         ),
       ),
@@ -36,20 +38,20 @@ class LoginForm extends StatelessWidget {
   }
 }
 
-class _UsernameInput extends StatelessWidget {
+class _EmailInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LoginBloc, LoginState>(
       buildWhen: (previous, current) => previous.email != current.email,
       builder: (context, state) {
         return TextField(
-          key: const Key('loginForm_usernameInput_textField'),
-          onChanged: (username) =>
-              context.read<LoginBloc>().add(LoginEmailChanged(username)),
+          key: const Key('loginForm_emailInput_textField'),
+          onChanged: (email) =>
+              context.read<LoginBloc>().add(LoginEmailChanged(email)),
           decoration: InputDecoration(
-            labelText: 'username',
+            labelText: 'email',
             errorText:
-                state.email.displayError != null ? 'invalid username' : null,
+                state.email.displayError != null ? 'invalid email' : null,
           ),
         );
       },
@@ -88,15 +90,18 @@ class _LoginButton extends StatelessWidget {
             ? const CircularProgressIndicator()
             : Padding(
               padding: const EdgeInsets.only(top: 28.0),
-              child: ElevatedButton(
-                  key: const Key('loginForm_continue_raisedButton'),
-                  onPressed: state.isValid
-                      ? () {
-                          context.read<LoginBloc>().add(const LoginSubmitted());
-                        }
-                      : null,
-                  child: const Text('Login', style: TextStyle(fontSize: 30),),
-                ),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                    key: const Key('loginForm_continue_raisedButton'),
+                    onPressed: state.isValid
+                        ? () {
+                            context.read<LoginBloc>().add(const LoginSubmitted());
+                          }
+                        : null,
+                    child: const Text('Login', style: TextStyle(fontSize: 30),),
+                  ),
+              ),
             );
       },
     );

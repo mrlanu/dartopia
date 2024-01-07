@@ -15,6 +15,11 @@ abstract class WorldService {
     int fromY,
     int toY,
   );
+
+  Future<void> insertSettlement(
+      {required String settlementId, required int x, required int y,});
+
+  Future<bool> _dropWorld();
 }
 
 class WorldServiceImpl implements WorldService {
@@ -28,7 +33,6 @@ class WorldServiceImpl implements WorldService {
     await _dropWorld();
     _createBlueprint(Config.worldWidth, Config.worldHeight);
     _insertOases(Config.oasesAmount);
-    _insertSomeVillages(); //just for development purpose, should be removed later
     await _worldRepository.saveWorld(tiles);
   }
 
@@ -47,6 +51,20 @@ class WorldServiceImpl implements WorldService {
     );
   }
 
+  @override
+  Future<void> insertSettlement(
+      {required String settlementId, required int x, required int y,}) async {
+    final myTile = await _worldRepository.getMapTileByCoordinates(x, y);
+    final updatedTile = myTile.copyWith(
+          ownerId: settlementId,
+          name: 'New village',
+          empty: false,
+          tileNumber: 56,
+        );
+    await _worldRepository.updateMapTile(updatedTile);
+  }
+
+  @override
   Future<bool> _dropWorld() => _worldRepository.dropWorld();
 
   void _createBlueprint(int xLength, int yLength) {
@@ -94,32 +112,5 @@ class WorldServiceImpl implements WorldService {
   int _getRandomNumber(int min, int max) {
     final random = Random();
     return min + random.nextInt((max - min) + 1);
-  }
-
-  void _insertSomeVillages() {
-    final myTile =
-        tiles.firstWhere((tile) => tile.corX == 25 && tile.corY == 25);
-    final index = tiles.indexOf(myTile);
-    tiles
-      ..removeAt(index)
-      ..insert(
-          index,
-          myTile.copyWith(
-              ownerId: '654eaeb5693f198560bc1e5a',
-              name: 'New village',
-              empty: false,
-              tileNumber: 56,),);
-    final myTile2 =
-    tiles.firstWhere((tile) => tile.corX == 27 && tile.corY == 27);
-    final index2 = tiles.indexOf(myTile2);
-    tiles
-      ..removeAt(index2)
-      ..insert(
-        index2,
-        myTile2.copyWith(
-          ownerId: '654eaeb5693f198560bc1e5b',
-          name: 'Test',
-          empty: false,
-          tileNumber: 56,),);
   }
 }

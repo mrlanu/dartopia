@@ -3,7 +3,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
 
-import '../login.dart';
+import 'package:dartopia/authentication/authentication.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';

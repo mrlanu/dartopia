@@ -58,6 +58,20 @@ class AuthenticationRepository {
     yield* _controller.stream;
   }
 
+  Future<void> signup({
+    required String email,
+    required String password,
+  }) async {
+    final url = Uri.http(Api.baseURL, Api.signup());
+    final responseMap = await http.post(url,
+        body: json.encode({'email': email, 'password': password, 'name': ''}));
+    if (responseMap.statusCode != 200) {
+      _controller.add(Unauthenticated());
+    } else {
+      _success(responseMap);
+    }
+  }
+
   Future<void> logIn({
     required String email,
     required String password,
@@ -68,15 +82,19 @@ class AuthenticationRepository {
     if (responseMap.statusCode != 200) {
       _controller.add(Unauthenticated());
     } else {
-      final response = json.decode(responseMap.body) as Map<String, dynamic>;
-      _setValue(keyMap['keyToken']!, response['token']);
-      _setValue(keyMap['keyId']!, response['id']);
-      _setValue(keyMap['keyName']!, response['name']);
-      _controller.add(Authenticated(
-          token: response['token'],
-          userId: response['id'],
-          userName: response['name']));
+      _success(responseMap);
     }
+  }
+
+  void _success(http.Response responseMap) {
+    final response = json.decode(responseMap.body) as Map<String, dynamic>;
+    _setValue(keyMap['keyToken']!, response['token']);
+    _setValue(keyMap['keyId']!, response['id']);
+    _setValue(keyMap['keyName']!, response['name']);
+    _controller.add(Authenticated(
+        token: response['token'],
+        userId: response['id'],
+        userName: response['name']));
   }
 
   void logOut() {

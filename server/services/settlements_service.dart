@@ -39,7 +39,7 @@ abstract class SettlementService {
     required Settlement settlement,
   });
 
-  Future<String?> foundNewSettlement({
+  Future<Settlement?> foundNewSettlement({
     required String userId,
   });
 
@@ -213,15 +213,15 @@ class SettlementServiceImpl extends SettlementService {
   }
 
   @override
-  Future<String?> foundNewSettlement({required String userId}) async {
+  Future<Settlement?> foundNewSettlement({required String userId}) async {
     final newSettlement = Settlement(
       id: ObjectId(),
       userId: userId,
-      x: Random().nextInt(Config.worldWidth * Config.worldHeight),
-      y: Random().nextInt(Config.worldWidth * Config.worldHeight),
+      x: Random().nextInt(Config.worldWidth),
+      y: Random().nextInt(Config.worldHeight),
     );
     final result = await _settlementRepository.saveSettlement(newSettlement);
-    return result?.id.$oid;
+    return newSettlement;
   }
 
   @override
