@@ -2,17 +2,16 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
+import 'package:models/models.dart';
 
 import '../../services/reports_service.dart';
 import '../../services/settlements_service.dart';
 
 FutureOr<Response> onRequest(RequestContext context) async {
-  final request = context.request;
-  final params = request.uri.queryParameters;
-  final userId = params['userId'] ?? '0';
+  final user = context.read<User>();
   switch (context.request.method) {
     case HttpMethod.get:
-      return _get(context, userId);
+      return _get(context, user.id!);
     case HttpMethod.delete:
     case HttpMethod.head:
     case HttpMethod.put:
@@ -27,6 +26,6 @@ Future<Response> _get(RequestContext context, String userId) async {
   final reportsService = context.read<ReportsService>();
   final settlementService = context.read<SettlementService>();
   final reports = await reportsService.createReportsBrief(
-      userId: userId, settlementService: settlementService);
+      userId: userId, settlementService: settlementService,);
   return Response.json(body: reports);
 }

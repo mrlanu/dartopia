@@ -1,49 +1,60 @@
-class Api{
+class Api {
   Api._();
 
   static const baseURL = '10.0.2.2:8080';
 
-  static String signup(){
+  static Map<String, String> headerAuthorization({required String token}) =>
+      {'Authorization': 'Bearer $token'};
+
+  static String signup() {
     return '/signup';
   }
 
-  static String signin(){
+  static String signin() {
     return '/signin';
   }
 
-  static String fetchSettlementsListByUserId(String userId){
+  static String fetchPartOfWorld() {
+    return '/world';
+  }
+
+  static String fetchTileDetails() {
+    return '/world/tiles';
+  }
+
+  static String fetchSettlementsListByUserId(String userId) {
     return '/users/$userId/settlements';
   }
 
-  static String fetchSettlementById(String id){
-    return '/settlement/$id';
+  static String fetchSettlementById(String id) {
+    return '/settlements/$id';
   }
 
-  static String upgradeBuilding(String settlementId){
-    return '/settlement/$settlementId/construction';
+  static String upgradeBuilding(String settlementId) {
+    return '/settlements/$settlementId/constructions';
   }
 
-  static String sendTroopsContract(String settlementId){
-    return 'settlement/$settlementId/troops_send_contract';
+  static String sendTroopsContract(String settlementId) {
+    return 'settlements/$settlementId/troops_send_contract';
   }
 
-  static String sendTroops(String settlementId){
-    return 'settlement/$settlementId/send_units';
+  static String sendTroops(String settlementId) {
+    return 'settlements/$settlementId/send_units';
   }
 
-  static String fetchMovements(String settlementId){
-    return 'settlement/$settlementId/movements';
+  static String fetchMovements(String settlementId) {
+    return 'settlements/$settlementId/movements';
   }
 
-  static String fetchAllReportsBriefByUserId(String userId){
+  static String fetchAllReportsBrief() {
     return 'reports';
   }
 
-  static String fetchReportById(String reportId){
+  static String fetchReportById(String reportId) {
     return 'reports/$reportId';
   }
 
-  static String deleteReportById(String reportId){
+  static String deleteReportById(String reportId) {
     return 'reports/$reportId';
   }
 }

@@ -9,16 +9,15 @@ import 'package:intl/intl.dart';
 class ReportsPage extends StatelessWidget {
   ReportsPage({super.key});
 
-  final ReportsRepository _reportsRepository = ReportsRepositoryImpl();
-
   @override
   Widget build(BuildContext context) {
     final token = context.read<AuthBloc>().state.token;
+    final ReportsRepository reportsRepository = ReportsRepositoryImpl(token: token);
     return RepositoryProvider(
-      create: (context) => _reportsRepository,
+      create: (context) => reportsRepository,
       child: BlocProvider(
-        create: (context) => ReportsBloc(reportsRepository: _reportsRepository)
-          ..add(ListOfBriefsRequested(userId: 'Nata', token: token)),
+        create: (context) => ReportsBloc(reportsRepository: reportsRepository)
+          ..add(const ListOfBriefsRequested()),
         child: const ReportsView(),
       ),
     );
