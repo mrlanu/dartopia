@@ -13,26 +13,26 @@ import '../../reports/reports.dart';
 import '../settlement.dart';
 
 class SettlementPage extends StatelessWidget {
-  SettlementPage({super.key});
+  const SettlementPage({super.key});
 
   static Route<void> route() {
-    return MaterialPageRoute<void>(builder: (_) => SettlementPage());
+    return MaterialPageRoute<void>(builder: (_) => const SettlementPage());
   }
-
-  final SettlementRepository _settlementRepository = SettlementRepositoryImpl();
-  final TroopMovementsRepository _movementsRepository =
-      TroopMovementsRepositoryImpl();
 
   @override
   Widget build(BuildContext context) {
+    final token = context.read<AuthBloc>().state.token;
+    final SettlementRepository settlementRepository = SettlementRepositoryImpl(token: token);
+    final TroopMovementsRepository movementsRepository =
+    TroopMovementsRepositoryImpl(token: token);
     final userId = context.read<AuthBloc>().state.userId;
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider(
-          create: (context) => _settlementRepository,
+          create: (context) => settlementRepository,
         ),
         RepositoryProvider(
-          create: (context) => _movementsRepository,
+          create: (context) => movementsRepository,
         ),
       ],
       child: MultiBlocProvider(
@@ -45,7 +45,7 @@ class SettlementPage extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) =>
-                MovementsBloc(movementsRepository: _movementsRepository)
+                MovementsBloc(movementsRepository: movementsRepository)
                   ..add(const MovementsSubscriptionRequested()),
           )
         ],

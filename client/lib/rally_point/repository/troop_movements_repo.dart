@@ -8,7 +8,7 @@ abstract class TroopMovementsRepository {
   Future<void> sendTroops(SendTroopsRequest request, String fromSettlementId);
 
   Future<TroopsSendContract> fetchSendTroopsContract(
-  {required TroopsSendContract contract, required String fromSettlementId});
+      {required TroopsSendContract contract, required String fromSettlementId});
 
   Stream<List<Movement>?> getMovements();
 
@@ -21,6 +21,10 @@ abstract class TroopMovementsRepository {
 }
 
 class TroopMovementsRepositoryImpl implements TroopMovementsRepository {
+  TroopMovementsRepositoryImpl({required String token}) : _token = token;
+
+  final String _token;
+
   final _movementsStreamController = BehaviorSubject<List<Movement>>.seeded([]);
 
   @override
@@ -29,9 +33,12 @@ class TroopMovementsRepositoryImpl implements TroopMovementsRepository {
 
   @override
   Future<TroopsSendContract> fetchSendTroopsContract(
-      {required TroopsSendContract contract, required String fromSettlementId}) async {
+      {required TroopsSendContract contract,
+      required String fromSettlementId}) async {
     final url = Uri.http(Api.baseURL, Api.sendTroopsContract(fromSettlementId));
-    final response = await http.post(url, body: json.encode(contract));
+    final response = await http.post(url,
+        body: json.encode(contract),
+        headers: Api.headerAuthorization(token: _token));
 
     final map = json.decode(response.body) as Map<String, dynamic>;
     final confirmedContract = TroopsSendContract.fromJson(map);
@@ -42,13 +49,16 @@ class TroopMovementsRepositoryImpl implements TroopMovementsRepository {
   Future<void> sendTroops(
       SendTroopsRequest request, String fromSettlementId) async {
     final url = Uri.http(Api.baseURL, Api.sendTroops(fromSettlementId));
-    await http.post(url, body: json.encode(request));
+    await http.post(url,
+        body: json.encode(request),
+        headers: Api.headerAuthorization(token: _token));
   }
 
   @override
   Future<void> fetchMovements(String settlementId) async {
     final url = Uri.http(Api.baseURL, Api.fetchMovements(settlementId));
-    final response = await http.get(url);
+    final response =
+        await http.get(url, headers: Api.headerAuthorization(token: _token));
     final movementsList = json.decode(response.body) as List<dynamic>;
     final movements = movementsList
         .map((e) => Movement.fromJson(e as Map<String, dynamic>))
@@ -65,7 +75,8 @@ class TroopMovementsRepositoryImpl implements TroopMovementsRepository {
       'x': x.toString(),
       'y': y.toString(),
     });
-    final response = await http.get(url);
+    final response =
+        await http.get(url, headers: Api.headerAuthorization(token: _token));
     final tileDetailMap = json.decode(response.body) as Map<String, dynamic>;
     return TileDetails.fromJson(tileDetailMap);
   }

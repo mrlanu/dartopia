@@ -7,13 +7,12 @@ import '../../services/authenticator.dart';
 import '../../services/reports_service.dart';
 
 Handler middleware(Handler handler) {
-  return handler;
-  /*return handler.use(
+  return handler.use(
     bearerAuthentication<User>(
       authenticator: (context, token) async {
         final authenticator = context.read<Authenticator>();
         return authenticator.verifyToken(token);
       },
     ),
-  );*/
+  );
 }

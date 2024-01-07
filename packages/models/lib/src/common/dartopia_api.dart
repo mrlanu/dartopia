@@ -23,7 +23,7 @@ class Api {
   }
 
   static String fetchSettlementsListByUserId(String userId) {
-    return '/users/$userId/settlements';
+    return '/settlements';
   }
 
   static String fetchSettlementById(String id) {

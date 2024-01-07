@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dartopia/authentication/bloc/auth_bloc.dart';
 import 'package:dartopia/consts/consts.dart';
 import 'package:dartopia/settlement/bloc/settlement_bloc.dart';
 import 'package:flutter/material.dart';
@@ -12,12 +13,12 @@ import '../../consts/images.dart';
 import '../world_map.dart';
 
 class WorldMapPage extends StatelessWidget {
-  WorldMapPage({super.key});
-
-  final WorldRepository worldRepo = WorldRepositoryImpl();
+  const WorldMapPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final token = context.read<AuthBloc>().state.token;
+    final WorldRepository worldRepo = WorldRepositoryImpl(token: token);
     final currentSettlement = context.read<SettlementBloc>().state.settlement!;
     return RepositoryProvider(
       create: (context) => worldRepo,
