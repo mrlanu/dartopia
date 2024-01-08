@@ -86,7 +86,7 @@ class _AppViewState extends State<AppView> {
             switch (state.status) {
               case AuthStatus.authenticated:
                 _navigator.pushAndRemoveUntil<void>(
-                  SettlementPage.route(),
+                  SettlementPage.route(token: state.token),
                   (route) => false,
                 );
               case AuthStatus.unauthenticated:

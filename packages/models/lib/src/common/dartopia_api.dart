@@ -22,7 +22,7 @@ class Api {
     return '/world/tiles';
   }
 
-  static String fetchSettlementsListByUserId(String userId) {
+  static String fetchSettlementsInfoList() {
     return '/settlements';
   }
 

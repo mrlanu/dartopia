@@ -5,12 +5,10 @@ sealed class SettlementEvent extends Equatable {
 }
 
 final class ListOfSettlementsRequested extends SettlementEvent {
-  const ListOfSettlementsRequested({required this.userId});
-
-  final String userId;
+  const ListOfSettlementsRequested();
 
   @override
-  List<Object?> get props => [userId];
+  List<Object?> get props => [];
 }
 
 final class SettlementSubscriptionRequested extends SettlementEvent {

@@ -25,7 +25,7 @@ class SettlementBloc extends Bloc<SettlementEvent, SettlementState> {
 
   Future<void> _onListOfSettlementsRequested(
       ListOfSettlementsRequested event, Emitter<SettlementState> emit) async {
-    final settlementList = await _villageRepository.fetchSettlementListByUserId(userId: event.userId);
+    final settlementList = await _villageRepository.fetchSettlementListByUserId();
     emit(state.copyWith(settlementList: settlementList));
     add(const SettlementSubscriptionRequested());
   }

@@ -1,4 +1,3 @@
-import 'package:dartopia/authentication/bloc/auth_bloc.dart';
 import 'package:dartopia/bottom_navbar/bottom_navbar.dart';
 import 'package:dartopia/buildings/view/buildings_page.dart';
 import 'package:dartopia/consts/consts.dart';
@@ -12,33 +11,46 @@ import '../../rally_point/rally_point.dart';
 import '../../reports/reports.dart';
 import '../settlement.dart';
 
-class SettlementPage extends StatelessWidget {
-  const SettlementPage({super.key});
+class SettlementPage extends StatefulWidget {
+  const SettlementPage({super.key, required this.token});
 
-  static Route<void> route() {
-    return MaterialPageRoute<void>(builder: (_) => const SettlementPage());
+  final String token;
+
+  static Route<void> route({required String token}) {
+    return MaterialPageRoute<void>(builder: (_) => SettlementPage(token: token,));
+  }
+
+  @override
+  State<SettlementPage> createState() => _SettlementPageState();
+}
+
+class _SettlementPageState extends State<SettlementPage> {
+
+  late final SettlementRepository _settlementRepository;
+  late final TroopMovementsRepository _troopMovementsRepository;
+  late final ReportsRepository _reportsRepository;
+
+  @override
+  void initState() {
+    _settlementRepository = SettlementRepositoryImpl(token: widget.token);
+    _troopMovementsRepository =
+    TroopMovementsRepositoryImpl(token: widget.token);
+    _reportsRepository = ReportsRepositoryImpl(token: widget.token);
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final token = context.read<AuthBloc>().state.token;
-    final SettlementRepository settlementRepository =
-        SettlementRepositoryImpl(token: token);
-    final TroopMovementsRepository movementsRepository =
-        TroopMovementsRepositoryImpl(token: token);
-    final ReportsRepository reportsRepository =
-        ReportsRepositoryImpl(token: token);
-    final userId = context.read<AuthBloc>().state.userId;
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider(
-          create: (context) => settlementRepository,
+          create: (context) => _settlementRepository,
         ),
         RepositoryProvider(
-          create: (context) => movementsRepository,
+          create: (context) => _troopMovementsRepository,
         ),
         RepositoryProvider(
-          create: (context) => reportsRepository,
+          create: (context) => _reportsRepository,
         ),
       ],
       child: MultiBlocProvider(
@@ -47,11 +59,11 @@ class SettlementPage extends StatelessWidget {
           BlocProvider(
             create: (context) => SettlementBloc(
                 settlementRepository: context.read<SettlementRepository>())
-              ..add(ListOfSettlementsRequested(userId: userId)),
+              ..add(const ListOfSettlementsRequested()),
           ),
           BlocProvider(
             create: (context) =>
-                MovementsBloc(movementsRepository: movementsRepository)
+                MovementsBloc(movementsRepository: _troopMovementsRepository)
                   ..add(const MovementsSubscriptionRequested()),
           ),
           BlocProvider(
@@ -95,9 +107,9 @@ class SettlementView extends StatelessWidget {
                         index: selectedTab.index,
                         children: [
                           const BuildingsPage(),
-                          WorldMapPage(),
+                          const WorldMapPage(),
                           Container(),
-                          ReportsPage(),
+                          const ReportsPage(),
                           const Scaffold()
                         ],
                       );

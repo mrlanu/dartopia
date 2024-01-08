@@ -12,8 +12,7 @@ abstract class SettlementRepository {
   Future<void> upgradeBuilding(
       {required String settlementId, required ConstructionRequest request});
 
-  Future<List<ShortSettlementInfo>> fetchSettlementListByUserId(
-      {required String userId});
+  Future<List<ShortSettlementInfo>> fetchSettlementListByUserId();
 }
 
 class SettlementRepositoryImpl implements SettlementRepository {
@@ -28,9 +27,8 @@ class SettlementRepositoryImpl implements SettlementRepository {
       _settlementStreamController.asBroadcastStream();
 
   @override
-  Future<List<ShortSettlementInfo>> fetchSettlementListByUserId(
-      {required String userId}) async {
-    final url = Uri.http(Api.baseURL, Api.fetchSettlementsListByUserId(userId));
+  Future<List<ShortSettlementInfo>> fetchSettlementListByUserId() async {
+    final url = Uri.http(Api.baseURL, Api.fetchSettlementsInfoList());
     final response =
         await http.get(url, headers: Api.headerAuthorization(token: _token));
     final responseList = json.decode(response.body) as List<dynamic>;
