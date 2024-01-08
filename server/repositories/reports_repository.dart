@@ -4,13 +4,12 @@ import 'package:mongo_dart/mongo_dart.dart';
 import '../services/mongo_service.dart';
 
 abstract class ReportsRepository {
-  Future<List<Report>> fetchReportsBriefByUserId({required String userId});
+  Future<List<Report>> fetchAllReportsByUserId({required String userId});
 
   Future<Report> fetchReportById(
       {required String reportId, required String userId});
 
-  Future<void> deleteById(
-      {required String reportId, required String userId});
+  Future<void> deleteById({required String reportId, required String userId});
 }
 
 class ReportsRepositoryMongoImpl implements ReportsRepository {
@@ -20,7 +19,7 @@ class ReportsRepositoryMongoImpl implements ReportsRepository {
   final MongoService _mongoService;
 
   @override
-  Future<List<Report>> fetchReportsBriefByUserId({
+  Future<List<Report>> fetchAllReportsByUserId({
     required String userId,
   }) =>
       _mongoService.db

@@ -17,6 +17,7 @@ class ReportsBloc extends Bloc<ReportsEvent, ReportsState> {
     on<ListOfBriefsRequested>(_onListOfBriefsRequested);
     on<FetchReportRequested>(_onFetchReportRequested);
     on<DeleteReportRequested>(_onDeleteReportRequested);
+    on<AmountSubtractRequested>(_onAmountSubtractRequested);
   }
 
   final ReportsRepository _reportsRepository;
@@ -27,7 +28,8 @@ class ReportsBloc extends Bloc<ReportsEvent, ReportsState> {
   ) async {
     emit(state.copyWith(status: ReportsStatus.loading));
     final briefs = await _reportsRepository.fetchAllReportsBriefByUserId();
-    emit(state.copyWith(status: ReportsStatus.success, briefs: briefs));
+    emit(state.copyWith(
+        status: ReportsStatus.success, amount: briefs.$1, briefs: briefs.$2));
   }
 
   Future<void> _onFetchReportRequested(
@@ -45,8 +47,18 @@ class ReportsBloc extends Bloc<ReportsEvent, ReportsState> {
     Emitter<ReportsState> emit,
   ) async {
     final briefs = [...state.briefs];
+    final isRead = briefs[event.index].read;
     briefs.removeAt(event.index);
-    emit(state.copyWith(briefs: briefs));
+    emit(state.copyWith(briefs: briefs, amount: isRead ? state.amount : state.amount - 1));
     _reportsRepository.deleteReportById(reportId: event.reportId);
+  }
+
+  Future<void> _onAmountSubtractRequested(
+      AmountSubtractRequested event,
+      Emitter<ReportsState> emit,
+      ) async {
+    final briefs = [...state.briefs];
+    briefs[event.index] = briefs[event.index].copyWith(read: true);
+    emit(state.copyWith(amount: state.amount - 1, briefs: briefs));
   }
 }

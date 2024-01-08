@@ -22,9 +22,12 @@ class SettlementPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final token = context.read<AuthBloc>().state.token;
-    final SettlementRepository settlementRepository = SettlementRepositoryImpl(token: token);
+    final SettlementRepository settlementRepository =
+        SettlementRepositoryImpl(token: token);
     final TroopMovementsRepository movementsRepository =
-    TroopMovementsRepositoryImpl(token: token);
+        TroopMovementsRepositoryImpl(token: token);
+    final ReportsRepository reportsRepository =
+        ReportsRepositoryImpl(token: token);
     final userId = context.read<AuthBloc>().state.userId;
     return MultiRepositoryProvider(
       providers: [
@@ -33,6 +36,9 @@ class SettlementPage extends StatelessWidget {
         ),
         RepositoryProvider(
           create: (context) => movementsRepository,
+        ),
+        RepositoryProvider(
+          create: (context) => reportsRepository,
         ),
       ],
       child: MultiBlocProvider(
@@ -47,6 +53,11 @@ class SettlementPage extends StatelessWidget {
             create: (context) =>
                 MovementsBloc(movementsRepository: movementsRepository)
                   ..add(const MovementsSubscriptionRequested()),
+          ),
+          BlocProvider(
+            create: (context) => ReportsBloc(
+                reportsRepository: context.read<ReportsRepository>())
+              ..add(const ListOfBriefsRequested()),
           )
         ],
         child: const SettlementView(),

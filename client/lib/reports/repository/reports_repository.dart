@@ -4,7 +4,7 @@ import 'package:models/models.dart';
 import 'package:http/http.dart' as http;
 
 abstract class ReportsRepository {
-  Future<List<ReportBrief>> fetchAllReportsBriefByUserId();
+  Future<(int, List<ReportBrief>)> fetchAllReportsBriefByUserId();
 
   Future<Report> fetchReportById({required String reportId});
 
@@ -18,14 +18,14 @@ class ReportsRepositoryImpl implements ReportsRepository {
   final String _token;
 
   @override
-  Future<List<ReportBrief>> fetchAllReportsBriefByUserId() async {
+  Future<(int, List<ReportBrief>)> fetchAllReportsBriefByUserId() async {
     final url = Uri.http(Api.baseURL, Api.fetchAllReportsBrief());
     final response = await http.get(url, headers: Api.headerAuthorization(token: _token));
-    final responseList = json.decode(response.body) as List<dynamic>;
-    final result = responseList
+    final responseMap = json.decode(response.body) as Map<String, dynamic>;
+    final result = (responseMap['briefs'] as List<dynamic>)
         .map((e) => ReportBrief.fromJson(e as Map<String, dynamic>))
         .toList();
-    return result;
+    return (responseMap['amount']! as int, result);
   }
 
   @override

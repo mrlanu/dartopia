@@ -27,5 +27,5 @@ Future<Response> _get(RequestContext context, String userId) async {
   final settlementService = context.read<SettlementService>();
   final reports = await reportsService.createReportsBrief(
       userId: userId, settlementService: settlementService,);
-  return Response.json(body: reports);
+  return Response.json(body: {'amount': reports.$1, 'briefs': reports.$2,});
 }

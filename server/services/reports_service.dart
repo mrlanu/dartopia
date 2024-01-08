@@ -4,7 +4,7 @@ import '../repositories/reports_repository.dart';
 import 'settlements_service.dart';
 
 abstract class ReportsService {
-  Future<List<ReportBrief>> createReportsBrief(
+  Future<(int, List<ReportBrief>)> createReportsBrief(
       {required String userId, required SettlementService settlementService});
 
   Future<Report> fetchReportById(
@@ -28,13 +28,15 @@ class ReportsServiceImpl implements ReportsService {
       _reportsRepository.deleteById(reportId: id, userId: userId);
 
   @override
-  Future<List<ReportBrief>> createReportsBrief({
+  Future<(int, List<ReportBrief>)> createReportsBrief({
     required String userId,
     required SettlementService settlementService,
   }) async {
     final cache = <String, Settlement>{};
     final originalReports =
-        await _reportsRepository.fetchReportsBriefByUserId(userId: userId);
+        await _reportsRepository.fetchAllReportsByUserId(userId: userId);
+    final amountUnreadReports =
+        _countUnreadReports(reports: originalReports, userId: userId);
     final briefs = <ReportBrief>[];
     for (final report in originalReports) {
       final ownerIndex = report.reportOwners.indexOf(userId);
@@ -52,7 +54,16 @@ class ReportsServiceImpl implements ReportsService {
     briefs.sort(
       (a, b) => b.received.compareTo(a.received),
     );
-    return briefs;
+    return (amountUnreadReports, briefs);
+  }
+
+  int _countUnreadReports(
+      {required List<Report> reports, required String userId}) {
+    if (reports.isNotEmpty) {
+      final ownerIndex = reports[0].reportOwners.indexOf(userId);
+      return reports.where((report) => report.state[ownerIndex] == 0).length;
+    }
+    return 0;
   }
 
   Future<String> _createTitle(
