@@ -170,7 +170,7 @@ class Attack extends MissionStrategy {
     final ownDef = PlayerInfo(
       settlementId: defender.id.$oid,
       settlementName: defender.name,
-      playerName: movement.to.playerName,
+      playerName: movement.from.playerName,
       nation: Nations.gaul,
       units: battleResult.unitsBeforeBattle![0],
       casualty: battleResult.casualties![0],
