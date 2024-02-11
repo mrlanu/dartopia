@@ -69,29 +69,11 @@ class BottomNavBar extends StatelessWidget {
           builder: (context, state) {
             return state.amount == 0
                 ? const FaIcon(FontAwesomeIcons.book)
-                : SizedBox(
-                    width: 30,
-                    child: Stack(
-                      children: [
-                        const FaIcon(FontAwesomeIcons.book),
-                        Positioned(
-                          top: 0,
-                          right: 0,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 0.0, horizontal: 3),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5.0),
-                              // Adjust the border radius
-                              color: Colors.redAccent,
-                            ),
-                            child: Text('${state.amount}',
-                                style: const TextStyle(
-                                    fontSize: 12, color: Colors.white)),
-                          ),
-                        ),
-                      ],
-                    ),
+                : Badge(
+                    label: Text('${state.amount}',
+                        style:
+                            const TextStyle(fontSize: 12, color: Colors.white)),
+                    child: const FaIcon(FontAwesomeIcons.book),
                   );
           },
         ));
