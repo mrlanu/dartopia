@@ -4,9 +4,9 @@ import 'package:mongo_dart/mongo_dart.dart';
 import '../services/mongo_service.dart';
 
 abstract class ReportsRepository {
-  Future<List<Report>> fetchAllReportsByUserId({required String userId});
+  Future<List<ReportEntity>> fetchAllReportsByUserId({required String userId});
 
-  Future<Report> fetchReportById(
+  Future<ReportEntity> fetchReportById(
       {required String reportId, required String userId});
 
   Future<void> deleteById({required String reportId, required String userId});
@@ -19,23 +19,23 @@ class ReportsRepositoryMongoImpl implements ReportsRepository {
   final MongoService _mongoService;
 
   @override
-  Future<List<Report>> fetchAllReportsByUserId({
+  Future<List<ReportEntity>> fetchAllReportsByUserId({
     required String userId,
   }) =>
       _mongoService.db
           .collection('reports')
           .find(where.eq('reportOwners', userId))
-          .map(Report.fromMap)
+          .map(ReportEntity.fromMap)
           .toList();
 
   @override
-  Future<Report> fetchReportById(
+  Future<ReportEntity> fetchReportById(
       {required String reportId, required String userId}) async {
     final objectId = ObjectId.parse(reportId);
     final document = await _mongoService.db
         .collection('reports')
         .findOne(where.id(objectId));
-    final report = Report.fromMap(document!);
+    final report = ReportEntity.fromMap(document!);
     final ownerIndex = report.reportOwners.indexOf(userId);
     final state = [...report.state];
     state[ownerIndex] = 1;
@@ -52,7 +52,7 @@ class ReportsRepositoryMongoImpl implements ReportsRepository {
     final document = await _mongoService.db
         .collection('reports')
         .findOne(where.id(objectId));
-    final report = Report.fromMap(document!);
+    final report = ReportEntity.fromMap(document!);
     final ownerIndex = report.reportOwners.indexOf(userId);
     final state = [...report.state];
     state[ownerIndex] = 2;

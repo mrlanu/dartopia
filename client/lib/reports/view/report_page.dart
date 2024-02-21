@@ -57,16 +57,15 @@ class ReportView extends StatelessWidget {
                         dateTime: state.currentReport!.dateTime),
                     const Divider(),
                     _buildSide(context,
-                        playerInfo: state.currentReport!.off,
+                        playerInfo: state.currentReport!.off!,
                         playerRole: 'ATTACKER',
                         color: const Color(0xFFA33F41)),
                     _buildSide(context,
-                        playerInfo: state.currentReport!.def[0],
+                        playerInfo: state.currentReport!.def!,
                         playerRole: 'DEFENDER',
                         bountyBar: false,
                         color: const Color(0xFF6A9AB8)),
-                    ...state.currentReport!.def
-                        .skip(1)
+                    ...state.currentReport!.reinforcements
                         .map((r) => _buildSide(context,
                             playerInfo: r,
                             playerRole: 'REINFORCEMENT',

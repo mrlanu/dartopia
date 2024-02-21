@@ -16,13 +16,13 @@ class ReportsState extends Equatable {
   final ReportsStatus status;
   final List<ReportBrief> briefs;
   final int amount;
-  final Report? currentReport;
+  final MilitaryReportResponse? currentReport;
 
   ReportsState copyWith(
       {ReportsStatus? status,
       List<ReportBrief>? briefs,
         int? amount,
-      Report? currentReport}) {
+      MilitaryReportResponse? currentReport}) {
     return ReportsState(
         status: status ?? this.status,
         briefs: briefs ?? this.briefs,

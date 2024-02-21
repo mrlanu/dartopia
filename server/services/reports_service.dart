@@ -7,7 +7,7 @@ abstract class ReportsService {
   Future<(int, List<ReportBrief>)> createReportsBrief(
       {required String userId, required SettlementService settlementService});
 
-  Future<Report> fetchReportById(
+  Future<MilitaryReportResponse> fetchReportById(
       {required String reportId, required String userId});
 
   Future<void> deleteById(String id, String userId);
@@ -19,9 +19,25 @@ class ReportsServiceImpl implements ReportsService {
   final ReportsRepository _reportsRepository;
 
   @override
-  Future<Report> fetchReportById(
-          {required String reportId, required String userId}) =>
-      _reportsRepository.fetchReportById(reportId: reportId, userId: userId);
+  Future<MilitaryReportResponse> fetchReportById({
+    required String reportId,
+    required String userId,
+  }) async {
+    final reportEntity = await _reportsRepository.fetchReportById(
+        reportId: reportId, userId: userId);
+    final ownerIndex = reportEntity.reportOwners.indexOf(userId);
+    if (ownerIndex == 0) {
+      final unitsSum = reportEntity.off.units.reduce((a, b) => a + b);
+      final casualtySum = reportEntity.off.casualty.reduce((a, b) => a + b);
+      return unitsSum == casualtySum
+          ? MilitaryReportResponse.failed(reportEntity)
+          : MilitaryReportResponse.full(reportEntity);
+    }
+    if (ownerIndex == 1) {
+      return MilitaryReportResponse.full(reportEntity);
+    }
+    return MilitaryReportResponse.reinforcement(reportEntity, ownerIndex - 2);
+  }
 
   @override
   Future<void> deleteById(String id, String userId) =>
@@ -58,7 +74,7 @@ class ReportsServiceImpl implements ReportsService {
   }
 
   int _countUnreadReports(
-      {required List<Report> reports, required String userId}) {
+      {required List<ReportEntity> reports, required String userId}) {
     if (reports.isNotEmpty) {
       final ownerIndex = reports[0].reportOwners.indexOf(userId);
       return reports.where((report) => report.state[ownerIndex] == 0).length;
@@ -68,7 +84,7 @@ class ReportsServiceImpl implements ReportsService {
 
   Future<String> _createTitle(
     Map<String, Settlement> cache,
-    Report report,
+    ReportEntity report,
     SettlementService settlementService,
   ) async {
     late Settlement? from;
@@ -98,7 +114,7 @@ class ReportsServiceImpl implements ReportsService {
     return '${from!.name} ${_getMission(report)} ${to!.name}';
   }
 
-  String _getMission(Report reportEntity) {
+  String _getMission(ReportEntity reportEntity) {
     String mission;
     if (reportEntity.mission == Mission.reinforcement) {
       mission = "reinforces";

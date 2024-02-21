@@ -212,7 +212,7 @@ class Attack extends MissionStrategy {
       ...reinforcement.map((e) => e.from.userId),
     ];
     
-    final report = Report(
+    final report = ReportEntity(
       reportOwners: reportOwners,
       state: List<int>.filled(reportOwners.length, 0),
       mission: movement.mission,

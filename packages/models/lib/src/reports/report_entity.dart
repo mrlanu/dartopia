@@ -1,7 +1,7 @@
 import 'package:models/models.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
-class Report {
+class ReportEntity {
   final ObjectId? id;
   final List<String> reportOwners;
   final List<int> state; // 0 - unread, 1 - read, 2 - deleted
@@ -10,7 +10,7 @@ class Report {
   final List<PlayerInfo> def;
   final DateTime dateTime;
 
-  Report({
+  ReportEntity({
     this.id,
     this.reportOwners = const [],
     this.state = const [],
@@ -20,7 +20,7 @@ class Report {
     required this.dateTime,
   });
 
-  Report.fromMap(Map<String, dynamic> map)
+  ReportEntity.fromMap(Map<String, dynamic> map)
       : id = map['_id'] as ObjectId,
         reportOwners = (map['reportOwners'] as List<dynamic>)
             .map((r) => r as String)
@@ -35,7 +35,7 @@ class Report {
             .toList(),
         dateTime = map['dateTime'] as DateTime;
 
-  Report.fromJson(Map<String, dynamic> map)
+  ReportEntity.fromJson(Map<String, dynamic> map)
       : id = ObjectId.parse(map['_id'] as String),
         reportOwners = (map['reportOwners'] as List<dynamic>)
             .map((r) => r as String)
@@ -70,7 +70,7 @@ class Report {
     'dateTime': dateTime.toIso8601String(),
   };
 
-  Report copyWith({
+  ReportEntity copyWith({
     ObjectId? id,
     List<String>? reportOwners,
     List<int>? state,
@@ -79,7 +79,7 @@ class Report {
     List<PlayerInfo>? def,
     DateTime? dateTime,
   }) {
-    return Report(
+    return ReportEntity(
       id: id ?? this.id,
       reportOwners: reportOwners ?? this.reportOwners,
       state: state ?? this.state,
