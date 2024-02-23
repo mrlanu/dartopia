@@ -3,9 +3,11 @@ import 'package:google_fonts/google_fonts.dart';
 
 const offsetForFieldsCarousel = 14;
 
+const primary = Color.fromRGBO(36, 126, 38, 1.0);
 const transparent = Color(0x00000000);
 const black = Color(0xFF000000);
 const background = Color(0xFFC0D9B6);
+const background3 = Color(0xFFA7D293);
 const background2 = Colors.white70;
 const storageBar = Colors.white70;
 const bottomNavBarBackground = Color(0xFFE7E5E5);

@@ -30,6 +30,7 @@ dependencies:
   flutter_native_splash: ^2.3.7
   formz: ^0.6.1
   shared_preferences: ^2.2.2
+  reorderable_grid_view: ^2.2.8
 
 dev_dependencies:
   flutter_test:
