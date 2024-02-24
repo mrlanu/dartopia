@@ -20,7 +20,6 @@ class SettlementState extends Equatable {
       {SettlementStatus? status,
       List<ShortSettlementInfo>? settlementList,
       Settlement? settlement,
-      List<double>? storage,
       List<List<int>>? buildingRecords,
       int? buildingIndex}) {
     return SettlementState(

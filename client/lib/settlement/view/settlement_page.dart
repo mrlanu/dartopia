@@ -18,7 +18,10 @@ class SettlementPage extends StatefulWidget {
   final String token;
 
   static Route<void> route({required String token}) {
-    return MaterialPageRoute<void>(builder: (_) => SettlementPage(token: token,));
+    return MaterialPageRoute<void>(
+        builder: (_) => SettlementPage(
+              token: token,
+            ));
   }
 
   @override
@@ -26,7 +29,6 @@ class SettlementPage extends StatefulWidget {
 }
 
 class _SettlementPageState extends State<SettlementPage> {
-
   late final SettlementRepository _settlementRepository;
   late final TroopMovementsRepository _troopMovementsRepository;
   late final ReportsRepository _reportsRepository;
@@ -35,7 +37,7 @@ class _SettlementPageState extends State<SettlementPage> {
   void initState() {
     _settlementRepository = SettlementRepositoryImpl(token: widget.token);
     _troopMovementsRepository =
-    TroopMovementsRepositoryImpl(token: widget.token);
+        TroopMovementsRepositoryImpl(token: widget.token);
     _reportsRepository = ReportsRepositoryImpl(token: widget.token);
     super.initState();
   }
@@ -107,7 +109,9 @@ class SettlementView extends StatelessWidget {
                     : IndexedStack(
                         index: selectedTab.index,
                         children: [
-                          const BuildingsPageGrid(),
+                          BuildingsPageGrid(
+                              settlement: state.settlement!,
+                              buildingRecords: state.buildingRecords),
                           const WorldMapPage(),
                           Container(),
                           const ReportsPage(),

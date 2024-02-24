@@ -158,6 +158,7 @@ class BuildingCard extends StatelessWidget {
                                           index: position - 14))
                                       ..add(BuildingUpgradeRequested(
                                           request: request));
+                                    Navigator.of(context).pop();
                                   }
                                 : null,
                             child: const Text('Build')),
