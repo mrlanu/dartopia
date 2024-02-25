@@ -103,7 +103,7 @@ class Time {
 final buildingSpecefication = <int, Building>{
   0: Building(
     id: 0,
-    name: 'Wood cutter',
+    name: 'Wood',
     cost: [40, 100, 50, 60],
     time: Time(1780 / 3, 1.6, 1000 / 3),
     benefit: getProduction,
@@ -114,7 +114,7 @@ final buildingSpecefication = <int, Building>{
   ),
   1: Building(
     id: 1,
-    name: 'Clay pit',
+    name: 'Clay',
     cost: [80, 40, 80, 50],
     time: Time(1660 / 3, 1.6, 1000 / 3),
     benefit: getProduction,
@@ -125,7 +125,7 @@ final buildingSpecefication = <int, Building>{
   ),
   2: Building(
     id: 2,
-    name: 'Iron mine',
+    name: 'Iron',
     cost: [100, 80, 30, 60],
     time: Time(2350 / 3, 1.6, 1000 / 3),
     benefit: getProduction,
@@ -136,7 +136,7 @@ final buildingSpecefication = <int, Building>{
   ),
   3: Building(
     id: 3,
-    name: 'Crop land',
+    name: 'Crops',
     cost: [70, 90, 70, 20],
     time: Time(1450 / 3, 1.6, 1000 / 3),
     benefit: getProduction,
