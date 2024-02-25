@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:models/models.dart';
 
 import '../../../settlement/settlement.dart';
-import '../../../utils/countdown.dart';
 import '../../../utils/utils.dart';
 
 class FieldViewTile extends StatelessWidget {

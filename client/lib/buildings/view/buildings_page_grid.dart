@@ -41,7 +41,7 @@ class _BuildingsGridViewState extends State<BuildingsGridView> {
   @override
   Widget build(BuildContext context) {
     final emptySpots =
-    widget.buildingRecords.where((bR) => bR[1] == 99).toList();
+        widget.buildingRecords.where((bR) => bR[1] == 99).toList();
     return Column(
       children: [
         const SizedBox(
@@ -70,50 +70,21 @@ class _BuildingsGridViewState extends State<BuildingsGridView> {
             },
             header: widget.buildingRecords
                 .where((bR) =>
-            bR[1] == 0 || bR[1] == 1 || bR[1] == 2 || bR[1] == 3)
+                    bR[1] == 0 || bR[1] == 1 || bR[1] == 2 || bR[1] == 3)
                 .map(
-                  (field) {
-                final building = buildingSpecefication[field[1]];
+              (field) {
                 final upgradingTasks = widget.settlement.constructionTasks
                     .where((task) => task.buildingId == field[1])
                     .toList();
-                Widget label;
-                Color labelBackground;
-                // check weather this building is under construction
-                if (upgradingTasks.isNotEmpty) {
-                  labelBackground = Colors.orange;
-                  final buildingUnderConstruction =
-                  buildingSpecefication[upgradingTasks.last.buildingId];
-                  label = Row(
-                    children: [
-                      Text(buildingUnderConstruction!.name),
-                      const SizedBox(width: 5),
-                      CountdownTimer(
-                        startValue: upgradingTasks.last.executionTime
-                            .difference(DateTime.now())
-                            .inSeconds,
-                        onFinish: () {
-                          context
-                              .read<SettlementBloc>()
-                              .add(const SettlementFetchRequested());
-                        },
-                        textStyle: Theme.of(context)
-                            .textTheme
-                            .bodyMedium!
-                            .copyWith(color: Colors.white),
-                      ),
-                    ],
-                  );
-                } else {
-                  label = Text(building!.name);
-                  labelBackground = primary;
-                }
+                final (label, labelBackground, labelColor) =
+                    _buildLabel(field, upgradingTasks.lastOrNull);
                 return _BuildingGridItem(
                   key: ValueKey('${field[0]} ${field[1]}'),
                   buildingRecord: field,
                   prodPerHour: widget.settlement.calculateProducePerHour(),
                   label: label,
                   labelBackground: labelBackground,
+                  labelColor: labelColor,
                 );
               },
             ).toList(),
@@ -125,53 +96,24 @@ class _BuildingsGridViewState extends State<BuildingsGridView> {
             ],
             children: widget.buildingRecords
                 .where((bR) =>
-            bR[1] != 99 &&
-                bR[1] != 0 &&
-                bR[1] != 1 &&
-                bR[1] != 2 &&
-                bR[1] != 3)
+                    bR[1] != 99 &&
+                    bR[1] != 0 &&
+                    bR[1] != 1 &&
+                    bR[1] != 2 &&
+                    bR[1] != 3)
                 .map(
-                  (bRecord) {
-                final building = buildingSpecefication[bRecord[1]];
+              (bRecord) {
                 final upgradingTasks = widget.settlement.constructionTasks
                     .where((task) => task.position == bRecord[0])
                     .toList();
-                Widget label;
-                Color labelBackground;
-                // check weather this building is under construction
-                if (upgradingTasks.isNotEmpty) {
-                  labelBackground = Colors.orange;
-                  final buildingUnderConstruction =
-                  buildingSpecefication[upgradingTasks.last.buildingId];
-                  label = Row(
-                    children: [
-                      Text(buildingUnderConstruction!.name),
-                      const SizedBox(width: 5),
-                      CountdownTimer(
-                        startValue: upgradingTasks.last.executionTime
-                            .difference(DateTime.now())
-                            .inSeconds,
-                        onFinish: () {
-                          context
-                              .read<SettlementBloc>()
-                              .add(const SettlementFetchRequested());
-                        },
-                        textStyle: Theme.of(context)
-                            .textTheme
-                            .bodyMedium!
-                            .copyWith(color: Colors.white),
-                      ),
-                    ],
-                  );
-                } else {
-                  label = Text(building!.name);
-                  labelBackground = primary;
-                }
+                final (label, labelBackground, labelColor) =
+                _buildLabel(bRecord, upgradingTasks.lastOrNull);
                 return _BuildingGridItem(
                   key: ValueKey('${bRecord[0]} ${bRecord[1]}'),
                   buildingRecord: bRecord,
                   label: label,
                   labelBackground: labelBackground,
+                  labelColor: labelColor,
                 );
               },
             ).toList(),
@@ -180,20 +122,60 @@ class _BuildingsGridViewState extends State<BuildingsGridView> {
       ],
     );
   }
+
+  (Widget, Color, Color) _buildLabel(
+      List<int> buildingRecord, ConstructionTask? constructionTask) {
+    final labelBackground = constructionTask == null
+        ? primary
+        : const Color.fromRGBO(253, 216, 87, 1.0);
+    final labelColor = constructionTask == null ? Colors.white : Colors.black;
+    return constructionTask == null
+        ? (
+            Text(buildingSpecefication[buildingRecord[1]]!.name),
+            labelBackground,
+            labelColor
+          )
+        : (
+            Row(
+              children: [
+                Text(buildingSpecefication[constructionTask.buildingId]!.name),
+                const SizedBox(width: 5),
+                CountdownTimer(
+                  startValue: constructionTask.executionTime
+                      .difference(DateTime.now())
+                      .inSeconds,
+                  onFinish: () {
+                    context
+                        .read<SettlementBloc>()
+                        .add(const SettlementFetchRequested());
+                  },
+                  textStyle: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(color: labelColor),
+                ),
+              ],
+            ),
+            labelBackground,
+            labelColor
+          );
+  }
 }
 
 class _BuildingGridItem extends StatelessWidget {
   const _BuildingGridItem(
       {super.key,
-        required this.buildingRecord,
-        this.prodPerHour = const [0,0,0,0],
-        required this.label,
-        this.labelBackground = primary});
+      required this.buildingRecord,
+      this.prodPerHour = const [0, 0, 0, 0],
+      required this.label,
+      this.labelBackground = primary,
+      this.labelColor = Colors.black});
 
   final List<int> buildingRecord;
   final List<int> prodPerHour;
   final Widget label;
   final Color labelBackground;
+  final Color labelColor;
 
   @override
   Widget build(BuildContext context) {
@@ -204,6 +186,7 @@ class _BuildingGridItem extends StatelessWidget {
     return Badge(
       label: Text(lbl),
       backgroundColor: labelBackground,
+      textColor: labelColor,
       textStyle: Theme.of(context).textTheme.bodyMedium,
       offset: Offset(-1.0 * lbl.length, 0),
       largeSize: 22,
@@ -211,6 +194,7 @@ class _BuildingGridItem extends StatelessWidget {
       child: Badge(
         alignment: Alignment.bottomLeft,
         label: label,
+        textColor: labelColor,
         backgroundColor: labelBackground,
         offset: const Offset(0, 0),
         textStyle: Theme.of(context).textTheme.bodyMedium,
