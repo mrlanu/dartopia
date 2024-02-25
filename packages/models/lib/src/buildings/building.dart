@@ -147,7 +147,7 @@ final buildingSpecefication = <int, Building>{
   ),
   4: Building(
     id: 4,
-    name: 'Main building',
+    name: 'Main office',
     cost: [70, 40, 60, 20],
     time: Time.withA(3875),
     benefit: mbLike,

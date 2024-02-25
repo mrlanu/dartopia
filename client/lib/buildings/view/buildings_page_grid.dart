@@ -80,15 +80,13 @@ class _BuildingsGridViewState extends State<BuildingsGridView> {
                   key: ValueKey('${fieldRecord[0]} ${fieldRecord[1]}'),
                   buildingRecord: fieldRecord,
                   constructionTask: constructionTasks.lastOrNull,
+                  storage: widget.settlement.storage,
                   prodPerHour: widget.settlement.calculateProducePerHour(),
                 );
               },
             ).toList(),
             footer: [
-              _BuildingGridAddItem(
-                  key: UniqueKey(),
-                  emptySpots: emptySpots,
-                  labelBackground: Colors.deepOrangeAccent),
+              _BuildingGridAddItem(key: UniqueKey(), emptySpots: emptySpots),
             ],
             children: widget.buildingRecords
                 .where((bR) =>
@@ -105,6 +103,7 @@ class _BuildingsGridViewState extends State<BuildingsGridView> {
                 return _BuildingGridItem(
                   key: ValueKey('${bRecord[0]} ${bRecord[1]}'),
                   buildingRecord: bRecord,
+                  storage: widget.settlement.storage,
                   constructionTask: upgradingTasks.lastOrNull,
                 );
               },
@@ -121,36 +120,35 @@ class _BuildingGridItem extends StatelessWidget {
     super.key,
     required this.buildingRecord,
     this.constructionTask,
+    required this.storage,
     this.prodPerHour = const [0, 0, 0, 0],
   });
 
   final List<int> buildingRecord;
   final ConstructionTask? constructionTask;
+  final List<double> storage;
   final List<int> prodPerHour;
 
   @override
   Widget build(BuildContext context) {
-    final labelBackground = constructionTask == null
-        ? primary
-        : const Color.fromRGBO(253, 216, 87, 1.0);
-    final labelColor = constructionTask == null ? Colors.white : Colors.black;
+    final (labelBackground, labelTextColor) = _getLabelColors();
     final id = buildingRecord[1];
     final lbl = id == 0 || id == 1 || id == 2 || id == 3
         ? prodPerHour[id].toString()
         : 'lvl ${buildingRecord[2]}';
     return Badge(
       label: Text(lbl),
-      backgroundColor: labelBackground,
-      textColor: labelColor,
+      backgroundColor: primary,
+      textColor: Colors.white,
       textStyle: Theme.of(context).textTheme.bodyMedium,
       offset: Offset(-1.0 * lbl.length, 0),
       largeSize: 22,
       smallSize: 0,
       child: Badge(
         alignment: Alignment.bottomLeft,
-        label: _buildLabel(labelColor, context),
-        textColor: labelColor,
-        backgroundColor: labelBackground,
+        label: _buildLabel(labelTextColor, context),
+        textColor: Colors.white,
+        backgroundColor: primary,
         offset: const Offset(0, 0),
         textStyle: Theme.of(context).textTheme.bodyMedium,
         largeSize: 22,
@@ -161,7 +159,7 @@ class _BuildingGridItem extends StatelessWidget {
                 block: settlementBloc, buildingRecord: buildingRecord));
           },
           child: Card(
-            color: background3,
+            color: labelBackground,
             child: BuildingPicture(
               buildingRecord: buildingRecord,
               prodPerHour: null,
@@ -191,10 +189,31 @@ class _BuildingGridItem extends StatelessWidget {
                 textStyle: Theme.of(context)
                     .textTheme
                     .bodyMedium!
-                    .copyWith(color: labelColor),
+                    .copyWith(color: Colors.white),
               ),
             ],
           );
+  }
+
+  (Color, Color) _getLabelColors() {
+    final specification = buildingSpecefication[buildingRecord[1]];
+    final canBeUpgraded = specification!
+        .canBeUpgraded(storage: storage, toLevel: buildingRecord[2] + 1);
+    Color labelBackground;
+    Color labelTextColor;
+    if (canBeUpgraded) {
+      if (constructionTask == null) {
+        labelBackground = background3;
+        labelTextColor = Colors.white;
+      } else {
+        labelBackground = const Color.fromRGBO(238, 213, 140, 1.0);
+        labelTextColor = Colors.black;
+      }
+    } else {
+      labelBackground = Colors.white38;
+      labelTextColor = Colors.black;
+    }
+    return (labelBackground, labelTextColor);
   }
 }
 
