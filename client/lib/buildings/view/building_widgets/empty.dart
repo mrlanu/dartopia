@@ -16,7 +16,6 @@ class Empty extends StatefulWidget {
 
 class _EmptyState extends State<Empty> {
   late PageController _pageController;
-  int _currentPage = 0;
 
   @override
   void initState() {
@@ -26,28 +25,44 @@ class _EmptyState extends State<Empty> {
 
   @override
   Widget build(BuildContext context) {
-    final allBuildingList = buildingSpecefication.values
-        .where((sp) =>
-            sp.id != 0 && sp.id != 1 && sp.id != 2 && sp.id != 3 && sp.id != 99)
-        .toList();
+    final settlementState = context.read<SettlementBloc>().state;
+    final allBuildingList =
+        _getAvailableNewBuildings(settlementState.buildingRecords);
     return PageView.builder(
-      controller: _pageController,
-      onPageChanged: (value) {
-        setState(() {
-          //_currentPage = value % allBuildingList.length;
+        controller: _pageController,
+        onPageChanged: (value) {
+          setState(() {
+            //_currentPage = value % allBuildingList.length;
+          });
+        },
+        itemBuilder: (context, index) {
+          return Center(
+              child: BuildingCard(
+                  position: widget.buildingRecord[0],
+                  specification:
+                      allBuildingList[index % allBuildingList.length],
+                  storage: settlementState.settlement!.storage,
+                  buildingRecords: settlementState.buildingRecords));
         });
-      },
-      itemBuilder: (context, index) {
-        return Center(child: BlocBuilder<SettlementBloc, SettlementState>(
-          builder: (context, state) {
-            return BuildingCard(
-                position: widget.buildingRecord[0],
-                specification: allBuildingList[index % allBuildingList.length],
-                storage: state.settlement!.storage,
-                buildingRecords: state.buildingRecords);
-          },
-        ));
-      },
-    );
+  }
+
+  List<Building> _getAvailableNewBuildings(
+      List<List<int>> existBuildingRecords) {
+    final result = buildingSpecefication.values
+        .where((sp) =>
+            sp.id != 0 &&
+            sp.id != 1 &&
+            sp.id != 2 &&
+            sp.id != 3 &&
+            sp.id != 99 &&
+            sp.id != 100 &&
+            (!_isBuildingExists(existBuildingRecords, sp.id) ||
+                (_isBuildingExists(existBuildingRecords, sp.id) && sp.isMulti)))
+        .toList();
+    return result;
+  }
+
+  bool _isBuildingExists(List<List<int>> existBuildingRecords, int buildingId) {
+    return existBuildingRecords.where((bR) => bR[1] == buildingId).isNotEmpty;
   }
 }
