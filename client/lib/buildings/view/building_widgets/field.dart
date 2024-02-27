@@ -13,6 +13,8 @@ class Field extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SettlementBloc, SettlementState>(
       builder: (context, state) {
+        final constructionsTaskAmount =
+            state.settlement!.constructionTasks.length;
         return SingleChildScrollView(
           child: Column(
             children: [
@@ -31,10 +33,12 @@ class Field extends StatelessWidget {
                             .executionTime
                             .difference(DateTime.now())
                             .inSeconds,
+                        constructionsTaskAmount: constructionsTaskAmount,
                       )
                     : FieldViewTile(
                         buildingRecord: e,
                         storage: state.settlement!.storage,
+                        constructionsTaskAmount: constructionsTaskAmount,
                       );
               }).toList()
             ],

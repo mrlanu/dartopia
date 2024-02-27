@@ -1,3 +1,4 @@
+import 'package:dartopia/consts/consts.dart';
 import 'package:dartopia/consts/images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -113,19 +114,22 @@ class BuildingContainer extends StatelessWidget {
                       const SizedBox(width: 20),
                       IconButton.outlined(
                           color: Colors.green,
-                          onPressed: specification.canBeUpgraded(
-                                  storage: storage,
-                                  toLevel: buildingRecord[2] + 1)
-                              ? () {
-                                  final request = ConstructionRequest(
-                                      buildingId: specification.id,
-                                      position: buildingRecord[0],
-                                      toLevel: buildingRecord[2] + 1);
-                                  context.read<SettlementBloc>().add(
-                                      BuildingUpgradeRequested(
-                                          request: request));
-                                }
-                              : null,
+                          onPressed:
+                              state.settlement!.constructionTasks.length <
+                                          maxConstructionTasksAllowed &&
+                                      specification.canBeUpgraded(
+                                          storage: storage,
+                                          toLevel: buildingRecord[2] + 1)
+                                  ? () {
+                                      final request = ConstructionRequest(
+                                          buildingId: specification.id,
+                                          position: buildingRecord[0],
+                                          toLevel: buildingRecord[2] + 1);
+                                      context.read<SettlementBloc>().add(
+                                          BuildingUpgradeRequested(
+                                              request: request));
+                                    }
+                                  : null,
                           icon: const Icon(Icons.update)),
                       const SizedBox(width: 20),
                       enterable

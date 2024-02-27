@@ -38,11 +38,13 @@ class _EmptyState extends State<Empty> {
         itemBuilder: (context, index) {
           return Center(
               child: BuildingCard(
-                  position: widget.buildingRecord[0],
-                  specification:
-                      allBuildingList[index % allBuildingList.length],
-                  storage: settlementState.settlement!.storage,
-                  buildingRecords: settlementState.buildingRecords));
+            position: widget.buildingRecord[0],
+            specification: allBuildingList[index % allBuildingList.length],
+            storage: settlementState.settlement!.storage,
+            buildingRecords: settlementState.buildingRecords,
+            constructionsTaskAmount:
+                settlementState.settlement!.constructionTasks.length,
+          ));
         });
   }
 

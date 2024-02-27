@@ -14,10 +14,12 @@ class BarracksBuilding extends StatelessWidget {
       builder: (context, state) {
         return Center(
             child: BuildingCard(
-                position: 1000,
-                specification: buildingSpecefication[7]!,
-                storage: state.settlement!.storage,
-                buildingRecords: state.buildingRecords));
+          position: 1000,
+          specification: buildingSpecefication[7]!,
+          storage: state.settlement!.storage,
+          buildingRecords: state.buildingRecords,
+          constructionsTaskAmount: state.settlement!.constructionTasks.length,
+        ));
       },
     );
   }

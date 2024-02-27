@@ -18,3 +18,5 @@ final font = GoogleFonts.ptSerif(color: black);
 const worldWidth = 50;
 const mapWidth = 7; // should be odd number
 
+const maxConstructionTasksAllowed = 2;
+

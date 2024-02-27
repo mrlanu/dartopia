@@ -1,3 +1,4 @@
+import 'package:dartopia/consts/consts.dart';
 import 'package:dartopia/consts/images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,11 +11,14 @@ class FieldViewTile extends StatelessWidget {
   final List<int> buildingRecord;
   final List<double> storage;
   final int? isUpgrading;
+  final int constructionsTaskAmount;
 
-  const FieldViewTile({super.key,
-    required this.buildingRecord,
-    required this.storage,
-    this.isUpgrading});
+  const FieldViewTile(
+      {super.key,
+      required this.buildingRecord,
+      required this.constructionsTaskAmount,
+      required this.storage,
+      this.isUpgrading});
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +27,10 @@ class FieldViewTile extends StatelessWidget {
     final prodNext = specification.benefit(buildingRecord[2] + 1).toInt();
     final cost = specification.getResourcesToNextLevel(buildingRecord[2] + 1);
     final canBeUpgraded = specification.canBeUpgraded(
-        storage: storage,
-        existingBuildings: [],
-        toLevel: buildingRecord[2] + 1);
+            storage: storage,
+            existingBuildings: [],
+            toLevel: buildingRecord[2] + 1) &&
+        constructionsTaskAmount < maxConstructionTasksAllowed;
     return Card(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 16.0),
@@ -37,8 +42,8 @@ class FieldViewTile extends StatelessWidget {
                     backgroundColor: canBeUpgraded && isUpgrading == null
                         ? null
                         : isUpgrading != null
-                        ? const Color.fromRGBO(253, 216, 87, 1.0)
-                        : const Color.fromRGBO(255, 176, 176, 1.0),
+                            ? const Color.fromRGBO(253, 216, 87, 1.0)
+                            : const Color.fromRGBO(255, 176, 176, 1.0),
                     child: Text(
                       '${buildingRecord[2]}',
                       style: const TextStyle(
@@ -52,22 +57,24 @@ class FieldViewTile extends StatelessWidget {
             ),
             Expanded(
                 child: isUpgrading != null
-                    ? _upgradingBody(context, isUpgrading!, buildingRecord[2] + 1)
-                    : _notUpgradingBody(
-                    cost, specification.time.valueOf(buildingRecord[2] + 1))),
+                    ? _upgradingBody(
+                        context, isUpgrading!, buildingRecord[2] + 1)
+                    : _notUpgradingBody(cost,
+                        specification.time.valueOf(buildingRecord[2] + 1))),
             Column(
               children: [
                 IconButton.outlined(
                     color: Colors.green,
-                    onPressed:
-                    canBeUpgraded && isUpgrading == null ? () {
-                      final request = ConstructionRequest(
-                          buildingId: buildingRecord[1],
-                          position: buildingRecord[0],
-                          toLevel: buildingRecord[2] + 1);
-                      context.read<SettlementBloc>().add(
-                          BuildingUpgradeRequested(request: request));
-                    } : null,
+                    onPressed: canBeUpgraded && isUpgrading == null
+                        ? () {
+                            final request = ConstructionRequest(
+                                buildingId: buildingRecord[1],
+                                position: buildingRecord[0],
+                                toLevel: buildingRecord[2] + 1);
+                            context.read<SettlementBloc>().add(
+                                BuildingUpgradeRequested(request: request));
+                          }
+                        : null,
                     icon: const Icon(Icons.update)),
                 Text(
                   '$prodNext/hr',
@@ -88,9 +95,14 @@ class FieldViewTile extends StatelessWidget {
           'Upgrading to lvl: $lvl',
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        CountdownTimer(startValue: duration, onFinish: () {
-          context.read<SettlementBloc>().add(const SettlementFetchRequested());
-        },),
+        CountdownTimer(
+          startValue: duration,
+          onFinish: () {
+            context
+                .read<SettlementBloc>()
+                .add(const SettlementFetchRequested());
+          },
+        ),
       ],
     );
   }
@@ -102,21 +114,13 @@ class FieldViewTile extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             _resItemBuilder(
-                cost: cost,
-                assetPath: DartopiaImages.lumber,
-                itemPosition: 0),
+                cost: cost, assetPath: DartopiaImages.lumber, itemPosition: 0),
             _resItemBuilder(
-                cost: cost,
-                assetPath: DartopiaImages.clay,
-                itemPosition: 1),
+                cost: cost, assetPath: DartopiaImages.clay, itemPosition: 1),
             _resItemBuilder(
-                cost: cost,
-                assetPath: DartopiaImages.iron,
-                itemPosition: 2),
+                cost: cost, assetPath: DartopiaImages.iron, itemPosition: 2),
             _resItemBuilder(
-                cost: cost,
-                assetPath: DartopiaImages.crop,
-                itemPosition: 3),
+                cost: cost, assetPath: DartopiaImages.crop, itemPosition: 3),
           ],
         ),
         Row(
@@ -136,11 +140,12 @@ class FieldViewTile extends StatelessWidget {
     );
   }
 
-  Widget _resItemBuilder({required List<int> cost,
-    required String assetPath,
-    required int itemPosition,
-    double fontSize = 13,
-    double imageHeight = 11}) {
+  Widget _resItemBuilder(
+      {required List<int> cost,
+      required String assetPath,
+      required int itemPosition,
+      double fontSize = 13,
+      double imageHeight = 11}) {
     return Row(
       children: [
         Image.asset(assetPath, height: imageHeight),

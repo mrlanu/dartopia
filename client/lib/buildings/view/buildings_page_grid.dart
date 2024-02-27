@@ -80,6 +80,7 @@ class _BuildingsGridViewState extends State<BuildingsGridView> {
                   key: ValueKey('${fieldRecord[0]} ${fieldRecord[1]}'),
                   buildingRecord: fieldRecord,
                   constructionTask: constructionTasks.lastOrNull,
+                  constructionsTaskAmount: widget.settlement.constructionTasks.length,
                   storage: widget.settlement.storage,
                   prodPerHour: widget.settlement.calculateProducePerHour(),
                 );
@@ -105,6 +106,7 @@ class _BuildingsGridViewState extends State<BuildingsGridView> {
                   buildingRecord: bRecord,
                   storage: widget.settlement.storage,
                   constructionTask: upgradingTasks.lastOrNull,
+                  constructionsTaskAmount: widget.settlement.constructionTasks.length,
                 );
               },
             ).toList(),
@@ -120,12 +122,14 @@ class _BuildingGridItem extends StatelessWidget {
     super.key,
     required this.buildingRecord,
     this.constructionTask,
+    required this.constructionsTaskAmount,
     required this.storage,
     this.prodPerHour = const [0, 0, 0, 0],
   });
 
   final List<int> buildingRecord;
   final ConstructionTask? constructionTask;
+  final int constructionsTaskAmount;
   final List<double> storage;
   final List<int> prodPerHour;
 
@@ -198,7 +202,8 @@ class _BuildingGridItem extends StatelessWidget {
   (Color, Color) _getLabelColors() {
     final specification = buildingSpecefication[buildingRecord[1]];
     final canBeUpgraded = specification!
-        .canBeUpgraded(storage: storage, toLevel: buildingRecord[2] + 1);
+            .canBeUpgraded(storage: storage, toLevel: buildingRecord[2] + 1) &&
+        constructionsTaskAmount < maxConstructionTasksAllowed;
     Color labelBackground;
     Color labelTextColor;
     if (canBeUpgraded) {

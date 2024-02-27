@@ -1,3 +1,4 @@
+import 'package:dartopia/consts/consts.dart';
 import 'package:dartopia/consts/images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,13 +13,15 @@ class BuildingCard extends StatelessWidget {
   final Building specification;
   final List<double> storage;
   final List<List<int>> buildingRecords;
+  final int constructionsTaskAmount;
 
   const BuildingCard(
       {super.key,
       required this.position,
       required this.specification,
       required this.storage,
-      required this.buildingRecords});
+      required this.buildingRecords,
+      required this.constructionsTaskAmount});
 
   @override
   Widget build(BuildContext context) {
@@ -144,10 +147,13 @@ class BuildingCard extends StatelessWidget {
                           width: 50,
                           height: 50,
                         ),
-                        Text(FormatUtil.formatTime(specification.time.valueOf(1))),
+                        Text(FormatUtil.formatTime(
+                            specification.time.valueOf(1))),
                         const SizedBox(width: 20),
                         FilledButton(
-                            onPressed: _isMatchRequirements()
+                            onPressed: _isMatchRequirements() &&
+                                    constructionsTaskAmount <
+                                        maxConstructionTasksAllowed
                                 ? () {
                                     final request = ConstructionRequest(
                                         buildingId: specification.id,
