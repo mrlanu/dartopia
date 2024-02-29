@@ -1,3 +1,4 @@
+import 'package:dartopia/consts/calors.dart';
 import 'package:dartopia/settlement/bloc/settlement_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,8 +12,8 @@ PreferredSizeWidget buildAppBar() => AppBar(
             state.settlement?.name ?? '');
         },
       ),
-      foregroundColor: Colors.white,
-      backgroundColor: const Color.fromRGBO(36, 126, 38, 1.0),
+      foregroundColor: DartopiaColors.onPrimary,
+      backgroundColor: DartopiaColors.primary,
       actions: [
         IconButton(onPressed: () {}, icon: const FaIcon(FontAwesomeIcons.gear))
       ],

@@ -1,7 +1,6 @@
 import 'package:dartopia/bottom_navbar/bottom_navbar.dart';
-import 'package:dartopia/buildings/view/buildings_page_carousel.dart';
 import 'package:dartopia/buildings/view/buildings_page_grid.dart';
-import 'package:dartopia/consts/consts.dart';
+import 'package:dartopia/consts/calors.dart';
 import 'package:dartopia/drawer/main_drawer.dart';
 import 'package:dartopia/world_map/world_map.dart';
 import 'package:flutter/material.dart';
@@ -91,7 +90,7 @@ class SettlementView extends StatelessWidget {
 
     return SafeArea(
       child: Scaffold(
-          backgroundColor: background,
+          backgroundColor: DartopiaColors.background,
           appBar: buildAppBar(),
           drawer: const MainDrawer(),
           body: BlocConsumer<SettlementBloc, SettlementState>(

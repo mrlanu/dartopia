@@ -1,4 +1,5 @@
 import 'package:dartopia/common/common.dart';
+import 'package:dartopia/consts/calors.dart';
 import 'package:dartopia/consts/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -77,7 +78,7 @@ class _RallyPointViewState extends State<RallyPointView> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: background,
+        backgroundColor: DartopiaColors.background,
         appBar: buildAppBar(),
         body: IndexedStack(index: currentIndex, children: [
           _movementsTab(),

@@ -1,6 +1,7 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:dartopia/authentication/bloc/auth_bloc.dart';
 import 'package:dartopia/settlement/view/settlement_page.dart';
+import 'package:dartopia/utils/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -75,11 +76,7 @@ class _AppViewState extends State<AppView> {
       navigatorKey: _navigatorKey,
       debugShowCheckedModeBanner: false,
       title: 'Dartopia',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-        useMaterial3: true,
-        textTheme: GoogleFonts.boogalooTextTheme(),
-      ),
+      theme: dartopiaTheme,
       builder: (context, child) {
         return BlocListener<AuthBloc, AuthState>(
           listener: (context, state) {

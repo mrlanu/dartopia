@@ -1,3 +1,4 @@
+import 'package:dartopia/consts/calors.dart';
 import 'package:dartopia/consts/consts.dart';
 import 'package:dartopia/consts/images.dart';
 import 'package:flutter/material.dart';
@@ -113,7 +114,7 @@ class BuildingContainer extends StatelessWidget {
                             ),
                       const SizedBox(width: 20),
                       IconButton.outlined(
-                          color: Colors.green,
+                          color: DartopiaColors.primaryContainer,
                           onPressed:
                               state.settlement!.constructionTasks.length <
                                           maxConstructionTasksAllowed &&
@@ -134,7 +135,7 @@ class BuildingContainer extends StatelessWidget {
                       const SizedBox(width: 20),
                       enterable
                           ? IconButton.outlined(
-                              color: Colors.green,
+                              color: DartopiaColors.primary,
                               onPressed: () {
                                 onEnter!();
                               },

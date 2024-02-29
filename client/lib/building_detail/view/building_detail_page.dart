@@ -1,4 +1,4 @@
-import 'package:dartopia/consts/consts.dart';
+import 'package:dartopia/consts/calors.dart';
 import 'package:dartopia/settlement/bloc/settlement_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,9 +30,6 @@ class BuildingDetailPage extends StatelessWidget {
       value: settlementBloc,
       child: BuildingDetailView(buildingRecord: buildingRecord),
     );
-    BuildingDetailView(
-      buildingRecord: buildingRecord,
-    );
   }
 }
 
@@ -45,7 +42,7 @@ class BuildingDetailView extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-          backgroundColor: background,
+          backgroundColor: DartopiaColors.background,
           appBar: AppBar(),
           body: BuildingWidgetsFactory.get(buildingRecord)),
     );

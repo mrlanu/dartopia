@@ -1,3 +1,4 @@
+import 'package:dartopia/consts/calors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -18,9 +19,9 @@ class BottomNavBar extends StatelessWidget {
       child: BlocBuilder<NavigationCubit, NavigationState>(
         builder: (context, state) {
           return BottomNavigationBar(
-            backgroundColor: const Color.fromRGBO(36, 126, 38, 1.0),
-            unselectedItemColor: Colors.white38,
-            selectedItemColor: Colors.white,
+            backgroundColor: DartopiaColors.primary,
+            unselectedItemColor: DartopiaColors.white38,
+            selectedItemColor: DartopiaColors.onPrimary,
             currentIndex: state.tab.index,
             onTap: (value) {
               context.read<NavigationCubit>().setTab(NavTab.values[value]);

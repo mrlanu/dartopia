@@ -1,9 +1,9 @@
+import 'package:dartopia/consts/calors.dart';
 import 'package:dartopia/storage_bar/view/storage_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:models/models.dart';
 
-import '../../consts/consts.dart';
 import '../../settlement/settlement.dart';
 import '../buildings.dart';
 
@@ -121,7 +121,7 @@ class _BuildingsViewState extends State<BuildingsView>
                   child: Container(
                     height: 30,
                     width: 350,
-                    color: black.withOpacity(0.35),
+                    color: DartopiaColors.black.withOpacity(0.35),
                   ),
                 ),
               ),

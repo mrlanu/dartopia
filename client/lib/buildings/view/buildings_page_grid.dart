@@ -1,3 +1,4 @@
+import 'package:dartopia/consts/calors.dart';
 import 'package:dartopia/consts/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -58,7 +59,7 @@ class _BuildingsGridViewState extends State<BuildingsGridView> {
             crossAxisCount: 3,
             dragWidgetBuilder: (index, child) {
               return Card(
-                color: const Color.fromRGBO(36, 126, 38, 1.0),
+                color: DartopiaColors.primary,
                 child: child,
               );
             },
@@ -80,14 +81,21 @@ class _BuildingsGridViewState extends State<BuildingsGridView> {
                   key: ValueKey('${fieldRecord[0]} ${fieldRecord[1]}'),
                   buildingRecord: fieldRecord,
                   constructionTask: constructionTasks.lastOrNull,
-                  constructionsTaskAmount: widget.settlement.constructionTasks.length,
+                  constructionsTaskAmount:
+                      widget.settlement.constructionTasks.length,
                   storage: widget.settlement.storage,
                   prodPerHour: widget.settlement.calculateProducePerHour(),
                 );
               },
             ).toList(),
             footer: [
-              _BuildingGridAddItem(key: UniqueKey(), emptySpots: emptySpots),
+              _BuildingGridAddItem(
+                  key: UniqueKey(),
+                  emptySpots: emptySpots,
+                  labelBackground: widget.settlement.constructionTasks.length <
+                          maxConstructionTasksAllowed
+                      ? DartopiaColors.primaryContainer
+                      : DartopiaColors.white38),
             ],
             children: widget.buildingRecords
                 .where((bR) =>
@@ -106,7 +114,8 @@ class _BuildingsGridViewState extends State<BuildingsGridView> {
                   buildingRecord: bRecord,
                   storage: widget.settlement.storage,
                   constructionTask: upgradingTasks.lastOrNull,
-                  constructionsTaskAmount: widget.settlement.constructionTasks.length,
+                  constructionsTaskAmount:
+                      widget.settlement.constructionTasks.length,
                 );
               },
             ).toList(),
@@ -142,8 +151,8 @@ class _BuildingGridItem extends StatelessWidget {
         : 'lvl ${buildingRecord[2]}';
     return Badge(
       label: Text(lbl),
-      backgroundColor: primary,
-      textColor: Colors.white,
+      backgroundColor: DartopiaColors.primary,
+      textColor: DartopiaColors.onPrimary,
       textStyle: Theme.of(context).textTheme.bodyMedium,
       offset: Offset(-1.0 * lbl.length, 0),
       largeSize: 22,
@@ -151,8 +160,8 @@ class _BuildingGridItem extends StatelessWidget {
       child: Badge(
         alignment: Alignment.bottomLeft,
         label: _buildLabel(labelTextColor, context),
-        textColor: Colors.white,
-        backgroundColor: primary,
+        textColor: DartopiaColors.onPrimary,
+        backgroundColor: DartopiaColors.primary,
         offset: const Offset(0, 0),
         textStyle: Theme.of(context).textTheme.bodyMedium,
         largeSize: 22,
@@ -193,7 +202,7 @@ class _BuildingGridItem extends StatelessWidget {
                 textStyle: Theme.of(context)
                     .textTheme
                     .bodyMedium!
-                    .copyWith(color: Colors.white),
+                    .copyWith(color: DartopiaColors.onPrimary,),
               ),
             ],
           );
@@ -208,14 +217,14 @@ class _BuildingGridItem extends StatelessWidget {
     Color labelTextColor;
     if (canBeUpgraded) {
       if (constructionTask == null) {
-        labelBackground = background3;
-        labelTextColor = Colors.white;
+        labelBackground = DartopiaColors.primaryContainer;
+        labelTextColor = DartopiaColors.onPrimary;
       } else {
-        labelBackground = const Color.fromRGBO(238, 213, 140, 1.0);
+        labelBackground = DartopiaColors.secondaryContainer;
         labelTextColor = Colors.black;
       }
     } else {
-      labelBackground = Colors.white38;
+      labelBackground = DartopiaColors.white38;
       labelTextColor = Colors.black;
     }
     return (labelBackground, labelTextColor);
@@ -224,7 +233,7 @@ class _BuildingGridItem extends StatelessWidget {
 
 class _BuildingGridAddItem extends StatelessWidget {
   const _BuildingGridAddItem(
-      {super.key, required this.emptySpots, this.labelBackground = primary});
+      {super.key, required this.emptySpots, this.labelBackground = DartopiaColors.primary,});
 
   final List<List<int>> emptySpots;
   final Color labelBackground;
@@ -240,14 +249,14 @@ class _BuildingGridAddItem extends StatelessWidget {
       child: Badge(
         alignment: Alignment.bottomRight,
         label: Text(emptySpots.length.toString()),
-        backgroundColor: labelBackground,
+        backgroundColor: DartopiaColors.primary,
         textStyle: Theme.of(context).textTheme.bodyMedium,
         offset: const Offset(5, 0),
         largeSize: 22,
-        child: const Card(
-          color: background3,
-          child: Center(
-            child: Icon(Icons.add),
+        child: Card(
+          color: labelBackground,
+          child: const Center(
+            child: Icon(Icons.add, color: DartopiaColors.black),
           ),
         ),
       ),
