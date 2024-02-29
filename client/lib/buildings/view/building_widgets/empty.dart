@@ -27,7 +27,7 @@ class _EmptyState extends State<Empty> {
   Widget build(BuildContext context) {
     final settlementState = context.read<SettlementBloc>().state;
     final allBuildingList =
-        _getAvailableNewBuildings(settlementState.buildingRecords);
+        _getAvailableNewBuildings(settlementState.settlement!.buildings);
     return PageView.builder(
         controller: _pageController,
         onPageChanged: (value) {
@@ -41,7 +41,7 @@ class _EmptyState extends State<Empty> {
             position: widget.buildingRecord[0],
             specification: allBuildingList[index % allBuildingList.length],
             storage: settlementState.settlement!.storage,
-            buildingRecords: settlementState.buildingRecords,
+            buildingRecords: settlementState.settlement!.buildings,
             constructionsTaskAmount:
                 settlementState.settlement!.constructionTasks.length,
           ));

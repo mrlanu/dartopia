@@ -40,7 +40,7 @@ class SettlementBloc extends Bloc<SettlementEvent, SettlementState> {
       _villageRepository.getSettlement(),
       onData: (settlement) {
         if (settlement != null) {
-          return _reduceFields(settlement).copyWith(
+          return state.copyWith(
               status: SettlementStatus.success, settlement: settlement);
         } else {
           _villageRepository.fetchSettlementById(state.settlementList[0].settlementId);
@@ -67,22 +67,5 @@ class SettlementBloc extends Bloc<SettlementEvent, SettlementState> {
   Future<void> _onVillageBuildingIndexChanged(
       BuildingIndexChanged event, Emitter<SettlementState> emit) async {
     emit(state.copyWith(buildingIndex: event.index));
-  }
-
-  SettlementState _reduceFields(Settlement settlement) {
-    final buildingRecords = <List<int>>[
-      [0, 0, 0],
-      [1, 1, 0],
-      [2, 2, 0],
-      [3, 3, 0]
-    ];
-
-    final buildingsExceptFields = settlement.buildings
-        .where((bR) => bR[1] != 0 && bR[1] != 1 && bR[1] != 2 && bR[1] != 3)
-        .toList();
-
-    buildingRecords.addAll(buildingsExceptFields);
-
-    return state.copyWith(buildingRecords: buildingRecords);
   }
 }

@@ -18,7 +18,7 @@ class MainBuilding extends StatelessWidget {
           // SHOULD BE CHANGED OR DELETED
           specification: buildingSpecefication[4]!,
           storage: state.settlement!.storage,
-          buildingRecords: state.buildingRecords,
+          buildingRecords: state.settlement!.buildings,
           constructionsTaskAmount: state.settlement!.constructionTasks.length,
         ));
       },

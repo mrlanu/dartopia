@@ -17,7 +17,7 @@ class BarracksBuilding extends StatelessWidget {
           position: 1000,
           specification: buildingSpecefication[7]!,
           storage: state.settlement!.storage,
-          buildingRecords: state.buildingRecords,
+          buildingRecords: state.settlement!.buildings,
           constructionsTaskAmount: state.settlement!.constructionTasks.length,
         ));
       },

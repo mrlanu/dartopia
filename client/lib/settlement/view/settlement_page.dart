@@ -1,4 +1,5 @@
 import 'package:dartopia/bottom_navbar/bottom_navbar.dart';
+import 'package:dartopia/buildings/buildings.dart';
 import 'package:dartopia/buildings/view/buildings_page_grid.dart';
 import 'package:dartopia/consts/calors.dart';
 import 'package:dartopia/drawer/main_drawer.dart';
@@ -108,9 +109,8 @@ class SettlementView extends StatelessWidget {
                     : IndexedStack(
                         index: selectedTab.index,
                         children: [
-                          BuildingsPageGrid(
-                              settlement: state.settlement!,
-                              buildingRecords: state.buildingRecords),
+                          BuildingsPageGrid(settlement: state.settlement!),
+                          //BuildingsPage(),
                           const WorldMapPage(),
                           Container(),
                           const ReportsPage(),

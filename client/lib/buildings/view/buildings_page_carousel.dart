@@ -19,7 +19,13 @@ class BuildingsPage extends StatelessWidget {
           : BuildingsView(
               startBuildingIndex: state.buildingIndex,
               settlement: state.settlement!,
-              buildingRecords: state.buildingRecords,
+              buildingRecords: [
+                  const [0, 0, 0],
+                  const [1, 1, 0],
+                  const [2, 2, 0],
+                  const [3, 3, 0],
+                ...state.settlement!.buildingsExceptFields
+              ],
             );
     });
   }

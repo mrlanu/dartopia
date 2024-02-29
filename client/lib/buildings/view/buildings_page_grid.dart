@@ -12,26 +12,21 @@ import '../../utils/countdown.dart';
 import '../buildings.dart';
 
 class BuildingsPageGrid extends StatelessWidget {
-  const BuildingsPageGrid(
-      {super.key, required this.settlement, required this.buildingRecords});
+  const BuildingsPageGrid({super.key, required this.settlement});
 
   final Settlement settlement;
-  final List<List<int>> buildingRecords;
 
   @override
   Widget build(BuildContext context) {
     return BuildingsGridView(
       settlement: settlement,
-      buildingRecords: buildingRecords,
     );
   }
 }
 
 class BuildingsGridView extends StatefulWidget {
-  const BuildingsGridView(
-      {super.key, required this.settlement, required this.buildingRecords});
+  const BuildingsGridView({super.key, required this.settlement});
 
-  final List<List<int>> buildingRecords;
   final Settlement settlement;
 
   @override
@@ -41,8 +36,6 @@ class BuildingsGridView extends StatefulWidget {
 class _BuildingsGridViewState extends State<BuildingsGridView> {
   @override
   Widget build(BuildContext context) {
-    final emptySpots =
-        widget.buildingRecords.where((bR) => bR[1] == 99).toList();
     return Column(
       children: [
         const SizedBox(
@@ -65,14 +58,13 @@ class _BuildingsGridViewState extends State<BuildingsGridView> {
             },
             onReorder: (oldIndex, newIndex) {
               setState(() {
-                final element = widget.buildingRecords.removeAt(oldIndex);
-                widget.buildingRecords.insert(newIndex, element);
+                final element = widget.settlement.buildings.removeAt(oldIndex);
+                widget.settlement.buildings.insert(newIndex, element);
               });
             },
-            header: widget.buildingRecords
-                .where((bR) =>
-                    bR[1] == 0 || bR[1] == 1 || bR[1] == 2 || bR[1] == 3)
-                .map(
+            header: List.from([
+              [0, 0, 0], [1, 1, 0], [2, 2, 0], [3, 3, 0] //mock fields
+            ]).map(
               (fieldRecord) {
                 final constructionTasks = widget.settlement.constructionTasks
                     .where((task) => task.buildingId == fieldRecord[1])
@@ -91,20 +83,13 @@ class _BuildingsGridViewState extends State<BuildingsGridView> {
             footer: [
               _BuildingGridAddItem(
                   key: UniqueKey(),
-                  emptySpots: emptySpots,
+                  emptySpots: widget.settlement.emptySpots,
                   labelBackground: widget.settlement.constructionTasks.length <
                           maxConstructionTasksAllowed
                       ? DartopiaColors.primaryContainer
                       : DartopiaColors.white38),
             ],
-            children: widget.buildingRecords
-                .where((bR) =>
-                    bR[1] != 99 &&
-                    bR[1] != 0 &&
-                    bR[1] != 1 &&
-                    bR[1] != 2 &&
-                    bR[1] != 3)
-                .map(
+            children: widget.settlement.buildingsExceptFieldsAndEmpty.map(
               (bRecord) {
                 final upgradingTasks = widget.settlement.constructionTasks
                     .where((task) => task.position == bRecord[0])
@@ -199,10 +184,9 @@ class _BuildingGridItem extends StatelessWidget {
                       .read<SettlementBloc>()
                       .add(const SettlementFetchRequested());
                 },
-                textStyle: Theme.of(context)
-                    .textTheme
-                    .bodyMedium!
-                    .copyWith(color: DartopiaColors.onPrimary,),
+                textStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: DartopiaColors.onPrimary,
+                    ),
               ),
             ],
           );
@@ -232,8 +216,11 @@ class _BuildingGridItem extends StatelessWidget {
 }
 
 class _BuildingGridAddItem extends StatelessWidget {
-  const _BuildingGridAddItem(
-      {super.key, required this.emptySpots, this.labelBackground = DartopiaColors.primary,});
+  const _BuildingGridAddItem({
+    super.key,
+    required this.emptySpots,
+    this.labelBackground = DartopiaColors.primary,
+  });
 
   final List<List<int>> emptySpots;
   final Color labelBackground;

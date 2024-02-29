@@ -111,6 +111,21 @@ class Settlement extends Equatable {
   List<CombatUtitQueue> combatUnitQueue;
   DateTime lastModified;
 
+  /// Return just empty spots
+  List<List<int>> get emptySpots =>
+      buildings.where((bR) => bR[1] == 99).toList();
+
+  /// Return just buildings without fields
+  List<List<int>> get buildingsExceptFields => buildings
+      .where((bR) => bR[1] != 0 && bR[1] != 1 && bR[1] != 2 && bR[1] != 3)
+      .toList();
+
+  /// Return just buildings without fields and empty spots
+  List<List<int>> get buildingsExceptFieldsAndEmpty => buildings
+      .where((bR) =>
+          bR[1] != 99 && bR[1] != 0 && bR[1] != 1 && bR[1] != 2 && bR[1] != 3)
+      .toList();
+
   /// Add new ConstructionTask to constructionTasks list
   void addConstructionTask(ConstructionTask task) {
     constructionTasks.add(task);
