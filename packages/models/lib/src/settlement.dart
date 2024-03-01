@@ -48,6 +48,7 @@ class Settlement extends Equatable {
       [24, 99, 0],
     ],
     this.units = const [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    this.movements = const [],
     this.constructionTasks = const [],
     this.combatUnitQueue = const [],
     DateTime? lastModified,
@@ -68,6 +69,9 @@ class Settlement extends Equatable {
             )
             .toList(),
         units = (map['army'] as List<dynamic>).map((e) => e as int).toList(),
+        movements = (map['movements'] as List<dynamic>)
+            .map((e) => Movement.fromMap(e as Map<String, dynamic>))
+            .toList(),
         constructionTasks = (map['constructionTasks'] as List<dynamic>)
             .map((e) => ConstructionTask.fromMap(e as Map<String, dynamic>))
             .toList(),
@@ -91,6 +95,9 @@ class Settlement extends Equatable {
             )
             .toList(),
         units = (map['army'] as List<dynamic>).map((e) => e as int).toList(),
+        movements = (map['movements'] as List<dynamic>)
+            .map((e) => Movement.fromJson(e as Map<String, dynamic>))
+            .toList(),
         constructionTasks = (map['constructionTasks'] as List<dynamic>)
             .map((e) => ConstructionTask.fromJson(e as Map<String, dynamic>))
             .toList(),
@@ -99,15 +106,16 @@ class Settlement extends Equatable {
             .toList(),
         lastModified = DateTime.parse(map['lastModified'] as String);
 
-  ObjectId id;
+  final ObjectId id;
   final String userId;
   String name;
-  int x;
-  int y;
+  final int x;
+  final int y;
   List<double> storage;
-  List<List<int>> buildings;
+  final List<List<int>> buildings;
   List<int> units;
-  List<ConstructionTask> constructionTasks;
+  final List<Movement> movements;
+  final List<ConstructionTask> constructionTasks;
   List<CombatUtitQueue> combatUnitQueue;
   DateTime lastModified;
 
@@ -248,6 +256,7 @@ class Settlement extends Equatable {
         'storage': storage,
         'buildings': buildings,
         'army': units.map((a) => a).toList(),
+        'movements': movements.map((m) => m.toMap()).toList(),
         'constructionTasks': constructionTasks.map((c) => c.toMap()).toList(),
         'combatUnitQueue': combatUnitQueue.map((c) => c.toMap()).toList(),
         'lastModified': lastModified,
@@ -263,6 +272,7 @@ class Settlement extends Equatable {
         'storage': storage,
         'buildings': buildings,
         'army': units.map((a) => a).toList(),
+        'movements': movements.map((m) => m.toJson()).toList(),
         'constructionTasks': constructionTasks.map((c) => c.toJson()).toList(),
         'combatUnitQueue': combatUnitQueue.map((c) => c.toJson()).toList(),
         'lastModified': lastModified.toIso8601String(),
@@ -278,6 +288,7 @@ class Settlement extends Equatable {
     List<double>? storage,
     List<List<int>>? buildings,
     List<int>? units,
+    List<Movement>? movements,
     List<ConstructionTask>? constructionTasks,
     List<CombatUtitQueue>? combatUnitQueue,
     DateTime? lastModified,
@@ -291,6 +302,7 @@ class Settlement extends Equatable {
       storage: storage ?? this.storage,
       buildings: buildings ?? this.buildings,
       units: units ?? this.units,
+      movements: movements ?? this.movements,
       constructionTasks: constructionTasks ?? this.constructionTasks,
       combatUnitQueue: combatUnitQueue ?? this.combatUnitQueue,
       lastModified: lastModified ?? this.lastModified,

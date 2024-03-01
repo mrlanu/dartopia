@@ -74,7 +74,7 @@ class ConfirmSendTroops extends StatelessWidget {
                       IconButton.outlined(
                           color: Colors.green,
                           onPressed: () async {
-                            final movBloc = context.read<MovementsBloc>();
+                            final settlementBloc = context.read<SettlementBloc>();
                             final settlementId = context
                                 .read<SettlementBloc>()
                                 .state
@@ -84,9 +84,8 @@ class ConfirmSendTroops extends StatelessWidget {
                             await context
                                 .read<SendTroopsCubit>()
                                 .sendTroops(currentSettlementId: settlementId);
-                            movBloc.add(MovementsFetchRequested(
-                                settlementId: settlementId));
                             onConfirm();
+                            settlementBloc.add(const SettlementFetchRequested());
                           },
                           icon: const Icon(
                             Icons.check,

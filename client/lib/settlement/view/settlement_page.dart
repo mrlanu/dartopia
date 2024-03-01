@@ -65,11 +65,6 @@ class _SettlementPageState extends State<SettlementPage> {
               ..add(const ListOfSettlementsRequested()),
           ),
           BlocProvider(
-            create: (context) =>
-                MovementsBloc(movementsRepository: _troopMovementsRepository)
-                  ..add(const MovementsSubscriptionRequested()),
-          ),
-          BlocProvider(
             create: (context) => ReportsBloc(
                 reportsRepository: context.read<ReportsRepository>())
               ..add(const ListOfBriefsRequested()),
@@ -94,13 +89,7 @@ class SettlementView extends StatelessWidget {
           backgroundColor: DartopiaColors.background,
           appBar: buildAppBar(),
           drawer: const MainDrawer(),
-          body: BlocConsumer<SettlementBloc, SettlementState>(
-              listenWhen: (previous, current) =>
-                  previous.settlement != current.settlement,
-              listener: (context, state) {
-                context.read<MovementsBloc>().add(MovementsFetchRequested(
-                    settlementId: state.settlement!.id.$oid));
-              },
+          body: BlocBuilder<SettlementBloc, SettlementState>(
               builder: (context, state) {
                 return state.status == SettlementStatus.loading
                     ? const Center(

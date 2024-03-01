@@ -122,12 +122,19 @@ class SettlementServiceImpl extends SettlementService {
 
     _executeAllTasks(settlement, executableTaskList);
 
-    return _settlementRepository.updateSettlement(settlement);
+    final movements = await getMovementsBySettlementId(
+      settlement: settlement,
+    );
+    final updatedSettlement =
+        await _settlementRepository.updateSettlement(settlement);
+    return updatedSettlement?.copyWith(movements: movements);
   }
 
   Future<bool> _hasMovementsBeforeNow(String settlementId) async {
     final movements = await _settlementRepository.getAllMovementsBySettlementId(
-        id: settlementId, isMoving: true,);
+      id: settlementId,
+      isMoving: true,
+    );
     return movements.any((element) => element.when.isBefore(DateTime.now()));
   }
 
@@ -365,8 +372,8 @@ class SettlementServiceImpl extends SettlementService {
     required Settlement settlement,
   }) async {
     final homeLegion = _buildHomeLegion(settlement);
-    final movements = await _settlementRepository
-        .getAllMovementsBySettlementId(id: settlement.id.$oid);
+    final movements = await _settlementRepository.getAllMovementsBySettlementId(
+        id: settlement.id.$oid);
     movements.add(homeLegion);
     return movements;
   }

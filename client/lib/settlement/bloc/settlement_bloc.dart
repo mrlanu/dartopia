@@ -25,7 +25,8 @@ class SettlementBloc extends Bloc<SettlementEvent, SettlementState> {
 
   Future<void> _onListOfSettlementsRequested(
       ListOfSettlementsRequested event, Emitter<SettlementState> emit) async {
-    final settlementList = await _villageRepository.fetchSettlementListByUserId();
+    final settlementList =
+        await _villageRepository.fetchSettlementListByUserId();
     emit(state.copyWith(settlementList: settlementList));
     add(const SettlementSubscriptionRequested());
   }
@@ -40,10 +41,14 @@ class SettlementBloc extends Bloc<SettlementEvent, SettlementState> {
       _villageRepository.getSettlement(),
       onData: (settlement) {
         if (settlement != null) {
+          final movementsMap = _sortMovementsByLocation(settlement.movements);
           return state.copyWith(
-              status: SettlementStatus.success, settlement: settlement);
+              status: SettlementStatus.success,
+              settlement: settlement,
+              movementsByLocationMap: movementsMap);
         } else {
-          _villageRepository.fetchSettlementById(state.settlementList[0].settlementId);
+          _villageRepository
+              .fetchSettlementById(state.settlementList[0].settlementId);
           return state.copyWith(status: SettlementStatus.loading);
         }
       },
@@ -55,17 +60,51 @@ class SettlementBloc extends Bloc<SettlementEvent, SettlementState> {
 
   Future<void> _onSettlementFetchRequested(
       SettlementFetchRequested event, Emitter<SettlementState> emi) async {
-    await _villageRepository.fetchSettlementById(state.settlementList[0].settlementId);
+    await _villageRepository
+        .fetchSettlementById(state.settlementList[0].settlementId);
   }
 
   Future<void> _onBuildingUpgradeRequested(
       BuildingUpgradeRequested event, Emitter<SettlementState> emit) async {
     await _villageRepository.upgradeBuilding(
-        settlementId: state.settlementList[0].settlementId, request: event.request);
+        settlementId: state.settlementList[0].settlementId,
+        request: event.request);
   }
 
   Future<void> _onVillageBuildingIndexChanged(
       BuildingIndexChanged event, Emitter<SettlementState> emit) async {
     emit(state.copyWith(buildingIndex: event.index));
+  }
+
+  Map<MovementLocation, List<Movement>> _sortMovementsByLocation(
+      List<Movement> movements) {
+    final result = <MovementLocation, List<Movement>>{
+      MovementLocation.home: [],
+      MovementLocation.incoming: [],
+      MovementLocation.outgoing: [],
+      MovementLocation.away: [],
+    };
+    if (movements.isNotEmpty) {
+      final currentSettlementId =
+          movements[movements.length - 1].from.villageId;
+      for (var m in movements) {
+        if (m.mission == Mission.home) {
+          result[MovementLocation.home]!.add(m);
+        } else if (m.from.villageId == currentSettlementId) {
+          if (m.isMoving) {
+            result[MovementLocation.outgoing]!.add(m);
+          } else {
+            result[MovementLocation.away]!.add(m);
+          }
+        } else if (m.to.villageId == currentSettlementId) {
+          if (m.isMoving) {
+            result[MovementLocation.incoming]!.add(m);
+          } else {
+            result[MovementLocation.home]!.add(m);
+          }
+        }
+      }
+    }
+    return result;
   }
 }

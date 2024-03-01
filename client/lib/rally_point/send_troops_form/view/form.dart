@@ -16,20 +16,12 @@ class SendTroopsForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MovementsBloc, MovementsState>(
-      builder: (context, state) {
-        return state.movements[MovementLocation.home]!.isNotEmpty
-            ? BlocProvider(
-                create: (context) => SendTroopsCubit(
-                        troopMovementsRepository:
-                            context.read<TroopMovementsRepository>())
-                    ..setTargetCoordinates(
-                        x: targetCoordinates?[0] ?? 0,
-                        y: targetCoordinates?[1] ?? 0),
-                child: SendTroopsFormView(onConfirm: onConfirm),
-              )
-            : Container();
-      },
+    return BlocProvider(
+      create: (context) => SendTroopsCubit(
+          troopMovementsRepository: context.read<TroopMovementsRepository>())
+        ..setTargetCoordinates(
+            x: targetCoordinates?[0] ?? 0, y: targetCoordinates?[1] ?? 0),
+      child: SendTroopsFormView(onConfirm: onConfirm),
     );
   }
 }

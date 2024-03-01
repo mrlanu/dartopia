@@ -91,9 +91,6 @@ class MapTileWidget extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pop();
                 Navigator.of(context).push(RallyPointPage.route(
-                    movementsBloc: context.read<MovementsBloc>(),
-                    troopMovementsRepository:
-                        context.read<TroopMovementsRepository>(),
                     settlementBloc: context.read<SettlementBloc>(),
                     tabIndex: 1,
                     targetCoordinates: [tileDetails.x, tileDetails.y]));

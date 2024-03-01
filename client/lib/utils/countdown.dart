@@ -28,8 +28,9 @@ class _CountdownTimerState extends State<CountdownTimer> {
     timer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) {
-        if (timeResume <= 0) {
+        if (timeResume == 0) {
           widget.onFinish();
+          timer.cancel();
         }
         setState(() {
           timeResume--;

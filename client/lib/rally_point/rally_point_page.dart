@@ -1,6 +1,6 @@
+import 'package:dartopia/authentication/bloc/auth_bloc.dart';
 import 'package:dartopia/common/common.dart';
 import 'package:dartopia/consts/calors.dart';
-import 'package:dartopia/consts/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -17,24 +17,17 @@ class RallyPointPage extends StatelessWidget {
   final List<int>? targetCoordinates;
 
   static Route<void> route(
-      {required SettlementBloc
-          settlementBloc, // for getting current settlement info
-      required MovementsBloc movementsBloc,
-      required TroopMovementsRepository troopMovementsRepository,
+      {required SettlementBloc settlementBloc, // for getting current settlement info
       int tabIndex = 0,
       List<int>? targetCoordinates}) {
     return MaterialPageRoute(builder: (context) {
-      return RepositoryProvider.value(
-        value: troopMovementsRepository,
-        child: MultiBlocProvider(
-          providers: [
-            BlocProvider.value(value: settlementBloc),
-            BlocProvider.value(value: movementsBloc),
-          ],
-          child: RallyPointPage(
-            tabIndex: tabIndex,
-            targetCoordinates: targetCoordinates,
-          ),
+      return MultiBlocProvider(
+        providers: [
+          BlocProvider.value(value: settlementBloc),
+        ],
+        child: RallyPointPage(
+          tabIndex: tabIndex,
+          targetCoordinates: targetCoordinates,
         ),
       );
     });
@@ -42,15 +35,10 @@ class RallyPointPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final settlementId =
-        context.read<SettlementBloc>().state.settlement!.id.$oid;
-    context
-        .read<MovementsBloc>()
-        .add(MovementsFetchRequested(settlementId: settlementId));
     return RallyPointView(
-      initialTabIndex: tabIndex,
-      targetCoordinates: targetCoordinates,
-    );
+          initialTabIndex: tabIndex,
+          targetCoordinates: targetCoordinates,
+        );
   }
 }
 
@@ -67,16 +55,21 @@ class RallyPointView extends StatefulWidget {
 
 class _RallyPointViewState extends State<RallyPointView> {
   late int currentIndex;
+  late final TroopMovementsRepository _troopMovementsRepository;
 
   @override
   void initState() {
     super.initState();
     currentIndex = widget.initialTabIndex;
+    final token = context.read<AuthBloc>().state.token;
+    _troopMovementsRepository = TroopMovementsRepositoryImpl(token: token);
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return RepositoryProvider(
+  create: (context) => _troopMovementsRepository,
+    child: SafeArea(
       child: Scaffold(
         backgroundColor: DartopiaColors.background,
         appBar: buildAppBar(),
@@ -86,43 +79,41 @@ class _RallyPointViewState extends State<RallyPointView> {
         ]),
         bottomNavigationBar: _buildBottomBar(),
       ),
-    );
+    ),
+);
   }
 
   Widget _movementsTab() {
-    return BlocBuilder<MovementsBloc, MovementsState>(
+    return BlocBuilder<SettlementBloc, SettlementState>(
       builder: (context, state) {
-        return state.status == MovementsStatus.initial ||
-                state.status == MovementsStatus.initial
-            ? const Center(child: CircularProgressIndicator())
-            : SingleChildScrollView(
+        return SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    state.movements[MovementLocation.incoming]!.isNotEmpty
+                    state.movementsByLocationMap[MovementLocation.incoming]!.isNotEmpty
                         ? Padding(
                             padding: const EdgeInsets.only(left: 8.0),
                             child: Text(
-                              'Incoming troops (${state.movements[MovementLocation.incoming]!.length})',
+                              'Incoming troops (${state.movementsByLocationMap[MovementLocation.incoming]!.length})',
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
                           )
                         : Container(),
-                    ...state.movements[MovementLocation.incoming]!
+                    ...state.movementsByLocationMap[MovementLocation.incoming]!
                         .map((move) => TroopDetails(
                               movement: move,
                             ))
                         .toList(),
-                    state.movements[MovementLocation.outgoing]!.isNotEmpty
+                    state.movementsByLocationMap[MovementLocation.outgoing]!.isNotEmpty
                         ? Padding(
                             padding: const EdgeInsets.only(left: 8.0),
                             child: Text(
-                              'Outgoing troops (${state.movements[MovementLocation.outgoing]!.length})',
+                              'Outgoing troops (${state.movementsByLocationMap[MovementLocation.outgoing]!.length})',
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
                           )
                         : Container(),
-                    ...state.movements[MovementLocation.outgoing]!
+                    ...state.movementsByLocationMap[MovementLocation.outgoing]!
                         .map((move) => TroopDetails(
                               movement: move,
                             ))
@@ -130,25 +121,25 @@ class _RallyPointViewState extends State<RallyPointView> {
                     Padding(
                       padding: const EdgeInsets.only(left: 8.0),
                       child: Text(
-                        'Troops in this village and its oases (${state.movements[MovementLocation.home]!.length})',
+                        'Troops in this village and its oases (${state.movementsByLocationMap[MovementLocation.home]!.length})',
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                     ),
-                    ...state.movements[MovementLocation.home]!
+                    ...state.movementsByLocationMap[MovementLocation.home]!
                         .map((move) => TroopDetails(
                               movement: move,
                             ))
                         .toList(),
-                    state.movements[MovementLocation.away]!.isNotEmpty
+                    state.movementsByLocationMap[MovementLocation.away]!.isNotEmpty
                         ? Padding(
                             padding: const EdgeInsets.only(left: 8.0),
                             child: Text(
-                              'Armies in other places (${state.movements[MovementLocation.away]!.length})',
+                              'Armies in other places (${state.movementsByLocationMap[MovementLocation.away]!.length})',
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
                           )
                         : Container(),
-                    ...state.movements[MovementLocation.away]!
+                    ...state.movementsByLocationMap[MovementLocation.away]!
                         .map((move) => TroopDetails(
                               movement: move,
                             ))

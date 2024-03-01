@@ -10,9 +10,9 @@ abstract class TroopMovementsRepository {
   Future<TroopsSendContract> fetchSendTroopsContract(
       {required TroopsSendContract contract, required String fromSettlementId});
 
-  Stream<List<Movement>?> getMovements();
+  /*Stream<List<Movement>?> getMovements();
 
-  Future<void> fetchMovements(String settlementId);
+  Future<void> fetchMovements(String settlementId);*/
 
   Future<TileDetails> fetchTileDetails(
     int x,
@@ -25,11 +25,11 @@ class TroopMovementsRepositoryImpl implements TroopMovementsRepository {
 
   final String _token;
 
-  final _movementsStreamController = BehaviorSubject<List<Movement>>.seeded([]);
+  /*final _movementsStreamController = BehaviorSubject<List<Movement>>.seeded([]);
 
   @override
   Stream<List<Movement>> getMovements() =>
-      _movementsStreamController.asBroadcastStream();
+      _movementsStreamController.asBroadcastStream();*/
 
   @override
   Future<TroopsSendContract> fetchSendTroopsContract(
@@ -54,7 +54,7 @@ class TroopMovementsRepositoryImpl implements TroopMovementsRepository {
         headers: Api.headerAuthorization(token: _token));
   }
 
-  @override
+  /*@override
   Future<void> fetchMovements(String settlementId) async {
     final url = Uri.http(Api.baseURL, Api.fetchMovements(settlementId));
     final response =
@@ -64,7 +64,7 @@ class TroopMovementsRepositoryImpl implements TroopMovementsRepository {
         .map((e) => Movement.fromJson(e as Map<String, dynamic>))
         .toList();
     _movementsStreamController.add(movements);
-  }
+  }*/
 
   @override
   Future<TileDetails> fetchTileDetails(
