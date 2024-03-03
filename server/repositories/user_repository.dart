@@ -12,9 +12,7 @@ abstract class UserRepository {
 
 class UserRepositoryMongo extends UserRepository {
   UserRepositoryMongo({required DatabaseClient databaseClient})
-      : _databaseClient = databaseClient{
-    print('REPOSITORY CONSTRUCTOR');
-  }
+      : _databaseClient = databaseClient;
 
   final DatabaseClient _databaseClient;
 
@@ -26,7 +24,7 @@ class UserRepositoryMongo extends UserRepository {
             .collection('users')
             .findOne({'email': email});
         if (userMap == null) {
-          return null;
+          throw NoUserFoundException();
         } else {
           return User.fromJson(userMap);
         }

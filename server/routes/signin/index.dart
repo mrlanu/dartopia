@@ -8,12 +8,14 @@ Future<Response> onRequest(RequestContext context) async {
   return switch (context.request.method) {
     HttpMethod.post => _onPost(context),
     _ => Future.value(
-      Response(statusCode: HttpStatus.methodNotAllowed),
-    ),
+        Response(statusCode: HttpStatus.methodNotAllowed),
+      ),
   };
 }
 
 Future<Response> _onPost(RequestContext context) async {
+  final authenticator = context.read<Authenticator>();
+
   final body = await context.request.json() as Map<String, dynamic>;
   final email = body['email'] as String?;
   final password = body['password'] as String?;
@@ -22,23 +24,25 @@ Future<Response> _onPost(RequestContext context) async {
     return Response(statusCode: HttpStatus.badRequest);
   }
 
-  final authenticator = context.read<Authenticator>();
-
-  final user = await authenticator.findByUsernameAndPassword(
+  final userResponse = await authenticator.findByUsernameAndPassword(
     username: email,
     password: password,
   );
 
-  if (user == null) {
-    return Response(statusCode: HttpStatus.unauthorized);
-  } else {
-    return Response.json(
+  return userResponse.fold(
+    (error) => Response.json(
+      statusCode: HttpStatus.internalServerError,
+      body: error.toJson(),
+    ),
+    (user) => Response.json(
       body: {
         'name': user.name,
         'id': user.id,
         'email': user.email,
-        'token': authenticator.generateToken(user: user,),
+        'token': authenticator.generateToken(
+          user: user,
+        ),
       },
-    );
-  }
+    ),
+  );
 }

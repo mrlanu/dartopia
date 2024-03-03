@@ -1,7 +1,9 @@
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
+import 'package:dartz/dartz.dart';
 import 'package:models/models.dart';
 
 import '../config/config.dart';
+import '../exceptions/exceptions.dart';
 import '../helpers/hash.dart';
 import '../repositories/user_repository.dart';
 
@@ -11,19 +13,25 @@ class Authenticator {
 
   final UserRepository _userRepository;
 
-  Future<User?> findByUsernameAndPassword({
+  Future<Either<FailureModel, User>> findByUsernameAndPassword({
     required String username,
     required String password,
   }) async {
-    final foundUser = await _userRepository.findByEmail(email: username);
-    final foundUserPassword = foundUser?.password;
-    final hashedPassword = hashPassword(
-      password,
-    );
-    if (foundUser == null || hashedPassword != foundUserPassword) {
-      return Future(() => null);
+    try{
+      final foundUser = await _userRepository.findByEmail(email: username);
+      final foundUserPassword = foundUser?.password;
+      final hashedPassword = hashPassword(
+        password,
+      );
+      if (foundUser == null || hashedPassword != foundUserPassword) {
+        return left(const FailureModel(message: 'Invalid credentials'));
+      }
+      return right(foundUser);
+    }on NoUserFoundException catch(e){
+      return left(FailureModel(message: e.message));
+    }catch(_){
+      return left(const FailureModel(message: UnknownException.message));
     }
-    return foundUser;
   }
 
   String generateToken({

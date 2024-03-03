@@ -5,6 +5,7 @@ import 'package:dart_frog/dart_frog.dart';
 import 'package:models/models.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
+import '../../exceptions/exceptions.dart';
 import '../../helpers/helpers.dart';
 import '../../repositories/user_repository.dart';
 import '../../services/authenticator.dart';
@@ -21,36 +22,32 @@ Future<Response> onRequest(RequestContext context) async {
 }
 
 Future<Response> _onPost(RequestContext context) async {
+  final request = context.request;
+  final userRepository = context.read<UserRepository>();
+  final settlementService = context.read<SettlementService>();
+  final worldService = context.read<WorldService>();
+
+  final requestBody = await request.body();
+  final requestData = jsonDecode(requestBody) as Map<String, dynamic>;
+
+  final user = User.fromJson(requestData).copyWith(
+    id: ObjectId().$oid,
+    name: 'New Player',
+    password: hashPassword(requestData['password'] as String),
+  );
+
   try {
-    final request = context.request;
-    final userRepository = context.read<UserRepository>();
-    final settlementService = context.read<SettlementService>();
-    final worldService = context.read<WorldService>();
-
-    final requestBody = await request.body();
-    final requestData = jsonDecode(requestBody) as Map<String, dynamic>;
-
-    final user = User.fromJson(requestData).copyWith(
-      id: ObjectId().$oid,
-      name: 'New Player',
-      password: hashPassword(requestData['password'] as String),
+    await userRepository.findByEmail(email: user.email);
+    return Response.json(
+      statusCode: 400,
+      body: {
+        'status': 400,
+        'message': 'A user with the provided email already exists',
+        'error': 'user_exists',
+      },
     );
-
-    final foundUser = await userRepository.findByEmail(email: user.email);
-
-    if (foundUser != null) {
-      return Response.json(
-        statusCode: 400,
-        body: {
-          'status': 400,
-          'message': 'A user with the provided email already exists',
-          'error': 'user_exists',
-        },
-      );
-    }
-
+  } on NoUserFoundException catch (_) {
     await userRepository.insertOne(user: user);
-
     await _foundNewSettlement(
       user: user,
       settlementService: settlementService,
@@ -89,5 +86,5 @@ Future<void> _foundNewSettlement({
   final settlement =
       await settlementService.foundNewSettlement(userId: user.id!);
   await worldService.insertSettlement(
-      settlementId: settlement!.id.$oid, x: settlement.x, y: settlement.y);
+      settlementId: settlement!.id.$oid, x: settlement.x, y: settlement.y,);
 }
