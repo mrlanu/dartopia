@@ -9,4 +9,8 @@ dependencies:
   http: ^1.1.0
   models:
     path: ../../../packages/models
+  cache_client:
+    path: ../cache_client
+  network:
+    path: ../network
   shared_preferences: ^2.2.2
