@@ -1,6 +1,6 @@
 import 'package:models/models.dart';
 
-import '../../services.dart';
+import '../../../database/database_client.dart';
 import '../../settlements_service.dart';
 
 abstract class MissionStrategy {
@@ -11,7 +11,7 @@ abstract class MissionStrategy {
   });
 
   Movement movement;
-  final MongoService mongoService;
+  final DatabaseClient mongoService;
   final SettlementService settlementService;
 
   Future<void> handle();

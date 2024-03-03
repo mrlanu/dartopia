@@ -17,7 +17,7 @@ class BackHome extends MissionStrategy {
     _addUnits(movement.units, homeSettlement!);
     _addStolenResources(movement.plunder, homeSettlement);
     await settlementService.updateSettlement(settlement: homeSettlement);
-    await mongoService.db
+    await mongoService.db!
         .collection('movements')
         .deleteOne(where.id(movement.id!));
   }

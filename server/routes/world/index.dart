@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
 
+import '../../server_settings.dart';
 import '../../services/world_service.dart';
 
 FutureOr<Response> onRequest(RequestContext context) async {
@@ -39,6 +40,15 @@ Future<Response> _get(RequestContext context) async {
 
 Future<Response> _post(RequestContext context) async {
   final worldService = context.read<WorldService>();
+  final body = await context.request.body();
+
+  //if body is empty default settings will be used from ServerSettings
+  //in other case settings will be extracted from request
+  if(body.isNotEmpty){
+    final settingsRequest =
+    await context.request.json() as Map<String, dynamic>;
+    ServerSettings.initializeFromMap(settingsRequest);
+  }
   await worldService.createWorld();
 
   return Response.json(

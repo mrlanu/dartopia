@@ -3,8 +3,8 @@ import 'dart:isolate';
 
 import 'package:dart_frog/dart_frog.dart';
 
+import '../../../database/database_client.dart';
 import '../../../services/automation/automation.dart';
-import '../../../services/mongo_service.dart';
 import '../../../utils/my_logger.dart';
 
 bool _lockAcquired = false;
@@ -29,8 +29,8 @@ Future<Response> _checkAutomation(String initiatorId) async {
     try {
       await Isolate.run(() => _performAutomation(initiatorId));
     } on StateError catch (e, s) {
-      print(e.message); // In a bad state!
-      print(LineSplitter.split("$s").first); // Contains "eventualError"
+      MyLogger.warning(e.message); // In a bad state!
+      MyLogger.warning(LineSplitter.split("$s").first); // Contains "eventualError"
     } finally {
       _lockAcquired = false;
     }
@@ -41,9 +41,10 @@ Future<Response> _checkAutomation(String initiatorId) async {
 Future<void> _performAutomation(String initiatorId) async {
   MyLogger.debug('Automation started by $initiatorId');
   final stopwatch = Stopwatch()..start();
-  await MongoService.instance.initializeMongo();
+  final databaseClient = DatabaseClient();
+  await databaseClient.connect();
 
-  await Automation().main();
+  await Automation(databaseClient: databaseClient).main();
   stopwatch.stop();
   MyLogger.debug('Automation completed. Elapsed time: '
       '${stopwatch.elapsedMilliseconds} ms');

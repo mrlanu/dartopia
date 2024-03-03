@@ -83,13 +83,13 @@ class Attack extends MissionStrategy {
     for (var i = 1; i < sidesArmy.length; i++) {
       var currentDef = defEntities[i - 1];
       if (sidesArmy[i].numbers.reduce((a, b) => a + b) == 0) {
-        await mongoService.db
+        await mongoService.db!
             .collection('movements')
             .deleteOne(where.id(currentDef.id!));
         continue;
       }
       currentDef = currentDef.copyWith(units: sidesArmy[i].numbers);
-      await mongoService.db
+      await mongoService.db!
           .collection('movements')
           .replaceOne(where.id(currentDef.id!), currentDef.toMap());
     }
@@ -101,7 +101,7 @@ class Attack extends MissionStrategy {
           (value, element) => value + element,
         ) ==
         0) {
-      await mongoService.db
+      await mongoService.db!
           .collection('movements')
           .deleteOne(where.id(movement.id!));
       return [0, 0, 0, 0];
@@ -117,7 +117,7 @@ class Attack extends MissionStrategy {
       when: movement.when.add(const Duration(seconds: 3600)),
     );
 
-    await mongoService.db
+    await mongoService.db!
         .collection('movements')
         .replaceOne(where.id(movement.id!), movement.toMap());
 
@@ -221,6 +221,6 @@ class Attack extends MissionStrategy {
       dateTime: movement.when,
     );
 
-    await mongoService.db.collection('reports').insertOne(report.toMap());
+    await mongoService.db!.collection('reports').insertOne(report.toMap());
   }
 }

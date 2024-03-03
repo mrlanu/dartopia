@@ -5,6 +5,7 @@ import 'package:mongo_dart/mongo_dart.dart';
 
 import '../config/config.dart';
 import '../repositories/world_repository.dart';
+import '../server_settings.dart';
 
 abstract class WorldService {
   Future<void> createWorld();
@@ -16,8 +17,11 @@ abstract class WorldService {
     int toY,
   );
 
-  Future<void> insertSettlement(
-      {required String settlementId, required int x, required int y,});
+  Future<void> insertSettlement({
+    required String settlementId,
+    required int x,
+    required int y,
+  });
 
   Future<bool> _dropWorld();
 }
@@ -31,8 +35,8 @@ class WorldServiceImpl implements WorldService {
   @override
   Future<void> createWorld() async {
     await _dropWorld();
-    _createBlueprint(Config.worldWidth, Config.worldHeight);
-    _insertOases(Config.oasesAmount);
+    _createBlueprint(ServerSettings().mapWidth, ServerSettings().mapHeight);
+    _insertOases(ServerSettings().oasesAmount);
     await _worldRepository.saveWorld(tiles);
   }
 
@@ -52,15 +56,18 @@ class WorldServiceImpl implements WorldService {
   }
 
   @override
-  Future<void> insertSettlement(
-      {required String settlementId, required int x, required int y,}) async {
+  Future<void> insertSettlement({
+    required String settlementId,
+    required int x,
+    required int y,
+  }) async {
     final myTile = await _worldRepository.getMapTileByCoordinates(x, y);
     final updatedTile = myTile.copyWith(
-          ownerId: settlementId,
-          name: 'New village',
-          empty: false,
-          tileNumber: 56,
-        );
+      ownerId: settlementId,
+      name: 'New village',
+      empty: false,
+      tileNumber: 56,
+    );
     await _worldRepository.updateMapTile(updatedTile);
   }
 

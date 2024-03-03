@@ -9,7 +9,7 @@ class Reinforcement extends MissionStrategy {
 
   @override
   Future<void> handle() async {
-    await mongoService.db
+    await mongoService.db!
         .collection('movements')
         .updateOne(where.id(movement.id!), modify.set('isMoving', false));
   }

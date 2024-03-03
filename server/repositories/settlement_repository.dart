@@ -1,11 +1,12 @@
 import 'package:models/models.dart';
 import 'package:mongo_dart/mongo_dart.dart';
-
-import '../services/mongo_service.dart';
+import '../database/database_client.dart';
+import '../exceptions/exceptions.dart';
 
 abstract class SettlementRepository {
-  Future<List<ShortSettlementInfo>> getSettlementsIdByUserId(
-      {required String userId});
+  Future<List<ShortSettlementInfo>> getSettlementsIdByUserId({
+    required String userId,
+  });
 
   Future<Settlement?> saveSettlement(Settlement settlement);
 
@@ -37,39 +38,58 @@ abstract class SettlementRepository {
 }
 
 class SettlementRepositoryMongoImpl implements SettlementRepository {
-  SettlementRepositoryMongoImpl({MongoService? mongoService})
-      : _mongoService = mongoService ?? MongoService.instance;
+  SettlementRepositoryMongoImpl({required DatabaseClient databaseClient})
+      : _databaseClient = databaseClient;
 
-  final MongoService _mongoService;
+  final DatabaseClient _databaseClient;
 
   @override
   Future<List<ShortSettlementInfo>> getSettlementsIdByUserId({
     required String userId,
-  }) =>
-      _mongoService.db
-          .collection('settlements')
-          .find(where.eq('userId', userId))
-          .map(Settlement.fromMap)
-          .map(
-            (s) => ShortSettlementInfo(
+  }) {
+    try {
+      if (_databaseClient.db != null && _databaseClient.db!.isConnected) {
+        final result = _databaseClient.db!
+            .collection('settlements')
+            .find(where.eq('userId', userId))
+            .map(Settlement.fromMap)
+            .map(
+              (s) => ShortSettlementInfo(
                 isCapital: true,
                 settlementId: s.id.$oid,
                 name: s.name,
                 x: s.x,
-                y: s.y),
-          )
-          .toList();
+                y: s.y,
+              ),
+            )
+            .toList();
+        return result;
+      } else {
+        throw DatabaseConnectionException();
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   @override
   Future<Settlement?> getById(String id) async {
     final objectId = ObjectId.parse(id);
-    final document = await _mongoService.db
-        .collection('settlements')
-        .findOne(where.id(objectId));
-    if (document != null) {
-      return Settlement.fromMap(document);
-    } else {
-      return null;
+    try {
+      if (_databaseClient.db != null && _databaseClient.db!.isConnected) {
+        final document = await _databaseClient.db!
+            .collection('settlements')
+            .findOne(where.id(objectId));
+        if (document != null) {
+          return Settlement.fromMap(document);
+        } else {
+          return null;
+        }
+      }else{
+        throw DatabaseConnectionException();
+      }
+    }catch(e){
+      rethrow;
     }
   }
 
@@ -78,13 +98,21 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
     required int x,
     required int y,
   }) async {
-    final document = await _mongoService.db
-        .collection('settlements')
-        .findOne(where.eq('x', x).and(where.eq('y', y)));
-    if (document != null) {
-      return Settlement.fromMap(document);
-    } else {
-      return null;
+    try {
+      if (_databaseClient.db != null && _databaseClient.db!.isConnected) {
+        final document = await _databaseClient.db!
+            .collection('settlements')
+            .findOne(where.eq('x', x).and(where.eq('y', y)));
+        if (document != null) {
+          return Settlement.fromMap(document);
+        } else {
+          return null;
+        }
+      }else{
+        throw DatabaseConnectionException();
+      }
+    }catch(e){
+      rethrow;
     }
   }
 
@@ -93,44 +121,69 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
     required int x,
     required int y,
   }) async {
-    final doc = await _mongoService.db
-        .collection('settlements')
-        .findOne(where.eq('x', x).and(where.eq('y', y)));
-    final settlement = Settlement.fromMap(doc!);
-    final tileDetails = TileDetails(
-      id: settlement.id.$oid,
-      playerName: settlement.userId,
-      name: settlement.name,
-      x: settlement.x,
-      y: settlement.y,
-      population: 100,
-      distance: 3,
-    );
-    return tileDetails;
+    try {
+      if (_databaseClient.db != null && _databaseClient.db!.isConnected) {
+        final doc = await _databaseClient.db!
+            .collection('settlements')
+            .findOne(where.eq('x', x).and(where.eq('y', y)));
+        final settlement = Settlement.fromMap(doc!);
+        final tileDetails = TileDetails(
+          id: settlement.id.$oid,
+          playerName: settlement.userId,
+          name: settlement.name,
+          x: settlement.x,
+          y: settlement.y,
+          population: 100,
+          distance: 3,
+        );
+        return tileDetails;
+      }else{
+        throw DatabaseConnectionException();
+      }
+    }catch(e){
+      rethrow;
+    }
   }
 
   @override
   Future<Settlement?> saveSettlement(Settlement settlement) async {
-    final result = await _mongoService.db
-        .collection('settlements')
-        .insertOne(settlement.toMap());
-    if (result.isSuccess) {
-      return settlement;
-    } else {
-      return null;
+    try {
+      if (_databaseClient.db != null && _databaseClient.db!.isConnected) {
+        final result = await _databaseClient.db!
+            .collection('settlements')
+            .insertOne(settlement.toMap());
+        if (result.isSuccess) {
+          return settlement;
+        } else {
+          return null;
+        }
+      }else{
+        throw DatabaseConnectionException();
+      }
+    }catch(e){
+      rethrow;
     }
   }
 
   @override
   Future<Settlement?> updateSettlement(Settlement settlement) async {
-    final result = await _mongoService.db.collection('settlements').replaceOne(
+    try {
+      if (_databaseClient.db != null && _databaseClient.db!.isConnected) {
+        final result =
+        await _databaseClient.db!.collection('settlements').replaceOne(
           where.id(settlement.id),
           settlement.copyWith(lastModified: DateTime.now()).toMap(),
         );
-    if (result.isSuccess) {
-      return settlement;
-    } else {
-      return null;
+        if (result.isSuccess) {
+          return settlement;
+        } else {
+          return null;
+        }
+      }else{
+        throw DatabaseConnectionException();
+      }
+    }catch(e){
+      rethrow;
     }
   }
 
@@ -145,49 +198,90 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
         .or(where.eq('from.villageId', id).and(where.ne('mission', 'back')));
     if (isMoving != null && isMoving == true) {
       // 'isMoving' == true' &&
-      // (to.villageId' == id || ('from.villageId' == id && 'mission' != 'back'))
+      // (to.villageId' == id ||
+      // ('from.villageId' == id && 'mission' != 'back'))
       selector = where.eq('isMoving', true).and(
-            where.eq('to.villageId', id).or(where
-                .eq('from.villageId', id)
-                .and(where.ne('mission', 'back')),),
+            where.eq('to.villageId', id).or(
+                  where
+                      .eq('from.villageId', id)
+                      .and(where.ne('mission', 'back')),
+                ),
           );
     }
     if (isMoving != null && isMoving == false) {
       selector = where.eq('isMoving', false).and(
-            where.eq('to.villageId', id).or(where
-                .eq('from.villageId', id)
-                .and(where.ne('mission', 'back')),),
+            where.eq('to.villageId', id).or(
+                  where
+                      .eq('from.villageId', id)
+                      .and(where.ne('mission', 'back')),
+                ),
           );
     }
-    return _mongoService.db
-        .collection('movements')
-        .find(selector)
-        .map(Movement.fromMap)
-        .toList();
+    try {
+      if (_databaseClient.db != null && _databaseClient.db!.isConnected) {
+        return _databaseClient.db!
+            .collection('movements')
+            .find(selector)
+            .map(Movement.fromMap)
+            .toList();
+      }else{
+        throw DatabaseConnectionException();
+      }
+    }catch(e){
+      rethrow;
+    }
   }
 
   @override
   Future<List<Movement>> getAllStaticForeignMovementsBySettlementId(
     String id,
-  ) =>
-      _mongoService.db
-          .collection('movements')
-          .find(where.eq('to.villageId', id).and(where.eq('isMoving', false)))
-          .map(Movement.fromMap)
-          .toList();
-
-  @override
-  Future<bool> sendUnits(Movement movement) async {
-    final result = await _mongoService.db
-        .collection('movements')
-        .insertOne(movement.toMap());
-    return result.document == null;
+  ) {
+    try {
+      if (_databaseClient.db != null && _databaseClient.db!.isConnected) {
+        return _databaseClient.db!
+            .collection('movements')
+            .find(where.eq('to.villageId', id).and(where.eq('isMoving', false)))
+            .map(Movement.fromMap)
+            .toList();
+      }else{
+        throw DatabaseConnectionException();
+      }
+    }catch(e){
+      rethrow;
+    }
   }
 
   @override
-  Future<List<Movement>> getMovementsBeforeNow() => _mongoService.db
-      .collection('movements')
-      .find(where.eq('isMoving', true).and(where.lte('when', DateTime.now())))
-      .map(Movement.fromMap)
-      .toList();
+  Future<bool> sendUnits(Movement movement) async {
+    try {
+      if (_databaseClient.db != null && _databaseClient.db!.isConnected) {
+        final result = await _databaseClient.db!
+            .collection('movements')
+            .insertOne(movement.toMap());
+        return result.document == null;
+      }else{
+        throw DatabaseConnectionException();
+      }
+    }catch(e){
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<Movement>> getMovementsBeforeNow() {
+    try {
+      if (_databaseClient.db != null && _databaseClient.db!.isConnected) {
+        return _databaseClient.db!
+            .collection('movements')
+            .find(
+            where.eq('isMoving', true).and(where.lte('when', DateTime.now())),)
+            .map(Movement.fromMap)
+            .toList();
+      }else{
+        throw DatabaseConnectionException();
+      }
+    }catch(e){
+      rethrow;
+    }
+  }
 }

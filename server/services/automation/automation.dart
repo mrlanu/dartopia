@@ -1,43 +1,44 @@
 import 'package:models/models.dart';
 
+import '../../database/database_client.dart';
 import '../../repositories/settlement_repository.dart';
 import '../../utils/my_logger.dart';
-import '../mongo_service.dart';
 import '../settlements_service.dart';
 import 'troops_missions/troop_missions.dart';
 
 class Automation {
-  Automation({SettlementService? settlementService})
-      : _settlementService = settlementService ??
-            SettlementServiceImpl(
-              settlementRepository: SettlementRepositoryMongoImpl(),
-            );
+  Automation({required DatabaseClient databaseClient})
+      : _databaseClient = databaseClient,
+        _settlementService = SettlementServiceImpl(
+          settlementRepository: SettlementRepositoryMongoImpl(
+            databaseClient: databaseClient,
+          ),
+        );
   final SettlementService _settlementService;
+  final DatabaseClient _databaseClient;
 
   Future<void> main() async {
-    final mongo = MongoService.instance;
     final movements = await _settlementService.getMovementsBeforeNow();
     print('MOVEMENTS ----------->>>>>>>>>>>> ${movements.length}');
-    //final movements = <Movement>[];
 
     MyLogger.debug('Perform attacks: ${movements.length}');
     for (final m in movements) {
       final strategy = switch (m.mission) {
         Mission.attack || Mission.raid => Attack(
             movement: m,
-            mongoService: mongo,
+            mongoService: _databaseClient,
             settlementService: _settlementService,
           ),
         Mission.back => BackHome(
             movement: m,
-            mongoService: mongo,
+            mongoService: _databaseClient,
             settlementService: _settlementService,
           ),
         Mission.reinforcement => Reinforcement(
-          movement: m,
-          mongoService: mongo,
-          settlementService: _settlementService,
-        ),
+            movement: m,
+            mongoService: _databaseClient,
+            settlementService: _settlementService,
+          ),
         _ => throw ArgumentError('Invalid option'),
       };
 
@@ -47,6 +48,6 @@ class Automation {
           'to ${m.to.villageId} has been performed');
     }
 
-    await mongo.closeDb();
+    await _databaseClient.closeDb();
   }
 }

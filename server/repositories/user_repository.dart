@@ -1,32 +1,53 @@
 import 'package:models/models.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
-import '../services/mongo_service.dart';
+import '../database/database_client.dart';
+import '../exceptions/exceptions.dart';
 
 abstract class UserRepository {
   Future<User?> findByEmail({required String email});
+
   Future<WriteResult> insertOne({required User user});
 }
 
 class UserRepositoryMongo extends UserRepository {
-  UserRepositoryMongo({required MongoService mongoService})
-      : _mongoService = mongoService;
+  UserRepositoryMongo({required DatabaseClient databaseClient})
+      : _databaseClient = databaseClient{
+    print('REPOSITORY CONSTRUCTOR');
+  }
 
-  final MongoService _mongoService;
+  final DatabaseClient _databaseClient;
 
   @override
   Future<User?> findByEmail({required String email}) async {
-    final userMap =
-        await _mongoService.db.collection('users').findOne({'email': email});
-    if (userMap == null) {
-      return null;
-    } else {
-      return User.fromJson(userMap);
+    try {
+      if (_databaseClient.db != null && _databaseClient.db!.isConnected) {
+        final userMap = await _databaseClient.db!
+            .collection('users')
+            .findOne({'email': email});
+        if (userMap == null) {
+          return null;
+        } else {
+          return User.fromJson(userMap);
+        }
+      } else {
+        throw DatabaseConnectionException();
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 
   @override
   Future<WriteResult> insertOne({required User user}) async {
-    return _mongoService.db.collection('users').insertOne(user.toJson());
+    try {
+      if (_databaseClient.db != null && _databaseClient.db!.isConnected) {
+        return _databaseClient.db!.collection('users').insertOne(user.toJson());
+      } else {
+        throw DatabaseConnectionException();
+      }
+    } catch (e) {
+      rethrow;
+    }
   }
 }
