@@ -1,9 +1,12 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:bloc/bloc.dart';
+import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
 
 import 'package:dartopia/authentication/authentication.dart';
+import 'package:models/models.dart';
+import 'package:network/network.dart';
 
 part 'signup_event.dart';
 
@@ -11,16 +14,17 @@ part 'signup_state.dart';
 
 class SignupBloc extends Bloc<SignupEvent, SignupState> {
   SignupBloc({
-    required AuthenticationRepository authenticationRepository,
+    required AuthRepo authenticationRepository,
   })  : _authenticationRepository = authenticationRepository,
         super(const SignupState()) {
     on<SignupEmailChanged>(_onEmailChanged);
     on<SignupPasswordChanged>(_onPasswordChanged);
     on<SignupConfirmPasswordChanged>(_onConfirmedPasswordChanged);
     on<SignupSubmitted>(_onSubmitted);
+    on<ResetSignupStatus>(_onResetStatus);
   }
 
-  final AuthenticationRepository _authenticationRepository;
+  final AuthRepo _authenticationRepository;
 
   void _onEmailChanged(
     SignupEmailChanged event,
@@ -72,14 +76,43 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
   ) async {
     if (state.isValid) {
       emit(state.copyWith(status: FormzSubmissionStatus.inProgress));
-      try {
-        await _authenticationRepository.signup(
+      final response = await _signup(
           email: state.email.value,
           password: state.password.value,
         );
-      } catch (_) {
-        emit(state.copyWith(status: FormzSubmissionStatus.failure));
-      }
+      response.fold(
+            (failure) => emit(
+          state.copyWith(
+            status: FormzSubmissionStatus.failure,
+            errorMessage: failure.message,
+          ),
+        ),
+            (success) => emit(
+          state.copyWith(
+            status: FormzSubmissionStatus.success,
+          ),
+        ),
+      );
     }
+  }
+
+  Future<Either<FailureModel, void>> _signup({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final response = await _authenticationRepository.signup(
+          email: email, password: password);
+      return right(response);
+    } on NetworkException catch (e) {
+      return left(FailureModel(message: e.message));
+    }
+  }
+
+  Future<void> _onResetStatus(
+      ResetSignupStatus event,
+      Emitter<SignupState> emit,
+      ) async {
+    emit(state.copyWith(status: FormzSubmissionStatus.initial));
   }
 }

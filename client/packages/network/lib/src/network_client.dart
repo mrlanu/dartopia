@@ -8,7 +8,7 @@ import 'auth_interceptor.dart';
 class NetworkClient {
   NetworkClient._init() {
     _dio = Dio();
-    _dio.options.baseUrl = Api.baseURL;
+    _dio.options.baseUrl = 'http://10.0.2.2:8080';
     _dio.options.connectTimeout = const Duration(seconds: 10);
     _dio.options.sendTimeout = const Duration(seconds: 10);
     _dio.options.receiveTimeout = const Duration(seconds: 10);

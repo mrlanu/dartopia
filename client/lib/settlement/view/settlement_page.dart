@@ -35,7 +35,7 @@ class _SettlementPageState extends State<SettlementPage> {
 
   @override
   void initState() {
-    _settlementRepository = SettlementRepositoryImpl(token: widget.token);
+    _settlementRepository = SettlementRepositoryImpl();
     _troopMovementsRepository =
         TroopMovementsRepositoryImpl(token: widget.token);
     _reportsRepository = ReportsRepositoryImpl(token: widget.token);
@@ -91,22 +91,22 @@ class SettlementView extends StatelessWidget {
           drawer: const MainDrawer(),
           body: BlocBuilder<SettlementBloc, SettlementState>(
               builder: (context, state) {
-                return state.status == SettlementStatus.loading
-                    ? const Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : IndexedStack(
-                        index: selectedTab.index,
-                        children: [
-                          BuildingsPageGrid(settlement: state.settlement!),
-                          //BuildingsPage(),
-                          const WorldMapPage(),
-                          Container(),
-                          const ReportsPage(),
-                          const Scaffold()
-                        ],
-                      );
-              }),
+            return state.status == SettlementStatus.loading
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : IndexedStack(
+                    index: selectedTab.index,
+                    children: [
+                      BuildingsPageGrid(settlement: state.settlement!),
+                      //BuildingsPage(),
+                      const WorldMapPage(),
+                      Container(),
+                      const ReportsPage(),
+                      const Scaffold()
+                    ],
+                  );
+          }),
           bottomNavigationBar: const BottomNavBar()),
     );
   }

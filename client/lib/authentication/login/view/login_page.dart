@@ -22,7 +22,7 @@ class LoginPage extends StatelessWidget {
             create: (context) {
               return LoginBloc(
                 authenticationRepository:
-                RepositoryProvider.of<AuthenticationRepository>(context),
+                context.read<AuthRepo>(),
               );
             },
             child: const Padding(

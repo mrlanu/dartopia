@@ -1,55 +1,34 @@
 import 'dart:async';
 
-import 'package:authentication_repository/authentication_repository.dart';
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
+import 'package:cache_client/cache_client.dart';
+import 'package:jwt_decode/jwt_decode.dart';
 
 part 'auth_event.dart';
 
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc({
-    required AuthenticationRepository authenticationRepository,
-  })  : _authenticationRepository = authenticationRepository,
-        super(const AuthState.unknown()) {
-    on<_AuthStatusChanged>(_onAuthStatusChanged);
-    on<AuthLogoutRequested>(_onAuthLogoutRequested);
-    _authenticationStatusSubscription = _authenticationRepository.status.listen(
-      (status) => add(_AuthStatusChanged(status)),
-    );
+  AuthBloc({CacheClient? cacheClient,
+  })  : _cacheClient = cacheClient ?? CacheClient.instance,
+        super(UnauthenticatedState()) {
+    on<CheckAuthStatus>(_onCheckAuthState);
+    on<AuthLogoutRequested>(_onLogout);
   }
 
-  final AuthenticationRepository _authenticationRepository;
-  late StreamSubscription<AuthenticationStatus>
-      _authenticationStatusSubscription;
+  final CacheClient _cacheClient;
 
-  @override
-  Future<void> close() {
-    _authenticationStatusSubscription.cancel();
-    return super.close();
-  }
-
-  Future<void> _onAuthStatusChanged(
-    _AuthStatusChanged event,
-    Emitter<AuthState> emit,
-  ) async {
-    switch (event.status) {
-      case Unauthenticated():
-        return emit(const AuthState.unauthenticated());
-      case Authenticated():
-        final st = event.status as Authenticated;
-        return emit(AuthState.authenticated(
-            token: st.token, userId: st.userId, userName: st.userName));
-      case Unknown():
-        return emit(const AuthState.unknown());
+  Future<void> _onCheckAuthState(CheckAuthStatus event, Emitter<AuthState> emit) async {
+    final accessToken = await _cacheClient.getAccessToken();
+    if (accessToken != null && !Jwt.isExpired(accessToken)) {
+      emit(AuthenticatedState());
+    } else {
+      emit(UnauthenticatedState());
     }
   }
 
-  void _onAuthLogoutRequested(
-    AuthLogoutRequested event,
-    Emitter<AuthState> emit,
-  ) {
-    _authenticationRepository.logOut();
+  Future<void> _onLogout(AuthLogoutRequested event, Emitter<AuthState> emit) async {
+    await _cacheClient.deleteAccessToken();
+    emit(UnauthenticatedState());
   }
 }

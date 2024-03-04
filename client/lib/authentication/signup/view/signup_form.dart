@@ -10,13 +10,39 @@ class SignupForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<SignupBloc, SignupState>(
+      listenWhen: (previous, current) => previous.status != current.status,
       listener: (context, state) {
+        if (state.status.isSuccess) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'Account has been created',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.w700),
+                ),
+                backgroundColor: Colors.green,
+              ),
+            );
+          Navigator.of(context).pop();
+        }
         if (state.status.isFailure) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
-              const SnackBar(content: Text('Authentication Failure')),
+              SnackBar(
+                content: Text(
+                  state.errorMessage,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.w700),
+                ),
+                backgroundColor: Colors.redAccent,
+              ),
             );
+          context.read<SignupBloc>().add(const ResetSignupStatus());
         }
       },
       child: Align(

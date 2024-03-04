@@ -27,7 +27,7 @@ class _MainDrawerState extends State<MainDrawer> {
                 Color.fromRGBO(26, 89, 5, 1.0),
               ], begin: Alignment.topLeft, end: Alignment.bottomRight)),
               child: Builder(builder: (context) {
-                final userName = context.read<AuthBloc>().state.userName;
+                final userName = 'DRAWER USERNAME';
                 return Center(
                   child: Container(
                       alignment: Alignment.center,

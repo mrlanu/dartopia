@@ -1,3 +1,4 @@
+import 'package:dartopia/authentication/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
@@ -10,13 +11,26 @@ class LoginForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<LoginBloc, LoginState>(
+      listenWhen: (previous, current) => previous.status != current.status,
       listener: (context, state) {
+        if (state.status.isSuccess) {
+          context.read<AuthBloc>().add(CheckAuthStatus());
+        }
         if (state.status.isFailure) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
-              const SnackBar(content: Text('Authentication Failure')),
+              SnackBar(
+                content: Text(
+                  state.errorMessage,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.w700),
+                ),
+                backgroundColor: Colors.redAccent,
+              ),
             );
+          context.read<LoginBloc>().add(const ResetStatus());
         }
       },
       child: Align(
@@ -89,20 +103,25 @@ class _LoginButton extends StatelessWidget {
         return state.status.isInProgress
             ? const CircularProgressIndicator()
             : Padding(
-              padding: const EdgeInsets.only(top: 28.0),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
+                padding: const EdgeInsets.only(top: 28.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
                     key: const Key('loginForm_continue_raisedButton'),
                     onPressed: state.isValid
                         ? () {
-                            context.read<LoginBloc>().add(const LoginSubmitted());
+                            context
+                                .read<LoginBloc>()
+                                .add(const LoginSubmitted());
                           }
                         : null,
-                    child: const Text('Login', style: TextStyle(fontSize: 30),),
+                    child: const Text(
+                      'Login',
+                      style: TextStyle(fontSize: 30),
+                    ),
                   ),
-              ),
-            );
+                ),
+              );
       },
     );
   }

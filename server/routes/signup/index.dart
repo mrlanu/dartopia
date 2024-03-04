@@ -39,12 +39,8 @@ Future<Response> _onPost(RequestContext context) async {
   try {
     await userRepository.findByEmail(email: user.email);
     return Response.json(
-      statusCode: 400,
-      body: {
-        'status': 400,
-        'message': 'A user with the provided email already exists',
-        'error': 'user_exists',
-      },
+      statusCode: HttpStatus.internalServerError,
+      body: const FailureModel(message: 'Email already exists.').toJson(),
     );
   } on NoUserFoundException catch (_) {
     await userRepository.insertOne(user: user);

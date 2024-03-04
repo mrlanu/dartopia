@@ -34,6 +34,10 @@ final class SignupConfirmPasswordChanged extends SignupEvent {
   List<Object> get props => [password];
 }
 
+final class ResetSignupStatus extends SignupEvent {
+  const ResetSignupStatus();
+}
+
 final class SignupSubmitted extends SignupEvent {
   const SignupSubmitted();
 }

@@ -23,7 +23,7 @@ class SignupPage extends StatelessWidget {
             create: (context) {
               return SignupBloc(
                 authenticationRepository:
-                RepositoryProvider.of<AuthenticationRepository>(context),
+                context.read<AuthRepo>(),
               );
             },
             child: const Padding(

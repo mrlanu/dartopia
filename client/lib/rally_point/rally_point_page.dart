@@ -61,8 +61,8 @@ class _RallyPointViewState extends State<RallyPointView> {
   void initState() {
     super.initState();
     currentIndex = widget.initialTabIndex;
-    final token = context.read<AuthBloc>().state.token;
-    _troopMovementsRepository = TroopMovementsRepositoryImpl(token: token);
+    //final token = context.read<AuthBloc>().state.token;
+    _troopMovementsRepository = TroopMovementsRepositoryImpl(token: 'token');
   }
 
   @override

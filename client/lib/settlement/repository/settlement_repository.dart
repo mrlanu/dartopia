@@ -1,7 +1,8 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:models/models.dart';
-import 'package:http/http.dart' as http;
+import 'package:network/network.dart';
 import 'package:rxdart/rxdart.dart';
 
 abstract class SettlementRepository {
@@ -16,9 +17,10 @@ abstract class SettlementRepository {
 }
 
 class SettlementRepositoryImpl implements SettlementRepository {
-  SettlementRepositoryImpl({required String token}) : _token = token;
+  SettlementRepositoryImpl({NetworkClient? networkClient})
+      : _networkClient = networkClient ?? NetworkClient.instance;
 
-  final String _token;
+  final NetworkClient _networkClient;
 
   final _settlementStreamController = BehaviorSubject<Settlement?>.seeded(null);
 
@@ -28,29 +30,28 @@ class SettlementRepositoryImpl implements SettlementRepository {
 
   @override
   Future<List<ShortSettlementInfo>> fetchSettlementListByUserId() async {
-    final url = Uri.http(Api.baseURL, Api.fetchSettlementsInfoList());
-    final response =
-        await http.get(url, headers: Api.headerAuthorization(token: _token));
-    final responseList = json.decode(response.body) as List<dynamic>;
-    final result = responseList
-        .map((e) => ShortSettlementInfo.fromJson(e as Map<String, dynamic>))
-        .toList();
-    return result;
+    try {
+      final response = await _networkClient
+          .get<List<dynamic>>(Api.fetchSettlementsInfoList());
+      final result = response.data!
+          .map((e) => ShortSettlementInfo.fromJson(e as Map<String, dynamic>))
+          .toList();
+      return result;
+    } on DioException catch (e) {
+      throw NetworkException.fromDioError(e);
+    }
   }
 
   @override
   Future<void> fetchSettlementById(String settlementId) async {
-    final url = Uri.http(Api.baseURL, Api.fetchSettlementById(settlementId));
     for (var i = 0; i <= 10; i++) {
-      final response =
-          await http.get(url, headers: Api.headerAuthorization(token: _token));
-      print('RESPONSE: ${response.statusCode}');
+      final response = await _networkClient
+          .get<Map<String, dynamic>>(Api.fetchSettlementById(settlementId));
       if (response.statusCode != 200) {
         await Future<void>.delayed(const Duration(milliseconds: 200));
         continue;
       } else {
-        final map = json.decode(response.body) as Map<String, dynamic>;
-        final settlement = Settlement.fromJson(map);
+        final settlement = Settlement.fromJson(response.data!);
         _settlementStreamController.add(settlement);
         break;
       }
@@ -61,12 +62,13 @@ class SettlementRepositoryImpl implements SettlementRepository {
   Future<void> upgradeBuilding(
       {required String settlementId,
       required ConstructionRequest request}) async {
-    final url = Uri.http(Api.baseURL, Api.upgradeBuilding(settlementId));
-    final response = await http.post(url,
-        body: json.encode(request),
-        headers: Api.headerAuthorization(token: _token));
-    final map = json.decode(response.body) as Map<String, dynamic>;
-    final settlement = Settlement.fromJson(map);
-    _settlementStreamController.add(settlement);
+    try {
+      final response = await _networkClient.post<Map<String, dynamic>>(Api.upgradeBuilding(settlementId),
+              data: json.encode(request));
+      final settlement = Settlement.fromJson(response.data!);
+      _settlementStreamController.add(settlement);
+    } on DioException catch (e) {
+      throw NetworkException.fromDioError(e);
+    }
   }
 }
