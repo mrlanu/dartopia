@@ -27,7 +27,7 @@ class SignupPage extends StatelessWidget {
               );
             },
             child: const Padding(
-              padding: EdgeInsets.all(40.0),
+              padding: EdgeInsets.symmetric(horizontal: 40.0),
               child: SignupForm(),
             ),
           ),
