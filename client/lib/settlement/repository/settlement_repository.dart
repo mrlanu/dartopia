@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:dio/dio.dart';
 import 'package:models/models.dart';
 import 'package:network/network.dart';
 import 'package:rxdart/rxdart.dart';
