@@ -1,10 +1,7 @@
 class Api {
   Api._();
 
-  static const baseURL = '10.0.2.2:8080';
-
-  static Map<String, String> headerAuthorization({required String token}) =>
-      {'Authorization': 'Bearer $token'};
+  static const baseURL = 'http://10.0.2.2:8080';
 
   static String signup() {
     return '/signup';

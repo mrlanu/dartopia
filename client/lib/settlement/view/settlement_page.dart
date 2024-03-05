@@ -37,8 +37,8 @@ class _SettlementPageState extends State<SettlementPage> {
   void initState() {
     _settlementRepository = SettlementRepositoryImpl();
     _troopMovementsRepository =
-        TroopMovementsRepositoryImpl(token: widget.token);
-    _reportsRepository = ReportsRepositoryImpl(token: widget.token);
+        TroopMovementsRepositoryImpl();
+    _reportsRepository = ReportsRepositoryImpl();
     super.initState();
   }
 

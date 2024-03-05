@@ -1,4 +1,3 @@
-import 'package:dartopia/authentication/bloc/auth_bloc.dart';
 import 'package:dartopia/common/common.dart';
 import 'package:dartopia/consts/calors.dart';
 import 'package:flutter/material.dart';
@@ -62,7 +61,7 @@ class _RallyPointViewState extends State<RallyPointView> {
     super.initState();
     currentIndex = widget.initialTabIndex;
     //final token = context.read<AuthBloc>().state.token;
-    _troopMovementsRepository = TroopMovementsRepositoryImpl(token: 'token');
+    _troopMovementsRepository = TroopMovementsRepositoryImpl();
   }
 
   @override

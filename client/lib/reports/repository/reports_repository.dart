@@ -1,7 +1,5 @@
-import 'dart:convert';
-
 import 'package:models/models.dart';
-import 'package:http/http.dart' as http;
+import 'package:network/network.dart';
 
 abstract class ReportsRepository {
   Future<(int, List<ReportBrief>)> fetchAllReportsBriefByUserId();
@@ -12,36 +10,44 @@ abstract class ReportsRepository {
 }
 
 class ReportsRepositoryImpl implements ReportsRepository {
+  ReportsRepositoryImpl({NetworkClient? networkClient})
+      : _networkClient = networkClient ?? NetworkClient.instance;
 
-  ReportsRepositoryImpl({required String token}): _token = token;
-
-  final String _token;
+  final NetworkClient _networkClient;
 
   @override
   Future<(int, List<ReportBrief>)> fetchAllReportsBriefByUserId() async {
-    final url = Uri.http(Api.baseURL, Api.fetchAllReportsBrief());
-    final response = await http.get(url, headers: Api.headerAuthorization(token: _token));
-    final responseMap = json.decode(response.body) as Map<String, dynamic>;
-    final result = (responseMap['briefs'] as List<dynamic>)
-        .map((e) => ReportBrief.fromJson(e as Map<String, dynamic>))
-        .toList();
-    return (responseMap['amount']! as int, result);
+    try {
+      final response = await _networkClient
+          .get<Map<String, dynamic>>(Api.fetchAllReportsBrief());
+      final result = (response.data!['briefs'] as List<dynamic>)
+          .map((e) => ReportBrief.fromJson(e as Map<String, dynamic>))
+          .toList();
+      return (response.data!['amount'] as int, result);
+    } on DioException catch (e) {
+      throw NetworkException.fromDioError(e);
+    }
   }
 
   @override
-  Future<MilitaryReportResponse> fetchReportById({required String reportId}) async {
-    final url = Uri.http(
-        Api.baseURL, Api.fetchReportById(reportId));
-    final response = await http.get(url, headers: Api.headerAuthorization(token: _token));
-    final map = json.decode(response.body) as Map<String, dynamic>;
-    final report = MilitaryReportResponse.fromJson(map);
-    return report;
+  Future<MilitaryReportResponse> fetchReportById(
+      {required String reportId}) async {
+    try {
+      final response = await _networkClient
+          .get<Map<String, dynamic>>(Api.fetchReportById(reportId));
+      final report = MilitaryReportResponse.fromJson(response.data!);
+      return report;
+    } on DioException catch (e) {
+      throw NetworkException.fromDioError(e);
+    }
   }
 
   @override
   Future<void> deleteReportById({required String reportId}) async {
-    final url = Uri.http(
-        Api.baseURL, Api.deleteReportById(reportId));
-    http.delete(url, headers: Api.headerAuthorization(token: _token));
+    try {
+      _networkClient.delete(Api.deleteReportById(reportId));
+    } on DioException catch (e) {
+      throw NetworkException.fromDioError(e);
+    }
   }
 }

@@ -18,7 +18,7 @@ class WorldMapPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //final token = context.read<AuthBloc>().state.token;
-    final WorldRepository worldRepo = WorldRepositoryImpl(token: 'token');
+    final WorldRepository worldRepo = WorldRepositoryImpl();
     final currentSettlement = context.read<SettlementBloc>().state.settlement!;
     return RepositoryProvider(
       create: (context) => worldRepo,
