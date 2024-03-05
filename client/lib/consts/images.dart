@@ -10,4 +10,6 @@ class DartopiaImages {
 
   static const String troops = 'assets/images/troops/gaul.png';
   static const String tiles = 'assets/images/resources/tiles.png';
+
+  static const String logo = 'assets/images/logo/dartopia_logo.png';
 }

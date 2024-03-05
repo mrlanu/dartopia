@@ -1,3 +1,4 @@
+import 'package:dartopia/consts/images.dart';
 import 'package:flutter/material.dart';
 
 class SplashPage extends StatelessWidget {
@@ -9,8 +10,9 @@ class SplashPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: CircularProgressIndicator()),
+    final width = MediaQuery.of(context).size.width;
+    return Scaffold(
+      body: Center(child: Image.asset(DartopiaImages.logo, width: width * 0.7,)),
     );
   }
 }
