@@ -1,13 +1,18 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:dartopia/authentication/bloc/auth_bloc.dart';
+import 'package:dartopia/building_detail/view/building_detail_page.dart';
+import 'package:dartopia/rally_point/rally_point.dart';
+import 'package:dartopia/settlement/bloc/settlement_bloc.dart';
+import 'package:dartopia/settlement/repository/settlement_repository.dart';
 import 'package:dartopia/settlement/view/settlement_page.dart';
+import 'package:dartopia/splash/splash.dart';
 import 'package:dartopia/utils/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'authentication/authentication.dart';
-import 'splash/splash.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,77 +22,124 @@ void main() async {
   ));
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({super.key, required this.sharedPreferences});
+class MyApp extends StatelessWidget {
+  MyApp({super.key, required this.sharedPreferences});
 
   final SharedPreferences sharedPreferences;
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  late final AuthRepo _authRepo;
-
-  @override
-  void initState() {
-    super.initState();
-    _authRepo = AuthRepo();
-  }
+  final AuthRepo _authRepo = AuthRepo();
+  final SettlementRepository _settlementRepository = SettlementRepositoryImpl();
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider(
-      create: (context) => _authRepo,
-      child: BlocProvider(
-        create: (_) => AuthBloc()..add(CheckAuthStatus()),
-        child: const AppView(),
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider(
+          create: (context) => _authRepo,
+        ),
+        RepositoryProvider(
+          create: (context) => _settlementRepository,
+        ),
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (_) => AuthBloc()..add(CheckAuthStatus()),
+          ),
+          BlocProvider(
+            create: (context) =>
+                SettlementBloc(settlementRepository: _settlementRepository)
+                  ..add(const ListOfSettlementsRequested()),
+          ),
+        ],
+        child: AppView(),
       ),
     );
   }
 }
 
-class AppView extends StatefulWidget {
-  const AppView({super.key});
-
-  @override
-  State<AppView> createState() => _AppViewState();
-}
-
-class _AppViewState extends State<AppView> {
-  final _navigatorKey = GlobalKey<NavigatorState>();
-
-  NavigatorState get _navigator => _navigatorKey.currentState!;
+class AppView extends StatelessWidget {
+  AppView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: _navigatorKey,
-      debugShowCheckedModeBanner: false,
-      title: 'Dartopia',
-      theme: dartopiaTheme,
-      builder: (context, child) {
-        return BlocListener<AuthBloc, AuthState>(
-          listener: (context, state) {
-            switch (state) {
-              case AuthenticatedState():
-                _navigator.pushAndRemoveUntil<void>(
-                  SettlementPage.route(token: 'state.token'),
-                  (route) => false,
-                );
-              case UnauthenticatedState():
-                _navigator.pushAndRemoveUntil<void>(
-                  LoginPage.route(),
-                  (route) => false,
-                );
-              case UnknownState():
-                break;
-            }
-          },
-          child: child,
-        );
+    return BlocListener<AuthBloc, AuthState>(
+      listenWhen: (previous, current) => previous != current,
+      listener: (context, state) {
+        _router.refresh();
       },
-      onGenerateRoute: (_) => SplashPage.route(),
+      child: MaterialApp.router(
+        routerConfig: _router,
+        debugShowCheckedModeBanner: false,
+        title: 'Dartopia',
+        theme: dartopiaTheme,
+      ),
     );
+  }
+
+  /// The route configuration.
+  late final GoRouter _router = GoRouter(
+    routes: [
+      GoRoute(
+        path: '/',
+        redirect: (_, __) => '/settlement',
+      ),
+      GoRoute(
+        path: '/splash',
+        builder: (BuildContext context, GoRouterState state) {
+          return const SplashPage();
+        },
+      ),
+      GoRoute(
+          path: '/login',
+          builder: (BuildContext context, GoRouterState state) {
+            return const LoginPage();
+          },
+          routes: [
+            GoRoute(
+              path: 'signup',
+              builder: (BuildContext context, GoRouterState state) {
+                return const SignupPage();
+              },
+            ),
+          ]),
+      GoRoute(
+          path: '/settlement',
+          builder: (BuildContext context, GoRouterState state) {
+            return const SettlementPage();
+          },
+          routes: [
+            GoRoute(
+              path: 'details',
+              builder: (context, state) {
+                final buildingRecord = state.extra as List<int>;
+                return BuildingDetailPage(buildingRecord: buildingRecord);
+              },
+            ),
+          ]),
+      GoRoute(
+        path: '/rally_point/:tabId',
+        builder: (BuildContext context, GoRouterState state) {
+          final x = state.uri.queryParameters['x']?? 0.toString();
+          final y = state.uri.queryParameters['y']?? 0.toString();
+          final coordinates = [int.parse(x), int.parse(y)];
+          return RallyPointPage(targetCoordinates: coordinates,
+              tabIndex: int.parse(state.pathParameters['tabId']!));
+        },
+      ),
+    ],
+    redirect: _guard,
+    debugLogDiagnostics: true,
+  );
+
+  Future<String?> _guard(BuildContext context, GoRouterState state) async {
+    final bool signedIn = context.read<AuthBloc>().state is AuthenticatedState;
+    final bool signingIn =
+        ['/login', '/login/signup', '/splash'].contains(state.matchedLocation);
+    if (!signedIn && !signingIn) {
+      return '/login';
+    } else if (signedIn && signingIn) {
+      return '/settlement';
+    }
+    return null;
   }
 }

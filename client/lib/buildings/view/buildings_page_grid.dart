@@ -2,10 +2,10 @@ import 'package:dartopia/consts/calors.dart';
 import 'package:dartopia/consts/consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:models/models.dart';
 import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 
-import '../../building_detail/view/building_detail_page.dart';
 import '../../settlement/bloc/settlement_bloc.dart';
 import '../../storage_bar/view/storage_bar.dart';
 import '../../utils/countdown.dart';
@@ -152,9 +152,7 @@ class _BuildingGridItem extends StatelessWidget {
         largeSize: 22,
         child: GestureDetector(
           onTap: () {
-            final settlementBloc = context.read<SettlementBloc>();
-            Navigator.of(context).push(BuildingDetailPage.route(
-                block: settlementBloc, buildingRecord: buildingRecord));
+            context.go('/settlement/details', extra: buildingRecord);
           },
           child: Card(
             color: labelBackground,
@@ -227,11 +225,9 @@ class _BuildingGridAddItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final settlementBloc = context.read<SettlementBloc>();
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(BuildingDetailPage.route(
-            block: settlementBloc, buildingRecord: emptySpots.first));
+        context.go('/settlement/details', extra: emptySpots.first);
       },
       child: Badge(
         alignment: Alignment.bottomRight,

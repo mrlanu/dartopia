@@ -1,5 +1,4 @@
 import 'package:dartopia/authentication/bloc/auth_bloc.dart';
-import 'package:dartopia/settlement/bloc/settlement_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -27,14 +26,14 @@ class _MainDrawerState extends State<MainDrawer> {
                 Color.fromRGBO(26, 89, 5, 1.0),
               ], begin: Alignment.topLeft, end: Alignment.bottomRight)),
               child: Builder(builder: (context) {
-                final userName = 'DRAWER USERNAME';
+                const userName = 'DRAWER USERNAME';
                 return Center(
                   child: Container(
                       alignment: Alignment.center,
                       width: double.infinity,
-                      child: Text(
+                      child: const Text(
                         'Dartopia for $userName',
-                        style: const TextStyle(
+                        style: TextStyle(
                             color: Colors.white70, fontSize: 25),
                       ) /*Image.asset('assets/images/piggy_logo.png',
                             fit: BoxFit.contain)*/

@@ -2,6 +2,7 @@ import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../consts/calors.dart';
 import '../signup.dart';
 
 class SignupPage extends StatelessWidget {
@@ -16,14 +17,16 @@ class SignupPage extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         backgroundColor: const Color(0xFFC0D9B6),
-        appBar: AppBar(backgroundColor: Colors.transparent),
+        appBar: AppBar(
+          foregroundColor: DartopiaColors.onPrimary,
+          backgroundColor: DartopiaColors.primary,
+        ),
         body: Padding(
           padding: const EdgeInsets.all(12),
           child: BlocProvider(
             create: (context) {
               return SignupBloc(
-                authenticationRepository:
-                context.read<AuthRepo>(),
+                authenticationRepository: context.read<AuthRepo>(),
               );
             },
             child: const Padding(
@@ -36,4 +39,3 @@ class SignupPage extends StatelessWidget {
     );
   }
 }
-

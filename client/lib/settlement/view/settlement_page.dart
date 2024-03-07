@@ -13,29 +13,18 @@ import '../../reports/reports.dart';
 import '../settlement.dart';
 
 class SettlementPage extends StatefulWidget {
-  const SettlementPage({super.key, required this.token});
-
-  final String token;
-
-  static Route<void> route({required String token}) {
-    return MaterialPageRoute<void>(
-        builder: (_) => SettlementPage(
-              token: token,
-            ));
-  }
+  const SettlementPage({super.key});
 
   @override
   State<SettlementPage> createState() => _SettlementPageState();
 }
 
 class _SettlementPageState extends State<SettlementPage> {
-  late final SettlementRepository _settlementRepository;
   late final TroopMovementsRepository _troopMovementsRepository;
   late final ReportsRepository _reportsRepository;
 
   @override
   void initState() {
-    _settlementRepository = SettlementRepositoryImpl();
     _troopMovementsRepository =
         TroopMovementsRepositoryImpl();
     _reportsRepository = ReportsRepositoryImpl();
@@ -47,9 +36,6 @@ class _SettlementPageState extends State<SettlementPage> {
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider(
-          create: (context) => _settlementRepository,
-        ),
-        RepositoryProvider(
           create: (context) => _troopMovementsRepository,
         ),
         RepositoryProvider(
@@ -59,11 +45,6 @@ class _SettlementPageState extends State<SettlementPage> {
       child: MultiBlocProvider(
         providers: [
           BlocProvider(create: (context) => NavigationCubit()),
-          BlocProvider(
-            create: (context) => SettlementBloc(
-                settlementRepository: context.read<SettlementRepository>())
-              ..add(const ListOfSettlementsRequested()),
-          ),
           BlocProvider(
             create: (context) => ReportsBloc(
                 reportsRepository: context.read<ReportsRepository>())

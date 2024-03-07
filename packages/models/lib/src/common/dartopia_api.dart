@@ -32,26 +32,26 @@ class Api {
   }
 
   static String sendTroopsContract(String settlementId) {
-    return 'settlements/$settlementId/troops_send_contract';
+    return '/settlements/$settlementId/troops_send_contract';
   }
 
   static String sendTroops(String settlementId) {
-    return 'settlements/$settlementId/send_units';
+    return '/settlements/$settlementId/send_units';
   }
 
   static String fetchMovements(String settlementId) {
-    return 'settlements/$settlementId/movements';
+    return '/settlements/$settlementId/movements';
   }
 
   static String fetchAllReportsBrief() {
-    return 'reports';
+    return '/reports';
   }
 
   static String fetchReportById(String reportId) {
-    return 'reports/$reportId';
+    return '/reports/$reportId';
   }
 
   static String deleteReportById(String reportId) {
-    return 'reports/$reportId';
+    return '/reports/$reportId';
   }
 }
