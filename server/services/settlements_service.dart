@@ -5,7 +5,7 @@ import 'package:mongo_dart/mongo_dart.dart';
 
 import '../config/config.dart';
 import '../repositories/settlement_repository.dart';
-import 'utils_service.dart';
+import '../server_settings.dart';
 
 abstract class SettlementService {
   Future<List<ShortSettlementInfo>> getSettlementsIdByUserId({
@@ -125,6 +125,10 @@ class SettlementServiceImpl extends SettlementService {
     final movements = await getMovementsBySettlementId(
       settlement: settlement,
     );
+
+    settlement.checkBuildingsForUpgradePosibility(
+        ServerSettings().maxConstructionTasksInQueue,);
+
     final updatedSettlement =
         await _settlementRepository.updateSettlement(settlement);
     return updatedSettlement?.copyWith(movements: movements);
@@ -276,6 +280,8 @@ class SettlementServiceImpl extends SettlementService {
           level: request.toLevel,
         );
       }
+      settlement.checkBuildingsForUpgradePosibility(
+        ServerSettings().maxConstructionTasksInQueue,);
       return updateSettlement(
         settlement: settlement,
       );

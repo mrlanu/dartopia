@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:models/models.dart';
 
+import '../../../consts/calors.dart';
 import '../../../settlement/settlement.dart';
 import '../../../utils/utils.dart';
 
@@ -26,11 +27,7 @@ class FieldViewTile extends StatelessWidget {
     final prod = specification.benefit(buildingRecord[2]).toInt();
     final prodNext = specification.benefit(buildingRecord[2] + 1).toInt();
     final cost = specification.getResourcesToNextLevel(buildingRecord[2] + 1);
-    final canBeUpgraded = specification.canBeUpgraded(
-            storage: storage,
-            existingBuildings: [],
-            toLevel: buildingRecord[2] + 1) &&
-        constructionsTaskAmount < maxConstructionTasksAllowed;
+    final canBeUpgraded = buildingRecord[3] == 1 ? true : false;
     return Card(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 16.0),
@@ -39,15 +36,13 @@ class FieldViewTile extends StatelessWidget {
             Column(
               children: [
                 CircleAvatar(
-                    backgroundColor: canBeUpgraded && isUpgrading == null
-                        ? null
-                        : isUpgrading != null
-                            ? const Color.fromRGBO(253, 216, 87, 1.0)
-                            : const Color.fromRGBO(255, 176, 176, 1.0),
+                    backgroundColor: _getColor(),
                     child: Text(
                       '${buildingRecord[2]}',
                       style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 24),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 24,
+                          color: DartopiaColors.black),
                     )),
                 Text(
                   '$prod/hr',
@@ -86,6 +81,20 @@ class FieldViewTile extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Color _getColor() {
+    final canBeUpgraded = buildingRecord[3] == 1 ? true : false;
+    final canBeUpgradedWithGold = buildingRecord[3] == 2 ? true : false;
+    Color labelBackground;
+    if (canBeUpgraded) {
+      labelBackground = DartopiaColors.primaryContainer;
+    } else if (canBeUpgradedWithGold) {
+      labelBackground = DartopiaColors.secondaryContainer;
+    } else {
+      labelBackground = DartopiaColors.grey;
+    }
+    return labelBackground;
   }
 
   Widget _upgradingBody(BuildContext context, int duration, int lvl) {

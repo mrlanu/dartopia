@@ -133,6 +133,9 @@ class AppView extends StatelessWidget {
 
   Future<String?> _guard(BuildContext context, GoRouterState state) async {
     final bool signedIn = context.read<AuthBloc>().state is AuthenticatedState;
+    if(context.read<AuthBloc>().state is UnknownState){
+      return '/splash';
+    }
     final bool signingIn =
         ['/login', '/login/signup', '/splash'].contains(state.matchedLocation);
     if (!signedIn && !signingIn) {

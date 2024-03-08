@@ -79,7 +79,7 @@ class SettlementView extends StatelessWidget {
                 : IndexedStack(
                     index: selectedTab.index,
                     children: [
-                      BuildingsPageGrid(settlement: state.settlement!),
+                      BuildingsPageGrid(key: UniqueKey(), settlement: state.settlement!),
                       //BuildingsPage(),
                       const WorldMapPage(),
                       Container(),

@@ -62,9 +62,7 @@ class _BuildingsGridViewState extends State<BuildingsGridView> {
                 widget.settlement.buildings.insert(newIndex, element);
               });
             },
-            header: List.from([
-              [0, 0, 0], [1, 1, 0], [2, 2, 0], [3, 3, 0] //mock fields
-            ]).map(
+            header: _groupFieldsByType().map(
               (fieldRecord) {
                 final constructionTasks = widget.settlement.constructionTasks
                     .where((task) => task.buildingId == fieldRecord[1])
@@ -72,7 +70,7 @@ class _BuildingsGridViewState extends State<BuildingsGridView> {
                 return _BuildingGridItem(
                   key: ValueKey('${fieldRecord[0]} ${fieldRecord[1]}'),
                   buildingRecord: fieldRecord,
-                  constructionTask: constructionTasks.lastOrNull,
+                  constructionTask: constructionTasks.firstOrNull,
                   constructionsTaskAmount:
                       widget.settlement.constructionTasks.length,
                   storage: widget.settlement.storage,
@@ -98,7 +96,7 @@ class _BuildingsGridViewState extends State<BuildingsGridView> {
                   key: ValueKey('${bRecord[0]} ${bRecord[1]}'),
                   buildingRecord: bRecord,
                   storage: widget.settlement.storage,
-                  constructionTask: upgradingTasks.lastOrNull,
+                  constructionTask: upgradingTasks.firstOrNull,
                   constructionsTaskAmount:
                       widget.settlement.constructionTasks.length,
                 );
@@ -108,6 +106,22 @@ class _BuildingsGridViewState extends State<BuildingsGridView> {
         ),
       ],
     );
+  }
+
+  List<List<int>> _groupFieldsByType() {
+    List<List<int>> mockList = [
+      [0, 0, 0, 0], [1, 1, 0, 0], [2, 2, 0, 0], [3, 3, 0, 0] //mock fields
+    ];
+    return mockList.map((mock) {
+      final upgradableFields = widget.settlement.buildings
+          .where((buildingRecord) =>
+              mock[1] == buildingRecord[1] &&
+              (buildingRecord[3] == 1 || buildingRecord[3] == 2))
+          .toList();
+      return upgradableFields.isNotEmpty
+          ? [...mock.sublist(0, 3), upgradableFields[0][3]]
+          : mock;
+    }).toList();
   }
 }
 
@@ -191,20 +205,16 @@ class _BuildingGridItem extends StatelessWidget {
   }
 
   (Color, Color) _getLabelColors() {
-    final specification = buildingSpecefication[buildingRecord[1]];
-    final canBeUpgraded = specification!
-            .canBeUpgraded(storage: storage, toLevel: buildingRecord[2] + 1) &&
-        constructionsTaskAmount < maxConstructionTasksAllowed;
+    final canBeUpgraded = buildingRecord[3] == 1 ? true : false;
+    final canBeUpgradedWithGold = buildingRecord[3] == 2 ? true : false;
     Color labelBackground;
     Color labelTextColor;
     if (canBeUpgraded) {
-      if (constructionTask == null) {
-        labelBackground = DartopiaColors.primaryContainer;
-        labelTextColor = DartopiaColors.onPrimary;
-      } else {
-        labelBackground = DartopiaColors.secondaryContainer;
-        labelTextColor = Colors.black;
-      }
+      labelBackground = DartopiaColors.primaryContainer;
+      labelTextColor = DartopiaColors.onPrimary;
+    } else if (canBeUpgradedWithGold) {
+      labelBackground = DartopiaColors.secondaryContainer;
+      labelTextColor = Colors.black;
     } else {
       labelBackground = DartopiaColors.white38;
       labelTextColor = Colors.black;

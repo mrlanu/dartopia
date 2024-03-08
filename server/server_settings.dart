@@ -11,7 +11,7 @@ class ServerSettings {
       required this.mapHeight,
       required this.oasesAmount,
       required this.troopsSpeed,
-      required this.maxConstructionTasksInQueue});
+      required this.maxConstructionTasksInQueue,});
 
   final String serverName;
   final int mapWidth;
@@ -21,7 +21,7 @@ class ServerSettings {
   final int maxConstructionTasksInQueue;
 
   // Singleton instance
-  static final ServerSettings _instance = ServerSettings._(
+  static ServerSettings _instance = ServerSettings._(
     serverName: 'testServer',
     mapWidth: 50,
     mapHeight: 50,
@@ -32,7 +32,7 @@ class ServerSettings {
 
   // Method to initialize settings from JSON
   static void initializeFromMap(Map<String, dynamic> map) {
-    _instance.copyWith(
+   _instance = _instance.copyWith(
       serverName: map['serverName'] as String,
       mapWidth: map['mapWidth'] as int,
       mapHeight: map['mapHeight'] as int,
@@ -57,7 +57,7 @@ class ServerSettings {
       int? mapHeight,
       int? oasesAmount,
       int? troopsSpeed,
-      int? maxConstructionTasksInQueue}) {
+      int? maxConstructionTasksInQueue,}) {
     return ServerSettings._(
       serverName: serverName ?? this.serverName,
       mapWidth: mapWidth ?? this.mapWidth,

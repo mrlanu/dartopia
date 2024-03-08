@@ -16,36 +16,36 @@ class Settlement extends Equatable {
     this.storage = const [500.0, 500.0, 500.0, 500.0],
     this.buildings = const [
       //------------------FIELDS----------------
-      [0, 0, 0],
-      [1, 0, 0],
-      [2, 0, 1],
-      [3, 0, 0],
+      [0, 0, 0, 0], // [position, id, level, canBeUpgraded]
+      [1, 0, 0, 0],
+      [2, 0, 1, 0],
+      [3, 0, 0, 0],
       // lumber
-      [4, 1, 0],
-      [5, 1, 0],
-      [6, 1, 1],
-      [7, 1, 0],
+      [4, 1, 0, 0],
+      [5, 1, 0, 0],
+      [6, 1, 1, 0],
+      [7, 1, 0, 0],
       // clay
-      [8, 2, 0],
-      [9, 2, 0],
-      [10, 2, 1],
-      [11, 2, 0],
+      [8, 2, 0, 0],
+      [9, 2, 0, 0],
+      [10, 2, 1, 0],
+      [11, 2, 0, 0],
       // iron
-      [12, 3, 0],
-      [13, 3, 0],
-      [14, 3, 0],
-      [15, 3, 1],
-      [16, 3, 0],
-      [17, 3, 0],
+      [12, 3, 0, 0],
+      [13, 3, 0, 0],
+      [14, 3, 0, 0],
+      [15, 3, 1, 0],
+      [16, 3, 0, 0],
+      [17, 3, 0, 0],
       // crop
       //------------------BUILDINGS----------------
-      [18, 4, 1],
-      [19, 99, 0],
-      [20, 99, 0],
-      [21, 99, 0],
-      [22, 99, 0],
-      [23, 99, 0],
-      [24, 99, 0],
+      [18, 4, 1, 0],
+      [19, 99, 0, 0],
+      [20, 99, 0, 0],
+      [21, 99, 0, 0],
+      [22, 99, 0, 0],
+      [23, 99, 0, 0],
+      [24, 99, 0, 0],
     ],
     this.units = const [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     this.movements = const [],
@@ -243,7 +243,7 @@ class Settlement extends Equatable {
   /// Changing the BuildingRecord on given position.
   void changeBuilding(
       {required int position, required int buildingId, required int level}) {
-    buildings[position] = [position, buildingId, level];
+    buildings[position] = [position, buildingId, level, 0];
   }
 
   /// Converting a BuildingRecord to a map representation.
@@ -311,4 +311,23 @@ class Settlement extends Equatable {
 
   @override
   List<Object?> get props => [id, storage, buildings, constructionTasks];
+
+  void checkBuildingsForUpgradePosibility(int maxTaskQueue) {
+    for (final building in buildings) {
+      if (building[1] == 99 || building[1] == 100) continue;
+      final canBeUpgraded = buildingSpecefication[building[1]]!
+          .canBeUpgraded(storage: storage, toLevel: building[2] + 1);
+      if (canBeUpgraded) {
+        if (constructionTasks.length < maxTaskQueue) {
+          building[3] = 1;
+        } else if (constructionTasks.length == maxTaskQueue) {
+          building[3] = 2;
+        } else {
+          building[3] = 0;
+        }
+      }else{
+        building[3] = 0;
+      }
+    }
+  }
 }
