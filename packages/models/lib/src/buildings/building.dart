@@ -78,7 +78,7 @@ class Building {
     required List<List<int>> existingBuildings,
   }) {
     return existingBuildings
-        .where((bR) => bR[1] == building[1] && building[1] <= bR[2])
+        .where((bR) => bR[1] == building[0] && building[1] <= bR[2])
         .isNotEmpty;
   }
 }

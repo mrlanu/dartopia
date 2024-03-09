@@ -114,7 +114,7 @@ class BuildingContainer extends StatelessWidget {
                             ),
                       const SizedBox(width: 20),
                       IconButton.outlined(
-                          color: DartopiaColors.primaryContainer,
+                          color: DartopiaColors.primary,
                           onPressed:
                               state.settlement!.constructionTasks.length <
                                           maxConstructionTasksAllowed &&
