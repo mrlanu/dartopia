@@ -49,7 +49,7 @@ class ConfirmSendTroops extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
-                TroopDetails(
+                TroopDetailsTable(
                     isEstimate: true,
                     movement: _createMovement(state, currentSettlement)),
                 const Divider(),

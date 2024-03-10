@@ -9,7 +9,9 @@ class DartopiaImages {
   static const String carry = 'assets/images/resources/carry.png';
 
   static const String troops = 'assets/images/troops/gaul.png';
+  static const String phalang = 'assets/images/troops/t1.png';
   static const String tiles = 'assets/images/resources/tiles.png';
 
   static const String logo = 'assets/images/logo/dartopia_logo.png';
+  static const String troopMock = 'assets/images/resources/silhouete.jpg';
 }

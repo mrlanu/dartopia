@@ -15,19 +15,21 @@ class Granary extends StatelessWidget {
       key: ValueKey('${buildingRecord[1]} ${buildingRecord[0]}'),
       buildingRecord: buildingRecord,
       child: (settlement, buildingRecord) {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              'Capacity: ${buildingSpecefication[buildingRecord[1]]!.getCapacity(buildingRecord[2])}',
-              style: const TextStyle(fontSize: 20),
-            ),
-            Text(
-              'Capacity on level ${buildingRecord[2] + 1} : ${buildingSpecefication[buildingRecord[1]]!.getCapacity(buildingRecord[2] + 1)}',
-              style: const TextStyle(fontSize: 20),
-            ),
-          ],
+        return Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Capacity: ${buildingSpecefication[buildingRecord[1]]!.getCapacity(buildingRecord[2])}',
+                style: const TextStyle(fontSize: 20),
+              ),
+              Text(
+                'Capacity on level ${buildingRecord[2] + 1} : ${buildingSpecefication[buildingRecord[1]]!.getCapacity(buildingRecord[2] + 1)}',
+                style: const TextStyle(fontSize: 20),
+              ),
+            ],
+          ),
         );
       },
     );

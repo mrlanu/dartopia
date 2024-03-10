@@ -35,140 +35,116 @@ class BuildingContainer extends StatelessWidget {
             .toList();
         return Card(
             elevation: 5,
-            child: Container(
-              padding: const EdgeInsets.all(15),
-              height: 390,
-              child: Column(
-                children: [
-                  Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        '${specification.name} level ${buildingRecord[2]}',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      )),
-                  const Divider(),
-                  Expanded(
-                      child: child != null
-                          ? child!(state.settlement!, buildingRecord)
-                          : Container()),
-                  const Divider(),
-                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    _buildResItem(
-                        imagePath: DartopiaImages.lumber,
-                        specification: specification,
-                        buildingRecord: buildingRecord,
-                        storage: storage,
-                        position: 0),
-                    _buildResItem(
-                        imagePath: DartopiaImages.clay,
-                        specification: specification,
-                        buildingRecord: buildingRecord,
-                        storage: storage,
-                        position: 1),
-                    _buildResItem(
-                        imagePath: DartopiaImages.iron,
-                        specification: specification,
-                        buildingRecord: buildingRecord,
-                        storage: storage,
-                        position: 2),
-                    _buildResItem(
-                        imagePath: DartopiaImages.crop,
-                        specification: specification,
-                        buildingRecord: buildingRecord,
-                        storage: storage,
-                        position: 3),
-                  ]),
-                  const Divider(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      upgradingTask.isEmpty
-                          ? Row(children: [
-                              Image.asset(
-                                DartopiaImages.clock,
-                                width: 50,
-                                height: 50,
-                              ),
-                              Text(FormatUtil.formatTime(specification.time
-                                  .valueOf(buildingRecord[2] + 1))),
-                            ])
-                          : Column(
-                              children: [
-                                Text(
-                                  'Upgrading to lvl: ${buildingRecord[2] + 1}',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                CountdownTimer(
-                                  startValue: upgradingTask[0]
-                                      .executionTime
-                                      .difference(DateTime.now())
-                                      .inSeconds,
-                                  onFinish: () {
-                                    context
-                                        .read<SettlementBloc>()
-                                        .add(const SettlementFetchRequested());
-                                  },
-                                ),
-                              ],
+            child: Column(
+              children: [
+                child != null
+                    ? child!(state.settlement!, buildingRecord)
+                    : Container(),
+                _RequiredResourcesBar(
+                    buildingRecord: buildingRecord,
+                    specification: specification,
+                    storage: storage),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    upgradingTask.isEmpty
+                        ? Row(children: [
+                            Image.asset(
+                              DartopiaImages.clock,
+                              width: 50,
+                              height: 50,
                             ),
-                      const SizedBox(width: 20),
-                      IconButton.outlined(
-                          color: DartopiaColors.primary,
-                          onPressed:
-                              state.settlement!.constructionTasks.length <
-                                          maxConstructionTasksAllowed &&
-                                      specification.canBeUpgraded(
-                                          storage: storage,
-                                          toLevel: buildingRecord[2] + 1)
-                                  ? () {
-                                      final request = ConstructionRequest(
-                                          buildingId: specification.id,
-                                          position: buildingRecord[0],
-                                          toLevel: buildingRecord[2] + 1);
-                                      context.read<SettlementBloc>().add(
-                                          BuildingUpgradeRequested(
-                                              request: request));
-                                    }
-                                  : null,
-                          icon: const Icon(Icons.update)),
-                      const SizedBox(width: 20),
-                      enterable
-                          ? IconButton.outlined(
-                              color: DartopiaColors.primary,
-                              onPressed: () {
-                                onEnter!();
-                              },
-                              icon: const Icon(Icons.input))
-                          : const SizedBox(),
-                    ],
-                  )
-                ],
-              ),
+                            Text(FormatUtil.formatTime(specification.time
+                                .valueOf(buildingRecord[2] + 1))),
+                          ])
+                        : Column(
+                            children: [
+                              Text(
+                                'Upgrading to lvl: ${buildingRecord[2] + 1}',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              CountdownTimer(
+                                startValue: upgradingTask[0]
+                                    .executionTime
+                                    .difference(DateTime.now())
+                                    .inSeconds,
+                                onFinish: () {
+                                  context
+                                      .read<SettlementBloc>()
+                                      .add(const SettlementFetchRequested());
+                                },
+                              ),
+                            ],
+                          ),
+                    const SizedBox(width: 20),
+                    IconButton.outlined(
+                        color: DartopiaColors.primary,
+                        onPressed:
+                            state.settlement!.constructionTasks.length <
+                                        maxConstructionTasksAllowed &&
+                                    specification.canBeUpgraded(
+                                        storage: storage,
+                                        toLevel: buildingRecord[2] + 1)
+                                ? () {
+                                    final request = ConstructionRequest(
+                                        buildingId: specification.id,
+                                        position: buildingRecord[0],
+                                        toLevel: buildingRecord[2] + 1);
+                                    context.read<SettlementBloc>().add(
+                                        BuildingUpgradeRequested(
+                                            request: request));
+                                  }
+                                : null,
+                        icon: const Icon(Icons.update)),
+                    const SizedBox(width: 20),
+                    enterable
+                        ? IconButton.outlined(
+                            color: DartopiaColors.primary,
+                            onPressed: () {
+                              onEnter!();
+                            },
+                            icon: const Icon(Icons.input))
+                        : const SizedBox(),
+                  ],
+                )
+              ],
             ));
       },
     );
   }
+}
 
-  Widget _buildResItem(
-      {required String imagePath,
-      required Building specification,
-      required List<int> buildingRecord,
-      required List<double> storage,
-      required int position}) {
+class _RequiredResourcesBar extends StatelessWidget {
+  const _RequiredResourcesBar(
+      {required this.buildingRecord,
+        required this.specification,
+        required this.storage});
+
+  final List<int> buildingRecord;
+  final Building specification;
+  final List<double> storage;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      _buildResItem(imagePath: DartopiaImages.lumber, position: 0),
+      _buildResItem(imagePath: DartopiaImages.clay, position: 1),
+      _buildResItem(imagePath: DartopiaImages.iron, position: 2),
+      _buildResItem(imagePath: DartopiaImages.crop, position: 3),
+    ]);
+  }
+
+  Widget _buildResItem({required String imagePath, required int position}) {
     final resToNextLvl =
-        specification.getResourcesToNextLevel(buildingRecord[2] + 1);
+    specification.getResourcesToNextLevel(buildingRecord[2] + 1);
     return Row(children: [
-      Image.asset(
-        imagePath,
-        width: 40,
-        height: 40,
-      ),
+      Image.asset(imagePath, width: 40, height: 40,),
       Text(
         '${specification.getResourcesToNextLevel(buildingRecord[2] + 1)[position]}',
         style: TextStyle(
             color:
-                resToNextLvl[position] > storage[position] ? Colors.red : null),
+            resToNextLvl[position] > storage[position] ? Colors.red : null),
       )
     ]);
   }

@@ -99,7 +99,7 @@ class _RallyPointViewState extends State<RallyPointView> {
                           )
                         : Container(),
                     ...state.movementsByLocationMap[MovementLocation.incoming]!
-                        .map((move) => TroopDetails(
+                        .map((move) => TroopDetailsTable(
                               movement: move,
                             ))
                         .toList(),
@@ -113,7 +113,7 @@ class _RallyPointViewState extends State<RallyPointView> {
                           )
                         : Container(),
                     ...state.movementsByLocationMap[MovementLocation.outgoing]!
-                        .map((move) => TroopDetails(
+                        .map((move) => TroopDetailsTable(
                               movement: move,
                             ))
                         .toList(),
@@ -125,7 +125,7 @@ class _RallyPointViewState extends State<RallyPointView> {
                       ),
                     ),
                     ...state.movementsByLocationMap[MovementLocation.home]!
-                        .map((move) => TroopDetails(
+                        .map((move) => TroopDetailsTable(
                               movement: move,
                             ))
                         .toList(),
@@ -139,7 +139,7 @@ class _RallyPointViewState extends State<RallyPointView> {
                           )
                         : Container(),
                     ...state.movementsByLocationMap[MovementLocation.away]!
-                        .map((move) => TroopDetails(
+                        .map((move) => TroopDetailsTable(
                               movement: move,
                             ))
                         .toList(),

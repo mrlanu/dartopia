@@ -6,8 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:models/models.dart';
 
-class TroopDetails extends StatelessWidget {
-  const TroopDetails(
+class TroopDetailsTable extends StatelessWidget {
+  const TroopDetailsTable(
       {super.key,
       required this.movement,
       this.isEstimate = false,
