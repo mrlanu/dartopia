@@ -1,14 +1,11 @@
-import 'package:dartopia/rally_point/rally_point.dart';
+import 'dart:ui' as ui;
+
 import 'package:dartopia/world_map/repository/world_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'dart:ui' as ui;
-
 import 'package:models/models.dart';
-
-import '../../../settlement/settlement.dart';
 
 class MapTileWidget extends StatelessWidget {
   final MapTile tile;
@@ -92,6 +89,7 @@ class MapTileWidget extends StatelessWidget {
               onPressed: () {
                 context
                     .push('/rally_point/1?x=${tileDetails.x}&y=${tileDetails.x}');
+                Navigator.of(context, rootNavigator: true).pop();
               },
               icon: const FaIcon(FontAwesomeIcons.khanda)),
         ],

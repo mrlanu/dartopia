@@ -64,7 +64,6 @@ class SettlementView extends StatelessWidget {
   Widget build(BuildContext context) {
     final selectedTab =
         context.select((NavigationCubit cubit) => cubit.state.tab);
-    context.read<SettlementBloc>().add(const ListOfSettlementsRequested());
     return SafeArea(
       child: Scaffold(
           backgroundColor: DartopiaColors.background,
