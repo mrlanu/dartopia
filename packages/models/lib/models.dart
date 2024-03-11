@@ -12,6 +12,7 @@ export 'src/executable_task.dart';
 export 'src/movement.dart';
 export 'src/movement_location.dart';
 export 'src/nations.dart';
+export 'src/proba.dart';
 export 'src/reports/reports.dart';
 export 'src/requests/requests.dart';
 export 'src/resources/resources.dart';
