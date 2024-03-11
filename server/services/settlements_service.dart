@@ -127,7 +127,8 @@ class SettlementServiceImpl extends SettlementService {
     );
 
     settlement.checkBuildingsForUpgradePosibility(
-        ServerSettings().maxConstructionTasksInQueue,);
+      ServerSettings().maxConstructionTasksInQueue,
+    );
 
     final updatedSettlement =
         await _settlementRepository.updateSettlement(settlement);
@@ -181,7 +182,7 @@ class SettlementServiceImpl extends SettlementService {
       Settlement settlement, DateTime untilDateTime) {
     final result = <Executable>[];
     final ordersList = settlement.combatUnitQueue;
-    final newOrdersList = <CombatUtitQueue>[];
+    final newOrdersList = <CombatUnitQueue>[];
 
     if (ordersList.isNotEmpty) {
       for (final order in ordersList) {
@@ -213,7 +214,7 @@ class SettlementServiceImpl extends SettlementService {
     return result;
   }
 
-  List<Executable> _addCompletedCombatUnit(CombatUtitQueue order, int amount) {
+  List<Executable> _addCompletedCombatUnit(CombatUnitQueue order, int amount) {
     final result = <Executable>[];
     var exec = order.lastTime;
     for (var i = 0; i < amount; i++) {
@@ -228,6 +229,7 @@ class SettlementServiceImpl extends SettlementService {
     final newSettlement = Settlement(
       id: ObjectId(),
       userId: userId,
+      nation: Nations.gaul,
       x: Random().nextInt(Config.worldWidth),
       y: Random().nextInt(Config.worldHeight),
     );
@@ -281,7 +283,8 @@ class SettlementServiceImpl extends SettlementService {
         );
       }
       settlement.checkBuildingsForUpgradePosibility(
-        ServerSettings().maxConstructionTasksInQueue,);
+        ServerSettings().maxConstructionTasksInQueue,
+      );
       return updateSettlement(
         settlement: settlement,
       );
@@ -297,23 +300,26 @@ class SettlementServiceImpl extends SettlementService {
 
     DateTime lastTime;
     if (ordersList.isNotEmpty) {
-      final lastOrder = ordersList[ordersList.length - 1];
+      final lastOrder = ordersList.last;
       lastTime = lastOrder.lastTime
           .add(Duration(seconds: lastOrder.leftTrain * lastOrder.durationEach));
     } else {
       lastTime = DateTime.now();
     }
 
-    final order = CombatUtitQueue(
+    final order = CombatUnitQueue(
       lastTime: lastTime,
       unitId: request.unitId,
       leftTrain: request.amount,
-      durationEach: 15,
+      durationEach: ServerSettings().troopBuildDuration,
     );
 
-    // unimplemented spend resources
-
-    settlement.addCombatUnitOrder(order);
+    final unit = UnitsConst.UNITS[settlement.nation.index][order.unitId];
+    final costOfAll =
+        unit.cost.map((price) => price * order.leftTrain).toList();
+    settlement
+      ..spendResources(costOfAll)
+      ..addCombatUnitOrder(order);
     return updateSettlement(settlement: settlement);
   }
 

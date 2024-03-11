@@ -1,4 +1,5 @@
 import 'package:dartopia/authentication/bloc/auth_bloc.dart';
+import 'package:dartopia/settlement/settlement.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -33,8 +34,7 @@ class _MainDrawerState extends State<MainDrawer> {
                       width: double.infinity,
                       child: const Text(
                         'Dartopia for $userName',
-                        style: TextStyle(
-                            color: Colors.white70, fontSize: 25),
+                        style: TextStyle(color: Colors.white70, fontSize: 25),
                       ) /*Image.asset('assets/images/piggy_logo.png',
                             fit: BoxFit.contain)*/
                       ),

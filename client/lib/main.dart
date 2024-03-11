@@ -47,8 +47,7 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) =>
-                SettlementBloc(settlementRepository: _settlementRepository)
-                  ..add(const ListOfSettlementsRequested()),
+                SettlementBloc(settlementRepository: _settlementRepository),
           ),
         ],
         child: AppView(),
@@ -66,6 +65,7 @@ class AppView extends StatelessWidget {
       listenWhen: (previous, current) => previous != current,
       listener: (context, state) {
         _router.refresh();
+        _router.go('/');
       },
       child: MaterialApp.router(
         routerConfig: _router,
@@ -78,6 +78,7 @@ class AppView extends StatelessWidget {
 
   /// The route configuration.
   late final GoRouter _router = GoRouter(
+    initialLocation: '/',
     routes: [
       GoRoute(
         path: '/',
@@ -112,17 +113,27 @@ class AppView extends StatelessWidget {
               path: 'details',
               builder: (context, state) {
                 final buildingRecord = state.extra as List<int>;
+                context
+                    .read<SettlementBloc>()
+                    .add(const SettlementFetchRequested());
                 return BuildingDetailPage(buildingRecord: buildingRecord);
+              },
+              onExit: (context) async {
+                context
+                    .read<SettlementBloc>()
+                    .add(const SettlementFetchRequested());
+                return true;
               },
             ),
           ]),
       GoRoute(
         path: '/rally_point/:tabId',
         builder: (BuildContext context, GoRouterState state) {
-          final x = state.uri.queryParameters['x']?? 0.toString();
-          final y = state.uri.queryParameters['y']?? 0.toString();
+          final x = state.uri.queryParameters['x'] ?? 0.toString();
+          final y = state.uri.queryParameters['y'] ?? 0.toString();
           final coordinates = [int.parse(x), int.parse(y)];
-          return RallyPointPage(targetCoordinates: coordinates,
+          return RallyPointPage(
+              targetCoordinates: coordinates,
               tabIndex: int.parse(state.pathParameters['tabId']!));
         },
       ),
@@ -133,7 +144,7 @@ class AppView extends StatelessWidget {
 
   Future<String?> _guard(BuildContext context, GoRouterState state) async {
     final bool signedIn = context.read<AuthBloc>().state is AuthenticatedState;
-    if(context.read<AuthBloc>().state is UnknownState){
+    if (context.read<AuthBloc>().state is UnknownState) {
       return '/splash';
     }
     final bool signingIn =

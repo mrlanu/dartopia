@@ -10,7 +10,7 @@ class UnitReadyTask implements Executable {
   void execute(Settlement settlement) {
     print('Inside UnitReadyTask task execute method.');
     final updatedList = List<int>.from(settlement.units);
-    updatedList[1] += 1;
+    updatedList[unitId] += 1;
     settlement.units = updatedList;
   }
 

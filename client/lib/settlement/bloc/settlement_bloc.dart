@@ -40,7 +40,13 @@ class SettlementBloc extends Bloc<SettlementEvent, SettlementState> {
     await emit.forEach<Settlement?>(
       _villageRepository.getSettlement(),
       onData: (settlement) {
-        if (settlement != null) {
+        // since SettlementBloc not rebuild after logout
+        // there is settlement from previous user
+        final isSameUser = settlement != null &&
+            state.settlementList
+                .where((s) => s.settlementId == settlement.id.$oid)
+                .isNotEmpty;
+        if (settlement != null && isSameUser) {
           final movementsMap = _sortMovementsByLocation(settlement.movements);
           return state.copyWith(
               status: SettlementStatus.success,

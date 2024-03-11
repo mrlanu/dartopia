@@ -91,7 +91,7 @@ class MapTileWidget extends StatelessWidget {
               color: Colors.green,
               onPressed: () {
                 context
-                    .go('/rally_point/1?x=${tileDetails.x}&y=${tileDetails.x}');
+                    .push('/rally_point/1?x=${tileDetails.x}&y=${tileDetails.x}');
               },
               icon: const FaIcon(FontAwesomeIcons.khanda)),
         ],

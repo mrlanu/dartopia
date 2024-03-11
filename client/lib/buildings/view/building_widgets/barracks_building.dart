@@ -1,7 +1,10 @@
 import 'package:dartopia/consts/calors.dart';
 import 'package:dartopia/consts/images.dart';
-import 'package:dartopia/utils/time_formatter.dart';
+import 'package:dartopia/settlement/settlement.dart';
+import 'package:dartopia/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:models/models.dart';
 
 import '../../buildings.dart';
@@ -21,21 +24,14 @@ class BarracksBuilding extends StatelessWidget {
             child: SingleChildScrollView(
                 child: Column(
           children: [
-            const _TroopOrderForm(),
-            const _TroopOrderForm(),
-            const _TroopOrderForm(),
-            const _TroopOrderForm(),
-            const Divider(),
-            Align(
-                alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10.0),
-                  child: Text(
-                    'In progress',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                )),
-            const _InTrainingTable(),
+            for (final troopId in settlement.availableUnits)
+              _TroopOrderForm(unitId: troopId, settlement: settlement),
+            settlement.combatUnitQueue.isNotEmpty
+                ? _InTrainingTable(
+                    key: UniqueKey(),
+                    lastModifiedDate: settlement.lastModified,
+                    combatUnitQueue: settlement.combatUnitQueue)
+                : Container(),
           ],
         )));
       },
@@ -44,15 +40,70 @@ class BarracksBuilding extends StatelessWidget {
 }
 
 class _TroopOrderForm extends StatefulWidget {
-  const _TroopOrderForm();
+  const _TroopOrderForm({required this.unitId, required this.settlement});
+
+  final int unitId;
+  final Settlement settlement;
 
   @override
   State<_TroopOrderForm> createState() => _TroopOrderFormState();
 }
 
 class _TroopOrderFormState extends State<_TroopOrderForm> {
+  late TextEditingController _textEditingController;
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    _textEditingController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _onSubmit() async {
+    final settlementBloc = context.read<SettlementBloc>();
+    final amount = _parseString(_textEditingController.text);
+    final settlementRepo = context.read<SettlementRepository>();
+    try {
+      await settlementRepo.orderUnits(
+          settlementId: widget.settlement.id.$oid,
+          unitId: widget.unitId,
+          amount: amount);
+      _textEditingController.clear();
+      _formKey.currentState!.reset();
+      settlementBloc.add(const SettlementFetchRequested());
+    } catch (e) {}
+  }
+
+  int _parseString(String text) {
+    int result;
+    try {
+      result = int.parse(text);
+    } catch (e) {
+      result = 0;
+    }
+    return result;
+  }
+
+  int _calculateMaxUnitsAmount(List<int> cost, List<double> storage) {
+    int minResult = 1000000;
+    for (int i = 0; i < storage.length; i++) {
+      int result = storage[i] ~/ cost[i];
+      minResult = result < minResult ? result : minResult;
+    }
+    return minResult;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final unit = UnitsConst.UNITS[widget.settlement.nation.index][widget.unitId];
+    final maxAmount =
+        _calculateMaxUnitsAmount(unit.cost, widget.settlement.storage);
     return LayoutBuilder(builder: (context, constraints) {
       return Card(
         color: DartopiaColors.primaryContainer,
@@ -87,23 +138,28 @@ class _TroopOrderFormState extends State<_TroopOrderForm> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Row(
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('Legionnaire'),
-                        Text(' Level 0'),
-                        Text('( present 2)'),
+                        Text(unit.name),
+                        const Text(' Level 0'),
+                        Text(
+                            '( present ${widget.settlement.units[widget.unitId]})'),
                       ],
                     ),
-                    const _CostBar(),
+                    _CostBar(unitId: widget.unitId),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
                           width: constraints.maxWidth * 0.2,
-                          child: _buildAmountFormInput(),
+                          child: _buildAmountFormInput(maxAmount),
                         ),
-                        const Text(' / 4'),
+                        GestureDetector(
+                          onTap: () => _textEditingController.text =
+                              maxAmount.toString(),
+                          child: Text(' / $maxAmount'),
+                        ),
                         const SizedBox(
                           width: 30,
                         ),
@@ -111,7 +167,9 @@ class _TroopOrderFormState extends State<_TroopOrderForm> {
                           height: 25,
                           child: ElevatedButton(
                             onPressed: () {
-                              // Add your button click logic here
+                              if (_formKey.currentState!.validate()) {
+                                _onSubmit();
+                              }
                             },
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.white,
@@ -140,41 +198,48 @@ class _TroopOrderFormState extends State<_TroopOrderForm> {
     });
   }
 
-  Widget _buildAmountFormInput() {
+  Widget _buildAmountFormInput(int maxAmount) {
     final size = MediaQuery.of(context).size;
-    return TextFormField(
-      initialValue: '0',
-      style: TextStyle(fontSize: size.width * 0.04),
-      onChanged: (name) {},
-      keyboardType: TextInputType.number,
-      decoration: InputDecoration(
-        isDense: true,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-        labelStyle:
-            TextStyle(fontSize: size.width * 0.04, color: DartopiaColors.black),
-        border: const OutlineInputBorder(),
-        labelText: 'Amount',
+    return Form(
+      key: _formKey,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      child: TextFormField(
+        controller: _textEditingController,
+        style: TextStyle(fontSize: size.width * 0.04),
+        keyboardType: TextInputType.number,
+        decoration: InputDecoration(
+          isDense: true,
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+          labelStyle: TextStyle(
+              fontSize: size.width * 0.04, color: DartopiaColors.black),
+          border: const OutlineInputBorder(),
+          errorStyle: const TextStyle(height: 0.01),
+          labelText: 'Amount',
+        ),
+        validator: (value) {
+          if (value == null ||
+              value.isEmpty ||
+              _parseString(value) <= 0 ||
+              _parseString(value) > maxAmount) {
+            return '';
+          }
+          return null;
+        },
+        onSaved: (newValue) {},
       ),
-      validator: (value) {
-        if (value == null ||
-            value.isEmpty ||
-            value.trim().length <= 3 ||
-            value.trim().length > 20) {
-          return 'Must be at least 3 characters long';
-        }
-        return null;
-      },
-      onSaved: (newValue) {},
     );
   }
 }
 
 class _CostBar extends StatelessWidget {
-  const _CostBar();
+  const _CostBar({required this.unitId});
+
+  final int unitId;
 
   @override
   Widget build(BuildContext context) {
-    final unit = UnitsConst.UNITS[2][0];
+    final unit = UnitsConst.UNITS[0][unitId];
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       _buildResItem(unit: unit, imagePath: DartopiaImages.lumber, position: 0),
       _buildResItem(unit: unit, imagePath: DartopiaImages.clay, position: 1),
@@ -218,25 +283,48 @@ class _CostBar extends StatelessWidget {
   }
 }
 
-class _InTrainingTable extends StatelessWidget {
-  const _InTrainingTable();
+class _InTrainingTable extends StatefulWidget {
+  const _InTrainingTable(
+      {super.key,
+      required this.combatUnitQueue,
+      required this.lastModifiedDate});
+
+  final List<CombatUnitQueue> combatUnitQueue;
+  final DateTime lastModifiedDate;
 
   @override
+  State<_InTrainingTable> createState() => _InTrainingTableState();
+}
+
+class _InTrainingTableState extends State<_InTrainingTable> {
+  @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: LayoutBuilder(
-        builder: (context, constraints) => Column(
-          children: [
-            _header(constraints.maxWidth),
-            _tableRow(constraints.maxWidth),
-            _tableRow(constraints.maxWidth),
-            _tableRow(constraints.maxWidth),
-            _tableRow(constraints.maxWidth),
-            _footer(constraints.maxWidth),
-          ],
+    return Column(
+      children: [
+        const Divider(),
+        Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 10.0),
+              child: Text(
+                'In progress',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+            )),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: LayoutBuilder(
+            builder: (context, constraints) => Column(
+              children: [
+                _header(constraints.maxWidth),
+                for (final c in widget.combatUnitQueue)
+                  _tableRow(c, constraints.maxWidth),
+                _footer(constraints.maxWidth),
+              ],
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 
@@ -301,7 +389,11 @@ class _InTrainingTable extends StatelessWidget {
     );
   }
 
-  Widget _tableRow(double maxWidth) {
+  Widget _tableRow(CombatUnitQueue combatUnitQueue, double maxWidth) {
+    final Unit unit = UnitsConst.UNITS[0][combatUnitQueue.unitId];
+    final durationInSeconds = combatUnitQueue.durationEach -
+        widget.lastModifiedDate.difference(combatUnitQueue.lastTime).inSeconds +
+        (combatUnitQueue.leftTrain - 1) * combatUnitQueue.durationEach;
     return Row(
       children: [
         Expanded(
@@ -317,9 +409,9 @@ class _InTrainingTable extends StatelessWidget {
                 // Skip the right side border
               ),
             ),
-            child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15.0),
-              child: Text('2 Legionnaire'),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              child: Text('${combatUnitQueue.leftTrain} ${unit.name}'),
             ),
           ),
         ),
@@ -333,8 +425,11 @@ class _InTrainingTable extends StatelessWidget {
                 // Skip the right side border
               ),
             ),
-            child: const Center(
-              child: Text('0:56:34'),
+            child: Center(
+              child: CountdownTimer(
+                startValue: durationInSeconds,
+                onFinish: () {},
+              ),
             ),
           ),
         ),
@@ -348,8 +443,9 @@ class _InTrainingTable extends StatelessWidget {
                 // Skip the right side border
               ),
             ),
-            child: const Center(
-              child: Text('03:34:09'),
+            child: Center(
+              child: Text(DateFormat('HH:mm:ss').format(
+                  DateTime.now().add(Duration(seconds: durationInSeconds)))),
             ),
           ),
         ),
@@ -358,6 +454,10 @@ class _InTrainingTable extends StatelessWidget {
   }
 
   Widget _footer(double maxWidth) {
+    final nextUnitDuration = widget.combatUnitQueue.first.durationEach -
+        widget.lastModifiedDate
+            .difference(widget.combatUnitQueue.first.lastTime)
+            .inSeconds;
     return Container(
       width: maxWidth,
       height: 22,
@@ -371,7 +471,20 @@ class _InTrainingTable extends StatelessWidget {
           // Skip the right side border
         ),
       ),
-      child: const Center(child: Text('Next unit will be ready in 0:26:03')),
+      child: Center(
+          child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text('Next unit will be ready in '),
+          CountdownTimer(
+              startValue: nextUnitDuration,
+              onFinish: () {
+                context
+                    .read<SettlementBloc>()
+                    .add(const SettlementFetchRequested());
+              })
+        ],
+      )),
     );
   }
 }

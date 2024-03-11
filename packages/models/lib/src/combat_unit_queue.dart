@@ -1,14 +1,14 @@
 import 'package:equatable/equatable.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
-class CombatUtitQueue extends Equatable{
+class CombatUnitQueue extends Equatable{
   final String id;
   DateTime lastTime;
   final int unitId;
   int leftTrain;
   final int durationEach;
 
-  CombatUtitQueue(
+  CombatUnitQueue(
       {String? id,
       required this.lastTime,
       required this.unitId,
@@ -16,9 +16,16 @@ class CombatUtitQueue extends Equatable{
       required this.durationEach})
       : id = id ?? Uuid().v4();
 
-  CombatUtitQueue.fromMap(Map<String, dynamic> map)
+  CombatUnitQueue.fromMap(Map<String, dynamic> map)
       : id = map['id'] as String,
         lastTime = map['lastTime'] as DateTime,
+        unitId = map['unitId'] as int,
+        leftTrain = map['leftTrain'] as int,
+        durationEach = map['durationEach'] as int;
+
+  CombatUnitQueue.fromJson(Map<String, dynamic> map)
+      : id = map['id'] as String,
+        lastTime = DateTime.parse(map['lastTime'] as String),
         unitId = map['unitId'] as int,
         leftTrain = map['leftTrain'] as int,
         durationEach = map['durationEach'] as int;
@@ -39,13 +46,13 @@ class CombatUtitQueue extends Equatable{
         'durationEach': durationEach,
       };
 
-  CombatUtitQueue copyWith(
+  CombatUnitQueue copyWith(
       {String? id,
       DateTime? lastTime,
       int? unitId,
       int? leftTrain,
       int? durationEach}) {
-    return CombatUtitQueue(
+    return CombatUnitQueue(
       id: id ?? this.id,
       lastTime: lastTime ?? this.lastTime,
       unitId: unitId ?? this.unitId,

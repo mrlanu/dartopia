@@ -13,6 +13,9 @@ abstract class SettlementRepository {
       {required String settlementId, required ConstructionRequest request});
 
   Future<List<ShortSettlementInfo>> fetchSettlementListByUserId();
+
+  Future<void> orderUnits(
+      {required String settlementId, required int unitId, required int amount});
 }
 
 class SettlementRepositoryImpl implements SettlementRepository {
@@ -62,10 +65,24 @@ class SettlementRepositoryImpl implements SettlementRepository {
       {required String settlementId,
       required ConstructionRequest request}) async {
     try {
-      final response = await _networkClient.post<Map<String, dynamic>>(Api.upgradeBuilding(settlementId),
-              data: json.encode(request));
+      final response = await _networkClient.post<Map<String, dynamic>>(
+          Api.upgradeBuilding(settlementId),
+          data: json.encode(request));
       final settlement = Settlement.fromJson(response.data!);
       _settlementStreamController.add(settlement);
+    } on DioException catch (e) {
+      throw NetworkException.fromDioError(e);
+    }
+  }
+
+  @override
+  Future<void> orderUnits(
+      {required String settlementId,
+      required int unitId,
+      required int amount}) async {
+    try {
+      await _networkClient.post(Api.orderTroops(settlementId),
+          data: OrderCombatUnitRequest(unitId: unitId, amount: amount).toMap());
     } on DioException catch (e) {
       throw NetworkException.fromDioError(e);
     }
