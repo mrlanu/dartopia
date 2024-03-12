@@ -39,6 +39,7 @@ class AuthRepo {
           data: json.encode({'email': email, 'password': password})
     );
     await _cacheClient.setAccessToken(accessToken: response.data!['token']);
+    await _cacheClient.setUsername(name: response.data!['name']);
     } on DioException catch (e) {
     throw NetworkException.fromDioError(e);
     }

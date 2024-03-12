@@ -1,3 +1,4 @@
+import 'package:cache_client/cache_client.dart';
 import 'package:dartopia/authentication/bloc/auth_bloc.dart';
 import 'package:dartopia/settlement/settlement.dart';
 import 'package:flutter/material.dart';
@@ -26,20 +27,22 @@ class _MainDrawerState extends State<MainDrawer> {
                 Color.fromRGBO(21, 56, 2, 1.0),
                 Color.fromRGBO(26, 89, 5, 1.0),
               ], begin: Alignment.topLeft, end: Alignment.bottomRight)),
-              child: Builder(builder: (context) {
-                const userName = 'DRAWER USERNAME';
-                return Center(
-                  child: Container(
-                      alignment: Alignment.center,
-                      width: double.infinity,
-                      child: const Text(
-                        'Dartopia for $userName',
-                        style: TextStyle(color: Colors.white70, fontSize: 25),
-                      ) /*Image.asset('assets/images/piggy_logo.png',
-                            fit: BoxFit.contain)*/
-                      ),
-                );
-              })),
+              child: FutureBuilder(
+                future: CacheClient.instance.getUsername(),
+                builder: (_, snapshot) {
+                  return snapshot.connectionState == ConnectionState.done
+                      ? Center(
+                          child: Container(
+                              alignment: Alignment.center,
+                              width: double.infinity,
+                              child: Text(
+                                'Dartopia for ${snapshot.data}',
+                                style: const TextStyle(
+                                    color: Colors.white70, fontSize: 25),
+                              )))
+                      : const Center(child: CircularProgressIndicator());
+                },
+              )),
           Expanded(
             child: SingleChildScrollView(
               child: Padding(
