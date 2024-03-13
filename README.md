@@ -1,4 +1,4 @@
-<img src="client/assets/images/logo/dartopia_logo.png" width="24%"/>
+<img src="readme_images/dartopia_logo.png" width="24%"/>
 
 [![Powered by Dart Frog](https://img.shields.io/endpoint?url=https://tinyurl.com/dartfrog-badge)](https://dartfrog.vgv.dev)
 
