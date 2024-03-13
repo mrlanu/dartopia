@@ -27,7 +27,7 @@ Middleware databaseProvider() {
 Future<void> _initServerSettings() async {
   final serverName = Platform.environment['SERVER_NAME'];
   assert(serverName != null,
-      'Server name required ==> SERVER_NAME=... dart_frog dev');
+      'Server name required ==> SERVER_NAME=... dart_frog dev',);
   try {
     if (_databaseClient.db != null && _databaseClient.db!.isConnected) {
       final settings = await _databaseClient.db!

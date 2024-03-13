@@ -25,6 +25,5 @@ Handler middleware(Handler handler) {
       .use(provider<SettlementService>((_) => _settlementService))
       .use(provider<WorldService>((_) => _worldService))
       .use(provider<Authenticator>((_) => _authenticator))
-      .use(provider<UserRepository>((_) => _userRepository))
-      .use(requestLogger());
+      .use(provider<UserRepository>((_) => _userRepository));
 }

@@ -30,16 +30,14 @@ class _EmptyState extends State<Empty> {
         _getAvailableNewBuildings(settlementState.settlement!.buildings);
     return PageView.builder(
         controller: _pageController,
-        onPageChanged: (value) {
-          setState(() {
-            //_currentPage = value % allBuildingList.length;
-          });
-        },
+        onPageChanged: (value) {},
+        itemCount: allBuildingList.length,
         itemBuilder: (context, index) {
           return Center(
               child: BuildingCard(
-            position: widget.buildingRecord[0],
-            specification: allBuildingList[index % allBuildingList.length],
+            buildingId: widget.buildingRecord[0],
+            //specification: allBuildingList[index % allBuildingList.length],
+            specification: allBuildingList[index],
             storage: settlementState.settlement!.storage,
             buildingRecords: settlementState.settlement!.buildings,
             constructionsTaskAmount:

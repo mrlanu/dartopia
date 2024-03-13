@@ -9,7 +9,7 @@ import '../../../utils/time_formatter.dart';
 import '../../buildings.dart';
 
 class BuildingCard extends StatelessWidget {
-  final int position;
+  final int buildingId;
   final Building specification;
   final List<double> storage;
   final List<List<int>> buildingRecords;
@@ -17,7 +17,7 @@ class BuildingCard extends StatelessWidget {
 
   const BuildingCard(
       {super.key,
-      required this.position,
+      required this.buildingId,
       required this.specification,
       required this.storage,
       required this.buildingRecords,
@@ -156,12 +156,12 @@ class BuildingCard extends StatelessWidget {
                                         maxConstructionTasksAllowed
                                 ? () {
                                     final request = ConstructionRequest(
-                                        buildingId: specification.id,
-                                        position: position,
+                                        specificationId: specification.id,
+                                        buildingId: buildingId,
                                         toLevel: 1);
                                     context.read<SettlementBloc>()
                                       ..add(BuildingIndexChanged(
-                                          index: position - 14))
+                                          index: buildingId - 14))
                                       ..add(BuildingUpgradeRequested(
                                           request: request));
                                     Navigator.of(context).pop();

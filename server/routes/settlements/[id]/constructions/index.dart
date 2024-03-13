@@ -8,7 +8,8 @@ import '../../../../services/settlements_service.dart';
 
 FutureOr<Response> onRequest(RequestContext context, String id) async {
   final settlementService = context.read<SettlementService>();
-  final settlement = await settlementService.tryToGetSettlement(settlementId: id);
+  final settlement =
+      await settlementService.tryToGetSettlement(settlementId: id);
 
   if (settlement == null) {
     return Response(
@@ -34,10 +35,11 @@ FutureOr<Response> onRequest(RequestContext context, String id) async {
 Future<Response> _post(RequestContext context, Settlement settlement) async {
   final settlementService = context.read<SettlementService>();
   final taskRequest = ConstructionRequest.fromJson(
-      await context.request.json() as Map<String, dynamic>
-  );
+      await context.request.json() as Map<String, dynamic>,);
   final result = await settlementService.addConstructionTask(
-      settlement: settlement, request: taskRequest,);
+    settlement: settlement,
+    request: taskRequest,
+  );
   return Response.json(
     statusCode:
         result != null ? HttpStatus.created : HttpStatus.internalServerError,
@@ -46,7 +48,5 @@ Future<Response> _post(RequestContext context, Settlement settlement) async {
 }
 
 Future<Response> _delete(RequestContext context, String id) async {
-  /*final dataSource = context.read<TodosDataSource>();
-  await dataSource.delete(id);*/
   return Response(statusCode: HttpStatus.noContent);
 }

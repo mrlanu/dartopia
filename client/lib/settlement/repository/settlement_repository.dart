@@ -16,6 +16,9 @@ abstract class SettlementRepository {
 
   Future<void> orderUnits(
       {required String settlementId, required int unitId, required int amount});
+
+  Future<void> reorderBuildings(
+      {required String settlementId, required List<List<int>> newBuildings});
 }
 
 class SettlementRepositoryImpl implements SettlementRepository {
@@ -83,6 +86,18 @@ class SettlementRepositoryImpl implements SettlementRepository {
     try {
       await _networkClient.post(Api.orderTroops(settlementId),
           data: OrderCombatUnitRequest(unitId: unitId, amount: amount).toMap());
+    } on DioException catch (e) {
+      throw NetworkException.fromDioError(e);
+    }
+  }
+
+  @override
+  Future<void> reorderBuildings(
+      {required String settlementId,
+      required List<List<int>> newBuildings}) async {
+    try {
+      await _networkClient.post(Api.reorderBuildings(settlementId),
+          data: json.encode(newBuildings));
     } on DioException catch (e) {
       throw NetworkException.fromDioError(e);
     }

@@ -31,6 +31,10 @@ class Api {
     return '/settlements/$settlementId/constructions';
   }
 
+  static String reorderBuildings(String settlementId) {
+    return '/settlements/$settlementId/reorder_buildings';
+  }
+
   static String orderTroops(String settlementId) {
     return '/settlements/$settlementId/order_troops';
   }

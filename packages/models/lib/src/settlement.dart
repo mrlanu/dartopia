@@ -79,7 +79,8 @@ class Settlement extends Equatable {
             .map((e) => ConstructionTask.fromMap(e as Map<String, dynamic>))
             .toList(),
         availableUnits = (map['availableUnits'] as List<dynamic>)
-            .map((e) => e as int).toList(),
+            .map((e) => e as int)
+            .toList(),
         combatUnitQueue = (map['combatUnitQueue'] as List<dynamic>)
             .map((e) => CombatUnitQueue.fromMap(e as Map<String, dynamic>))
             .toList(),
@@ -108,7 +109,8 @@ class Settlement extends Equatable {
             .map((e) => ConstructionTask.fromJson(e as Map<String, dynamic>))
             .toList(),
         availableUnits = (map['availableUnits'] as List<dynamic>)
-            .map((e) => e as int).toList(),
+            .map((e) => e as int)
+            .toList(),
         combatUnitQueue = (map['combatUnitQueue'] as List<dynamic>)
             .map((e) => CombatUnitQueue.fromJson(e as Map<String, dynamic>))
             .toList(),
@@ -250,10 +252,28 @@ class Settlement extends Equatable {
     storage = result;
   }
 
+  /// Add the BuildingRecord to the end of buildings list.
+  void addConstruction(
+      {required int buildingId,
+        required int specificationId,
+        required int level}) {
+    buildings.add([buildingId, specificationId, level, 0]);
+  }
+
   /// Changing the BuildingRecord on given position.
   void changeBuilding(
-      {required int position, required int buildingId, required int level}) {
-    buildings[position] = [position, buildingId, level, 0];
+      {required int buildingId,
+      required int specificationId,
+      required int level}) {
+    buildings.firstWhere((element) => element[0] == buildingId);
+    var index = -1;
+    for (var i = 0; i < buildings.length; i++) {
+      if (buildings[i][0] == buildingId) {
+        index = i;
+        break;
+      }
+    }
+    buildings[index] = [buildingId, specificationId, level, 0];
   }
 
   /// Converting a BuildingRecord to a map representation.
@@ -343,9 +363,15 @@ class Settlement extends Equatable {
         } else {
           building[3] = 0;
         }
-      }else{
+      } else {
         building[3] = 0;
       }
+    }
+  }
+
+  void reorderBuildings(List<List<int>> newBuildings) {
+    for (var i = 0; i < buildings.length; i++) {
+      buildings[i] = newBuildings[i];
     }
   }
 }

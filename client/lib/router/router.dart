@@ -40,11 +40,15 @@ final GoRouter _router = GoRouter(
           ),
         ]),
     ShellRoute(
-        builder: (_, __, child) => BlocProvider(
-            create: (context) =>
-                SettlementBloc(settlementRepository: SettlementRepositoryImpl())
-                  ..add(const ListOfSettlementsRequested()),
-            child: child),
+        builder: (_, __, child) => RepositoryProvider<SettlementRepository>(
+          create: (context) => SettlementRepositoryImpl(),
+          child: BlocProvider(
+              create: (context) => SettlementBloc(
+                  settlementRepository:
+                  context.read<SettlementRepository>())
+                ..add(const ListOfSettlementsRequested()),
+              child: child),
+        ),
         routes: [
           GoRoute(
               path: '/settlement',

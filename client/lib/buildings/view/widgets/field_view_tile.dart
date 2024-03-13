@@ -63,8 +63,8 @@ class FieldViewTile extends StatelessWidget {
                     onPressed: canBeUpgraded && isUpgrading == null
                         ? () {
                             final request = ConstructionRequest(
-                                buildingId: buildingRecord[1],
-                                position: buildingRecord[0],
+                                specificationId: buildingRecord[1],
+                                buildingId: buildingRecord[0],
                                 toLevel: buildingRecord[2] + 1);
                             context.read<SettlementBloc>().add(
                                 BuildingUpgradeRequested(request: request));

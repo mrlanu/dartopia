@@ -15,7 +15,7 @@ class Construction extends StatelessWidget {
     return BlocBuilder<SettlementBloc, SettlementState>(
       builder: (context, state) {
         final upgradingTask = state.settlement!.constructionTasks
-            .where((task) => task.position == buildingRecord[0])
+            .where((task) => task.buildingId == buildingRecord[0])
             .toList();
         return upgradingTask.isEmpty
             ? const SizedBox()
@@ -29,7 +29,7 @@ class Construction extends StatelessWidget {
                       Align(
                           alignment: Alignment.topLeft,
                           child: Text(
-                            '${buildingSpecefication[upgradingTask[0].buildingId]!.name} to level ${upgradingTask[0].toLevel}',
+                            '${buildingSpecefication[upgradingTask[0].specificationId]!.name} to level ${upgradingTask[0].toLevel}',
                             style: Theme.of(context).textTheme.titleLarge,
                           )),
                       const Divider(),

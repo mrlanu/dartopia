@@ -12,6 +12,9 @@ abstract class SettlementRepository {
 
   Future<Settlement?> updateSettlement(Settlement settlement);
 
+  Future<Settlement?> updateSettlementWithoutLastModified(
+      Settlement settlement,);
+
   Future<Settlement?> getById(String id);
 
   Future<Settlement?> fetchSettlementByCoordinates({
@@ -85,10 +88,10 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
         } else {
           return null;
         }
-      }else{
+      } else {
         throw DatabaseConnectionException();
       }
-    }catch(e){
+    } catch (e) {
       rethrow;
     }
   }
@@ -108,10 +111,10 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
         } else {
           return null;
         }
-      }else{
+      } else {
         throw DatabaseConnectionException();
       }
-    }catch(e){
+    } catch (e) {
       rethrow;
     }
   }
@@ -137,10 +140,10 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
           distance: 3,
         );
         return tileDetails;
-      }else{
+      } else {
         throw DatabaseConnectionException();
       }
-    }catch(e){
+    } catch (e) {
       rethrow;
     }
   }
@@ -157,10 +160,10 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
         } else {
           return null;
         }
-      }else{
+      } else {
         throw DatabaseConnectionException();
       }
-    }catch(e){
+    } catch (e) {
       rethrow;
     }
   }
@@ -170,19 +173,42 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
     try {
       if (_databaseClient.db != null && _databaseClient.db!.isConnected) {
         final result =
-        await _databaseClient.db!.collection('settlements').replaceOne(
-          where.id(settlement.id),
-          settlement.copyWith(lastModified: DateTime.now()).toMap(),
-        );
+            await _databaseClient.db!.collection('settlements').replaceOne(
+                  where.id(settlement.id),
+                  settlement.copyWith(lastModified: DateTime.now()).toMap(),
+                );
         if (result.isSuccess) {
           return settlement;
         } else {
           return null;
         }
-      }else{
+      } else {
         throw DatabaseConnectionException();
       }
-    }catch(e){
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<Settlement?> updateSettlementWithoutLastModified(
+      Settlement settlement,) async {
+    try {
+      if (_databaseClient.db != null && _databaseClient.db!.isConnected) {
+        final result =
+            await _databaseClient.db!.collection('settlements').replaceOne(
+                  where.id(settlement.id),
+                  settlement.toMap(),
+                );
+        if (result.isSuccess) {
+          return settlement;
+        } else {
+          return null;
+        }
+      } else {
+        throw DatabaseConnectionException();
+      }
+    } catch (e) {
       rethrow;
     }
   }
@@ -224,10 +250,10 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
             .find(selector)
             .map(Movement.fromMap)
             .toList();
-      }else{
+      } else {
         throw DatabaseConnectionException();
       }
-    }catch(e){
+    } catch (e) {
       rethrow;
     }
   }
@@ -243,10 +269,10 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
             .find(where.eq('to.villageId', id).and(where.eq('isMoving', false)))
             .map(Movement.fromMap)
             .toList();
-      }else{
+      } else {
         throw DatabaseConnectionException();
       }
-    }catch(e){
+    } catch (e) {
       rethrow;
     }
   }
@@ -259,10 +285,10 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
             .collection('movements')
             .insertOne(movement.toMap());
         return result.document == null;
-      }else{
+      } else {
         throw DatabaseConnectionException();
       }
-    }catch(e){
+    } catch (e) {
       rethrow;
     }
   }
@@ -274,13 +300,14 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
         return _databaseClient.db!
             .collection('movements')
             .find(
-            where.eq('isMoving', true).and(where.lte('when', DateTime.now())),)
+              where.eq('isMoving', true).and(where.lte('when', DateTime.now())),
+            )
             .map(Movement.fromMap)
             .toList();
-      }else{
+      } else {
         throw DatabaseConnectionException();
       }
-    }catch(e){
+    } catch (e) {
       rethrow;
     }
   }

@@ -8,15 +8,15 @@ part of 'construction_request.dart';
 
 ConstructionRequest _$ConstructionRequestFromJson(Map<String, dynamic> json) =>
     ConstructionRequest(
-      buildingId: json['buildingId'] as int,
-      position: json['position'] as int,
+      specificationId: json['buildingId'] as int,
+      buildingId: json['position'] as int,
       toLevel: json['toLevel'] as int,
     );
 
 Map<String, dynamic> _$ConstructionRequestToJson(
         ConstructionRequest instance) =>
     <String, dynamic>{
-      'buildingId': instance.buildingId,
-      'position': instance.position,
+      'buildingId': instance.specificationId,
+      'position': instance.buildingId,
       'toLevel': instance.toLevel,
     };

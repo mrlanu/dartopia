@@ -5,13 +5,13 @@ part 'construction_request.g.dart';
 
 @JsonSerializable()
 class ConstructionRequest extends Equatable{
+  final int specificationId;
   final int buildingId;
-  final int position;
   final int toLevel;
 
   ConstructionRequest(
-      {required this.buildingId,
-      required this.position,
+      {required this.specificationId,
+      required this.buildingId,
       required this.toLevel});
 
   /*ConstructionRequest.fromMap(Map<String, dynamic> map)
@@ -31,6 +31,6 @@ class ConstructionRequest extends Equatable{
   Map<String, dynamic> toJson() => _$ConstructionRequestToJson(this);
 
   @override
-  List<Object?> get props => [buildingId, position, toLevel];
+  List<Object?> get props => [specificationId, buildingId, toLevel];
 
 }

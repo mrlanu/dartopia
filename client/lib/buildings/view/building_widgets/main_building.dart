@@ -14,7 +14,7 @@ class MainBuilding extends StatelessWidget {
       builder: (context, state) {
         return Center(
             child: BuildingCard(
-          position: 1000,
+          buildingId: 1000,
           // SHOULD BE CHANGED OR DELETED
           specification: buildingSpecefication[4]!,
           storage: state.settlement!.storage,

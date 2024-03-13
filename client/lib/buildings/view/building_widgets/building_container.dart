@@ -30,8 +30,8 @@ class BuildingContainer extends StatelessWidget {
         final storage = state.settlement!.storage;
         final upgradingTask = state.settlement!.constructionTasks
             .where((task) =>
-                task.position == buildingRecord[0] &&
-                task.buildingId == buildingRecord[1])
+                task.buildingId == buildingRecord[0] &&
+                task.specificationId == buildingRecord[1])
             .toList();
         return Card(
             elevation: 5,
@@ -88,8 +88,8 @@ class BuildingContainer extends StatelessWidget {
                                         toLevel: buildingRecord[2] + 1)
                                 ? () {
                                     final request = ConstructionRequest(
-                                        buildingId: specification.id,
-                                        position: buildingRecord[0],
+                                        specificationId: specification.id,
+                                        buildingId: buildingRecord[0],
                                         toLevel: buildingRecord[2] + 1);
                                     context.read<SettlementBloc>().add(
                                         BuildingUpgradeRequested(

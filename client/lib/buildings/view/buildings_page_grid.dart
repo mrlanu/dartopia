@@ -1,5 +1,6 @@
 import 'package:dartopia/consts/calors.dart';
 import 'package:dartopia/consts/consts.dart';
+import 'package:dartopia/settlement/repository/settlement_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -58,14 +59,17 @@ class _BuildingsGridViewState extends State<BuildingsGridView> {
             },
             onReorder: (oldIndex, newIndex) {
               setState(() {
-                final element = widget.settlement.buildings.removeAt(oldIndex);
-                widget.settlement.buildings.insert(newIndex, element);
+                final element = widget.settlement.buildings.removeAt(oldIndex + 18);
+                widget.settlement.buildings.insert(newIndex + 18, element);
+                context.read<SettlementRepository>().reorderBuildings(
+                    settlementId: widget.settlement.id.$oid,
+                    newBuildings: widget.settlement.buildings);
               });
             },
             header: _groupFieldsByType().map(
               (fieldRecord) {
                 final constructionTasks = widget.settlement.constructionTasks
-                    .where((task) => task.buildingId == fieldRecord[1])
+                    .where((task) => task.specificationId == fieldRecord[1])
                     .toList();
                 return _BuildingGridItem(
                   key: ValueKey('${fieldRecord[0]} ${fieldRecord[1]}'),
@@ -81,7 +85,7 @@ class _BuildingsGridViewState extends State<BuildingsGridView> {
             footer: [
               _BuildingGridAddItem(
                   key: UniqueKey(),
-                  emptySpots: widget.settlement.emptySpots,
+                  buildingsAmount: widget.settlement.buildings.length,
                   labelBackground: widget.settlement.constructionTasks.length <
                           maxConstructionTasksAllowed
                       ? DartopiaColors.primaryContainer
@@ -90,7 +94,7 @@ class _BuildingsGridViewState extends State<BuildingsGridView> {
             children: widget.settlement.buildingsExceptFieldsAndEmpty.map(
               (bRecord) {
                 final upgradingTasks = widget.settlement.constructionTasks
-                    .where((task) => task.position == bRecord[0])
+                    .where((task) => task.buildingId == bRecord[0])
                     .toList();
                 return _BuildingGridItem(
                   key: ValueKey('${bRecord[0]} ${bRecord[1]}'),
@@ -185,7 +189,7 @@ class _BuildingGridItem extends StatelessWidget {
         ? Text(buildingSpecefication[buildingRecord[1]]!.name)
         : Row(
             children: [
-              Text(buildingSpecefication[constructionTask!.buildingId]!.name),
+              Text(buildingSpecefication[constructionTask!.specificationId]!.name),
               const SizedBox(width: 5),
               CountdownTimer(
                 startValue: constructionTask!.executionTime
@@ -226,22 +230,23 @@ class _BuildingGridItem extends StatelessWidget {
 class _BuildingGridAddItem extends StatelessWidget {
   const _BuildingGridAddItem({
     super.key,
-    required this.emptySpots,
+    required this.buildingsAmount,
     this.labelBackground = DartopiaColors.primary,
   });
 
-  final List<List<int>> emptySpots;
+  final int buildingsAmount;
   final Color labelBackground;
 
   @override
   Widget build(BuildContext context) {
+    final availableEmptySpots = maxBuildings - buildingsAmount;
     return GestureDetector(
       onTap: () {
-        context.go('/settlement/details', extra: emptySpots.first);
+        context.go('/settlement/details', extra: [buildingsAmount, 99, 0, 0]);
       },
       child: Badge(
         alignment: Alignment.bottomRight,
-        label: Text(emptySpots.length.toString()),
+        label: Text(availableEmptySpots.toString()),
         backgroundColor: DartopiaColors.primary,
         textStyle: Theme.of(context).textTheme.bodyMedium,
         offset: const Offset(5, 0),

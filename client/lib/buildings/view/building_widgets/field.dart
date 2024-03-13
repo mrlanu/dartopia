@@ -23,7 +23,7 @@ class Field extends StatelessWidget {
                   .map((e) {
                 final upgradingTask = state.settlement!.constructionTasks
                     .where((task) =>
-                        task.position == e[0] && task.buildingId == e[1])
+                        task.buildingId == e[0] && task.specificationId == e[1])
                     .toList();
                 return upgradingTask.isNotEmpty
                     ? FieldViewTile(
