@@ -33,6 +33,8 @@ class SendTroopsFormView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentSettlement =
+    context.read<SettlementBloc>().state.settlement!;
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 5),
@@ -40,8 +42,6 @@ class SendTroopsFormView extends StatelessWidget {
           elevation: 5,
           child: BlocBuilder<SendTroopsCubit, SendTroopsState>(
             builder: (context, state) {
-              final currentSettlement =
-                  context.read<SettlementBloc>().state.settlement!;
               return state.status == SendTroopsStatus.selecting ||
                       state.status == SendTroopsStatus.processing
                   ? Form(

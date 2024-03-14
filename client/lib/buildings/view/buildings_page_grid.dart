@@ -61,10 +61,10 @@ class _BuildingsGridViewState extends State<BuildingsGridView> {
               setState(() {
                 final element = widget.settlement.buildings.removeAt(oldIndex + 18);
                 widget.settlement.buildings.insert(newIndex + 18, element);
-                context.read<SettlementRepository>().reorderBuildings(
-                    settlementId: widget.settlement.id.$oid,
-                    newBuildings: widget.settlement.buildings);
               });
+              context.read<SettlementRepository>().reorderBuildings(
+                  settlementId: widget.settlement.id.$oid,
+                  newBuildings: widget.settlement.buildings);
             },
             header: _groupFieldsByType().map(
               (fieldRecord) {
