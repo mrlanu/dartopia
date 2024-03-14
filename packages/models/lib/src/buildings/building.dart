@@ -220,6 +220,25 @@ final buildingSpecefication = <int, Building>{
     culture: 1,
     imagePath: 'assets/images/buildings/rally_point.png',
   ),
+  9: Building(
+    id: 9,
+    name: 'Academy',
+    cost: [220, 160, 90, 40],
+    time: Time.withA(3875),
+    benefit: mbLike,
+    description:
+    'The academy can be explored new types of troops. '
+        'Academy With the development increases the amount '
+        'available for the study of types of troops .',
+    k: 1.28,
+    upkeep: 4,
+    culture: 4,
+    imagePath: 'assets/images/buildings/academy.png',
+    requirementBuildings: [
+      [4, 3], //main
+      [7, 3], //barracks
+    ],
+  ),
   // SHOULD BE LAST ONE
   99: Building(
     id: 99,

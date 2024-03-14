@@ -8,4 +8,5 @@ export 'building_widgets_factory.dart';
 export 'construction.dart';
 export 'building_container.dart';
 export 'rally_point.dart';
+export 'academy.dart';
 
