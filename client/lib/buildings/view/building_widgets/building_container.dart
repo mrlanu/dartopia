@@ -1,4 +1,4 @@
-import 'package:dartopia/consts/calors.dart';
+import 'package:dartopia/consts/colors.dart';
 import 'package:dartopia/consts/consts.dart';
 import 'package:dartopia/consts/images.dart';
 import 'package:flutter/material.dart';

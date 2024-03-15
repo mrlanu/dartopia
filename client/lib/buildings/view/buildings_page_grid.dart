@@ -1,4 +1,5 @@
-import 'package:dartopia/consts/calors.dart';
+import 'package:dartopia/navigation/app_bar.dart';
+import 'package:dartopia/consts/colors.dart';
 import 'package:dartopia/consts/consts.dart';
 import 'package:dartopia/settlement/repository/settlement_repository.dart';
 import 'package:flutter/material.dart';
@@ -7,20 +8,25 @@ import 'package:go_router/go_router.dart';
 import 'package:models/models.dart';
 import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 
+import '../../navigation/main_drawer.dart';
 import '../../settlement/bloc/settlement_bloc.dart';
 import '../../storage_bar/view/storage_bar.dart';
 import '../../utils/countdown.dart';
 import '../buildings.dart';
 
 class BuildingsPageGrid extends StatelessWidget {
-  const BuildingsPageGrid({super.key, required this.settlement});
-
-  final Settlement settlement;
+  const BuildingsPageGrid({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BuildingsGridView(
-      settlement: settlement,
+    return BlocBuilder<SettlementBloc, SettlementState>(
+      builder: (context, state) {
+        return state.status == SettlementStatus.loading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : BuildingsGridView(settlement: state.settlement!);
+      },
     );
   }
 }
@@ -37,87 +43,90 @@ class BuildingsGridView extends StatefulWidget {
 class _BuildingsGridViewState extends State<BuildingsGridView> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(
-          height: 3,
-        ),
-        StorageBar(
-          settlement: widget.settlement,
-        ),
-        Expanded(
-          child: ReorderableGridView.count(
-            padding: const EdgeInsets.all(10),
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-            crossAxisCount: 3,
-            dragWidgetBuilder: (index, child) {
-              return Card(
-                color: DartopiaColors.primary,
-                child: child,
-              );
-            },
-            onReorder: (oldIndex, newIndex) {
-              setState(() {
-                final element = widget.settlement.buildings.removeAt(oldIndex + 18);
-                widget.settlement.buildings.insert(newIndex + 18, element);
-              });
-              context.read<SettlementRepository>().reorderBuildings(
-                  settlementId: widget.settlement.id.$oid,
-                  newBuildings: widget.settlement.buildings);
-            },
-            header: _groupFieldsByType().map(
-              (fieldRecord) {
-                final constructionTasks = widget.settlement.constructionTasks
-                    .where((task) => task.specificationId == fieldRecord[1])
-                    .toList();
-                return _BuildingGridItem(
-                  key: ValueKey('${fieldRecord[0]} ${fieldRecord[1]}'),
-                  buildingRecord: fieldRecord,
-                  constructionTask: constructionTasks.firstOrNull,
-                  constructionsTaskAmount:
-                      widget.settlement.constructionTasks.length,
-                  storage: widget.settlement.storage,
-                  prodPerHour: widget.settlement.calculateProducePerHour(),
-                );
-              },
-            ).toList(),
-            footer: [
-              _BuildingGridAddItem(
-                  key: UniqueKey(),
-                  buildingsAmount: widget.settlement.buildings.length,
-                  labelBackground: widget.settlement.constructionTasks.length <
-                          maxConstructionTasksAllowed
-                      ? DartopiaColors.primaryContainer
-                      : DartopiaColors.white38),
-            ],
-            children: widget.settlement.buildingsExceptFieldsAndEmpty.map(
-              (bRecord) {
-                final upgradingTasks = widget.settlement.constructionTasks
-                    .where((task) => task.buildingId == bRecord[0])
-                    .toList();
-                return _BuildingGridItem(
-                  key: ValueKey('${bRecord[0]} ${bRecord[1]}'),
-                  buildingRecord: bRecord,
-                  storage: widget.settlement.storage,
-                  constructionTask: upgradingTasks.firstOrNull,
-                  constructionsTaskAmount:
-                      widget.settlement.constructionTasks.length,
-                );
-              },
-            ).toList(),
+    final settlement = widget.settlement;
+    return Scaffold(
+      appBar: buildAppBar(),
+      drawer: const MainDrawer(),
+      body: Column(
+        children: [
+          const SizedBox(
+            height: 3,
           ),
-        ),
-      ],
+          StorageBar(
+            settlement: settlement,
+          ),
+          Expanded(
+            child: ReorderableGridView.count(
+              padding: const EdgeInsets.all(10),
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              crossAxisCount: 3,
+              dragWidgetBuilder: (index, child) {
+                return Card(
+                  color: DartopiaColors.primary,
+                  child: child,
+                );
+              },
+              onReorder: (oldIndex, newIndex) {
+                setState(() {
+                  final element = settlement.buildings.removeAt(oldIndex + 18);
+                  settlement.buildings.insert(newIndex + 18, element);
+                });
+                context.read<SettlementRepository>().reorderBuildings(
+                    settlementId: settlement.id.$oid,
+                    newBuildings: settlement.buildings);
+              },
+              header: _groupFieldsByType(settlement).map(
+                (fieldRecord) {
+                  final constructionTasks = settlement.constructionTasks
+                      .where((task) => task.specificationId == fieldRecord[1])
+                      .toList();
+                  return _BuildingGridItem(
+                    key: ValueKey('${fieldRecord[0]} ${fieldRecord[1]}'),
+                    buildingRecord: fieldRecord,
+                    constructionTask: constructionTasks.firstOrNull,
+                    constructionsTaskAmount: settlement.constructionTasks.length,
+                    storage: settlement.storage,
+                    prodPerHour: settlement.calculateProducePerHour(),
+                  );
+                },
+              ).toList(),
+              footer: [
+                _BuildingGridAddItem(
+                    key: UniqueKey(),
+                    buildingsAmount: settlement.buildings.length,
+                    labelBackground: settlement.constructionTasks.length <
+                            maxConstructionTasksAllowed
+                        ? DartopiaColors.primaryContainer
+                        : DartopiaColors.white38),
+              ],
+              children: settlement.buildingsExceptFieldsAndEmpty.map(
+                (bRecord) {
+                  final upgradingTasks = settlement.constructionTasks
+                      .where((task) => task.buildingId == bRecord[0])
+                      .toList();
+                  return _BuildingGridItem(
+                    key: ValueKey('${bRecord[0]} ${bRecord[1]}'),
+                    buildingRecord: bRecord,
+                    storage: settlement.storage,
+                    constructionTask: upgradingTasks.firstOrNull,
+                    constructionsTaskAmount: settlement.constructionTasks.length,
+                  );
+                },
+              ).toList(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  List<List<int>> _groupFieldsByType() {
+  List<List<int>> _groupFieldsByType(Settlement settlement) {
     List<List<int>> mockList = [
       [0, 0, 0, 0], [1, 1, 0, 0], [2, 2, 0, 0], [3, 3, 0, 0] //mock fields
     ];
     return mockList.map((mock) {
-      final upgradableFields = widget.settlement.buildings
+      final upgradableFields = settlement.buildings
           .where((buildingRecord) =>
               mock[1] == buildingRecord[1] &&
               (buildingRecord[3] == 1 || buildingRecord[3] == 2))
@@ -170,7 +179,7 @@ class _BuildingGridItem extends StatelessWidget {
         largeSize: 22,
         child: GestureDetector(
           onTap: () {
-            context.go('/settlement/details', extra: buildingRecord);
+            context.go('/buildings/details', extra: buildingRecord);
           },
           child: Card(
             color: labelBackground,
@@ -189,7 +198,8 @@ class _BuildingGridItem extends StatelessWidget {
         ? Text(buildingSpecefication[buildingRecord[1]]!.name)
         : Row(
             children: [
-              Text(buildingSpecefication[constructionTask!.specificationId]!.name),
+              Text(buildingSpecefication[constructionTask!.specificationId]!
+                  .name),
               const SizedBox(width: 5),
               CountdownTimer(
                 startValue: constructionTask!.executionTime

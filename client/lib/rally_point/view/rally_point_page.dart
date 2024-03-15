@@ -1,12 +1,12 @@
-import 'package:dartopia/common/common.dart';
-import 'package:dartopia/consts/calors.dart';
+import 'package:dartopia/consts/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:models/models.dart';
 
-import '../settlement/settlement.dart';
-import 'rally_point.dart';
+import '../../navigation/navigation.dart';
+import '../../settlement/settlement.dart';
+import '../rally_point.dart';
 
 class RallyPointPage extends StatelessWidget {
   const RallyPointPage(

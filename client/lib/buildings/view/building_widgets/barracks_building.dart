@@ -1,4 +1,4 @@
-import 'package:dartopia/consts/calors.dart';
+import 'package:dartopia/consts/colors.dart';
 import 'package:dartopia/consts/images.dart';
 import 'package:dartopia/settlement/settlement.dart';
 import 'package:dartopia/utils/utils.dart';
