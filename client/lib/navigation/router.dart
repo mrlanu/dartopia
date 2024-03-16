@@ -1,142 +1,27 @@
-import 'package:dartopia/reports/reports.dart';
+import 'package:dartopia/building_detail/building_detail.dart';
+import 'package:dartopia/buildings/buildings.dart';
+import 'package:dartopia/rally_point/rally_point.dart';
+import 'package:dartopia/splash/splash.dart';
+import 'package:dartopia/world_map/view/view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../authentication/authentication.dart';
-import '../building_detail/building_detail.dart';
-import '../buildings/view/buildings_page_grid.dart';
-import '../rally_point/rally_point.dart';
+import '../reports/reports.dart';
+import '../reports/view/report_page.dart';
 import '../settlement/settlement.dart';
-import '../splash/splash.dart';
-import '../world_map/world_map.dart';
 
-final GlobalKey<NavigatorState> _rootNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'root');
-final GlobalKey<NavigatorState> _buildingsNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: 'buildingsNav');
+part 'router.g.dart';
 
-/// The route configuration.
+GoRouter get router => _router;
+
+final GlobalKey<NavigatorState> _sectionANavigatorKey =
+GlobalKey<NavigatorState>(debugLabel: 'sectionANav');
+
 final GoRouter _router = GoRouter(
-  navigatorKey: _rootNavigatorKey,
-  initialLocation: '/',
-  routes: [
-    GoRoute(
-      path: '/',
-      redirect: (_, __) => '/login',
-    ),
-    GoRoute(
-      path: '/splash',
-      builder: (BuildContext context, GoRouterState state) {
-        return const SplashPage();
-      },
-    ),
-    GoRoute(
-        path: '/login',
-        builder: (BuildContext context, GoRouterState state) {
-          return const LoginPage();
-        },
-        routes: [
-          GoRoute(
-            path: 'signup',
-            builder: (BuildContext context, GoRouterState state) {
-              return const SignupPage();
-            },
-          ),
-        ]),
-    StatefulShellRoute.indexedStack(
-        builder: (BuildContext context, GoRouterState state,
-                StatefulNavigationShell navigationShell) =>
-            MultiRepositoryProvider(
-              providers: [
-                RepositoryProvider<SettlementRepository>(
-                  create: (context) => SettlementRepositoryImpl(),
-                ),
-                RepositoryProvider<ReportsRepository>(
-                  create: (context) => ReportsRepositoryImpl(),
-                ),
-              ],
-              child: MultiBlocProvider(
-                providers: [
-                  BlocProvider(
-                    create: (context) => SettlementBloc(
-                        settlementRepository:
-                            context.read<SettlementRepository>())
-                      ..add(const ListOfSettlementsRequested()),
-                  ),
-                  BlocProvider(
-                    create: (context) => ReportsBloc(
-                        reportsRepository: context.read<ReportsRepository>()),
-                  ),
-                ],
-                child: ScaffoldWithNavBar(navigationShell: navigationShell),
-              ),
-            ),
-        branches: [
-          StatefulShellBranch(navigatorKey: _buildingsNavigatorKey, routes: [
-            GoRoute(
-                path: '/buildings',
-                builder: (BuildContext context, GoRouterState state) {
-                  return BuildingsPageGrid(key: UniqueKey());
-                },
-                routes: [
-                  GoRoute(
-                    path: 'details',
-                    builder: (context, state) {
-                      final buildingRecord = state.extra as List<int>;
-                      context
-                          .read<SettlementBloc>()
-                          .add(const SettlementFetchRequested());
-                      return BuildingDetailPage(buildingRecord: buildingRecord);
-                    },
-                  ),
-                ]),
-            GoRoute(
-              path: '/rally_point/:tabId',
-              builder: (BuildContext context, GoRouterState state) {
-                final x = state.uri.queryParameters['x'] ?? 0.toString();
-                final y = state.uri.queryParameters['y'] ?? 0.toString();
-                final coordinates = [int.parse(x), int.parse(y)];
-                return RallyPointPage(
-                    targetCoordinates: coordinates,
-                    tabIndex: int.parse(state.pathParameters['tabId']!));
-              },
-            ),
-          ]),
-          StatefulShellBranch(routes: [
-            GoRoute(
-              path: '/world',
-              builder: (BuildContext context, GoRouterState state) {
-                return const WorldMapPage();
-              },
-            ),
-          ]),
-          StatefulShellBranch(routes: [
-            GoRoute(
-              path: '/empty',
-              builder: (BuildContext context, GoRouterState state) {
-                return const Scaffold();
-              },
-            ),
-          ]),
-          StatefulShellBranch(routes: [
-            GoRoute(
-              path: '/reports',
-              builder: (BuildContext context, GoRouterState state) {
-                return const ReportsPage();
-              },
-            ),
-          ]),
-          StatefulShellBranch(routes: [
-            GoRoute(
-              path: '/empty2',
-              builder: (BuildContext context, GoRouterState state) {
-                return const Scaffold();
-              },
-            ),
-          ]),
-        ]),
-  ],
+  routes: $appRoutes,
+  initialLocation: '/buildings',
   redirect: _guard,
   debugLogDiagnostics: true,
 );
@@ -147,7 +32,7 @@ Future<String?> _guard(BuildContext context, GoRouterState state) async {
     return '/splash';
   }
   final bool signingIn =
-      ['/login', '/login/signup', '/splash'].contains(state.matchedLocation);
+  ['/login', '/login/signup', '/splash'].contains(state.matchedLocation);
   if (!signedIn && !signingIn) {
     return '/login';
   } else if (signedIn && signingIn) {
@@ -156,4 +41,224 @@ Future<String?> _guard(BuildContext context, GoRouterState state) async {
   return null;
 }
 
-GoRouter get router => _router;
+@TypedGoRoute<RootScreen>(path: '/')
+@immutable
+class RootScreen extends GoRouteData {
+  @override
+  String? redirect(BuildContext context, GoRouterState state) =>
+      SplashScreenRoute().location;
+}
+
+@TypedGoRoute<SplashScreenRoute>(path: '/splash')
+@immutable
+class SplashScreenRoute extends GoRouteData {
+  @override
+  Widget build(BuildContext context, GoRouterState state) => const SplashPage();
+}
+
+@TypedGoRoute<LoginRoute>(path: '/login', routes: [
+  TypedGoRoute<SignupRoute>(path: 'signup'),
+])
+@immutable
+class LoginRoute extends GoRouteData {
+  @override
+  Widget build(BuildContext context, GoRouterState state) => const LoginPage();
+}
+
+class SignupRoute extends GoRouteData {
+  const SignupRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const SignupPage();
+  }
+}
+
+@TypedStatefulShellRoute<MainShellRoute>(
+  branches: <TypedStatefulShellBranch<StatefulShellBranchData>>[
+    TypedStatefulShellBranch<BranchBuildings>(
+      routes: <TypedRoute<RouteData>>[
+        TypedGoRoute<BuildingsRoute>(path: '/buildings', routes: [
+          TypedGoRoute<BuildingDetailsRoute>(path: 'details'),
+        ]),
+        TypedGoRoute<RallyPointRoute>(path: '/rally_point/:tabId'),
+      ],
+    ),
+    TypedStatefulShellBranch<BranchWorld>(
+      routes: <TypedRoute<RouteData>>[
+        TypedGoRoute<WorldRoute>(path: '/world'),
+      ],
+    ),
+    TypedStatefulShellBranch<BranchStatistics>(
+      routes: <TypedRoute<RouteData>>[
+        TypedGoRoute<StatisticsRoute>(path: '/statistics'),
+      ],
+    ),
+    TypedStatefulShellBranch<BranchReports>(
+      routes: <TypedRoute<RouteData>>[
+        TypedGoRoute<ReportsRoute>(
+            path: '/reports',
+            routes: [TypedGoRoute<ReportDetailsRoute>(path: ':reportId')]),
+      ],
+    ),
+    TypedStatefulShellBranch<BranchMessages>(
+      routes: <TypedRoute<RouteData>>[
+        TypedGoRoute<MessagesRoute>(path: '/messages'),
+      ],
+    ),
+  ],
+)
+class MainShellRoute extends StatefulShellRouteData {
+  const MainShellRoute();
+
+  @override
+  Widget builder(
+      BuildContext context,
+      GoRouterState state,
+      StatefulNavigationShell navigationShell,
+      ) {
+    return MultiRepositoryProvider(
+        providers: [
+          RepositoryProvider<SettlementRepository>(
+            create: (context) => SettlementRepositoryImpl(),
+          ),
+          RepositoryProvider<ReportsRepository>(
+            create: (context) => ReportsRepositoryImpl(),
+          ),
+        ],
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) => SettlementBloc(
+                  settlementRepository: context.read<SettlementRepository>())
+                ..add(const ListOfSettlementsRequested()),
+            ),
+            BlocProvider(
+              create: (context) => ReportsBloc(
+                  reportsRepository: context.read<ReportsRepository>()),
+            ),
+          ],
+          child: ScaffoldWithNavBar(navigationShell: navigationShell),
+        ));
+  }
+
+  static const String $restorationScopeId = 'restorationScopeId';
+}
+
+class BranchBuildings extends StatefulShellBranchData {
+  const BranchBuildings();
+}
+
+class BranchWorld extends StatefulShellBranchData {
+  static final GlobalKey<NavigatorState> $navigatorKey = _sectionANavigatorKey;
+  static const String $restorationScopeId = 'restorationScopeId';
+
+  const BranchWorld();
+}
+
+class BranchStatistics extends StatefulShellBranchData {
+  const BranchStatistics();
+}
+
+class BranchReports extends StatefulShellBranchData {
+  const BranchReports();
+}
+
+class BranchMessages extends StatefulShellBranchData {
+  const BranchMessages();
+}
+
+class BuildingsRoute extends GoRouteData {
+  const BuildingsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const BuildingsPageGrid();
+  }
+}
+
+class BuildingDetailsRoute extends GoRouteData {
+  const BuildingDetailsRoute({required this.$extra});
+
+  final List<int> $extra;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return BuildingDetailPage(
+      buildingRecord: $extra,
+    );
+  }
+}
+
+class RallyPointRoute extends GoRouteData {
+  const RallyPointRoute({required this.tabId, this.x = '0', this.y = '0'});
+
+  final String tabId;
+  final String x;
+  final String y;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return RallyPointPage(
+      targetCoordinates: [int.parse(x), int.parse(y)],
+      tabIndex: int.parse(tabId),
+    );
+  }
+}
+
+class WorldRoute extends GoRouteData {
+  const WorldRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const WorldMapPage();
+  }
+}
+
+class StatisticsRoute extends GoRouteData {
+  const StatisticsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const Scaffold(
+      body: Center(
+        child: Text('Statistics'),
+      ),
+    );
+  }
+}
+
+class ReportsRoute extends GoRouteData {
+  const ReportsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const ReportsPage();
+  }
+}
+
+class ReportDetailsRoute extends GoRouteData {
+  const ReportDetailsRoute({required this.reportId});
+
+  final String reportId;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return ReportPage(
+      reportId: reportId,
+    );
+  }
+}
+
+class MessagesRoute extends GoRouteData {
+  const MessagesRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const Scaffold(
+      body: Center(
+        child: Text('Messages'),
+      ),
+    );
+  }
+}

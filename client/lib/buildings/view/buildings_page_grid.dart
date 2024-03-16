@@ -1,14 +1,12 @@
-import 'package:dartopia/navigation/app_bar.dart';
+import 'package:dartopia/navigation/navigation.dart';
 import 'package:dartopia/consts/colors.dart';
 import 'package:dartopia/consts/consts.dart';
 import 'package:dartopia/settlement/repository/settlement_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:models/models.dart';
 import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 
-import '../../navigation/main_drawer.dart';
 import '../../settlement/bloc/settlement_bloc.dart';
 import '../../storage_bar/view/storage_bar.dart';
 import '../../utils/countdown.dart';
@@ -179,7 +177,8 @@ class _BuildingGridItem extends StatelessWidget {
         largeSize: 22,
         child: GestureDetector(
           onTap: () {
-            context.go('/buildings/details', extra: buildingRecord);
+            BuildingDetailsRoute($extra: buildingRecord).go(context);
+            //BuildingDetailsRoute($extra: buildingRecord).go(context);
           },
           child: Card(
             color: labelBackground,
@@ -252,7 +251,7 @@ class _BuildingGridAddItem extends StatelessWidget {
     final availableEmptySpots = maxBuildings - buildingsAmount;
     return GestureDetector(
       onTap: () {
-        context.go('/settlement/details', extra: [buildingsAmount, 99, 0, 0]);
+        BuildingDetailsRoute($extra: [buildingsAmount, 99, 0, 0]).go(context);
       },
       child: Badge(
         alignment: Alignment.bottomRight,

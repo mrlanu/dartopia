@@ -8,20 +8,13 @@ import 'package:models/models.dart';
 import '../../consts/images.dart';
 
 class ReportPage extends StatelessWidget {
-  const ReportPage({super.key});
+  const ReportPage({super.key, required this.reportId});
 
-  static Route<void> route(
-      {required ReportsBloc reportsBloc, required ReportBrief reportBrief}) {
-    return MaterialPageRoute(builder: (context) {
-      return BlocProvider.value(
-        value: reportsBloc..add(FetchReportRequested(reportId: reportBrief.id)),
-        child: const ReportPage(),
-      );
-    });
-  }
+  final String reportId;
 
   @override
   Widget build(BuildContext context) {
+    context.read<ReportsBloc>().add(FetchReportRequested(reportId: reportId));
     return const ReportView();
   }
 }

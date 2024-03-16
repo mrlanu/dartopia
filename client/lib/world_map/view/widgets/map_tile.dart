@@ -4,8 +4,9 @@ import 'package:dartopia/world_map/repository/world_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:go_router/go_router.dart';
 import 'package:models/models.dart';
+
+import '../../../navigation/navigation.dart';
 
 class MapTileWidget extends StatelessWidget {
   final MapTile tile;
@@ -87,8 +88,11 @@ class MapTileWidget extends StatelessWidget {
               iconSize: 30,
               color: Colors.green,
               onPressed: () {
-                context
-                    .push('/rally_point/1?x=${tileDetails.x}&y=${tileDetails.x}');
+                RallyPointRoute(
+                        tabId: '1',
+                        x: tileDetails.x.toString(),
+                        y: tileDetails.y.toString())
+                    .push(context);
                 Navigator.of(context, rootNavigator: true).pop();
               },
               icon: const FaIcon(FontAwesomeIcons.khanda)),

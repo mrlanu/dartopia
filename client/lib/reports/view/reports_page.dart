@@ -1,10 +1,12 @@
 import 'package:dartopia/reports/reports.dart';
-import 'package:dartopia/reports/view/report_page.dart';
 import 'package:dartopia/settlement/settlement.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+
+import '../../navigation/navigation.dart';
+
 
 class ReportsPage extends StatelessWidget {
   const ReportsPage({super.key});
@@ -75,9 +77,7 @@ class ReportsView extends StatelessWidget {
                     onTap: () {
                       !state.briefs[index].read ? context.read<ReportsBloc>()
                           .add(AmountSubtractRequested(index: index)) : null;
-                      Navigator.of(context).push(ReportPage.route(
-                          reportsBloc: context.read<ReportsBloc>(),
-                          reportBrief: state.briefs[index]));
+                      ReportDetailsRoute(reportId: state.briefs[index].id).push(context);
                     },
                   ),
                 );
