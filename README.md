@@ -2,12 +2,23 @@
 
 [![Powered by Dart Frog](https://img.shields.io/endpoint?url=https://tinyurl.com/dartfrog-badge)](https://dartfrog.vgv.dev)
 
+### This project is under active development, and not completely ready
+
 ## Dartopia is a multiplayer, mobile-friendly, text-based, real-time strategy game
 
 ## Built With
 
 - [Flutter](https://flutter.dev/)
 - [Dart Frog](https://dartfrog.vgv.dev/)
+
+<p align="center">
+    <img src="client/assets/screenshots/0.png" alt="MyPic" width="170">
+    <img src="client/assets/screenshots/1.png" alt="MyPic" width="170">
+    <img src="client/assets/screenshots/2.png" alt="MyPic" width="170">
+    <img src="client/assets/screenshots/3.png" alt="MyPic" width="170">
+    <img src="client/assets/screenshots/4.png" alt="MyPic" width="170">
+    <img src="client/assets/screenshots/5.png" alt="MyPic" width="170">
+</p>
 
 ## How to run
 
