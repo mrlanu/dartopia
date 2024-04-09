@@ -2,7 +2,7 @@
 
 [![Powered by Dart Frog](https://img.shields.io/endpoint?url=https://tinyurl.com/dartfrog-badge)](https://dartfrog.vgv.dev)
 
-## Dartopia is a persistent, multiplayer, online, real-time strategy game
+## Dartopia is a multiplayer, mobile-friendly, text-based, real-time strategy game
 
 ## Built With
 
