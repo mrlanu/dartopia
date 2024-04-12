@@ -62,4 +62,9 @@ class Api {
   static String deleteReportById(String reportId) {
     return '/reports/$reportId';
   }
+
+  static String fetchStatistics(String? page, String sort) {
+    final pg = page == null ? '' : '&page=$page';
+    return '/statistics?sort=$sort$pg';
+  }
 }

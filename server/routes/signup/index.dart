@@ -10,6 +10,7 @@ import '../../helpers/helpers.dart';
 import '../../repositories/user_repository.dart';
 import '../../services/authenticator.dart';
 import '../../services/settlements_service.dart';
+import '../../services/statistics_service.dart';
 import '../../services/world_service.dart';
 
 Future<Response> onRequest(RequestContext context) async {
@@ -26,6 +27,7 @@ Future<Response> _onPost(RequestContext context) async {
   final userRepository = context.read<UserRepository>();
   final settlementService = context.read<SettlementService>();
   final worldService = context.read<WorldService>();
+  final statisticsService = context.read<StatisticsService>();
 
   final requestBody = await request.body();
   final requestData = jsonDecode(requestBody) as Map<String, dynamic>;
@@ -44,12 +46,15 @@ Future<Response> _onPost(RequestContext context) async {
     );
   } on NoUserFoundException catch (_) {
     await userRepository.insertOne(user: user);
-    await _foundNewSettlement(
+    final firstSettlement = await _foundNewSettlement(
       user: user,
       settlementService: settlementService,
       worldService: worldService,
     );
-
+    await statisticsService.createStatistics(
+        playerId: user.id!,
+        playerName: user.name,
+        buildings: firstSettlement.buildings);
     final authenticator = context.read<Authenticator>();
 
     return Response.json(
@@ -74,7 +79,7 @@ Future<Response> _onPost(RequestContext context) async {
   }
 }
 
-Future<void> _foundNewSettlement({
+Future<Settlement> _foundNewSettlement({
   required User user,
   required SettlementService settlementService,
   required WorldService worldService,
@@ -82,5 +87,9 @@ Future<void> _foundNewSettlement({
   final settlement =
       await settlementService.foundNewSettlement(userId: user.id!);
   await worldService.insertSettlement(
-      settlementId: settlement!.id.$oid, x: settlement.x, y: settlement.y,);
+    settlementId: settlement!.id.$oid,
+    x: settlement.x,
+    y: settlement.y,
+  );
+  return settlement;
 }

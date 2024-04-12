@@ -2,6 +2,7 @@ import 'package:dartopia/building_detail/building_detail.dart';
 import 'package:dartopia/buildings/buildings.dart';
 import 'package:dartopia/rally_point/rally_point.dart';
 import 'package:dartopia/splash/splash.dart';
+import 'package:dartopia/statistics/statistics_repository.dart';
 import 'package:dartopia/world_map/view/view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +12,7 @@ import '../authentication/authentication.dart';
 import '../reports/reports.dart';
 import '../reports/view/report_page.dart';
 import '../settlement/settlement.dart';
+import '../statistics/statistics.dart';
 
 part 'router.g.dart';
 
@@ -125,6 +127,9 @@ class MainShellRoute extends StatefulShellRouteData {
           RepositoryProvider<ReportsRepository>(
             create: (context) => ReportsRepositoryImpl(),
           ),
+          RepositoryProvider<StatisticsRepository>(
+            create: (context) => StatisticsRepositoryImpl(),
+          ),
         ],
         child: MultiBlocProvider(
           providers: [
@@ -220,11 +225,7 @@ class StatisticsRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const Scaffold(
-      body: Center(
-        child: Text('Statistics'),
-      ),
-    );
+    return const StatisticsPage();
   }
 }
 
