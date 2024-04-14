@@ -1,6 +1,7 @@
 import 'package:models/models.dart';
 
 abstract class Executable {
-  void execute(Settlement settlement);
+  //returned int is a statistics points gotten during execution
+  int execute(Settlement settlement);
   DateTime get executionTime;
 }

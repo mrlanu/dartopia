@@ -22,8 +22,6 @@ abstract class WorldService {
     required int x,
     required int y,
   });
-
-  Future<bool> _dropWorld();
 }
 
 class WorldServiceImpl implements WorldService {
@@ -71,7 +69,6 @@ class WorldServiceImpl implements WorldService {
     await _worldRepository.updateMapTile(updatedTile);
   }
 
-  @override
   Future<bool> _dropWorld() => _worldRepository.dropWorld();
 
   void _createBlueprint(int xLength, int yLength) {

@@ -8,8 +8,8 @@ class DeathTask implements Executable{
   final DateTime when;
 
   @override
-  void execute(Settlement settlement) {
-    // TODO: implement execute
+  int execute(Settlement settlement) {
+    return 0;
   }
 
   @override

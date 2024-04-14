@@ -255,11 +255,10 @@ class Settlement extends Equatable {
   }
 
   /// Changing the BuildingRecord on given position.
-  void changeBuilding(
+  int changeBuilding(
       {required int buildingId,
       required int specificationId,
-      required int level}) {
-    buildings.firstWhere((element) => element[0] == buildingId);
+      required int level,}) {
     var index = -1;
     for (var i = 0; i < buildings.length; i++) {
       if (buildings[i][0] == buildingId) {
@@ -268,6 +267,7 @@ class Settlement extends Equatable {
       }
     }
     buildings[index] = [buildingId, specificationId, level, 0];
+    return buildingSpecefication[specificationId]!.getPopulation(level);
   }
 
   /// Converting a BuildingRecord to a map representation.

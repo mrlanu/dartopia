@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:models/models.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
@@ -9,6 +11,8 @@ abstract class StatisticsRepository {
 
   Future<StatisticsResponse> getStatisticsList(
       String playerId, String? page, String sortBy);
+
+  Future<void> addPopulation({required String playerId, required int amount});
 }
 
 class StatisticsRepositoryImpl implements StatisticsRepository {
@@ -41,7 +45,7 @@ class StatisticsRepositoryImpl implements StatisticsRepository {
     String sortBy,
   ) async {
     try {
-      const pageSize = 3;
+      const pageSize = 10;
       if (_databaseClient.db != null && _databaseClient.db!.isConnected) {
         final collection = _databaseClient.db!.collection('statistics');
 
@@ -49,15 +53,15 @@ class StatisticsRepositoryImpl implements StatisticsRepository {
         final totalPages = (totalPlayers / pageSize).ceil();
 
         int page;
-        if(page2 == null){
+        if (page2 == null) {
           final index = await collection
               .find(where.sortBy(sortBy, descending: true))
               .toList()
               .then(
                 (list) => list.indexWhere((doc) => doc['playerId'] == playerId),
-          );
+              );
           page = ((index + 1) / pageSize).ceil();
-        }else{
+        } else {
           page = int.parse(page2);
         }
         final skip = (page - 1) * pageSize;
@@ -78,6 +82,22 @@ class StatisticsRepositoryImpl implements StatisticsRepository {
             totalItems: totalPlayers.toString(),
             totalPages: totalPages.toString(),
             itemsPerPage: pageSize.toString());
+      } else {
+        throw DatabaseConnectionException();
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> addPopulation(
+      {required String playerId, required int amount,}) async {
+    try {
+      if (_databaseClient.db != null && _databaseClient.db!.isConnected) {
+        unawaited(_databaseClient.db!.collection('statistics').update(
+              where.eq('playerId', playerId),
+              ModifierBuilder().inc('population', amount),),);
       } else {
         throw DatabaseConnectionException();
       }

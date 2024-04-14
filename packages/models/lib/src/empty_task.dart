@@ -6,8 +6,8 @@ class EmptyTask implements Executable {
   EmptyTask(this.when);
 
   @override
-  void execute(Settlement settlement) {
-    // TODO: implement execute
+  int execute(Settlement settlement) {
+    return 0;
   }
 
   @override

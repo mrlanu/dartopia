@@ -15,14 +15,15 @@ final _userRepository = UserRepositoryMongo(databaseClient: _databaseClient);
 final _authenticator = Authenticator(userRepository: _userRepository);
 final _settlementRepository =
     SettlementRepositoryMongoImpl(databaseClient: _databaseClient);
-final _settlementService =
-    SettlementServiceImpl(settlementRepository: _settlementRepository);
+final StatisticsRepository _statisticsRepository =
+    StatisticsRepositoryImpl(databaseClient: _databaseClient);
+final _settlementService = SettlementServiceImpl(
+    settlementRepository: _settlementRepository,
+    statisticsRepository: _statisticsRepository,);
 final WorldRepository _worldRepository =
     WorldRepositoryMongoImpl(databaseClient: _databaseClient);
 final WorldService _worldService =
     WorldServiceImpl(worldRepository: _worldRepository);
-final StatisticsRepository _statisticsRepository =
-    StatisticsRepositoryImpl(databaseClient: _databaseClient);
 final StatisticsService _statisticsService =
     StatisticsServiceImpl(statisticsRepository: _statisticsRepository);
 

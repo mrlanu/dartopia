@@ -64,15 +64,16 @@ class ConstructionTask extends Equatable implements Executable {
   }
 
   @override
-  void execute(Settlement settlement) {
+  int execute(Settlement settlement) {
     // upgrade building
-    settlement.changeBuilding(
+    final statPoints = settlement.changeBuilding(
       buildingId: buildingId,
       specificationId: specificationId,
       level: toLevel,
     );
     // remove executed Task
     settlement.constructionTasks.remove(this);
+    return statPoints;
   }
 
   @override

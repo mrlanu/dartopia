@@ -7,11 +7,12 @@ class UnitReadyTask implements Executable {
   UnitReadyTask(this.unitId, this.when);
 
   @override
-  void execute(Settlement settlement) {
+  int execute(Settlement settlement) {
     print('Inside UnitReadyTask task execute method.');
     final updatedList = List<int>.from(settlement.units);
     updatedList[unitId] += 1;
     settlement.units = updatedList;
+    return 0;
   }
 
   @override
