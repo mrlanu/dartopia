@@ -41,12 +41,6 @@ class Settlement extends Equatable {
       // crop
       //------------------BUILDINGS----------------
       [18, 4, 1, 0],
-      [19, 99, 0, 0],
-      [20, 99, 0, 0],
-      [21, 99, 0, 0],
-      [22, 99, 0, 0],
-      [23, 99, 0, 0],
-      [24, 99, 0, 0],
     ],
     this.units = const [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     this.movements = const [],
