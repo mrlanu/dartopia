@@ -34,7 +34,7 @@ Future<Response> _onPost(RequestContext context) async {
 
   final user = User.fromJson(requestData).copyWith(
     id: ObjectId().$oid,
-    name: 'New Player',
+    name: _trimEmail(requestData['email'] as String),
     password: hashPassword(requestData['password'] as String),
   );
 
@@ -92,4 +92,19 @@ Future<Settlement> _foundNewSettlement({
     y: settlement.y,
   );
   return settlement;
+}
+
+String _trimEmail(String email) {
+  final atIndex = email.indexOf('@');
+  if (atIndex != -1) {
+    final name = email.substring(0, atIndex);
+    return _capitalizeFirst(name);
+  } else {
+    return email;
+  }
+}
+
+String _capitalizeFirst(String text) {
+  if (text.isEmpty) return text;
+  return text[0].toUpperCase() + text.substring(1);
 }
