@@ -76,7 +76,7 @@ abstract class SettlementService {
 class SettlementServiceImpl extends SettlementService {
   SettlementServiceImpl(
       {required SettlementRepository settlementRepository,
-      required StatisticsRepository statisticsRepository})
+      required StatisticsRepository statisticsRepository,})
       : _settlementRepository = settlementRepository,
         _statisticsRepository = statisticsRepository;
   final SettlementRepository _settlementRepository;
@@ -194,7 +194,9 @@ class SettlementServiceImpl extends SettlementService {
       final statPoints = task.execute(settlement);
       if (statPoints > 0) {
         _statisticsRepository.addPopulation(
-            playerId: settlement.userId, amount: statPoints,);
+          playerId: settlement.userId,
+          amount: statPoints,
+        );
       }
       modified = task.executionTime;
     }
@@ -257,7 +259,7 @@ class SettlementServiceImpl extends SettlementService {
       x: Random().nextInt(Config.worldWidth),
       y: Random().nextInt(Config.worldHeight),
     );
-    final result = await _settlementRepository.saveSettlement(newSettlement);
+    await _settlementRepository.saveSettlement(newSettlement);
     return newSettlement;
   }
 
@@ -310,7 +312,9 @@ class SettlementServiceImpl extends SettlementService {
         ServerSettings().maxConstructionTasksInQueue,
       );
       return updateSettlement(
-        settlement: settlement,
+        settlement: settlement.copyWith(
+            movements: [],), // remove movements added
+        // during state recalculation
       );
     }
     return Future(() => null);
