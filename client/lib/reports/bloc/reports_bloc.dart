@@ -39,7 +39,7 @@ class ReportsBloc extends Bloc<ReportsEvent, ReportsState> {
     emit(state.copyWith(status: ReportsStatus.loading));
     final report =
         await _reportsRepository.fetchReportById(reportId: event.reportId);
-    emit(state.copyWith(status: ReportsStatus.success, currentReport: report));
+    emit(state.copyWith(currentReport: report, status: ReportsStatus.success,));
   }
 
   Future<void> _onDeleteReportRequested(

@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:dartopia/rally_point/rally_point.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,11 +43,12 @@ class ConfirmSendTroops extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    'Player: ${state.contract!.ownerId}',
+                    'Player: ${state.contract!.playerName}',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
                 TroopDetailsTable(
+                    hideName: true,
                     isEstimate: true,
                     movement: _createMovement(state, currentSettlement)),
                 const Divider(),
@@ -74,7 +73,8 @@ class ConfirmSendTroops extends StatelessWidget {
                       IconButton.outlined(
                           color: Colors.green,
                           onPressed: () async {
-                            final settlementBloc = context.read<SettlementBloc>();
+                            final settlementBloc =
+                                context.read<SettlementBloc>();
                             final settlementId = context
                                 .read<SettlementBloc>()
                                 .state
@@ -85,7 +85,8 @@ class ConfirmSendTroops extends StatelessWidget {
                                 .read<SendTroopsCubit>()
                                 .sendTroops(currentSettlementId: settlementId);
                             onConfirm();
-                            settlementBloc.add(const SettlementFetchRequested());
+                            settlementBloc
+                                .add(const SettlementFetchRequested());
                           },
                           icon: const Icon(
                             Icons.check,

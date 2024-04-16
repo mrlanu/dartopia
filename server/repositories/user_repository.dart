@@ -6,6 +6,7 @@ import '../exceptions/exceptions.dart';
 
 abstract class UserRepository {
   Future<User?> findByEmail({required String email});
+  Future<User?> findById({required String id});
 
   Future<WriteResult> insertOne({required User user});
 }
@@ -23,6 +24,26 @@ class UserRepositoryMongo extends UserRepository {
         final userMap = await _databaseClient.db!
             .collection('users')
             .findOne({'email': email});
+        if (userMap == null) {
+          throw NoUserFoundException();
+        } else {
+          return User.fromJson(userMap);
+        }
+      } else {
+        throw DatabaseConnectionException();
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<User?> findById({required String id}) async {
+    try {
+      if (_databaseClient.db != null && _databaseClient.db!.isConnected) {
+        final userMap = await _databaseClient.db!
+            .collection('users')
+            .findOne(where.eq('_id', id));
         if (userMap == null) {
           throw NoUserFoundException();
         } else {

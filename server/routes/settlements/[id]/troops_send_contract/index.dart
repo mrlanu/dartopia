@@ -26,27 +26,8 @@ Future<Response> _post(String fromSettlementId, RequestContext context) async {
     await context.request.json() as Map<String, dynamic>,
   );
 
-  final offSettlement = await settlementService.fetchSettlementById(
-    settlementId: fromSettlementId,
-  );
-  final targetSettlement = await settlementService.fetchSettlementByCoordinates(
-    x: contract.corX,
-    y: contract.corY,
-  );
+  final updatedContract =
+      await settlementService.updateContract(fromSettlementId, contract);
 
-  final when = UtilsService.getArrivalTime(
-    toX: contract.corX,
-    toY: contract.corY,
-    fromX: offSettlement!.x,
-    fromY: offSettlement.y,
-    units: contract.units,
-  );
-
-  return Response.json(
-    body: contract.copyWith(
-        ownerId: targetSettlement!.userId,
-        settlementId: targetSettlement.id.$oid,
-        name: targetSettlement.name,
-        when: when,),
-  );
+  return Response.json(body: updatedContract);
 }

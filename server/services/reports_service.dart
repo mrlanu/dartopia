@@ -5,10 +5,10 @@ import 'settlements_service.dart';
 
 abstract class ReportsService {
   Future<(int, List<ReportBrief>)> createReportsBrief(
-      {required String userId, required SettlementService settlementService});
+      {required String playerId, required SettlementService settlementService});
 
   Future<MilitaryReportResponse> fetchReportById(
-      {required String reportId, required String userId});
+      {required String reportId, required String playerId});
 
   Future<void> deleteById(String id, String userId);
 }
@@ -21,47 +21,53 @@ class ReportsServiceImpl implements ReportsService {
   @override
   Future<MilitaryReportResponse> fetchReportById({
     required String reportId,
-    required String userId,
+    required String playerId,
   }) async {
     final reportEntity = await _reportsRepository.fetchReportById(
-        reportId: reportId, userId: userId);
-    final ownerIndex = reportEntity.reportOwners.indexOf(userId);
-    if (ownerIndex == 0) {
-      final unitsSum = reportEntity.off.units.reduce((a, b) => a + b);
-      final casualtySum = reportEntity.off.casualty.reduce((a, b) => a + b);
-      return unitsSum == casualtySum
+        reportId: reportId, playerId: playerId);
+    //report for off
+    if (reportEntity.reportOwners[0].playerId == playerId) {
+      final units = reportEntity.participants[0].units;
+      final casualty = reportEntity.participants[0].casualty;
+      final isFailedReport = List.generate(10, (i) => units[i] - casualty[i])
+              .reduce((a, b) => a + b) == 0;
+      return isFailedReport
           ? MilitaryReportResponse.failed(reportEntity)
           : MilitaryReportResponse.full(reportEntity);
     }
-    if (ownerIndex == 1) {
+    //report for def
+    if (reportEntity.reportOwners[1].playerId == playerId) {
       return MilitaryReportResponse.full(reportEntity);
     }
-    return MilitaryReportResponse.reinforcement(reportEntity, ownerIndex - 2);
+    //report for reinforcement
+    final reinforcementIndex = reportEntity.reportOwners
+            .indexWhere((owner) => owner.playerId == playerId);
+    return MilitaryReportResponse.reinforcement(
+        reportEntity, reinforcementIndex);
   }
 
   @override
-  Future<void> deleteById(String id, String userId) =>
-      _reportsRepository.deleteById(reportId: id, userId: userId);
+  Future<void> deleteById(String id, String playerId) =>
+      _reportsRepository.deleteById(reportId: id, playerId: playerId);
 
   @override
   Future<(int, List<ReportBrief>)> createReportsBrief({
-    required String userId,
+    required String playerId,
     required SettlementService settlementService,
   }) async {
     final cache = <String, Settlement>{};
     final originalReports =
-        await _reportsRepository.fetchAllReportsByUserId(userId: userId);
+        await _reportsRepository.fetchAllReportsByUserId(playerId: playerId);
     final amountUnreadReports =
-        _countUnreadReports(reports: originalReports, userId: userId);
+        _countUnreadReports(reports: originalReports, playerId: playerId);
     final briefs = <ReportBrief>[];
     for (final report in originalReports) {
-      final ownerIndex = report.reportOwners.indexOf(userId);
-      if (report.state[ownerIndex] == 2) {
+      if (report.reportOwners.getReportStatus(playerId) == 2) {
         continue;
       }
       final brief = ReportBrief(
-        id: report.id!.$oid,
-        read: report.state[ownerIndex] != 0,
+        id: report.id!,
+        read: report.reportOwners.getReportStatus(playerId) != 0,
         title: await _createTitle(cache, report, settlementService),
         received: report.dateTime,
       );
@@ -74,10 +80,12 @@ class ReportsServiceImpl implements ReportsService {
   }
 
   int _countUnreadReports(
-      {required List<ReportEntity> reports, required String userId}) {
+      {required List<ReportEntity> reports, required String playerId}) {
     if (reports.isNotEmpty) {
-      final ownerIndex = reports[0].reportOwners.indexOf(userId);
-      return reports.where((report) => report.state[ownerIndex] == 0).length;
+      return reports
+          .where(
+              (report) => report.reportOwners.findById(playerId)!.status == 0)
+          .length;
     }
     return 0;
   }
@@ -89,22 +97,22 @@ class ReportsServiceImpl implements ReportsService {
   ) async {
     late Settlement? from;
     late Settlement? to;
-    if (cache.containsKey(report.off.settlementId)) {
-      from = cache[report.off.settlementId];
+    if (cache.containsKey(report.participants[0].settlementId)) {
+      from = cache[report.participants[0].settlementId];
     } else {
       from = await settlementService.fetchSettlementById(
-        settlementId: report.off.settlementId,
+        settlementId: report.participants[0].settlementId,
       );
       cache.putIfAbsent(
         from!.id.$oid,
         () => from!,
       );
     }
-    if (cache.containsKey(report.def[0].settlementId)) {
-      to = cache[report.def[0].settlementId];
+    if (cache.containsKey(report.participants[1].settlementId)) {
+      to = cache[report.participants[1].settlementId];
     } else {
       to = await settlementService.fetchSettlementById(
-        settlementId: report.def[0].settlementId,
+        settlementId: report.participants[1].settlementId,
       );
       cache.putIfAbsent(
         to!.id.$oid,

@@ -29,8 +29,12 @@ final GoRouter _router = GoRouter(
 );
 
 Future<String?> _guard(BuildContext context, GoRouterState state) async {
-  final bool signedIn = context.read<AuthBloc>().state is AuthenticatedState;
-  if (context.read<AuthBloc>().state is UnknownState) {
+  final bool signedIn = context
+      .read<AuthBloc>()
+      .state is AuthenticatedState;
+  if (context
+      .read<AuthBloc>()
+      .state is UnknownState) {
     return '/splash';
   }
   final bool signingIn =
@@ -114,11 +118,9 @@ class MainShellRoute extends StatefulShellRouteData {
   const MainShellRoute();
 
   @override
-  Widget builder(
-      BuildContext context,
+  Widget builder(BuildContext context,
       GoRouterState state,
-      StatefulNavigationShell navigationShell,
-      ) {
+      StatefulNavigationShell navigationShell,) {
     return MultiRepositoryProvider(
         providers: [
           RepositoryProvider<SettlementRepository>(
@@ -134,13 +136,16 @@ class MainShellRoute extends StatefulShellRouteData {
         child: MultiBlocProvider(
           providers: [
             BlocProvider(
-              create: (context) => SettlementBloc(
+              create: (context) =>
+              SettlementBloc(
                   settlementRepository: context.read<SettlementRepository>())
                 ..add(const ListOfSettlementsRequested()),
             ),
             BlocProvider(
-              create: (context) => ReportsBloc(
-                  reportsRepository: context.read<ReportsRepository>()),
+              create: (context) =>
+              ReportsBloc(
+                  reportsRepository: context.read<ReportsRepository>())
+                ..add(const ListOfBriefsRequested()),
             ),
           ],
           child: ScaffoldWithNavBar(navigationShell: navigationShell),

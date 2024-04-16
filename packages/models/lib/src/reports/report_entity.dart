@@ -1,92 +1,80 @@
 import 'package:models/models.dart';
-import 'package:mongo_dart/mongo_dart.dart';
 
 class ReportEntity {
-  final ObjectId? id;
-  final List<String> reportOwners;
-  final List<int> state; // 0 - unread, 1 - read, 2 - deleted
+  final String? id;
+  final List<ReportOwner> reportOwners;
   final Mission mission;
-  final PlayerInfo off;
-  final List<PlayerInfo> def;
+  final List<PlayerInfo> participants; // [off, def, ...reinforcements]
   final DateTime dateTime;
+  final List<int> bounty;
 
   ReportEntity({
     this.id,
     this.reportOwners = const [],
-    this.state = const [],
     required this.mission,
-    required this.off,
-    required this.def,
+    required this.participants,
     required this.dateTime,
+    this.bounty = const [0, 0, 0, 0],
   });
 
   ReportEntity.fromMap(Map<String, dynamic> map)
-      : id = map['_id'] as ObjectId,
+      : id = map['_id'] as String?,
         reportOwners = (map['reportOwners'] as List<dynamic>)
-            .map((r) => r as String)
-            .toList(),
-        state = (map['state'] as List<dynamic>)
-            .map((s) => s as int)
+            .map((r) => ReportOwner.fromJson(r as Map<String, dynamic>))
             .toList(),
         mission = Mission.values.byName(map['mission'] as String),
-        off = PlayerInfo.fromMap(map['off'] as Map<String, dynamic>),
-        def = (map['def'] as List<dynamic>)
+        participants = (map['participants'] as List<dynamic>)
             .map((e) => PlayerInfo.fromMap(e as Map<String, dynamic>))
             .toList(),
-        dateTime = map['dateTime'] as DateTime;
+        dateTime = map['dateTime'] as DateTime,
+        bounty = (map['bounty'] as List<dynamic>).map((u) => u as int).toList();
 
   ReportEntity.fromJson(Map<String, dynamic> map)
-      : id = ObjectId.parse(map['_id'] as String),
+      : id = map['_id'] as String?,
         reportOwners = (map['reportOwners'] as List<dynamic>)
-            .map((r) => r as String)
-            .toList(),
-        state = (map['state'] as List<dynamic>)
-            .map((s) => s as int)
+            .map((r) => ReportOwner.fromJson(r as Map<String, dynamic>))
             .toList(),
         mission = Mission.values.byName(map['mission'] as String),
-        off = PlayerInfo.fromMap(map['off'] as Map<String, dynamic>),
-        def = (map['def'] as List<dynamic>)
+        participants = (map['participants'] as List<dynamic>)
             .map((e) => PlayerInfo.fromMap(e as Map<String, dynamic>))
             .toList(),
-        dateTime = DateTime.parse(map['dateTime'] as String);
+        dateTime = DateTime.parse(map['dateTime'] as String),
+        bounty = (map['bounty'] as List<dynamic>).map((u) => u as int).toList();
 
   Map<String, dynamic> toMap() => <String, dynamic>{
         '_id': id,
-        'reportOwners': reportOwners,
-        'state': state,
+        'reportOwners': reportOwners.map((e) => e.toJson()).toList(),
         'mission': mission.name,
-        'off': off.toMap(),
-        'def': def.map((d) => d.toMap()).toList(),
+        'participants': participants.map((d) => d.toMap()).toList(),
         'dateTime': dateTime,
+        'bounty': bounty.map((a) => a).toList(),
       };
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-    '_id': id,
-    'reportOwners': reportOwners,
-    'state': state,
-    'mission': mission.name,
-    'off': off.toMap(),
-    'def': def.map((d) => d.toMap()).toList(),
-    'dateTime': dateTime.toIso8601String(),
-  };
+        '_id': id,
+        'reportOwners': reportOwners.map((e) => e.toJson()).toList(),
+        'mission': mission.name,
+        'participants': participants.map((d) => d.toMap()).toList(),
+        'dateTime': dateTime.toIso8601String(),
+        'bounty': bounty.map((a) => a).toList(),
+      };
 
   ReportEntity copyWith({
-    ObjectId? id,
-    List<String>? reportOwners,
-    List<int>? state,
+    String? id,
+    bool? failed,
+    List<ReportOwner>? reportOwners,
     Mission? mission,
-    PlayerInfo? off,
-    List<PlayerInfo>? def,
+    List<PlayerInfo>? participants,
     DateTime? dateTime,
+    List<int>? bounty,
   }) {
     return ReportEntity(
       id: id ?? this.id,
       reportOwners: reportOwners ?? this.reportOwners,
-      state: state ?? this.state,
       mission: mission ?? this.mission,
-      off: off ?? this.off,
-      def: def ?? this.def,
+      participants: participants ?? this.participants,
       dateTime: dateTime ?? this.dateTime,
+      bounty: bounty ?? this.bounty,
     );
   }
 }

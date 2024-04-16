@@ -7,16 +7,17 @@ class TroopsSendContract extends Equatable {
   final String? ownerId;
   final String? settlementId;
   final String? name;
+  final String? playerName;
   final DateTime when;
 
   TroopsSendContract(
       {required this.corX,
       required this.corY,
       required this.units,
-      this.ownerId,
+      required this.when, this.ownerId,
       this.settlementId,
       this.name,
-      required this.when});
+      this.playerName});
 
   TroopsSendContract.fromJson(Map<String, dynamic> map)
       : name = map['name'] as String?,
@@ -24,11 +25,13 @@ class TroopsSendContract extends Equatable {
         corY = map['corY'] as int,
         units = (map['units'] as List<dynamic>).map((u) => u as int).toList(),
         ownerId = map['ownerId'] as String?,
+        playerName = map['playerName'] as String?,
         settlementId = map['settlementId'] as String?,
         when = DateTime.parse(map['when'] as String);
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'name': name,
+        'playerName': playerName,
         'corX': corX,
         'corY': corY,
         'units': units,
@@ -44,6 +47,7 @@ class TroopsSendContract extends Equatable {
     String? ownerId,
     String? settlementId,
     String? name,
+    String? playerName,
     DateTime? when,
   }) {
     return TroopsSendContract(
@@ -53,6 +57,7 @@ class TroopsSendContract extends Equatable {
       ownerId: ownerId ?? this.ownerId,
       settlementId: settlementId ?? this.settlementId,
       name: name ?? this.name,
+      playerName: playerName ?? this.playerName,
       when: when ?? this.when,
     );
   }

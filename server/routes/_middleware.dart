@@ -19,7 +19,8 @@ final StatisticsRepository _statisticsRepository =
     StatisticsRepositoryImpl(databaseClient: _databaseClient);
 final _settlementService = SettlementServiceImpl(
     settlementRepository: _settlementRepository,
-    statisticsRepository: _statisticsRepository,);
+    statisticsRepository: _statisticsRepository,
+    userRepository: _userRepository,);
 final WorldRepository _worldRepository =
     WorldRepositoryMongoImpl(databaseClient: _databaseClient);
 final WorldService _worldService =

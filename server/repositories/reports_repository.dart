@@ -5,14 +5,15 @@ import '../database/database_client.dart';
 import '../exceptions/exceptions.dart';
 
 abstract class ReportsRepository {
-  Future<List<ReportEntity>> fetchAllReportsByUserId({required String userId});
+  Future<List<ReportEntity>> fetchAllReportsByUserId(
+      {required String playerId});
 
   Future<ReportEntity> fetchReportById({
     required String reportId,
-    required String userId,
+    required String playerId,
   });
 
-  Future<void> deleteById({required String reportId, required String userId});
+  Future<void> deleteById({required String reportId, required String playerId});
 }
 
 class ReportsRepositoryMongoImpl implements ReportsRepository {
@@ -23,13 +24,19 @@ class ReportsRepositoryMongoImpl implements ReportsRepository {
 
   @override
   Future<List<ReportEntity>> fetchAllReportsByUserId({
-    required String userId,
+    required String playerId,
   }) {
     try {
       if (_databaseClient.db != null && _databaseClient.db!.isConnected) {
         final result = _databaseClient.db!
             .collection('reports')
-            .find(where.eq('reportOwners', userId))
+            .find({
+              'reportOwners': {
+                r'$elemMatch': {
+                  'playerId': playerId,
+                },
+              },
+            })
             .map(ReportEntity.fromMap)
             .toList();
         return result;
@@ -44,21 +51,24 @@ class ReportsRepositoryMongoImpl implements ReportsRepository {
   @override
   Future<ReportEntity> fetchReportById({
     required String reportId,
-    required String userId,
+    required String playerId,
   }) async {
-    final objectId = ObjectId.parse(reportId);
     try {
       if (_databaseClient.db != null && _databaseClient.db!.isConnected) {
         final document = await _databaseClient.db!
             .collection('reports')
-            .findOne(where.id(objectId));
+            .findOne(where.eq('_id', reportId));
         final report = ReportEntity.fromMap(document!);
-        final ownerIndex = report.reportOwners.indexOf(userId);
-        final state = [...report.state];
-        state[ownerIndex] = 1;
+        final ownerIndex = report.reportOwners.indexWhere(
+          (owner) => owner.playerId == playerId,
+        );
+        final owners = report.reportOwners;
+        owners[ownerIndex] = owners[ownerIndex].copyWith(status: 1);
         await _databaseClient.db!.collection('reports').replaceOne(
-            where.id(objectId), report.copyWith(state: state).toMap(),);
-        return report.copyWith(state: state);
+              where.eq('_id', reportId),
+              report.copyWith(reportOwners: owners).toMap(),
+            );
+        return report.copyWith(reportOwners: owners);
       } else {
         throw DatabaseConnectionException();
       }
@@ -70,26 +80,27 @@ class ReportsRepositoryMongoImpl implements ReportsRepository {
   @override
   Future<void> deleteById({
     required String reportId,
-    required String userId,
+    required String playerId,
   }) async {
-    final objectId = ObjectId.parse(reportId);
     try {
       if (_databaseClient.db != null && _databaseClient.db!.isConnected) {
         final document = await _databaseClient.db!
             .collection('reports')
-            .findOne(where.id(objectId));
+            .findOne(where.eq('_id', reportId));
         final report = ReportEntity.fromMap(document!);
-        final ownerIndex = report.reportOwners.indexOf(userId);
-        final state = [...report.state];
-        state[ownerIndex] = 2;
-        final isAllDeleted = !state.any((element) => element != 2);
+        final ownerIndex = report.reportOwners.indexWhere(
+          (owner) => owner.playerId == playerId,
+        );
+        final owners = report.reportOwners;
+        owners[ownerIndex] = owners[ownerIndex].copyWith(status: 2);
+        final isAllDeleted = !owners.any((owner) => owner.status != 2);
         isAllDeleted
             ? _databaseClient.db!
                 .collection('reports')
-                .deleteOne(where.id(objectId))
+                .deleteOne(where.eq('_id', reportId))
             : await _databaseClient.db!.collection('reports').replaceOne(
-                  where.id(objectId),
-                  report.copyWith(state: state).toMap(),
+                  where.eq('_id', reportId),
+                  report.copyWith(reportOwners: owners).toMap(),
                 );
       } else {
         throw DatabaseConnectionException();

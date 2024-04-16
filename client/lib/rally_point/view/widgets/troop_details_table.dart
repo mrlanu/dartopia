@@ -11,11 +11,13 @@ class TroopDetailsTable extends StatelessWidget {
       {super.key,
       required this.movement,
       this.isEstimate = false,
+      this.hideName = false,
       this.backgroundColor = Colors.white70});
 
   final Movement movement;
   final bool isEstimate; // used in confirm_send_troops form
   final Color backgroundColor;
+  final bool hideName;
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +84,7 @@ class TroopDetailsTable extends StatelessWidget {
                         movement.mission == Mission.back
                             ? 'Return from ${movement.from.villageName} '
                                 '(${movement.from.coordinates[0]}|${movement.from.coordinates[1]})'
-                            : '${movement.from.playerName} ${_getMissionName()} ${movement.to.villageName} '
+                            : '${hideName ? '' : movement.from.playerName} ${_getMissionName()} ${movement.to.villageName} '
                                 '(${movement.to.coordinates[0]}|${movement.to.coordinates[1]})'))
                 : movement.mission == Mission.home
                     ? const Center(child: Text('Own troops'))

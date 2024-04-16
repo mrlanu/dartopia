@@ -1,9 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:mongo_dart/mongo_dart.dart';
 part 'user.freezed.dart';
 part 'user.g.dart';
 
-@freezed
+//@freezed
 class User with _$User  {
   const factory User({
     String? id,

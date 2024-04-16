@@ -28,13 +28,16 @@ Future<Response> _get(
   String userId,
 ) async {
   final reportsService = context.read<ReportsService>();
-  final report =
-      await reportsService.fetchReportById(reportId: reportId, userId: userId);
+  final report = await reportsService.fetchReportById(
+      reportId: reportId, playerId: userId,);
   return Response.json(body: report);
 }
 
 Future<Response> _delete(
-    RequestContext context, String id, String userId,) async {
+  RequestContext context,
+  String id,
+  String userId,
+) async {
   final reportsService = context.read<ReportsService>();
   await reportsService.deleteById(id, userId);
   return Response(statusCode: HttpStatus.noContent);

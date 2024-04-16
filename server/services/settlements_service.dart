@@ -6,7 +6,9 @@ import 'package:mongo_dart/mongo_dart.dart';
 import '../config/config.dart';
 import '../repositories/settlement_repository.dart';
 import '../repositories/statistics_repository.dart';
+import '../repositories/user_repository.dart';
 import '../server_settings.dart';
+import 'utils_service.dart';
 
 abstract class SettlementService {
   Future<List<ShortSettlementInfo>> getSettlementsIdByUserId({
@@ -71,16 +73,22 @@ abstract class SettlementService {
     required String settlementId,
     required List<List<int>> buildings,
   });
+
+  Future<TroopsSendContract> updateContract(
+      String fromSettlementId, TroopsSendContract contract);
 }
 
 class SettlementServiceImpl extends SettlementService {
-  SettlementServiceImpl(
-      {required SettlementRepository settlementRepository,
-      required StatisticsRepository statisticsRepository,})
-      : _settlementRepository = settlementRepository,
-        _statisticsRepository = statisticsRepository;
+  SettlementServiceImpl({
+    required SettlementRepository settlementRepository,
+    required StatisticsRepository statisticsRepository,
+    required UserRepository userRepository,
+  })  : _settlementRepository = settlementRepository,
+        _statisticsRepository = statisticsRepository,
+        _userRepository = userRepository;
   final SettlementRepository _settlementRepository;
   final StatisticsRepository _statisticsRepository;
+  final UserRepository _userRepository;
 
   @override
   Future<List<ShortSettlementInfo>> getSettlementsIdByUserId({
@@ -118,13 +126,17 @@ class SettlementServiceImpl extends SettlementService {
     if (hasMovements) {
       return null;
     }
-    return recalculateState(settlementId: settlementId);
+    return recalculateState(
+        settlementId: settlementId, forResponseToClient: true);
   }
 
   @override
   Future<Settlement?> recalculateState({
     required String settlementId,
     DateTime? untilDateTime,
+    //sometimes this method call not from route,
+    // and shouldn't update DB with movements
+    bool forResponseToClient = false,
   }) async {
     untilDateTime ??= DateTime.now();
 
@@ -149,7 +161,8 @@ class SettlementServiceImpl extends SettlementService {
 
     final updatedSettlement =
         await _settlementRepository.updateSettlement(settlement);
-    return updatedSettlement?.copyWith(movements: movements);
+    return updatedSettlement?.copyWith(
+        movements: forResponseToClient ? movements : []);
   }
 
   Future<bool> _hasMovementsBeforeNow(String settlementId) async {
@@ -311,11 +324,7 @@ class SettlementServiceImpl extends SettlementService {
       settlement.checkBuildingsForUpgradePosibility(
         ServerSettings().maxConstructionTasksInQueue,
       );
-      return updateSettlement(
-        settlement: settlement.copyWith(
-            movements: [],), // remove movements added
-        // during state recalculation
-      );
+      return updateSettlement(settlement: settlement);
     }
     return Future(() => null);
   }
@@ -353,25 +362,56 @@ class SettlementServiceImpl extends SettlementService {
   }
 
   @override
+  Future<TroopsSendContract> updateContract(
+      String fromSettlementId, TroopsSendContract contract) async {
+    final offSettlement =
+        await fetchSettlementById(settlementId: fromSettlementId);
+    final targetSettlement = await fetchSettlementByCoordinates(
+      x: contract.corX,
+      y: contract.corY,
+    );
+
+    final player = await _userRepository.findById(id: targetSettlement!.userId);
+    final when = UtilsService.getArrivalTime(
+      toX: contract.corX,
+      toY: contract.corY,
+      fromX: offSettlement!.x,
+      fromY: offSettlement.y,
+      units: contract.units,
+    );
+    return contract.copyWith(
+      ownerId: targetSettlement.userId,
+      settlementId: targetSettlement.id.$oid,
+      name: targetSettlement.name,
+      playerName: player!.name,
+      when: when,
+    );
+  }
+
+  @override
   Future<bool> sendUnits({
     required String fromId,
     required SendTroopsRequest request,
   }) async {
-    final sender = await fetchSettlementById(settlementId: fromId);
-    final receiver = await fetchSettlementById(settlementId: request.to);
+    final senderSettlement = await fetchSettlementById(settlementId: fromId);
+    final receiverSettlement =
+        await fetchSettlementById(settlementId: request.to);
+    final sender = await _userRepository.findById(id: senderSettlement!.userId);
+    final receiver =
+        await _userRepository.findById(id: receiverSettlement!.userId);
     final fromSide = SideBrief(
-      villageId: sender!.id.$oid,
-      villageName: sender.name,
-      playerName: sender.userId,
-      userId: sender.userId,
-      coordinates: [sender.x, sender.y],
+      villageId: senderSettlement.id.$oid,
+      villageName: senderSettlement.name,
+      playerName: sender!.name,
+      userId: senderSettlement.userId,
+      coordinates: [senderSettlement.x, senderSettlement.y],
     );
     final toSide = SideBrief(
-      villageId: receiver!.id.$oid,
-      villageName: receiver.name,
-      playerName: receiver.userId,
-      userId: receiver.userId,
-      coordinates: [receiver.x, receiver.y],
+      villageId: receiverSettlement.id.$oid,
+      villageName: receiverSettlement.name,
+      playerName: receiver!.name,
+      userId: receiverSettlement.userId,
+      coordinates: [receiverSettlement.x, receiverSettlement.y],
     );
     final movement = Movement(
       id: ObjectId(),
@@ -389,8 +429,8 @@ class SettlementServiceImpl extends SettlementService {
       mission: request.mission,
     );
     await _settlementRepository.sendUnits(movement);
-    _subtractUnits(request.units, sender);
-    await updateSettlement(settlement: sender);
+    _subtractUnits(request.units, senderSettlement);
+    await updateSettlement(settlement: senderSettlement);
     return true;
   }
 
