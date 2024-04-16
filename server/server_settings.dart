@@ -10,7 +10,7 @@ class ServerSettings {
     required this.mapWidth,
     required this.mapHeight,
     required this.oasesAmount,
-    required this.troopsSpeed,
+    required this.troopsSpeedX,
     // after development should be deleted(should be gotten from models/UnitsConst)
     required this.troopBuildDuration,
     required this.maxConstructionTasksInQueue,
@@ -20,7 +20,7 @@ class ServerSettings {
   final int mapWidth;
   final int mapHeight;
   final int oasesAmount;
-  final int troopsSpeed;
+  final int troopsSpeedX;
   // after development should be deleted(should be gotten from models/UnitsConst)
   final int troopBuildDuration;
   final int maxConstructionTasksInQueue;
@@ -31,7 +31,7 @@ class ServerSettings {
     mapWidth: 50,
     mapHeight: 50,
     oasesAmount: 100,
-    troopsSpeed: 1,
+    troopsSpeedX: 1,
     troopBuildDuration: 180,
     maxConstructionTasksInQueue: 2,
   );
@@ -43,7 +43,7 @@ class ServerSettings {
       mapWidth: map['mapWidth'] as int,
       mapHeight: map['mapHeight'] as int,
       oasesAmount: map['oasesAmount'] as int,
-      troopsSpeed: map['troopsSpeed'] as int,
+      troopsSpeedX: map['troopsSpeedX'] as int,
       troopBuildDuration: map['troopBuildDuration'] as int,
       maxConstructionTasksInQueue: map['maxConstructionTasksInQueue'] as int,
     );
@@ -54,7 +54,7 @@ class ServerSettings {
         'mapWidth': mapWidth,
         'mapHeight': mapHeight,
         'oasesAmount': oasesAmount,
-        'troopsSpeed': troopsSpeed,
+        'troopsSpeedX': troopsSpeedX,
         'troopBuildDuration': troopBuildDuration,
         'maxConstructionTasksInQueue': maxConstructionTasksInQueue,
       };
@@ -64,7 +64,7 @@ class ServerSettings {
     int? mapWidth,
     int? mapHeight,
     int? oasesAmount,
-    int? troopsSpeed,
+    int? troopsSpeedX,
     int? troopBuildDuration,
     int? maxConstructionTasksInQueue,
   }) {
@@ -73,7 +73,7 @@ class ServerSettings {
       mapWidth: mapWidth ?? this.mapWidth,
       mapHeight: mapHeight ?? this.mapHeight,
       oasesAmount: oasesAmount ?? this.oasesAmount,
-      troopsSpeed: troopsSpeed ?? this.troopsSpeed,
+      troopsSpeedX: troopsSpeedX ?? this.troopsSpeedX,
       troopBuildDuration: troopBuildDuration ?? this.troopBuildDuration,
       maxConstructionTasksInQueue:
           maxConstructionTasksInQueue ?? this.maxConstructionTasksInQueue,

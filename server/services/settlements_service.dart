@@ -74,8 +74,8 @@ abstract class SettlementService {
     required List<List<int>> buildings,
   });
 
-  Future<TroopsSendContract> updateContract(
-      String fromSettlementId, TroopsSendContract contract);
+  Future<TroopsSendContract> updateContract(String fromSettlementId,
+      TroopsSendContract contract,);
 }
 
 class SettlementServiceImpl extends SettlementService {
@@ -83,7 +83,8 @@ class SettlementServiceImpl extends SettlementService {
     required SettlementRepository settlementRepository,
     required StatisticsRepository statisticsRepository,
     required UserRepository userRepository,
-  })  : _settlementRepository = settlementRepository,
+  })
+      : _settlementRepository = settlementRepository,
         _statisticsRepository = statisticsRepository,
         _userRepository = userRepository;
   final SettlementRepository _settlementRepository;
@@ -160,7 +161,7 @@ class SettlementServiceImpl extends SettlementService {
     );
 
     final updatedSettlement =
-        await _settlementRepository.updateSettlement(settlement);
+    await _settlementRepository.updateSettlement(settlement);
     return updatedSettlement?.copyWith(
         movements: forResponseToClient ? movements : []);
   }
@@ -186,7 +187,7 @@ class SettlementServiceImpl extends SettlementService {
         final leftCrop = settlement.storage[3];
         final durationToDeath = leftCrop / -cropPerHour * 3600;
         final deathTime =
-            modified.add(Duration(seconds: durationToDeath.toInt()));
+        modified.add(Duration(seconds: durationToDeath.toInt()));
 
         if (deathTime.isBefore(task.executionTime)) {
           final Executable deathEvent = DeathTask(deathTime);
@@ -215,17 +216,17 @@ class SettlementServiceImpl extends SettlementService {
     }
   }
 
-  List<Executable> _getReadyUnits(
-    Settlement settlement,
-    DateTime untilDateTime,
-  ) {
+  List<Executable> _getReadyUnits(Settlement settlement,
+      DateTime untilDateTime,) {
     final result = <Executable>[];
     final ordersList = settlement.combatUnitQueue;
     final newOrdersList = <CombatUnitQueue>[];
 
     if (ordersList.isNotEmpty) {
       for (final order in ordersList) {
-        final duration = untilDateTime.difference(order.lastTime).inSeconds;
+        final duration = untilDateTime
+            .difference(order.lastTime)
+            .inSeconds;
 
         final endOrderTime = order.lastTime
             .add(Duration(seconds: order.leftTrain * order.durationEach));
@@ -300,7 +301,7 @@ class SettlementServiceImpl extends SettlementService {
     );
     if (canBeUpgraded) {
       final upgradeDuration =
-          Duration(seconds: specification.time.valueOf(request.toLevel));
+      Duration(seconds: specification.time.valueOf(request.toLevel));
       final newTask = ConstructionTask(
         specificationId: request.specificationId,
         buildingId: request.buildingId,
@@ -308,8 +309,8 @@ class SettlementServiceImpl extends SettlementService {
         when: constructionTasks.isEmpty
             ? DateTime.now().add(upgradeDuration)
             : constructionTasks[constructionTasks.length - 1]
-                .executionTime
-                .add(upgradeDuration),
+            .executionTime
+            .add(upgradeDuration),
       );
       settlement
         ..spendResources(specification.getResourcesToNextLevel(request.toLevel))
@@ -354,7 +355,7 @@ class SettlementServiceImpl extends SettlementService {
 
     final unit = UnitsConst.UNITS[settlement.nation.index][order.unitId];
     final costOfAll =
-        unit.cost.map((price) => price * order.leftTrain).toList();
+    unit.cost.map((price) => price * order.leftTrain).toList();
     settlement
       ..spendResources(costOfAll)
       ..addCombatUnitOrder(order);
@@ -362,10 +363,10 @@ class SettlementServiceImpl extends SettlementService {
   }
 
   @override
-  Future<TroopsSendContract> updateContract(
-      String fromSettlementId, TroopsSendContract contract) async {
+  Future<TroopsSendContract> updateContract(String fromSettlementId,
+      TroopsSendContract contract) async {
     final offSettlement =
-        await fetchSettlementById(settlementId: fromSettlementId);
+    await fetchSettlementById(settlementId: fromSettlementId);
     final targetSettlement = await fetchSettlementByCoordinates(
       x: contract.corX,
       y: contract.corY,
@@ -395,21 +396,22 @@ class SettlementServiceImpl extends SettlementService {
   }) async {
     final senderSettlement = await fetchSettlementById(settlementId: fromId);
     final receiverSettlement =
-        await fetchSettlementById(settlementId: request.to);
-    final sender = await _userRepository.findById(id: senderSettlement!.userId);
-    final receiver =
-        await _userRepository.findById(id: receiverSettlement!.userId);
+    await fetchSettlementById(settlementId: request.to);
+    final senderPlayerName = await _userRepository.findById(
+        id: senderSettlement!.userId,);
+    final receiverPlayerName =
+    await _userRepository.findById(id: receiverSettlement!.userId);
     final fromSide = SideBrief(
       villageId: senderSettlement.id.$oid,
       villageName: senderSettlement.name,
-      playerName: sender!.name,
+      playerName: senderPlayerName!.name,
       userId: senderSettlement.userId,
       coordinates: [senderSettlement.x, senderSettlement.y],
     );
     final toSide = SideBrief(
       villageId: receiverSettlement.id.$oid,
       villageName: receiverSettlement.name,
-      playerName: receiver!.name,
+      playerName: receiverPlayerName!.name,
       userId: receiverSettlement.userId,
       coordinates: [receiverSettlement.x, receiverSettlement.y],
     );
@@ -418,14 +420,15 @@ class SettlementServiceImpl extends SettlementService {
       units: request.units,
       from: fromSide,
       to: toSide,
-      when: DateTime.now().add(const Duration(seconds: 30)),
-      /*UtilsService.getArrivalTime(
+      when:
+      //DateTime.now().add(const Duration(seconds: 30)),
+      UtilsService.getArrivalTime(
         toX: toSide.coordinates[0],
         toY: toSide.coordinates[1],
         fromX: fromSide.coordinates[0],
         fromY: fromSide.coordinates[1],
         units: request.units,
-      ),*/
+      ),
       mission: request.mission,
     );
     await _settlementRepository.sendUnits(movement);
@@ -462,8 +465,7 @@ class SettlementServiceImpl extends SettlementService {
 
   @override
   Future<List<Movement>> getAllStaticForeignMovementsBySettlementId(
-    String id,
-  ) =>
+      String id,) =>
       _settlementRepository.getAllStaticForeignMovementsBySettlementId(id);
 
   Movement _buildHomeLegion(Settlement settlement) {
