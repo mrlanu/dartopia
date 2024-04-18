@@ -34,14 +34,18 @@ Future<void> _initServerSettings() async {
           .collection('settings')
           .findOne(where.eq('serverName', serverName));
       if (settings == null) {
+        initialSettingsMap = ServerSettings().toMap(serverName: serverName!);
         await _databaseClient.db!
             .collection('settings')
-            .insertOne(ServerSettings().toMap(serverName: serverName!));
+            .insertOne(initialSettingsMap);
       } else {
         ServerSettings.initializeFromMap(settings);
+        initialSettingsMap = settings;
       }
     }else{
       throw DatabaseConnectionException();
     }
   }catch(e){rethrow;}
 }
+
+Map<String, dynamic> initialSettingsMap = {};
