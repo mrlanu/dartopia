@@ -5,6 +5,7 @@ import 'package:mongo_dart/mongo_dart.dart';
 
 import '../../battle/battle.dart';
 import '../../battle/main_battle.dart';
+import '../../utils_service.dart';
 import 'troop_missions.dart';
 
 class Attack extends MissionStrategy {
@@ -59,13 +60,13 @@ class Attack extends MissionStrategy {
     final sidesArmy = [ownDef, ...reinforcementArmies, off];
 
     final battleResults = battle.perform(battleField, sidesArmy);
-    final plunder =
-        await _returnOff(sidesArmy[sidesArmy.length - 1], defenseSettlement);
+    final plunder = await _returnOff(
+        sidesArmy[sidesArmy.length - 1], offenseSettlement!, defenseSettlement);
     sidesArmy.removeAt(sidesArmy.length - 1);
     await _updateDef(defenseSettlement, sidesArmy, reinforcements);
     await settlementService.updateSettlement(settlement: defenseSettlement);
     await _createReports(
-      attacker: offenseSettlement!,
+      attacker: offenseSettlement,
       defender: defenseSettlement,
       reinforcement: reinforcements,
       battleResult: battleResults[0],
@@ -95,12 +96,10 @@ class Attack extends MissionStrategy {
     }
   }
 
-  Future<List<int>> _returnOff(Army offArmy, Settlement def) async {
+  Future<List<int>> _returnOff(
+      Army offArmy, Settlement off, Settlement def,) async {
     //off has been completely destroyed
-    if (offArmy.numbers.reduce(
-          (value, element) => value + element,
-        ) ==
-        0) {
+    if (offArmy.numbers.reduce((value, element) => value + element) == 0) {
       await mongoService.db!
           .collection('movements')
           .deleteOne(where.id(movement.id!));
@@ -109,13 +108,18 @@ class Attack extends MissionStrategy {
     final plunder = _calculatePlunder(offArmy.numbers, def);
     _subtractStolenResources(plunder, def);
     final backMovement = movement.copyWith(
-      from: movement.to,
-      to: movement.from,
-      units: offArmy.numbers,
-      plunder: plunder,
-      mission: Mission.back,
-      when: movement.when.add(const Duration(seconds: 3600)),
-    );
+        from: movement.to,
+        to: movement.from,
+        units: offArmy.numbers,
+        plunder: plunder,
+        mission: Mission.back,
+        when: UtilsService.getArrivalTime(
+            toX: off.x,
+            toY: off.y,
+            fromX: def.x,
+            fromY: def.y,
+            units: offArmy
+                .numbers,),);
 
     await mongoService.db!
         .collection('movements')
