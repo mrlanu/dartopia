@@ -1,3 +1,4 @@
+import 'package:dartopia/settlement/bloc/settlement_bloc.dart';
 import 'package:dartopia/statistics/statistics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,15 +27,22 @@ class StatisticsView extends StatelessWidget {
     return Column(
       children: [
         const TableFilter(),
-        BlocBuilder<StatisticsCubit, StatisticsState>(
+        BlocConsumer<SettlementBloc, SettlementState>(
+          listener: (context, state) {
+            context.read<StatisticsCubit>().fetchStatistics();
+          },
           builder: (context, state) {
-            return state.statisticsStatus == StatisticsStatus.loading
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : StatisticsTable(
-                    staticsModels: state.statisticsResponse!.modelsList,
-                  );
+            return BlocBuilder<StatisticsCubit, StatisticsState>(
+              builder: (context, state) {
+                return state.statisticsStatus == StatisticsStatus.loading
+                    ? const Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : StatisticsTable(
+                        staticsModels: state.statisticsResponse!.modelsList,
+                      );
+              },
+            );
           },
         ),
         const Spacer(),

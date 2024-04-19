@@ -6,10 +6,21 @@ import 'package:go_router/go_router.dart';
 import '../consts/colors.dart';
 import '../reports/bloc/reports_bloc.dart';
 
-class BottomNavBar extends StatelessWidget {
+class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key, required this.navigationShell});
 
   final StatefulNavigationShell navigationShell;
+
+  @override
+  State<BottomNavBar> createState() => _BottomNavBarState();
+}
+
+class _BottomNavBarState extends State<BottomNavBar> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<ReportsBloc>().add(const ListOfBriefsRequested());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +33,7 @@ class BottomNavBar extends StatelessWidget {
           backgroundColor: DartopiaColors.primary,
           unselectedItemColor: DartopiaColors.white38,
           selectedItemColor: DartopiaColors.onPrimary,
-          currentIndex: navigationShell.currentIndex,
+          currentIndex: widget.navigationShell.currentIndex,
           onTap: (index) => _onTap(context, index),
           elevation: 0,
           showSelectedLabels: false,
@@ -35,23 +46,20 @@ class BottomNavBar extends StatelessWidget {
                 label: 'buildings',
                 icon: FaIcon(FontAwesomeIcons.houseChimney)),
             const BottomNavigationBarItem(
-                label: 'map',
-                icon: FaIcon(FontAwesomeIcons.mapLocationDot)),
+                label: 'map', icon: FaIcon(FontAwesomeIcons.mapLocationDot)),
             const BottomNavigationBarItem(
-                label: 'charts',
-                icon: FaIcon(FontAwesomeIcons.chartLine)),
+                label: 'charts', icon: FaIcon(FontAwesomeIcons.chartLine)),
             _buildReportsBarItem(context),
             const BottomNavigationBarItem(
-                label: 'mail',
-                icon: FaIcon(FontAwesomeIcons.envelopeOpenText)),
+                label: 'mail', icon: FaIcon(FontAwesomeIcons.envelopeOpenText)),
           ],
         ));
   }
 
   void _onTap(BuildContext context, int index) {
-    navigationShell.goBranch(
+    widget.navigationShell.goBranch(
       index,
-      initialLocation: index == navigationShell.currentIndex,
+      initialLocation: index == widget.navigationShell.currentIndex,
     );
   }
 
@@ -63,11 +71,11 @@ class BottomNavBar extends StatelessWidget {
             return state.amount == 0
                 ? const FaIcon(FontAwesomeIcons.book)
                 : Badge(
-              label: Text('${state.amount}',
-                  style:
-                  const TextStyle(fontSize: 12, color: Colors.white)),
-              child: const FaIcon(FontAwesomeIcons.book),
-            );
+                    label: Text('${state.amount}',
+                        style:
+                            const TextStyle(fontSize: 12, color: Colors.white)),
+                    child: const FaIcon(FontAwesomeIcons.book),
+                  );
           },
         ));
   }

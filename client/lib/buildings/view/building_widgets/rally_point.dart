@@ -2,9 +2,9 @@ import 'package:dartopia/buildings/buildings.dart';
 import 'package:dartopia/utils/countdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:models/models.dart';
 
-import '../../../navigation/navigation.dart';
 import '../../../settlement/settlement.dart';
 import '../view.dart';
 
@@ -20,7 +20,7 @@ class RallyPoint extends StatelessWidget {
       key: ValueKey('${buildingRecord[1]} ${buildingRecord[0]}'),
       buildingRecord: buildingRecord,
       enterable: true,
-      onEnter: () => const RallyPointRoute(tabId: '0').push(context),
+      onEnter: () => context.push('/rally_point/0'),
       child: (settlement, buildingRecord) {
         return _buildInfo(settlementBloc.state.movementsByLocationMap, context);
       },

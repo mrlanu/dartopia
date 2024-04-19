@@ -1,6 +1,12 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:dartopia/authentication/bloc/auth_bloc.dart';
 import 'package:dartopia/navigation/router.dart';
+import 'package:dartopia/reports/bloc/reports_bloc.dart';
+import 'package:dartopia/reports/repository/reports_repository.dart';
+import 'package:dartopia/settlement/bloc/settlement_bloc.dart';
+import 'package:dartopia/settlement/repository/settlement_repository.dart';
+import 'package:dartopia/statistics/cubit/statistics_cubit.dart';
+import 'package:dartopia/statistics/statistics_repository.dart';
 import 'package:dartopia/utils/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,10 +23,39 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider(
-      create: (context) => _authRepo,
-      child: BlocProvider(
-        create: (_) => AuthBloc()..add(CheckAuthStatus()),
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider(
+          create: (context) => _authRepo,
+        ),
+        RepositoryProvider<SettlementRepository>(
+          create: (context) => SettlementRepositoryImpl(),
+        ),
+        RepositoryProvider<ReportsRepository>(
+          create: (context) => ReportsRepositoryImpl(),
+        ),
+        RepositoryProvider<StatisticsRepository>(
+          create: (context) => StatisticsRepositoryImpl(),
+        ),
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (_) => AuthBloc()..add(CheckAuthStatus()),
+          ),
+          BlocProvider(
+            create: (context) => SettlementBloc(
+                settlementRepository: context.read<SettlementRepository>()),
+          ),
+          BlocProvider(
+              create: (context) => ReportsBloc(
+                    reportsRepository: context.read<ReportsRepository>(),
+                  )),
+          BlocProvider(
+            create: (context) => StatisticsCubit(
+                statisticsRepository: context.read<StatisticsRepository>()),
+          ),
+        ],
         child: const AppView(),
       ),
     );
