@@ -264,7 +264,7 @@ class _BuildingGridAddItem extends StatelessWidget {
     final availableEmptySpots = maxBuildings - buildingsAmount;
     return GestureDetector(
       onTap: () {
-        context.go('/settlement/details', extra: [buildingsAmount, 99, 0, 0]);
+        context.go('/buildings/details', extra: [buildingsAmount, 99, 0, 0]);
       },
       child: Badge(
         alignment: Alignment.bottomRight,

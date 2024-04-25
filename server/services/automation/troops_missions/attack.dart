@@ -27,7 +27,7 @@ class Attack extends MissionStrategy {
     );
 
     final reinforcements = await settlementService
-        .getAllStaticForeignMovementsBySettlementId(defenseSettlement!.id.$oid);
+        .getAllStaticForeignMovementsBySettlementId(defenseSettlement.id.$oid);
 
     final battle = Battle();
 
@@ -61,7 +61,7 @@ class Attack extends MissionStrategy {
 
     final battleResults = battle.perform(battleField, sidesArmy);
     final plunder = await _returnOff(
-        sidesArmy[sidesArmy.length - 1], offenseSettlement!, defenseSettlement);
+        sidesArmy[sidesArmy.length - 1], offenseSettlement, defenseSettlement);
     sidesArmy.removeAt(sidesArmy.length - 1);
     await _updateDef(defenseSettlement, sidesArmy, reinforcements);
     await settlementService.updateSettlement(settlement: defenseSettlement);

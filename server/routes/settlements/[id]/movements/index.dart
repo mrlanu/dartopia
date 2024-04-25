@@ -6,20 +6,12 @@ import 'package:models/models.dart';
 
 import '../../../../services/settlements_service.dart';
 
-FutureOr<Response> onRequest(RequestContext context, String id) async {
-  final settlementService = context.read<SettlementService>();
-  final settlement = await settlementService.recalculateState(settlementId: id);
+FutureOr<Response> onRequest(RequestContext context, String settlementId) async {
 
   switch (context.request.method) {
     case HttpMethod.post:
-      return _post(context, id);
-    case HttpMethod.get:
-      return _get(context, settlement!);
-    case HttpMethod.delete:
-    case HttpMethod.put:
-    case HttpMethod.head:
-    case HttpMethod.options:
-    case HttpMethod.patch:
+      return _post(context, settlementId);
+    case _:
       return Response(statusCode: HttpStatus.methodNotAllowed);
   }
 }
@@ -37,9 +29,3 @@ Future<Response> _post(RequestContext context, String settlementId) async {
   );
 }
 
-Future<Response> _get(RequestContext context, Settlement settlement) async {
-  final settlementService = context.read<SettlementService>();
-  final movements = await settlementService.getMovementsBySettlementId(
-      settlement: settlement,);
-  return Response.json(body: movements);
-}

@@ -6,41 +6,28 @@ import 'package:models/models.dart';
 
 import '../../../../services/settlements_service.dart';
 
-FutureOr<Response> onRequest(RequestContext context, String id) async {
-  final settlementService = context.read<SettlementService>();
-  final settlement = await settlementService.tryToGetSettlement(settlementId: id);
-
-  if (settlement == null) {
-    return Response(
-      statusCode: HttpStatus.notFound,
-      body: 'Settlement with id: $id Not found',
-    );
-  }
-
+FutureOr<Response> onRequest(
+    RequestContext context, String settlementId,) async {
   switch (context.request.method) {
     case HttpMethod.post:
-      return _post(context, settlement);
-    case HttpMethod.delete:
-      return _delete(context, id);
-    case HttpMethod.get:
-    case HttpMethod.put:
-    case HttpMethod.head:
-    case HttpMethod.options:
-    case HttpMethod.patch:
+      return _post(context, settlementId);
+    case _:
       return Response(statusCode: HttpStatus.methodNotAllowed);
   }
 }
 
-Future<Response> _post(RequestContext context, Settlement settlement) async {
+Future<Response> _post(RequestContext context, String settlementId) async {
   final settlementService = context.read<SettlementService>();
   final combatUnitsRequest = OrderCombatUnitRequest.fromMap(
     await context.request.json() as Map<String, dynamic>,
   );
   final result = await settlementService.orderCombatUnits(
-    settlement: settlement, request: combatUnitsRequest,);
+    settlementId: settlementId,
+    request: combatUnitsRequest,
+  );
   return Response.json(
     statusCode:
-    result != null ? HttpStatus.created : HttpStatus.internalServerError,
+        result != null ? HttpStatus.created : HttpStatus.internalServerError,
     body: result?.toJson(),
   );
 }

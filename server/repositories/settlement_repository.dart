@@ -10,7 +10,7 @@ abstract class SettlementRepository {
 
   Future<Settlement?> saveSettlement(Settlement settlement);
 
-  Future<Settlement?> updateSettlement(Settlement settlement);
+  Future<Settlement> updateSettlement(Settlement settlement);
 
   Future<Settlement?> updateSettlementWithoutLastModified(
       Settlement settlement,);
@@ -169,19 +169,14 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
   }
 
   @override
-  Future<Settlement?> updateSettlement(Settlement settlement) async {
+  Future<Settlement> updateSettlement(Settlement settlement) async {
     try {
       if (_databaseClient.db != null && _databaseClient.db!.isConnected) {
-        final result =
-            await _databaseClient.db!.collection('settlements').replaceOne(
+        await _databaseClient.db!.collection('settlements').replaceOne(
                   where.id(settlement.id),
                   settlement.copyWith(lastModified: DateTime.now()).toMap(),
                 );
-        if (result.isSuccess) {
-          return settlement;
-        } else {
-          return null;
-        }
+        return settlement;
       } else {
         throw DatabaseConnectionException();
       }

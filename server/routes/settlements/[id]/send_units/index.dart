@@ -7,25 +7,10 @@ import 'package:models/models.dart';
 import '../../../../services/settlements_service.dart';
 
 FutureOr<Response> onRequest(RequestContext context, String id) async {
-  /*final settlementService = context.read<SettlementService>();
-  final settlement = await settlementService.recalculateState(settlementId: id);
-
-  if (settlement == null) {
-    return Response(
-      statusCode: HttpStatus.notFound,
-      body: 'Settlement with id: $id Not found',
-    );
-  }*/
-
   switch (context.request.method) {
     case HttpMethod.post:
       return _post(context, id);
-    case HttpMethod.delete:
-    case HttpMethod.get:
-    case HttpMethod.put:
-    case HttpMethod.head:
-    case HttpMethod.options:
-    case HttpMethod.patch:
+    case _:
       return Response(statusCode: HttpStatus.methodNotAllowed);
   }
 }

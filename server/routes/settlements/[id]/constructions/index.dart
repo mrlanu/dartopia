@@ -6,23 +6,13 @@ import 'package:models/models.dart';
 
 import '../../../../services/settlements_service.dart';
 
-FutureOr<Response> onRequest(RequestContext context, String id) async {
-  final settlementService = context.read<SettlementService>();
-  final settlement =
-      await settlementService.recalculateState(settlementId: id);
-
-  if (settlement == null) {
-    return Response(
-      statusCode: HttpStatus.notFound,
-      body: 'Settlement with id: $id Not found',
-    );
-  }
+FutureOr<Response> onRequest(RequestContext context, String settlementId) async {
 
   switch (context.request.method) {
     case HttpMethod.post:
-      return _post(context, settlement);
+      return _post(context, settlementId);
     case HttpMethod.delete:
-      return _delete(context, id);
+      return _delete(context, settlementId);
     case HttpMethod.get:
     case HttpMethod.put:
     case HttpMethod.head:
@@ -32,12 +22,12 @@ FutureOr<Response> onRequest(RequestContext context, String id) async {
   }
 }
 
-Future<Response> _post(RequestContext context, Settlement settlement) async {
+Future<Response> _post(RequestContext context, String settlementId) async {
   final settlementService = context.read<SettlementService>();
   final taskRequest = ConstructionRequest.fromJson(
       await context.request.json() as Map<String, dynamic>,);
   final result = await settlementService.addConstructionTask(
-    settlement: settlement,
+    settlementId: settlementId,
     request: taskRequest,
   );
   return Response.json(

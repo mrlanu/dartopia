@@ -45,7 +45,7 @@ class Settlement extends Equatable {
     this.units = const [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     this.movements = const [],
     this.constructionTasks = const [],
-    this.availableUnits = const [],
+    this.availableUnits = const [0],
     this.combatUnitQueue = const [],
     DateTime? lastModified,
   }) : lastModified = lastModified ?? DateTime.now();
@@ -343,25 +343,6 @@ class Settlement extends Equatable {
 
   @override
   List<Object?> get props => [id, storage, buildings, constructionTasks];
-
-  void checkBuildingsForUpgradePosibility(int maxTaskQueue) {
-    for (final building in buildings) {
-      if (building[1] == 99 || building[1] == 100) continue;
-      final canBeUpgraded = buildingSpecefication[building[1]]!
-          .canBeUpgraded(storage: storage, toLevel: building[2] + 1);
-      if (canBeUpgraded) {
-        if (constructionTasks.length < maxTaskQueue) {
-          building[3] = 1;
-        } else if (constructionTasks.length == maxTaskQueue) {
-          building[3] = 2;
-        } else {
-          building[3] = 0;
-        }
-      } else {
-        building[3] = 0;
-      }
-    }
-  }
 
   void reorderBuildings(List<List<int>> newBuildings) {
     for (var i = 0; i < buildings.length; i++) {

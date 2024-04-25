@@ -14,7 +14,7 @@ class BackHome extends MissionStrategy {
       settlementId: movement.to.villageId,
       untilDateTime: movement.when,
     );
-    _addUnits(movement.units, homeSettlement!);
+    _addUnits(movement.units, homeSettlement);
     _addStolenResources(movement.plunder, homeSettlement);
     await settlementService.updateSettlement(settlement: homeSettlement);
     await mongoService.db!
