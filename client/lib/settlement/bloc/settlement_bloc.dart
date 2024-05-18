@@ -21,7 +21,6 @@ class SettlementBloc extends Bloc<SettlementEvent, SettlementState> {
     on<BuildingUpgradeRequested>(_onBuildingUpgradeRequested);
   }
 
-
   final SettlementRepository _villageRepository;
 
   Future<void> _onListOfSettlementsRequested(
@@ -41,7 +40,10 @@ class SettlementBloc extends Bloc<SettlementEvent, SettlementState> {
     await emit.forEach<Settlement?>(
       _villageRepository.getSettlement(),
       onData: (settlement) {
-        if (settlement != null) {
+        if (settlement != null &&
+            //after logout old user's settlement is still in memory
+            state.settlementList
+                .any((e) => settlement.id.$oid == e.settlementId)) {
           final movementsMap = _sortMovementsByLocation(settlement.movements);
           return state.copyWith(
               status: SettlementStatus.success,
