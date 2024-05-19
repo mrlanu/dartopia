@@ -174,11 +174,16 @@ class SettlementServiceImpl extends SettlementService {
       id: ObjectId(),
       userId: userId,
       nation: Nations.gaul,
-      x: Random().nextInt(Config.worldWidth),
-      y: Random().nextInt(Config.worldHeight),
+      x: _getRandomNumber(4, ServerSettings().mapWidth - 4),
+      y: _getRandomNumber(4, ServerSettings().mapHeight - 4),
     );
     await _settlementRepository.saveSettlement(newSettlement);
     return newSettlement;
+  }
+
+  int _getRandomNumber(int min, int max) {
+    final random = Random();
+    return min + random.nextInt((max - min) + 1);
   }
 
   @override
