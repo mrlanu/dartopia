@@ -105,6 +105,10 @@ class WorldRepositoryMongoImpl implements WorldRepository {
   Future<bool> dropWorld() {
     try {
       if (_databaseClient.db != null && _databaseClient.db!.isConnected) {
+        _databaseClient.db!.dropCollection('settlements');
+        _databaseClient.db!.dropCollection('statistics');
+        _databaseClient.db!.dropCollection('users');
+        _databaseClient.db!.dropCollection('movements');
         return _databaseClient.db!.dropCollection('world');
       } else {
         throw DatabaseConnectionException();
