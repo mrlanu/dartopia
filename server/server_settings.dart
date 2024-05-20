@@ -14,6 +14,8 @@ class ServerSettings {
     // after development should be deleted(should be gotten from models/UnitsConst)
     required this.troopBuildDuration,
     required this.maxConstructionTasksInQueue,
+    required this.oasisName,
+    required this.natureRegTime,
   });
 
   final String serverName;
@@ -21,20 +23,24 @@ class ServerSettings {
   final int mapHeight;
   final int oasesAmount;
   final int troopsSpeedX;
+
   // after development should be deleted(should be gotten from models/UnitsConst)
   final int troopBuildDuration;
   final int maxConstructionTasksInQueue;
+  final String oasisName;
+  final int natureRegTime;
 
   // Singleton instance
   static ServerSettings _instance = ServerSettings._(
-    serverName: 'testServer',
-    mapWidth: 50,
-    mapHeight: 50,
-    oasesAmount: 100,
-    troopsSpeedX: 1,
-    troopBuildDuration: 180,
-    maxConstructionTasksInQueue: 2,
-  );
+      serverName: 'testServer',
+      mapWidth: 50,
+      mapHeight: 50,
+      oasesAmount: 100,
+      troopsSpeedX: 1,
+      troopBuildDuration: 180,
+      maxConstructionTasksInQueue: 2,
+      oasisName: 'Unoccupied Oasis',
+      natureRegTime: 4);
 
   // Method to initialize settings from JSON
   static void initializeFromMap(Map<String, dynamic> map) {
@@ -46,6 +52,8 @@ class ServerSettings {
       troopsSpeedX: map['troopsSpeedX'] as int,
       troopBuildDuration: map['troopBuildDuration'] as int,
       maxConstructionTasksInQueue: map['maxConstructionTasksInQueue'] as int,
+      oasisName: map['oasisName'] as String,
+      natureRegTime: map['natureRegTime'] as int,
     );
   }
 
@@ -57,6 +65,8 @@ class ServerSettings {
         'troopsSpeedX': troopsSpeedX,
         'troopBuildDuration': troopBuildDuration,
         'maxConstructionTasksInQueue': maxConstructionTasksInQueue,
+        'oasisName': oasisName,
+        'natureRegTime': natureRegTime,
       };
 
   ServerSettings copyWith({
@@ -67,16 +77,19 @@ class ServerSettings {
     int? troopsSpeedX,
     int? troopBuildDuration,
     int? maxConstructionTasksInQueue,
+    String? oasisName,
+    int? natureRegTime,
   }) {
     return ServerSettings._(
-      serverName: serverName ?? this.serverName,
-      mapWidth: mapWidth ?? this.mapWidth,
-      mapHeight: mapHeight ?? this.mapHeight,
-      oasesAmount: oasesAmount ?? this.oasesAmount,
-      troopsSpeedX: troopsSpeedX ?? this.troopsSpeedX,
-      troopBuildDuration: troopBuildDuration ?? this.troopBuildDuration,
-      maxConstructionTasksInQueue:
-          maxConstructionTasksInQueue ?? this.maxConstructionTasksInQueue,
-    );
+        serverName: serverName ?? this.serverName,
+        mapWidth: mapWidth ?? this.mapWidth,
+        mapHeight: mapHeight ?? this.mapHeight,
+        oasesAmount: oasesAmount ?? this.oasesAmount,
+        troopsSpeedX: troopsSpeedX ?? this.troopsSpeedX,
+        troopBuildDuration: troopBuildDuration ?? this.troopBuildDuration,
+        maxConstructionTasksInQueue:
+            maxConstructionTasksInQueue ?? this.maxConstructionTasksInQueue,
+        oasisName: oasisName ?? this.oasisName,
+        natureRegTime: natureRegTime ?? this.natureRegTime);
   }
 }

@@ -72,7 +72,11 @@ class WorldServiceImpl implements WorldService {
               ),
             );
             if (tileProbability[i].$1 != 0) {
-              final newOasis = _getOasis(userId: natureUserId, x: x, y: y);
+              final newOasis = _getOasis(
+                  kind: SettlementKind.getKindByTile(tileProbability[i].$1),
+                  userId: natureUserId,
+                  x: x,
+                  y: y);
               await _settlementRepository.saveSettlement(newOasis);
             }
             break;
@@ -104,11 +108,11 @@ class WorldServiceImpl implements WorldService {
 
   @override
   Future<List<MapTile>> getPartOfWorldBetweenCoordinates(
-      int fromX,
-      int toX,
-      int fromY,
-      int toY,
-      ) async {
+    int fromX,
+    int toX,
+    int fromY,
+    int toY,
+  ) async {
     return _worldRepository.getPartOfWorldBetweenCoordinates(
       fromX,
       toX,
@@ -137,13 +141,18 @@ class WorldServiceImpl implements WorldService {
     return result.id as String;
   }
 
-  Settlement _getOasis(
-      {required String userId, required int x, required int y,}) {
+  Settlement _getOasis({
+    required SettlementKind kind,
+    required String userId,
+    required int x,
+    required int y,
+  }) {
     return Settlement(
       id: ObjectId(),
+      kind: kind,
       userId: userId,
       nation: Nations.nature,
-      name: 'Oasis',
+      name: ServerSettings().oasisName,
       buildings: const [
         //------------------FIELDS----------------
         [0, 0, 10, 0], // [position, id, level, canBeUpgraded]

@@ -22,7 +22,7 @@ abstract class SettlementRepository {
     required int y,
   });
 
-  Future<TileDetails> getTileDetailsByCoordinates({
+  Future<Settlement> getSettlementByCoordinates({
     required int x,
     required int y,
   });
@@ -120,7 +120,7 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
   }
 
   @override
-  Future<TileDetails> getTileDetailsByCoordinates({
+  Future<Settlement> getSettlementByCoordinates({
     required int x,
     required int y,
   }) async {
@@ -130,16 +130,7 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
             .collection('settlements')
             .findOne(where.eq('x', x).and(where.eq('y', y)));
         final settlement = Settlement.fromMap(doc!);
-        final tileDetails = TileDetails(
-          id: settlement.id.$oid,
-          playerName: settlement.userId,
-          name: settlement.name,
-          x: settlement.x,
-          y: settlement.y,
-          population: 100,
-          distance: 3,
-        );
-        return tileDetails;
+        return settlement;
       } else {
         throw DatabaseConnectionException();
       }

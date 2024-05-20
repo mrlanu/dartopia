@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:models/models.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
+import '../../../server_settings.dart';
 import '../../battle/battle.dart';
 import '../../battle/main_battle.dart';
 import '../../utils_service.dart';
@@ -217,7 +218,8 @@ class Attack extends MissionStrategy {
 
     final reportOwners = [
       ReportOwner(playerId: attacker.userId),
-      if (defender.name != 'Oasis') ReportOwner(playerId: defender.userId),
+      if (defender.kind.isNotOasis)
+        ReportOwner(playerId: defender.userId),
       ...reinforcement.map(
         (e) => ReportOwner(playerId: e.from.userId),
       ),

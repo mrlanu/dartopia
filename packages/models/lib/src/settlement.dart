@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:models/models.dart';
-
 import 'package:mongo_dart/mongo_dart.dart';
 
 /// The `Settlement` class
@@ -9,6 +8,7 @@ class Settlement extends Equatable {
   /// Creates a new `Settlement`.
   Settlement({
     required this.id,
+    this.kind = SettlementKind.six,
     required this.userId,
     required this.nation,
     required this.x,
@@ -48,10 +48,13 @@ class Settlement extends Equatable {
     this.availableUnits = const [0],
     this.combatUnitQueue = const [],
     DateTime? lastModified,
-  }) : lastModified = lastModified ?? DateTime.now();
+    DateTime? lastSpawnedAnimals,
+  })  : lastModified = lastModified ?? DateTime.now(),
+        lastSpawnedAnimals = lastSpawnedAnimals ?? DateTime.now();
 
   Settlement.fromMap(Map<String, dynamic> map)
       : id = map['_id'] as ObjectId,
+        kind = SettlementKind.values.byName(map['kind'] as String),
         name = map['name'] as String,
         x = map['x'] as int,
         y = map['y'] as int,
@@ -78,10 +81,12 @@ class Settlement extends Equatable {
         combatUnitQueue = (map['combatUnitQueue'] as List<dynamic>)
             .map((e) => CombatUnitQueue.fromMap(e as Map<String, dynamic>))
             .toList(),
-        lastModified = map['lastModified'] as DateTime;
+        lastModified = map['lastModified'] as DateTime,
+        lastSpawnedAnimals = map['lastSpawnedAnimals'] as DateTime;
 
   Settlement.fromJson(Map<String, dynamic> map)
       : id = ObjectId.parse(map['_id'] as String),
+        kind = SettlementKind.values.byName(map['kind'] as String),
         name = map['name'] as String,
         x = map['x'] as int,
         y = map['y'] as int,
@@ -108,9 +113,12 @@ class Settlement extends Equatable {
         combatUnitQueue = (map['combatUnitQueue'] as List<dynamic>)
             .map((e) => CombatUnitQueue.fromJson(e as Map<String, dynamic>))
             .toList(),
-        lastModified = DateTime.parse(map['lastModified'] as String);
+        lastModified = DateTime.parse(map['lastModified'] as String),
+        lastSpawnedAnimals =
+            DateTime.parse(map['lastSpawnedAnimals'] as String);
 
   final ObjectId id;
+  final SettlementKind kind;
   final String userId;
   final Nations nation;
   String name;
@@ -124,6 +132,7 @@ class Settlement extends Equatable {
   final List<int> availableUnits;
   List<CombatUnitQueue> combatUnitQueue;
   DateTime lastModified;
+  DateTime lastSpawnedAnimals;
 
   /// Return just empty spots
   List<List<int>> get emptySpots =>
@@ -249,16 +258,17 @@ class Settlement extends Equatable {
   /// Add the BuildingRecord to the end of buildings list.
   void addConstruction(
       {required int buildingId,
-        required int specificationId,
-        required int level}) {
+      required int specificationId,
+      required int level}) {
     buildings.add([buildingId, specificationId, level, 0]);
   }
 
   /// Changing the BuildingRecord on given position.
-  int changeBuilding(
-      {required int buildingId,
-      required int specificationId,
-      required int level,}) {
+  int changeBuilding({
+    required int buildingId,
+    required int specificationId,
+    required int level,
+  }) {
     var index = -1;
     for (var i = 0; i < buildings.length; i++) {
       if (buildings[i][0] == buildingId) {
@@ -273,6 +283,7 @@ class Settlement extends Equatable {
   /// Converting a BuildingRecord to a map representation.
   Map<String, dynamic> toMap() => <String, dynamic>{
         '_id': id,
+        'kind': kind.name,
         'name': name,
         'x': x,
         'y': y,
@@ -286,11 +297,13 @@ class Settlement extends Equatable {
         'availableUnits': availableUnits.map((u) => u).toList(),
         'combatUnitQueue': combatUnitQueue.map((c) => c.toMap()).toList(),
         'lastModified': lastModified,
+        'lastSpawnedAnimals': lastSpawnedAnimals,
       };
 
   /// Converting a Settlement to a ResponseBody representation.
   Map<String, dynamic> toJson() => <String, dynamic>{
         '_id': id,
+        'kind': kind.name,
         'name': name,
         'x': x,
         'y': y,
@@ -304,11 +317,13 @@ class Settlement extends Equatable {
         'availableUnits': availableUnits.map((u) => u).toList(),
         'combatUnitQueue': combatUnitQueue.map((c) => c.toJson()).toList(),
         'lastModified': lastModified.toIso8601String(),
+        'lastSpawnedAnimals': lastSpawnedAnimals.toIso8601String(),
       };
 
   /// Returns a new `Settlement` instance with the specified updates.
   Settlement copyWith({
     ObjectId? id,
+    SettlementKind? kind,
     String? name,
     int? x,
     int? y,
@@ -322,9 +337,11 @@ class Settlement extends Equatable {
     List<int>? availableUnits,
     List<CombatUnitQueue>? combatUnitQueue,
     DateTime? lastModified,
+    DateTime? lastSpawnedAnimals,
   }) {
     return Settlement(
       id: id ?? this.id,
+      kind: kind ?? this.kind,
       name: name ?? this.name,
       x: x ?? this.x,
       y: y ?? this.y,
@@ -338,6 +355,7 @@ class Settlement extends Equatable {
       availableUnits: availableUnits ?? this.availableUnits,
       combatUnitQueue: combatUnitQueue ?? this.combatUnitQueue,
       lastModified: lastModified ?? this.lastModified,
+      lastSpawnedAnimals: lastSpawnedAnimals ?? this.lastSpawnedAnimals,
     );
   }
 
