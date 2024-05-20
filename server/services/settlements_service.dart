@@ -75,8 +75,10 @@ abstract class SettlementService {
     required List<List<int>> buildings,
   });
 
-  Future<TroopsSendContract> updateContract(String fromSettlementId,
-      TroopsSendContract contract,);
+  Future<TroopsSendContract> updateContract(
+    String fromSettlementId,
+    TroopsSendContract contract,
+  );
 }
 
 class SettlementServiceImpl extends SettlementService {
@@ -84,8 +86,7 @@ class SettlementServiceImpl extends SettlementService {
     required SettlementRepository settlementRepository,
     required StatisticsRepository statisticsRepository,
     required UserRepository userRepository,
-  })
-      : _settlementRepository = settlementRepository,
+  })  : _settlementRepository = settlementRepository,
         _statisticsRepository = statisticsRepository,
         _userRepository = userRepository;
   final SettlementRepository _settlementRepository;
@@ -119,7 +120,7 @@ class SettlementServiceImpl extends SettlementService {
     required int y,
   }) async {
     final settlement =
-    await _settlementRepository.getSettlementByCoordinates(x: x, y: y);
+        await _settlementRepository.getSettlementByCoordinates(x: x, y: y);
 
     unawaited(_checkForAnimalsSpawn(settlement));
 
@@ -226,7 +227,7 @@ class SettlementServiceImpl extends SettlementService {
     );
     if (canBeUpgraded) {
       final upgradeDuration =
-      Duration(seconds: specification.time.valueOf(request.toLevel));
+          Duration(seconds: specification.time.valueOf(request.toLevel));
       final newTask = ConstructionTask(
         specificationId: request.specificationId,
         buildingId: request.buildingId,
@@ -234,8 +235,8 @@ class SettlementServiceImpl extends SettlementService {
         when: constructionTasks.isEmpty
             ? DateTime.now().add(upgradeDuration)
             : constructionTasks[constructionTasks.length - 1]
-            .executionTime
-            .add(upgradeDuration),
+                .executionTime
+                .add(upgradeDuration),
       );
       settlement
         ..spendResources(specification.getResourcesToNextLevel(request.toLevel))
@@ -261,7 +262,9 @@ class SettlementServiceImpl extends SettlementService {
     required OrderCombatUnitRequest request,
   }) async {
     final settlement = await recalculateState(
-        settlementId: settlementId, untilDateTime: DateTime.now(),);
+      settlementId: settlementId,
+      untilDateTime: DateTime.now(),
+    );
     final ordersList = settlement.combatUnitQueue;
 
     DateTime lastTime;
@@ -282,7 +285,7 @@ class SettlementServiceImpl extends SettlementService {
 
     final unit = UnitsConst.UNITS[settlement.nation.index][order.unitId];
     final costOfAll =
-    unit.cost.map((price) => price * order.leftTrain).toList();
+        unit.cost.map((price) => price * order.leftTrain).toList();
     settlement
       ..spendResources(costOfAll)
       ..addCombatUnitOrder(order);
@@ -290,10 +293,12 @@ class SettlementServiceImpl extends SettlementService {
   }
 
   @override
-  Future<TroopsSendContract> updateContract(String fromSettlementId,
-      TroopsSendContract contract,) async {
+  Future<TroopsSendContract> updateContract(
+    String fromSettlementId,
+    TroopsSendContract contract,
+  ) async {
     final offSettlement =
-    await fetchSettlementById(settlementId: fromSettlementId);
+        await fetchSettlementById(settlementId: fromSettlementId);
     final targetSettlement = await fetchSettlementByCoordinates(
       x: contract.corX,
       y: contract.corY,
@@ -323,12 +328,12 @@ class SettlementServiceImpl extends SettlementService {
   }) async {
     final senderSettlement = await fetchSettlementById(settlementId: fromId);
     final receiverSettlement =
-    await fetchSettlementById(settlementId: request.to);
+        await fetchSettlementById(settlementId: request.to);
     final senderPlayerName = await _userRepository.findById(
       id: senderSettlement!.userId,
     );
     final receiverPlayerName =
-    await _userRepository.findById(id: receiverSettlement!.userId);
+        await _userRepository.findById(id: receiverSettlement!.userId);
     final fromSide = SideBrief(
       villageId: senderSettlement.id.$oid,
       villageName: senderSettlement.name,
@@ -349,8 +354,8 @@ class SettlementServiceImpl extends SettlementService {
       from: fromSide,
       to: toSide,
       when:
-      //DateTime.now().add(const Duration(seconds: 30)),
-      UtilsService.getArrivalTime(
+          //DateTime.now().add(const Duration(seconds: 30)),
+          UtilsService.getArrivalTime(
         toX: toSide.coordinates[0],
         toY: toSide.coordinates[1],
         fromX: fromSide.coordinates[0],
@@ -393,7 +398,8 @@ class SettlementServiceImpl extends SettlementService {
 
   @override
   Future<List<Movement>> getAllStaticForeignMovementsBySettlementId(
-      String id,) =>
+    String id,
+  ) =>
       _settlementRepository.getAllStaticForeignMovementsBySettlementId(id);
 
   Movement _buildHomeLegion(Settlement settlement) {
@@ -434,18 +440,18 @@ class SettlementServiceImpl extends SettlementService {
 
   Future<void> _checkForAnimalsSpawn(Settlement settlement) async {
     if (settlement.kind.isOasis) {
-      final isTimeSpawnAnimals = settlement.lastSpawnedAnimals
-          .isBefore(DateTime.now().subtract(
-        Duration(minutes: ServerSettings().natureRegTime),),);
+      final isTimeSpawnAnimals = settlement.lastSpawnedAnimals.isBefore(
+        DateTime.now().subtract(
+          Duration(minutes: ServerSettings().natureRegTime),
+        ),
+      );
       if (isTimeSpawnAnimals) {
-        await _spawnAnimals(settlement);
+        settlement
+          ..units = const [10, 0, 0, 5, 0, 0, 0, 0, 0, 0]
+          ..lastSpawnedAnimals = DateTime.now();
+        await _settlementRepository
+            .updateSettlementWithoutLastModified(settlement);
       }
     }
-  }
-
-  Future<void> _spawnAnimals(Settlement settlement) async {
-    settlement..units = const [10, 0, 0, 5, 0, 0, 0, 0, 0, 0]
-    ..lastSpawnedAnimals = DateTime.now();
-    await _settlementRepository.updateSettlementWithoutLastModified(settlement);
   }
 }

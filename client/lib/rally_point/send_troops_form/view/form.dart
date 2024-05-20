@@ -184,8 +184,8 @@ class SendTroopsFormView extends StatelessWidget {
               height: 24,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  alignment: Alignment(-1.0 + 0.224 * index, 0.0),
-                  image: const AssetImage(DartopiaImages.troops),
+                  alignment: Alignment(-1.0 + 0.218 * index, 0.0),
+                  image: const AssetImage(DartopiaImages.gauls),
                   // Replace with your actual image path
                   fit: BoxFit.cover,
                 ),

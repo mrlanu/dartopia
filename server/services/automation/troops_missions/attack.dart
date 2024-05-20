@@ -182,7 +182,7 @@ class Attack extends MissionStrategy {
       settlementId: defender.id.$oid,
       settlementName: defender.name,
       playerName: movement.to.playerName,
-      nation: Nations.gaul,
+      nation: defender.nation,
       units: battleResult.unitsBeforeBattle![0],
       casualty: battleResult.casualties![0],
     );

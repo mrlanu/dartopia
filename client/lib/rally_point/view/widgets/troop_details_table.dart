@@ -163,8 +163,8 @@ class TroopDetailsTable extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: backgroundColor,
                         image: DecorationImage(
-                          alignment: Alignment(-1.0 + 0.224 * e.key, 0.0),
-                          image: const AssetImage(DartopiaImages.troops),
+                          alignment: Alignment(-1.0 + 0.218 * e.key, 0.0),
+                          image: const AssetImage(DartopiaImages.gauls),
                           // Replace with your actual image path
                           fit: BoxFit.cover,
                         ),

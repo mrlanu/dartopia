@@ -148,6 +148,7 @@ class ReportBody extends StatelessWidget {
             children: [
               _iconsRow(
                   units: List.generate(10, (i) => 0),
+                  nation: playerInfo.nation,
                   maxWidth: constraints.maxWidth),
               _unitsRow(
                   units: List.generate(10, (i) => 0),
@@ -193,7 +194,9 @@ class ReportBody extends StatelessWidget {
           builder: (context, constraints) => Column(
             children: [
               _iconsRow(
-                  units: playerInfo.units, maxWidth: constraints.maxWidth),
+                  units: playerInfo.units,
+                  nation: playerInfo.nation,
+                  maxWidth: constraints.maxWidth),
               _unitsRow(
                   units: playerInfo.units, maxWidth: constraints.maxWidth),
               _unitsRow(
@@ -209,7 +212,10 @@ class ReportBody extends StatelessWidget {
     );
   }
 
-  Widget _iconsRow({required List<int> units, required double maxWidth}) {
+  Widget _iconsRow(
+      {required List<int> units,
+      required Nations nation,
+      required double maxWidth}) {
     return Row(
       children: [
         SizedBox(
@@ -229,8 +235,9 @@ class ReportBody extends StatelessWidget {
                       height: 16.0,
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          alignment: Alignment(-1.0 + 0.224 * e.key, 0.0),
-                          image: const AssetImage(DartopiaImages.troops),
+                          alignment: Alignment(-1.0 + 0.218 * e.key, 0.0),
+                          image: AssetImage(
+                              DartopiaImages.getTroopsByNation(nation)),
                           // Replace with your actual image path
                           fit: BoxFit.cover,
                         ),
@@ -373,7 +380,9 @@ class ReportBody extends StatelessWidget {
           builder: (context, constraints) => Column(
             children: [
               _iconsRow(
-                  units: playerInfo.units, maxWidth: constraints.maxWidth),
+                  units: playerInfo.units,
+                  nation: playerInfo.nation,
+                  maxWidth: constraints.maxWidth),
               _unitsRow(
                   units: playerInfo.units, maxWidth: constraints.maxWidth),
               _unitsRow(
