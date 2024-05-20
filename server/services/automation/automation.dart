@@ -24,9 +24,9 @@ class Automation {
 
   Future<void> main() async {
     final movements = await _settlementService.getMovementsBeforeNow();
-    print('MOVEMENTS ----------->>>>>>>>>>>> ${movements.length}');
 
     MyLogger.debug('Perform attacks: ${movements.length}');
+
     for (final m in movements) {
       final strategy = switch (m.mission) {
         Mission.attack || Mission.raid => Attack(

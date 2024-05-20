@@ -61,7 +61,10 @@ class Attack extends MissionStrategy {
 
     final battleResults = battle.perform(battleField, sidesArmy);
     final plunder = await _returnOff(
-        sidesArmy[sidesArmy.length - 1], offenseSettlement, defenseSettlement);
+      sidesArmy[sidesArmy.length - 1],
+      offenseSettlement,
+      defenseSettlement,
+    );
     sidesArmy.removeAt(sidesArmy.length - 1);
     await _updateDef(defenseSettlement, sidesArmy, reinforcements);
     await settlementService.updateSettlement(settlement: defenseSettlement);
@@ -97,7 +100,10 @@ class Attack extends MissionStrategy {
   }
 
   Future<List<int>> _returnOff(
-      Army offArmy, Settlement off, Settlement def,) async {
+    Army offArmy,
+    Settlement off,
+    Settlement def,
+  ) async {
     //off has been completely destroyed
     if (offArmy.numbers.reduce((value, element) => value + element) == 0) {
       await mongoService.db!
@@ -108,18 +114,19 @@ class Attack extends MissionStrategy {
     final plunder = _calculatePlunder(offArmy.numbers, def);
     _subtractStolenResources(plunder, def);
     final backMovement = movement.copyWith(
-        from: movement.to,
-        to: movement.from,
+      from: movement.to,
+      to: movement.from,
+      units: offArmy.numbers,
+      plunder: plunder,
+      mission: Mission.back,
+      when: UtilsService.getArrivalTime(
+        toX: off.x,
+        toY: off.y,
+        fromX: def.x,
+        fromY: def.y,
         units: offArmy.numbers,
-        plunder: plunder,
-        mission: Mission.back,
-        when: UtilsService.getArrivalTime(
-            toX: off.x,
-            toY: off.y,
-            fromX: def.x,
-            fromY: def.y,
-            units: offArmy
-                .numbers,),);
+      ),
+    );
 
     await mongoService.db!
         .collection('movements')
@@ -158,6 +165,7 @@ class Attack extends MissionStrategy {
     for (var i = 0; i < 4; i++) {
       var res = storage[i];
       res -= plunder[i];
+      if (res < 0) res = 0;
       storage[i] = res;
     }
   }
@@ -209,7 +217,7 @@ class Attack extends MissionStrategy {
 
     final reportOwners = [
       ReportOwner(playerId: attacker.userId),
-      ReportOwner(playerId: defender.userId),
+      if (defender.name != 'Oasis') ReportOwner(playerId: defender.userId),
       ...reinforcement.map(
         (e) => ReportOwner(playerId: e.from.userId),
       ),

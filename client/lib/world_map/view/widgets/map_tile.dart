@@ -20,7 +20,7 @@ class MapTileWidget extends StatelessWidget {
         print('ONE TAP on: ${tile.id.$oid}');
       },
       onDoubleTap: () {
-        tile.tileNumber == 56 ? _openDialog(context) : null;
+        tile.tileNumber != 0 ? _openDialog(context) : null;
       },
       child: SizedBox(
         child: CustomPaint(
