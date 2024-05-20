@@ -8,6 +8,7 @@ import '../repositories/settlement_repository.dart';
 import '../repositories/statistics_repository.dart';
 import '../repositories/user_repository.dart';
 import '../server_settings.dart';
+import 'oases_service.dart';
 import 'settlement_x.dart';
 import 'utils_service.dart';
 
@@ -122,7 +123,11 @@ class SettlementServiceImpl extends SettlementService {
     final settlement =
         await _settlementRepository.getSettlementByCoordinates(x: x, y: y);
 
-    unawaited(_checkForAnimalsSpawn(settlement));
+    final updatedOasis = OasesService.checkForAnimalsSpawn(settlement);
+    if(updatedOasis != null) {
+      unawaited(_settlementRepository
+        .updateSettlementWithoutLastModified(updatedOasis),);
+    }
 
     return TileDetails(
       id: settlement.id.$oid,
@@ -436,22 +441,5 @@ class SettlementServiceImpl extends SettlementService {
     final settlement = await fetchSettlementById(settlementId: settlementId);
     settlement!.reorderBuildings(buildings);
     await _settlementRepository.updateSettlementWithoutLastModified(settlement);
-  }
-
-  Future<void> _checkForAnimalsSpawn(Settlement settlement) async {
-    if (settlement.kind.isOasis) {
-      final isTimeSpawnAnimals = settlement.lastSpawnedAnimals.isBefore(
-        DateTime.now().subtract(
-          Duration(minutes: ServerSettings().natureRegTime),
-        ),
-      );
-      if (isTimeSpawnAnimals) {
-        settlement
-          ..units = const [10, 0, 0, 5, 0, 0, 0, 0, 0, 0]
-          ..lastSpawnedAnimals = DateTime.now();
-        await _settlementRepository
-            .updateSettlementWithoutLastModified(settlement);
-      }
-    }
   }
 }

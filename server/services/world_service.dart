@@ -7,6 +7,7 @@ import '../repositories/settlement_repository.dart';
 import '../repositories/user_repository.dart';
 import '../repositories/world_repository.dart';
 import '../server_settings.dart';
+import 'oases_service.dart';
 
 abstract class WorldService {
   Future<void> createWorld();
@@ -45,9 +46,9 @@ class WorldServiceImpl implements WorldService {
     final random = Random();
     // Probabilities must sum to 1
     final tileProbability = [
-      (0, 0.89), (3, 0.01), (5, 0.01), (7, 0.01), (17, 0.01), //
-      (19, 0.01), (27, 0.01), (29, 0.01), (31, 0.01), //
-      (41, 0.01), (43, 0.01), (45, 0.01), //
+      (0, 0.84), (3, 0.02), (5, 0.02), //
+      (17, 0.02), (19, 0.02), (27, 0.02), //
+      (29, 0.02), (41, 0.02), (43, 0.02), //
     ];
 
     final cumulativeProbabilities = <double>[];
@@ -72,11 +73,11 @@ class WorldServiceImpl implements WorldService {
               ),
             );
             if (tileProbability[i].$1 != 0) {
-              final newOasis = _getOasis(
+              final newOasis = OasesService.getOasis(
                   kind: SettlementKind.getKindByTile(tileProbability[i].$1),
                   userId: natureUserId,
                   x: x,
-                  y: y);
+                  y: y,);
               await _settlementRepository.saveSettlement(newOasis);
             }
             break;
@@ -139,31 +140,6 @@ class WorldServiceImpl implements WorldService {
     );
     final result = await _userRepository.insertOne(user: natureUser);
     return result.id as String;
-  }
-
-  Settlement _getOasis({
-    required SettlementKind kind,
-    required String userId,
-    required int x,
-    required int y,
-  }) {
-    return Settlement(
-      id: ObjectId(),
-      kind: kind,
-      userId: userId,
-      nation: Nations.nature,
-      name: ServerSettings().oasisName,
-      buildings: const [
-        //------------------FIELDS----------------
-        [0, 0, 10, 0], // [position, id, level, canBeUpgraded]
-        [1, 1, 10, 0],
-        [2, 2, 10, 0],
-        [3, 3, 10, 0],
-      ],
-      x: x,
-      y: y,
-      availableUnits: const [],
-    );
   }
 
   Future<bool> _dropWorld() => _worldRepository.dropWorld();
