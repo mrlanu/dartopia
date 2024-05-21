@@ -1,11 +1,13 @@
 class TileDetails {
-  String id;
-  String playerName;
-  String name;
-  int x;
-  int y;
-  int population;
-  double distance; // Assuming Dart's double for equivalent to Java's BigDecimal
+  final String id;
+  final String playerName;
+  final String name;
+  final int x;
+  final int y;
+  final int population;
+  final List<int>? animals;
+  final double
+      distance; // Assuming Dart's double for equivalent to Java's BigDecimal
 
   TileDetails({
     required this.id,
@@ -14,6 +16,7 @@ class TileDetails {
     required this.x,
     required this.y,
     required this.population,
+    this.animals,
     required this.distance,
   });
 
@@ -24,6 +27,9 @@ class TileDetails {
         x = map['x'] as int,
         y = map['y'] as int,
         population = map['population'] as int,
+        animals = map['animals'] != null
+            ? (map['animals'] as List<dynamic>).map((e) => e as int).toList()
+            : null,
         distance = map['distance'] as double;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
@@ -33,6 +39,7 @@ class TileDetails {
         'x': x,
         'y': y,
         'population': population,
+        'animals': animals?.map((a) => a).toList(),
         'distance': distance,
       };
 
@@ -43,6 +50,7 @@ class TileDetails {
     int? x,
     int? y,
     int? population,
+    List<int>? animals,
     double? distance,
   }) {
     return TileDetails(
@@ -52,6 +60,7 @@ class TileDetails {
       x: x ?? this.x,
       y: y ?? this.y,
       population: population ?? this.population,
+      animals: animals ?? this.animals,
       distance: distance ?? this.distance,
     );
   }

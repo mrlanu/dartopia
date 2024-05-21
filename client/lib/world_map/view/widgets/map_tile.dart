@@ -7,6 +7,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:models/models.dart';
 
+import '../../../consts/images.dart';
+
 class MapTileWidget extends StatelessWidget {
   final MapTile tile;
   final ui.Image image;
@@ -63,37 +65,83 @@ class MapTileWidget extends StatelessWidget {
 
   Widget _buildDialogBody(TileDetails tileDetails, BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    return Padding(
-      padding: const EdgeInsets.all(15.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Text(
-            '${tileDetails.name} (${tileDetails.x}|${tileDetails.y})',
-            style: textTheme.titleLarge,
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        return Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(
+                '${tileDetails.name} (${tileDetails.x}|${tileDetails.y})',
+                style: textTheme.titleLarge,
+              ),
+              const Divider(),
+              Text('Player name: ${tileDetails.playerName}',
+                  style: textTheme.titleMedium),
+              Text(
+                'Population: ${tileDetails.population}',
+                style: textTheme.titleMedium,
+              ),
+              Text(
+                'Distance: ${tileDetails.distance}',
+                style: textTheme.titleMedium,
+              ),
+              tileDetails.animals != null
+                  ? _getAnimals(tileDetails, constraints.maxWidth)
+                  : const SizedBox(),
+              IconButton.outlined(
+                  iconSize: 30,
+                  color: Colors.green,
+                  onPressed: () {
+                    context.push(
+                        '/rally_point/1?x=${tileDetails.x}&y=${tileDetails.y}');
+                    Navigator.of(context, rootNavigator: true).pop();
+                  },
+                  icon: const FaIcon(FontAwesomeIcons.khanda)),
+            ],
           ),
-          const Divider(),
-          Text('Player name: ${tileDetails.playerName}',
-              style: textTheme.titleMedium),
-          Text(
-            'Population: ${tileDetails.population}',
-            style: textTheme.titleMedium,
-          ),
-          Text(
-            'Distance: ${tileDetails.distance}',
-            style: textTheme.titleMedium,
-          ),
-          IconButton.outlined(
-              iconSize: 30,
-              color: Colors.green,
-              onPressed: () {
-                context
-                    .push('/rally_point/1?x=${tileDetails.x}&y=${tileDetails.y}');
-                Navigator.of(context, rootNavigator: true).pop();
-              },
-              icon: const FaIcon(FontAwesomeIcons.khanda)),
-        ],
-      ),
+        );
+      },
+    );
+  }
+
+  Widget _getAnimals(TileDetails tileDetails, double maxWidth) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ...tileDetails.animals!
+            .asMap()
+            .entries
+            .map((e) => tileDetails.animals?[e.key] == 0
+                ? const SizedBox()
+                : SizedBox(
+                    width: (maxWidth - maxWidth * 0.1) / 6,
+                    height: 22,
+                    child: Center(
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 21.0,
+                            height: 21.0,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                alignment: Alignment(-1.0 + 0.217 * e.key, 0.0),
+                                image: AssetImage(
+                                    DartopiaImages.getTroopsByNation(
+                                        Nations.nature)),
+                                // Replace with your actual image path
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          Text(' / ${tileDetails.animals?[e.key]}'),
+                        ],
+                      ),
+                    ),
+                  ))
+            .toList(),
+      ],
     );
   }
 }

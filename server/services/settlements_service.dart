@@ -122,20 +122,22 @@ class SettlementServiceImpl extends SettlementService {
   }) async {
     final settlement =
         await _settlementRepository.getSettlementByCoordinates(x: x, y: y);
+    final user = await _userRepository.findById(id: settlement.userId);
 
     final updatedOasis = OasesService.checkForAnimalsSpawn(settlement);
     if(updatedOasis != null) {
-      unawaited(_settlementRepository
-        .updateSettlementWithoutLastModified(updatedOasis),);
+      await _settlementRepository
+        .updateSettlementWithoutLastModified(updatedOasis);
     }
 
     return TileDetails(
       id: settlement.id.$oid,
-      playerName: settlement.userId,
+      playerName: user?.name?? '',
       name: settlement.name,
       x: settlement.x,
       y: settlement.y,
       population: 100,
+      animals: settlement.kind.isOasis ? settlement.units : null,
       distance: 3,
     );
   }

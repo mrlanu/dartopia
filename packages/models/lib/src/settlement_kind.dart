@@ -27,10 +27,10 @@ enum SettlementKind {
 
 extension XSettlementKind on SettlementKind {
   bool get isOasis {
-    return index <= 10;
+    return index <= 7;
   }
 
   bool get isNotOasis {
-    return index > 10;
+    return index > 7;
   }
 }
