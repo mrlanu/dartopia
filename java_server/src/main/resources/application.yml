@@ -1,0 +1,22 @@
+server:
+  port: 8181
+spring:
+  devtools:
+    restart:
+      enabled: true
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      username: mrlanu
+      password: pass
+      database: dartopia-java
+      authentication-database: admin
+
+#authorization:
+#  token:
+#    header:
+#      name: Authorization
+#      prefix: Bearer
+#    secret: hfgry463hf746hf573ydh475fhy5739
+#    expiration_time: 3600000
