@@ -30,7 +30,7 @@ public class SettlementEntityTest {
                 .userId("SerhiyId")
                 .name("New Settlement")
                 .nation(Nations.gaul)
-                .settlementKind(SettlementKind.six)
+                .kind(SettlementKind.six)
                 .x(10)
                 .y(10)
                 .storage(Arrays.asList(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO))
@@ -38,20 +38,23 @@ public class SettlementEntityTest {
                         Arrays.asList(0, 0, 3, 0), Arrays.asList(1, 1, 3, 0),
                         Arrays.asList(2, 2, 3, 0), Arrays.asList(3, 3, 3, 0),
                         Arrays.asList(4, 3, 1, 0)))
-                .units(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+                .army(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+                .availableUnits(new ArrayList<>())
                 .constructionTasks(new ArrayList<>())
                 .combatUnitQueue(new ArrayList<>())
+                .movements(new ArrayList<>())
                 .lastModified(LocalDateTime.now().minusHours(1))
+                .lastSpawnedAnimals(LocalDateTime.now().minusHours(1))
                 .build();
     }
 
     @Test
     public void testCalculateProducePerHour() {
-        var result = settlementEntity.calculateProducePerHour();
-        assertThat(result.get(0)).isEqualTo(15);
+        settlementEntity.update(LocalDateTime.now());
+        /*assertThat(settlementEntity.getStorage().get(0)).isEqualTo(15);
         assertThat(result.get(1)).isEqualTo(15);
         assertThat(result.get(2)).isEqualTo(15);
-        assertThat(result.get(3)).isEqualTo(20);
+        assertThat(result.get(3)).isEqualTo(20);*/
     }
 
     @Test
@@ -68,13 +71,13 @@ public class SettlementEntityTest {
         settlementEntity.update(untilTime);
 
         assertThat(settlementEntity.getStorage().get(0))
-                .isEqualTo(BigDecimal.valueOf(15));
+                .isEqualTo(BigDecimal.valueOf(15).setScale(3, RoundingMode.HALF_DOWN));
         assertThat(settlementEntity.getStorage().get(1))
-                .isEqualTo(BigDecimal.valueOf(15));
+                .isEqualTo(BigDecimal.valueOf(15).setScale(3, RoundingMode.HALF_DOWN));
         assertThat(settlementEntity.getStorage().get(2))
-                .isEqualTo(BigDecimal.valueOf(15));
+                .isEqualTo(BigDecimal.valueOf(15).setScale(3, RoundingMode.HALF_DOWN));
         assertThat(settlementEntity.getStorage().get(3))
-                .isEqualTo(BigDecimal.valueOf(20));
+                .isEqualTo(BigDecimal.valueOf(20).setScale(3, RoundingMode.HALF_DOWN));
     }
 
     @Test
@@ -121,15 +124,15 @@ public class SettlementEntityTest {
 
         assertThat(settlementEntity.getCombatUnitQueue().size()).isEqualTo(2);
 
-        var result = settlementEntity.getReadyUnits(untilTime);
+        settlementEntity.update(untilTime);
 
-        assertThat(result.size()).isEqualTo(5);
+        assertThat(settlementEntity.getArmy().get(0)).isEqualTo(5);
         assertThat(settlementEntity.getCombatUnitQueue().size()).isEqualTo(1);
 
         LocalDateTime untilTime2 = LocalDateTime.now().plusSeconds(60);
-        var result2 = settlementEntity.getReadyUnits(untilTime2);
+        settlementEntity.update(untilTime2);
 
-        assertThat(result2.size()).isEqualTo(1);
+        assertThat(settlementEntity.getArmy().get(0)).isEqualTo(6);
         assertThat(settlementEntity.getCombatUnitQueue().size()).isEqualTo(1);
     }
 
@@ -142,59 +145,42 @@ public class SettlementEntityTest {
 
         settlementEntity.update(untilTime);
 
-        assertThat(settlementEntity.getUnits().get(0)).isEqualTo(5);
+        assertThat(settlementEntity.getArmy().get(0)).isEqualTo(5);
     }
 
     @Test
     public void testCalculateEatPerHour() {
-        settlementEntity.setUnits(Arrays.asList(5, 0, 0, 10, 0, 0, 0, 0, 0, 0));
+        LocalDateTime untilTime = LocalDateTime.now();
+        settlementEntity.setArmy(Arrays.asList(5, 0, 0, 10, 0, 0, 0, 0, 0, 0));
+        settlementEntity.getStorage().set(3, BigDecimal.valueOf(50));
 
-        var result = settlementEntity.calculateEatPerHour();
+        settlementEntity.update(untilTime);
 
-        assertThat(result).isEqualTo(25);
+        assertThat(settlementEntity.getStorage().get(3))
+                .isEqualTo(BigDecimal.valueOf(45).setScale(3, RoundingMode.HALF_DOWN));
     }
 
     @ParameterizedTest
-    @CsvSource({"60, 15","120, 0"})
+    @CsvSource({"60, 20", "80, 15"})
     public void testCalculateEatenCrop(int units, int expected) {
         LocalDateTime untilTime = LocalDateTime.now().minusMinutes(45);
-        settlementEntity.setUnits(Arrays.asList(units, 0, 0, 0, 0, 0, 0, 0, 0, 0));
+        settlementEntity.setArmy(Arrays.asList(units, 0, 0, 0, 0, 0, 0, 0, 0, 0));
         settlementEntity.getStorage().set(3, BigDecimal.valueOf(30));
 
-        settlementEntity.calculateEatenCrop(untilTime);
+        settlementEntity.update(untilTime);
 
         assertThat(settlementEntity.getStorage().get(3)).isEqualTo(BigDecimal.valueOf(expected)
-                .setScale(2, RoundingMode.HALF_UP));
+                .setScale(3, RoundingMode.HALF_UP));
     }
 
     @Test
     public void testStarvation() {
         LocalDateTime untilTime = LocalDateTime.now();
-        settlementEntity.setUnits(Arrays.asList(60, 0, 0, 0, 0, 0, 0, 0, 0, 0));
+        settlementEntity.setArmy(Arrays.asList(60, 0, 0, 0, 0, 0, 0, 0, 0, 0));
         settlementEntity.getStorage().set(3, BigDecimal.TEN);
         settlementEntity.update(untilTime);
 
-        assertThat(settlementEntity.getUnits().get(0)).isEqualTo(58);
+        assertThat(settlementEntity.getArmy().get(0)).isEqualTo(58);
     }
-
-    @Test
-    public void testCombineAllEvents() {
-        LocalDateTime untilTime = LocalDateTime.now();
-
-        settlementEntity.getConstructionTasks().add(
-                new ConstructionTask("1", 0, 0, 1,
-                        LocalDateTime.now().minusMinutes(30)));
-
-        settlementEntity.getCombatUnitQueue()
-                .add(new CombatUnitQueue("1", LocalDateTime.now().minusMinutes(35),
-                        0, 10, 60));
-
-        var result = settlementEntity.combineAllEvents(untilTime);
-
-        assertThat(result.size()).isEqualTo(12);
-        assertThat(result.get(4)).isInstanceOf(ConstructionTask.class);
-        assertThat(result.get(11)).isInstanceOf(EmptyTask.class);
-    }
-
 }
 

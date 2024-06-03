@@ -1,5 +1,6 @@
 package xyz.qruto.java_server.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,6 +16,7 @@ import xyz.qruto.java_server.models.units.UnitsConst;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -33,8 +35,9 @@ import java.util.stream.IntStream;
 @Slf4j
 public class SettlementEntity {
     @Id
+    @JsonProperty("_id")
     private String id;
-    private SettlementKind settlementKind;
+    private SettlementKind kind;
     private String userId;
     private Nations nation;
     private String name;
@@ -42,7 +45,7 @@ public class SettlementEntity {
     private int y;
     private List<BigDecimal> storage;
     private List<List<Integer>> buildings;
-    private List<Integer> units;
+    private List<Integer> army;
     private List<Movement> movements;
     private List<ConstructionTask> constructionTasks;
     private List<Integer> availableUnits;
@@ -63,7 +66,7 @@ public class SettlementEntity {
                 LocalDateTime deathTime = lastModified.plusSeconds(durationToDeath);
 
                 if (deathTime.isBefore(event.getExecutionTime())) {
-                    Executable deathEvent = new DeathTask(deathTime, findUnitForDeath(units));
+                    Executable deathEvent = new DeathTask(deathTime, findUnitForDeath(army));
                     storage.set(3, BigDecimal.ZERO); // all crop has been eaten
                     deathEvent.execute(this);
                     lastModified = deathEvent.getExecutionTime();
@@ -82,7 +85,7 @@ public class SettlementEntity {
 
     }
 
-    public List<Executable> combineAllEvents(LocalDateTime untilTime) {
+    private List<Executable> combineAllEvents(LocalDateTime untilTime) {
         var events = getReadyUnits(untilTime);
 
         events.addAll(constructionTasks.stream()
@@ -96,7 +99,7 @@ public class SettlementEntity {
                 .collect(Collectors.toList());
     }
 
-    public List<Integer> calculateProducePerHour() {
+    private List<Integer> calculateProducePerHour() {
         var res = buildings.stream()
                 .filter(b -> b.get(1) == 0 || b.get(1) == 1 || b.get(1) == 2 || b.get(1) == 3)
                 .collect(Collectors.groupingBy(subList -> subList.get(1)));
@@ -108,13 +111,13 @@ public class SettlementEntity {
         return result;
     }
 
-    public int calculateEatPerHour() {
+    private int calculateEatPerHour() {
         return IntStream.range(0, 10)
-                .mapToObj(i -> UnitsConst.UNITS.get(nation.ordinal()).get(i).getUpKeep() * units.get(i))
+                .mapToObj(i -> UnitsConst.UNITS.get(nation.ordinal()).get(i).getUpKeep() * army.get(i))
                 .reduce(0, Integer::sum);
     }
 
-    public void calculateProducedGoods(LocalDateTime untilTime) {
+    private void calculateProducedGoods(LocalDateTime untilTime) {
         final MathContext mc = new MathContext(3);
         List<Integer> producePerHour = calculateProducePerHour();
 
@@ -127,16 +130,16 @@ public class SettlementEntity {
 
         BigDecimal woodProduced =
                 BigDecimal.valueOf(producePerHour.get(0))
-                        .multiply(divide);
+                        .multiply(divide).setScale(3, RoundingMode.HALF_DOWN);
         BigDecimal clayProduced =
                 BigDecimal.valueOf(producePerHour.get(1))
-                        .multiply(divide);
+                        .multiply(divide).setScale(3, RoundingMode.HALF_DOWN);
         BigDecimal ironProduced =
                 BigDecimal.valueOf(producePerHour.get(2))
-                        .multiply(divide);
+                        .multiply(divide).setScale(3, RoundingMode.HALF_DOWN);
         BigDecimal cropProduced =
                 BigDecimal.valueOf(producePerHour.get(3))
-                        .multiply(divide);
+                        .multiply(divide).setScale(3, RoundingMode.HALF_DOWN);
 
         storage.set(0, storage.get(0).add(woodProduced));
         storage.set(1, storage.get(1).add(clayProduced));
@@ -144,7 +147,7 @@ public class SettlementEntity {
         storage.set(3, storage.get(3).add(cropProduced));
     }
 
-    public void calculateEatenCrop(LocalDateTime untilTime) {
+    private void calculateEatenCrop(LocalDateTime untilTime) {
         final MathContext mc = new MathContext(3);
         var eatPerHour = calculateEatPerHour();
 
@@ -160,7 +163,7 @@ public class SettlementEntity {
         if (storage.get(3).intValue() < 0) storage.set(3, BigDecimal.ZERO);
     }
 
-    public BigDecimal getWarehouseCapacity() {
+    private BigDecimal getWarehouseCapacity() {
         double warehouse = buildings.stream()
                 .filter(b -> b.get(1).equals(6))
                 .map(b -> BuildingsConst.BUILDINGS.get(b.get(1)).getBenefit(b.get(2)))
@@ -168,7 +171,7 @@ public class SettlementEntity {
         return warehouse > 0.0 ? BigDecimal.valueOf(warehouse) : BigDecimal.valueOf(800);
     }
 
-    public BigDecimal getGranaryCapacity() {
+    private BigDecimal getGranaryCapacity() {
         double granary = buildings.stream()
                 .filter(b -> b.get(1).equals(5))
                 .map(b -> BuildingsConst.BUILDINGS.get(b.get(1)).getBenefit(b.get(2)))
@@ -176,7 +179,7 @@ public class SettlementEntity {
         return granary > 0.0 ? BigDecimal.valueOf(granary) : BigDecimal.valueOf(800);
     }
 
-    public void castStorage() {
+    private void castStorage() {
         var warehouseCapacity = getWarehouseCapacity();
         var granaryCapacity = getGranaryCapacity();
         for (int i = 0; i < storage.size() - 1; i++) {
@@ -190,13 +193,13 @@ public class SettlementEntity {
         }
     }
 
-    public void manipulateHomeLegion(List<Integer> newUnits) {
-        for (int i = 0; i < units.size(); i++) {
-            units.set(i, units.get(i) + newUnits.get(i));
+    private void manipulateHomeLegion(List<Integer> newUnits) {
+        for (int i = 0; i < army.size(); i++) {
+            army.set(i, army.get(i) + newUnits.get(i));
         }
     }
 
-    public List<Executable> getReadyUnits(LocalDateTime untilDateTime) {
+    private List<Executable> getReadyUnits(LocalDateTime untilDateTime) {
         List<Executable> result = new ArrayList<>();
         List<CombatUnitQueue> newOrdersList = new ArrayList<>();
 

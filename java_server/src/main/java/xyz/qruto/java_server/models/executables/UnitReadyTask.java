@@ -17,8 +17,8 @@ public class UnitReadyTask implements Executable {
     @Override
     public int execute(SettlementEntity settlement) {
         System.out.println("Inside UnitReadyTask task execute method.");
-        var oldAmount = settlement.getUnits().get(unitId);
-        settlement.getUnits().set(unitId, oldAmount + 1);
+        var oldAmount = settlement.getArmy().get(unitId);
+        settlement.getArmy().set(unitId, oldAmount + 1);
         return 0;
     }
 

@@ -25,7 +25,7 @@ public class SettlementServiceImpl implements SettlementService{
                 .userId("SerhiyId")
                 .name("New Settlement")
                 .nation(Nations.gaul)
-                .settlementKind(SettlementKind.six)
+                .kind(SettlementKind.six)
                 .x(10)
                 .y(10)
                 .storage(Arrays.asList(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO))
@@ -33,10 +33,13 @@ public class SettlementServiceImpl implements SettlementService{
                         Arrays.asList(0, 0, 3, 0), Arrays.asList(1, 1, 3, 0),
                         Arrays.asList(2, 2, 3, 0), Arrays.asList(3, 3, 3, 0),
                         Arrays.asList(4, 3, 1, 0)))
-                .units(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+                .army(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+                .availableUnits(new ArrayList<>())
                 .constructionTasks(new ArrayList<>())
                 .combatUnitQueue(new ArrayList<>())
+                .movements(new ArrayList<>())
                 .lastModified(LocalDateTime.now().minusHours(1))
+                .lastSpawnedAnimals(LocalDateTime.now().minusHours(1))
                 .build();
         return settlementRepository.save(settlementEntity);
     }

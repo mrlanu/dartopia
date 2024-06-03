@@ -26,8 +26,8 @@ public class DeathTask implements Executable {
                 .getCost()
                 .get(3);
         settlement.getStorage().set(3, cropOldAmount.add(BigDecimal.valueOf(returnedCrop)));
-        var oldAmount = settlement.getUnits().get(unitId);
-        settlement.getUnits().set(unitId, oldAmount - 1);
+        var oldAmount = settlement.getArmy().get(unitId);
+        settlement.getArmy().set(unitId, oldAmount - 1);
         return 0;
     }
 
