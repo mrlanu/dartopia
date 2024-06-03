@@ -203,6 +203,15 @@ class Settlement extends Equatable {
     return result;
   }
 
+  int calculateEatPerHour(){
+    var unitEats = 0;
+    for(var i = 0; i < units.length; i++){
+      final eat = UnitsConst.UNITS[nation.index][i].upKeep;
+      unitEats = unitEats + eat * units[i];
+    }
+    return unitEats;
+  }
+
   /// Calculate the production of wood, clay, iron, and crop resources
   /// over a specified duration and updates the resource storage with
   /// the new values.
@@ -223,7 +232,17 @@ class Settlement extends Equatable {
       double.parse((storage[3] + cropProduced).toStringAsFixed(4)),
     ];
     storage = newStorage;
-    lastModified = toDateTime;
+  }
+
+  void calculateEatenCrop({DateTime? toDateTime}) {
+    toDateTime ??= DateTime.now();
+    final eatPerHour = calculateEatPerHour();
+    final durationSinceLastModified =
+        toDateTime.difference(lastModified).inSeconds;
+    final divider = durationSinceLastModified / 3600;
+    final eatenCrop = eatPerHour * divider;
+    storage[3] = storage[3] - eatenCrop;
+    if(storage[3] < 0)storage[3] = 0;
   }
 
   void castStorage() {

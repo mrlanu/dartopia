@@ -26,26 +26,23 @@ extension SettlementX on Settlement {
   RecalculationResult _executeAllTasks(List<Executable> tasks) {
     var populationAdded = 0;
     tasks.sort((a, b) => a.executionTime.compareTo(b.executionTime));
-    var modified = lastModified;
     // main events loop
     for (final task in tasks) {
-      var cropPerHour = calculateProducePerHour()[3];
+      var cropPerHour = calculateProducePerHour()[3] - calculateEatPerHour();
 
       // if crop in the village is less than 0 keep create the death event
       // & execute them until the crop will be positive
       while (cropPerHour < 0) {
         final leftCrop = storage[3];
-        final durationToDeath = leftCrop / -cropPerHour * 3600;
+        final durationToDeath = leftCrop * 3600 / calculateEatPerHour();
         final deathTime =
-        modified.add(Duration(seconds: durationToDeath.toInt()));
+        lastModified.add(Duration(seconds: durationToDeath.toInt()));
 
         if (deathTime.isBefore(task.executionTime)) {
           final Executable deathEvent = DeathTask(deathTime);
-          calculateProducedGoods(
-            toDateTime: deathEvent.executionTime,
-          );
+          storage[3] = 0;
           deathEvent.execute(this);
-          modified = deathEvent.executionTime;
+          lastModified = deathEvent.executionTime;
         } else {
           break;
         }
@@ -54,9 +51,10 @@ extension SettlementX on Settlement {
       // recalculate storage leftovers
       
       calculateProducedGoods(toDateTime: task.executionTime);
+      calculateEatenCrop(toDateTime: task.executionTime);
       castStorage();
       populationAdded += task.execute(this);
-      modified = task.executionTime;
+      lastModified = task.executionTime;
     }
     return RecalculationResult(populationAmount: populationAdded);
   }
