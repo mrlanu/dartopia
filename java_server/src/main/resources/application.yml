@@ -13,6 +13,10 @@ spring:
       database: dartopia-java
       authentication-database: admin
 
+myapp:
+  jwtSecret: nio98282exec3=m=m=a=ExceptionHandlerExceptionResolver=Resolved
+  jwtExpirationMs: 86400000
+
 #authorization:
 #  token:
 #    header:
@@ -20,3 +24,4 @@ spring:
 #      prefix: Bearer
 #    secret: hfgry463hf746hf573ydh475fhy5739
 #    expiration_time: 3600000
+
