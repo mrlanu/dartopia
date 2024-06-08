@@ -1,14 +1,14 @@
 class Api {
   Api._();
 
-  static const baseURL = 'http://10.0.2.2:8080';
+  static const baseURL = 'http://10.0.2.2:8282';
 
   static String signup() {
-    return '/signup';
+    return '/auth/signup';
   }
 
   static String signin() {
-    return '/signin';
+    return '/auth/login';
   }
 
   static String fetchPartOfWorld() {
@@ -25,6 +25,10 @@ class Api {
 
   static String fetchSettlementById(String id) {
     return '/settlements/$id';
+  }
+
+  static String fetchSettlementById2(String id) {
+    return 'http://10.0.2.2:8282/api/settlements/$id';
   }
 
   static String upgradeBuilding(String settlementId) {

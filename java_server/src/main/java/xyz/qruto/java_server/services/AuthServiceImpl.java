@@ -57,7 +57,7 @@ public class AuthServiceImpl implements AuthService {
                 .token(jwt)
                 .type("Bearer")
                 .id(userDetails.getId())
-                .username(userDetails.getUsername())
+                .name(userDetails.getUsername())
                 .email(userDetails.getEmail())
                 .roles(roles)
                 .build();

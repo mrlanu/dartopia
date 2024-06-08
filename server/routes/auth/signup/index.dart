@@ -5,13 +5,13 @@ import 'package:dart_frog/dart_frog.dart';
 import 'package:models/models.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
-import '../../exceptions/exceptions.dart';
-import '../../helpers/helpers.dart';
-import '../../repositories/user_repository.dart';
-import '../../services/authenticator.dart';
-import '../../services/settlements_service.dart';
-import '../../services/statistics_service.dart';
-import '../../services/world_service.dart';
+import '../../../exceptions/exceptions.dart';
+import '../../../helpers/hash.dart';
+import '../../../repositories/user_repository.dart';
+import '../../../services/authenticator.dart';
+import '../../../services/settlements_service.dart';
+import '../../../services/statistics_service.dart';
+import '../../../services/world_service.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   return switch (context.request.method) {

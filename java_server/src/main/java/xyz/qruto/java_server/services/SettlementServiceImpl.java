@@ -4,12 +4,14 @@ import org.springframework.stereotype.Service;
 import xyz.qruto.java_server.entities.SettlementEntity;
 import xyz.qruto.java_server.models.Nations;
 import xyz.qruto.java_server.models.SettlementKind;
+import xyz.qruto.java_server.models.responses.ShortSettlementInfo;
 import xyz.qruto.java_server.repositories.SettlementRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class SettlementServiceImpl implements SettlementService{
@@ -45,10 +47,22 @@ public class SettlementServiceImpl implements SettlementService{
     }
 
     @Override
-    public SettlementEntity getMockSettlement(String settlementId) {
+    public SettlementEntity getSettlementById(String settlementId) {
         var settlement = settlementRepository.findById(settlementId)
                 .orElseThrow(() -> new IllegalArgumentException("Settlement not found"));
         settlement.update(LocalDateTime.now());
         return settlementRepository.save(settlement);
+    }
+
+    @Override
+    public List<ShortSettlementInfo> getAllSettlementsByUserId(String userId) {
+        return settlementRepository.findAllByUserId(userId).stream()
+                .map(settlement -> ShortSettlementInfo.builder()
+                        .name(settlement.getName())
+                        .settlementId(settlement.getId())
+                        .x(settlement.getX())
+                        .y(settlement.getY())
+                        .isCapital(false)
+                        .build()).toList();
     }
 }
