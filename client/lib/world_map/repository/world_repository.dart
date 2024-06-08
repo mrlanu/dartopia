@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:models/models.dart';
-import 'package:http/http.dart' as http;
 import 'package:network/network.dart';
 
 abstract class WorldRepository {
