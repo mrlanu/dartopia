@@ -31,10 +31,10 @@ public class WorldServiceImpl implements WorldService{
         List<Double> cumulativeProbability = getCumulativeProbability();
         List<MapTile> world = new ArrayList<>();
 
-        for (int y = settings.getMapHeight() - 1; y >= 0; y--) {
-            for (int x = 0; x <= settings.getMapWidth() - 1; x++) {
-                if(y < 3 || y > settings.getMapHeight() - 4
-                        || x < 3 || x > settings.getMapWidth() - 4) {
+        for (int y = settings.getMapHeight(); y > 0; y--) {
+            for (int x = 1; x <= settings.getMapWidth(); x++) {
+                if(y < 4 || y > settings.getMapHeight() - 3
+                        || x < 4 || x > settings.getMapWidth() - 3) {
                     world.add(MapTileFactory.getTile(MapTiles.water, x, y));
                     continue;
                 }
