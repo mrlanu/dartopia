@@ -1,6 +1,8 @@
 server:
   port: 8282
 spring:
+  cache:
+    type: caffeine
   devtools:
     restart:
       enabled: true
@@ -16,6 +18,8 @@ spring:
 myapp:
   jwtSecret: nio98282exec3=m=m=a=ExceptionHandlerExceptionResolver=Resolved
   jwtExpirationMs: 86400000
+  settings:
+    server-name: test1
 
 #authorization:
 #  token:
