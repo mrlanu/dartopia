@@ -2,61 +2,45 @@ package xyz.qruto.java_server.services;
 
 import org.springframework.stereotype.Service;
 import xyz.qruto.java_server.entities.MapTile;
+import xyz.qruto.java_server.models.MapTileFactory;
+import xyz.qruto.java_server.models.MapTiles;
+import xyz.qruto.java_server.models.TileProbability;
 import xyz.qruto.java_server.repositories.WorldRepository;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+
+import static xyz.qruto.java_server.models.MapTileFactory.proportions;
 
 @Service
 public class WorldServiceImpl implements WorldService{
 
+    private final SettingsService settingsService;
     private final WorldRepository worldRepository;
-    private static final List<TileProbability> proportions = Arrays.asList(
-            new TileProbability(0, 0.84),
-            new TileProbability(3, 0.02),
-            new TileProbability(5, 0.02),
-            new TileProbability(17, 0.02),
-            new TileProbability(19, 0.02),
-            new TileProbability(27, 0.02),
-            new TileProbability(29, 0.02),
-            new TileProbability(41, 0.02),
-            new TileProbability(43, 0.02)
 
-    );
-
-    public WorldServiceImpl(WorldRepository worldRepository) {
+    public WorldServiceImpl(SettingsService settingsService, WorldRepository worldRepository) {
+        this.settingsService = settingsService;
         this.worldRepository = worldRepository;
     }
 
     @Override
     public void createWorld() {
         Random random = new Random();
+        var settings = settingsService.readSettings();
         List<Double> cumulativeProbability = getCumulativeProbability();
         List<MapTile> world = new ArrayList<>();
 
-        for (int y = 49; y >= 0; y--) {
-            for (int x = 0; x < 50; x++) {
-                if(y < 4 || y > 46 || x < 4 || x > 46) {
-                    world.add(MapTile.builder()
-                            .corX(x)
-                            .corY(y)
-                            .name("Water")
-                            .tileNumber(89)
-                            .build());
+        for (int y = settings.getMapHeight() - 1; y >= 0; y--) {
+            for (int x = 0; x <= settings.getMapWidth() - 1; x++) {
+                if(y < 3 || y > settings.getMapHeight() - 4
+                        || x < 3 || x > settings.getMapWidth() - 4) {
+                    world.add(MapTileFactory.getTile(MapTiles.water, x, y));
                     continue;
                 }
                 double randValue = random.nextDouble();
                 TileProbability selectedTile = selectTileByProbability(randValue, cumulativeProbability);
-                world.add(
-                        MapTile.builder()
-                                .corX(x)
-                                .corY(y)
-                                .name(selectedTile.tileCode == 0 ? "Grass land" : "Oasis")
-                                .tileNumber(selectedTile.tileCode)
-                                .build()
-                );
+                world.add(MapTileFactory.getTile(selectedTile.name(), x, y));
             }
         }
         worldRepository.deleteAll();
@@ -72,7 +56,7 @@ public class WorldServiceImpl implements WorldService{
         double cumulativeSum = 0;
         List<Double> cumulativeProbability = new ArrayList<>();
         for (TileProbability proportion : proportions) {
-            cumulativeSum += proportion.probability;
+            cumulativeSum += proportion.probability();
             cumulativeProbability.add(cumulativeSum);
         }
         return cumulativeProbability;
@@ -87,5 +71,7 @@ public class WorldServiceImpl implements WorldService{
         return proportions.get(proportions.size() - 1); // Fallback in case of rounding errors
     }
 
-    private record TileProbability(int tileCode, double probability){}
+    private int getIndexByXY(int x, int y) {
+        return y * settingsService.readSettings().getMapWidth() + x;
+    }
 }
