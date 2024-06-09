@@ -1,3 +1,3 @@
 package xyz.qruto.java_server.models;
 
-public record TileProbability(MapTiles name, double probability){}
+public record TileProbability(SettlementKind kind, double probability){}
