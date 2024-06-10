@@ -6,8 +6,7 @@ class TileDetails {
   final int y;
   final int population;
   final List<int>? animals;
-  final double
-      distance; // Assuming Dart's double for equivalent to Java's BigDecimal
+  final double distance;
 
   TileDetails({
     required this.id,

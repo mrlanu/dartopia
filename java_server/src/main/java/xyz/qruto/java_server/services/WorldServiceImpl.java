@@ -5,6 +5,7 @@ import xyz.qruto.java_server.entities.MapTile;
 import xyz.qruto.java_server.entities.SettlementEntity;
 import xyz.qruto.java_server.entities.UserEntity;
 import xyz.qruto.java_server.models.*;
+import xyz.qruto.java_server.models.responses.TileDetails;
 import xyz.qruto.java_server.repositories.SettlementRepository;
 import xyz.qruto.java_server.repositories.UserRepository;
 import xyz.qruto.java_server.repositories.WorldRepository;
@@ -69,17 +70,6 @@ public class WorldServiceImpl implements WorldService{
         worldRepository.saveAll(world);
     }
 
-    private void dropWorld() {
-        worldRepository.deleteAll();
-        settlementRepository.deleteAll();
-        userRepository.deleteAll();
-    }
-
-    private UserEntity createUserNature() {
-        return userRepository.save(
-                new UserEntity("nature", "nature@nature.com", "123"));
-    }
-
     @Override
     public List<MapTile> getAllByCorXBetweenAndCorYBetween(int fromX, int toX, int fromY, int toY) {
         return worldRepository.getAllByCorXBetweenAndCorYBetween(fromX, toX, fromY, toY);
@@ -96,6 +86,125 @@ public class WorldServiceImpl implements WorldService{
                 return tile;
             }
         }
+    }
+
+    @Override
+    public TileDetails getTileByCoordinates(int x, int y){
+        var settlement = settlementRepository.findByXAndY(x, y);
+        var user = userRepository.findById(settlement.getUserId()).orElseThrow();
+        if(settlement.getKind().isOasis()){
+            spawnAnimals(settlement);
+            settlementRepository.save(settlement);
+        }
+        return TileDetails.builder()
+                .id(settlement.getId())
+                .playerName(user.getName())
+                .name(settlement.getName())
+                .x(settlement.getX())
+                .y(settlement.getY())
+                .population(100)
+                .animals(settlement.getKind().isOasis() ? settlement.getArmy() : null)
+                .distance(3)
+                .build();
+    }
+
+    private void spawnAnimals(SettlementEntity settlement) {
+        var isTimeSpawnAnimals = settlement.getLastSpawnedAnimals()
+                .isBefore(LocalDateTime.now()
+                        .minusMinutes(settingsService.readSettings().getNatureRegTime()));
+        if (isTimeSpawnAnimals) {
+            calculateSpawnedUnits(settlement.getKind(), settlement.getArmy());
+            settlement.setLastSpawnedAnimals(LocalDateTime.now());
+        }
+    }
+
+    public void calculateSpawnedUnits(SettlementKind kind, List<Integer> units) {
+        switch (kind) {
+            case w:
+                if (shouldSpawn(units, 4, 5, 6)) {
+                    units.set(4, units.get(4) + getRandom(15) + 5);
+                    units.set(5, units.get(5) + getRandom(5));
+                    units.set(6, units.get(6) + getRandom(5));
+                }
+                break;
+            case w_cr:
+                if (shouldSpawn(units, 4, 5, 6, 7, 8)) {
+                    units.set(4, units.get(4) + getRandom(15) + 5);
+                    units.set(5, units.get(5) + getRandom(5));
+                    units.set(6, units.get(6) + getRandom(5));
+                    units.set(7, units.get(7) + getRandom(5));
+                    units.set(8, units.get(8) + getRandom(3));
+                }
+                break;
+            case c:
+                if (shouldSpawn(units, 0, 1, 4)) {
+                    units.set(0, units.get(0) + getRandom(15) + 10);
+                    units.set(1, units.get(1) + getRandom(15) + 5);
+                    units.set(4, units.get(4) + getRandom(10));
+                }
+                break;
+            case c_cr:
+                if (shouldSpawn(units, 0, 1, 4, 9)) {
+                    units.set(0, units.get(0) + getRandom(20) + 15);
+                    units.set(1, units.get(1) + getRandom(15) + 10);
+                    units.set(4, units.get(4) + getRandom(10));
+                    units.set(9, units.get(9) + getRandom(3));
+                }
+                break;
+            case i:
+                if (shouldSpawn(units, 0, 1, 4)) {
+                    units.set(0, units.get(0) + getRandom(15) + 10);
+                    units.set(1, units.get(1) + getRandom(15) + 5);
+                    units.set(4, units.get(4) + getRandom(10));
+                }
+                break;
+            case i_cr:
+                if (shouldSpawn(units, 0, 1, 4, 8)) {
+                    units.set(0, units.get(0) + getRandom(20) + 15);
+                    units.set(1, units.get(1) + getRandom(15) + 10);
+                    units.set(4, units.get(4) + getRandom(10));
+                    units.set(8, units.get(8) + getRandom(3));
+                }
+                break;
+            case cr:
+                if (shouldSpawn(units, 0, 2, 6, 7, 8)) {
+                    units.set(0, units.get(0) + getRandom(15) + 5);
+                    units.set(2, units.get(2) + getRandom(10) + 5);
+                    units.set(6, units.get(6) + getRandom(10));
+                    units.set(7, units.get(7) + getRandom(5));
+                    units.set(8, units.get(8) + getRandom(5));
+                }
+                break;
+            case cr_cr:
+                if (shouldSpawn(units, 0, 2, 6, 7, 8, 9)) {
+                    units.set(0, units.get(0) + getRandom(15) + 10);
+                    units.set(2, units.get(2) + getRandom(10) + 5);
+                    units.set(6, units.get(6) + getRandom(10));
+                    units.set(7, units.get(7) + getRandom(5));
+                    units.set(8, units.get(8) + getRandom(5));
+                    units.set(9, units.get(9) + getRandom(3));
+                }
+                break;
+            default:
+                throw new UnsupportedOperationException("SettlementKind not supported");
+        }
+    }
+
+    private static boolean shouldSpawn(List<Integer> units, int... indices) {
+        final int MIN_UNITS_FOR_OASIS = 15;
+        final int MAX_UNITS_FOR_OASIS = 30;
+
+        for (int index : indices) {
+            if (units.get(index) <= MIN_UNITS_FOR_OASIS + getRandom(MAX_UNITS_FOR_OASIS)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static int getRandom(int bound) {
+        Random random = new Random();
+        return random.nextInt(bound + 1);
     }
 
     private int getRandomIntInRange() {
@@ -144,5 +253,16 @@ public class WorldServiceImpl implements WorldService{
                 .lastModified(LocalDateTime.now())
                 .lastSpawnedAnimals(LocalDateTime.now())
                 .build();
+    }
+
+    private void dropWorld() {
+        worldRepository.deleteAll();
+        settlementRepository.deleteAll();
+        userRepository.deleteAll();
+    }
+
+    private UserEntity createUserNature() {
+        return userRepository.save(
+                new UserEntity("nature", "nature@nature.com", "123"));
     }
 }

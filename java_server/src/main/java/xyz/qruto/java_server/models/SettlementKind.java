@@ -8,23 +8,25 @@ import java.util.List;
 
 @Getter
 public enum SettlementKind {
-    water(89),
-    gras_land(0),
-    w(41),
-    w_cr(43),
-    c(27),
-    c_cr(29),
-    i(3),
-    i_cr(5),
-    cr(17),
-    cr_cr(19),
-    six(56),
-    fifteen(56);
+    water(89, false),
+    gras_land(0, false),
+    w(41, true),
+    w_cr(43, true),
+    c(27, true),
+    c_cr(29, true),
+    i(3, true),
+    i_cr(5, true),
+    cr(17, true),
+    cr_cr(19, true),
+    six(56, false),
+    fifteen(56, false);
 
     private final int code;
+    private final boolean isOasis;
 
-    SettlementKind(int code) {
+    SettlementKind(int code, boolean isOasis) {
         this.code = code;
+        this.isOasis = isOasis;
     }
 
     public static final List<TileProbability> proportions = Arrays.asList(
