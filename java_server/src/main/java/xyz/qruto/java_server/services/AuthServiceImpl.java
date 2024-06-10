@@ -7,20 +7,22 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import xyz.qruto.java_server.config.jwt.JwtUtils;
-import xyz.qruto.java_server.entities.Role;
-import xyz.qruto.java_server.entities.Roles;
-import xyz.qruto.java_server.entities.UserEntity;
+import xyz.qruto.java_server.entities.*;
 import xyz.qruto.java_server.errors.UserErrorException;
+import xyz.qruto.java_server.models.Nations;
+import xyz.qruto.java_server.models.SettlementKind;
 import xyz.qruto.java_server.models.UserDetailsImpl;
 import xyz.qruto.java_server.models.requests.SignupRequest;
 import xyz.qruto.java_server.models.responses.JwtResponse;
 import xyz.qruto.java_server.repositories.RoleRepository;
+import xyz.qruto.java_server.repositories.SettlementRepository;
 import xyz.qruto.java_server.repositories.UserRepository;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,13 +33,22 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
+    private final SettlementRepository settlementRepository;
+    private final WorldService worldService;
 
-    public AuthServiceImpl(AuthenticationManager authenticationManager, JwtUtils jwtUtils, UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder) {
+    public AuthServiceImpl(AuthenticationManager authenticationManager,
+                           JwtUtils jwtUtils, UserRepository userRepository,
+                           RoleRepository roleRepository,
+                           PasswordEncoder encoder,
+                           SettlementRepository settlementRepository,
+                           WorldService worldService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.encoder = encoder;
+        this.settlementRepository = settlementRepository;
+        this.worldService = worldService;
     }
 
     public JwtResponse login(String username, String password) {
@@ -64,8 +75,9 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public UserEntity signup(SignupRequest signUpRequest) {
-        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+        if (userRepository.existsByName(signUpRequest.getName())) {
             throw new UserErrorException("Username is already taken!");
         }
 
@@ -73,14 +85,16 @@ public class AuthServiceImpl implements AuthService {
             throw new UserErrorException("Email is already in use!");
         }
 
-        UserEntity user = new UserEntity(signUpRequest.getUsername(),
+        UserEntity user = new UserEntity(signUpRequest.getName(),
                 signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()));
 
         Set<String> strRoles = signUpRequest.getRoles();
         Set<Role> roles = assignRoles(strRoles);
         user.setRoles(roles);
-        return userRepository.save(user);
+        var newUser = userRepository.save(user);
+        foundFirstSettlement(newUser.getId());
+        return newUser;
     }
 
     private Set<Role> assignRoles(Set<String> strRoles) {
@@ -116,5 +130,40 @@ public class AuthServiceImpl implements AuthService {
 
     private static RuntimeException getRuntimeException() {
         return new RuntimeException("Role is not found.");
+    }
+
+    private void foundFirstSettlement(String userId) {
+        var emptyTile = worldService.findEmptyTile();
+        var settlementEntity = SettlementEntity.builder()
+                .userId(userId)
+                .name("New Settlement")
+                .nation(Nations.gaul)
+                .kind(SettlementKind.six)
+                .x(emptyTile.getCorX())
+                .y(emptyTile.getCorY())
+                .storage(Arrays.asList(BigDecimal.valueOf(500), BigDecimal.valueOf(500),
+                        BigDecimal.valueOf(500), BigDecimal.valueOf(500)))
+                .buildings(Arrays.asList(
+                        Arrays.asList(0, 0, 3, 0), Arrays.asList(1, 1, 3, 0),
+                        Arrays.asList(2, 2, 3, 0), Arrays.asList(3, 3, 3, 0),
+                        Arrays.asList(4, 3, 1, 0)))
+                .army(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+                .availableUnits(new ArrayList<>())
+                .constructionTasks(new ArrayList<>())
+                .combatUnitQueue(new ArrayList<>())
+                .movements(new ArrayList<>())
+                .lastModified(LocalDateTime.now().minusHours(1))
+                .lastSpawnedAnimals(LocalDateTime.now().minusHours(1))
+                .build();
+        var newSettlementEntity = settlementRepository.save(settlementEntity);
+        updateTile(emptyTile, newSettlementEntity);
+    }
+
+    private void updateTile(MapTile emptyTile, SettlementEntity newSettlementEntity) {
+        emptyTile.setOwnerId(newSettlementEntity.getId());
+        emptyTile.setEmpty(false);
+        emptyTile.setTileNumber(SettlementKind.six.getCode());
+        emptyTile.setName("Settlement");
+        worldService.save(emptyTile);
     }
 }

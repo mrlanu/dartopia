@@ -3,38 +3,45 @@ package xyz.qruto.java_server.services;
 import org.springframework.stereotype.Service;
 import xyz.qruto.java_server.entities.MapTile;
 import xyz.qruto.java_server.entities.SettlementEntity;
+import xyz.qruto.java_server.entities.UserEntity;
 import xyz.qruto.java_server.models.*;
 import xyz.qruto.java_server.repositories.SettlementRepository;
+import xyz.qruto.java_server.repositories.UserRepository;
 import xyz.qruto.java_server.repositories.WorldRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static xyz.qruto.java_server.models.SettlementKind.proportions;
 
 @Service
 public class WorldServiceImpl implements WorldService{
 
+    private final UserRepository userRepository;
     private final SettingsService settingsService;
     private final WorldRepository worldRepository;
     private final SettlementRepository settlementRepository;
 
-    public WorldServiceImpl(SettingsService settingsService,
+    public WorldServiceImpl(UserRepository userRepository,
+                            SettingsService settingsService,
                             WorldRepository worldRepository,
                             SettlementRepository settlementRepository) {
+        this.userRepository = userRepository;
         this.settingsService = settingsService;
         this.worldRepository = worldRepository;
         this.settlementRepository = settlementRepository;
     }
 
     @Override
+    public MapTile save(MapTile mapTile){
+        return worldRepository.save(mapTile);
+    }
+
+    @Override
     public void createWorld() {
-        worldRepository.deleteAll();
-        settlementRepository.deleteAll();
+        dropWorld();
+        var natureUser = createUserNature();
         Random random = new Random();
         var settings = settingsService.readSettings();
         List<Double> cumulativeProbability = getCumulativeProbability();
@@ -53,7 +60,7 @@ public class WorldServiceImpl implements WorldService{
                 world.add(SettlementKind.getTile(selectedTile.kind(), x, y));
 
                 if(!selectedTile.kind().equals(SettlementKind.gras_land)){
-                    SettlementEntity oasis = getOasis(selectedTile.kind(), "nature", x, y);
+                    SettlementEntity oasis = getOasis(natureUser.getId(), selectedTile.kind(), x, y);
                     settlements.add(oasis);
                 }
             }
@@ -62,9 +69,40 @@ public class WorldServiceImpl implements WorldService{
         worldRepository.saveAll(world);
     }
 
+    private void dropWorld() {
+        worldRepository.deleteAll();
+        settlementRepository.deleteAll();
+        userRepository.deleteAll();
+    }
+
+    private UserEntity createUserNature() {
+        return userRepository.save(
+                new UserEntity("nature", "nature@nature.com", "123"));
+    }
+
     @Override
     public List<MapTile> getAllByCorXBetweenAndCorYBetween(int fromX, int toX, int fromY, int toY) {
         return worldRepository.getAllByCorXBetweenAndCorYBetween(fromX, toX, fromY, toY);
+    }
+
+    @Override
+    public MapTile findEmptyTile() {
+        MapTile tile;
+        while (true){
+            int x = getRandomIntInRange();
+            int y = getRandomIntInRange();
+            tile = worldRepository.getByCorXAndCorY(x, y);
+            if (tile.getName().equals("Gras land")) {
+                return tile;
+            }
+        }
+    }
+
+    private int getRandomIntInRange() {
+        Random random = new Random();
+        var min = 4;
+        var max = settingsService.readSettings().getMapWidth() - 3;
+        return random.nextInt((max - min) + 1) + min;
     }
 
     private List<Double> getCumulativeProbability() {
@@ -86,7 +124,7 @@ public class WorldServiceImpl implements WorldService{
         return proportions.get(proportions.size() - 1); // Fallback in case of rounding errors
     }
 
-    private SettlementEntity getOasis(SettlementKind kind, String userId, int x, int y) {
+    private SettlementEntity getOasis(String userId, SettlementKind kind, int x, int y) {
         return SettlementEntity.builder()
                 .userId(userId)
                 .name(settingsService.readSettings().getOasisName())

@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface WorldRepository extends MongoRepository<MapTile, String> {
     List<MapTile> getAllByCorXBetweenAndCorYBetween(int fromX, int toX, int fromY, int toY);
+    MapTile getByCorXAndCorY(int corX, int corY);
 }

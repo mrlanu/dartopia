@@ -34,7 +34,7 @@ Future<Response> _onPost(RequestContext context) async {
 
   final user = User.fromJson(requestData).copyWith(
     id: ObjectId().$oid,
-    name: _trimEmail(requestData['email'] as String),
+    name: requestData['name'] as String,
     password: hashPassword(requestData['password'] as String),
   );
 

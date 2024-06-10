@@ -24,7 +24,7 @@ public class UserEntity implements Serializable {
 
     @NotBlank
     @Size(max = 20)
-    private String username;
+    private String name;
 
     @NotBlank
     @Size(max = 50)
@@ -38,8 +38,8 @@ public class UserEntity implements Serializable {
     @DBRef
     private Set<Role> roles = new HashSet<>();
 
-    public UserEntity(String username, String email, String password) {
-        this.username = username;
+    public UserEntity(String name, String email, String password) {
+        this.name = name;
         this.email = email;
         this.password = password;
     }
