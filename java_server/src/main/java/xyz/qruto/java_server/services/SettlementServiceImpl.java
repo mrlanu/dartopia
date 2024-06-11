@@ -5,6 +5,7 @@ import xyz.qruto.java_server.entities.SettlementEntity;
 import xyz.qruto.java_server.models.Nations;
 import xyz.qruto.java_server.models.SettlementKind;
 import xyz.qruto.java_server.models.responses.ShortSettlementInfo;
+import xyz.qruto.java_server.repositories.MovementRepository;
 import xyz.qruto.java_server.repositories.SettlementRepository;
 
 import java.math.BigDecimal;
@@ -17,9 +18,11 @@ import java.util.List;
 public class SettlementServiceImpl implements SettlementService{
 
     private final SettlementRepository settlementRepository;
+    private final MovementRepository movementRepository;
 
-    public SettlementServiceImpl(SettlementRepository settlementRepository) {
+    public SettlementServiceImpl(SettlementRepository settlementRepository, MovementRepository movementRepository) {
         this.settlementRepository = settlementRepository;
+        this.movementRepository = movementRepository;
     }
 
     public SettlementEntity createMockSettlement() {
@@ -48,6 +51,10 @@ public class SettlementServiceImpl implements SettlementService{
 
     @Override
     public SettlementEntity getSettlementById(String settlementId) {
+        var t = movementRepository.findMovingToOrFromVillageIdBeforeDate(settlementId, LocalDateTime.now());
+        if(!t.isEmpty()){
+            return null;
+        }
         var settlement = settlementRepository.findById(settlementId)
                 .orElseThrow(() -> new IllegalArgumentException("Settlement not found"));
         settlement.update(LocalDateTime.now());

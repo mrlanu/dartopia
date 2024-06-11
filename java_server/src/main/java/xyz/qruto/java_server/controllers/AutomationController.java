@@ -3,7 +3,7 @@ package xyz.qruto.java_server.controllers;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import xyz.qruto.java_server.services.AutomationService;
+import xyz.qruto.java_server.services.automation.AutomationService;
 
 @RestController
 @RequestMapping("/api/automation")

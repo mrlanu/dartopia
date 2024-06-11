@@ -1,11 +1,13 @@
 package xyz.qruto.java_server.controllers;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import xyz.qruto.java_server.entities.SettlementEntity;
 import xyz.qruto.java_server.models.UserDetailsImpl;
 import xyz.qruto.java_server.models.responses.ShortSettlementInfo;
+import xyz.qruto.java_server.services.automation.AutomationService;
 import xyz.qruto.java_server.services.SettlementService;
 
 import java.util.List;
@@ -15,9 +17,11 @@ import java.util.List;
 public class SettlementsController {
 
 
+    private final AutomationService automationService;
     private final SettlementService settlementService;
 
-    public SettlementsController(SettlementService settlementService) {
+    public SettlementsController(AutomationService automationService, SettlementService settlementService) {
+        this.automationService = automationService;
         this.settlementService = settlementService;
     }
 
@@ -36,8 +40,15 @@ public class SettlementsController {
 
     @GetMapping("/{settlementId}")
     public ResponseEntity<SettlementEntity> getSettlementById(@PathVariable String settlementId) {
+        if (!automationService.isLocked()) {
+            automationService.startAutomation();
+            System.out.printf("Automation has been started by settlementId - %s%n",
+                    settlementId);
+        }
         var settlement = settlementService.getSettlementById(settlementId);
-        return ResponseEntity.ok(settlement);
+        return settlement != null ?
+                new ResponseEntity<>(settlement, HttpStatus.OK) :
+                new ResponseEntity<>(null, HttpStatus.CONFLICT);
     }
 
 }
