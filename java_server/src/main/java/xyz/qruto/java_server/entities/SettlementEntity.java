@@ -53,7 +53,7 @@ public class SettlementEntity {
     private LocalDateTime lastModified;
     private LocalDateTime lastSpawnedAnimals;
 
-    public void update(LocalDateTime untilTime) {
+    public void update(LocalDateTime untilTime, Settings settings) {
         var events = combineAllEvents(untilTime);
         for (Executable event : events) {
             var cropPerHour = calculateProducePerHour().get(3) - calculateEatPerHour();
@@ -82,7 +82,53 @@ public class SettlementEntity {
             event.execute(this);
             lastModified = event.getExecutionTime();
         }
+        checkBuildingsForUpgradePossibility(
+                settings.getMaxConstructionTasksInQueue());
+    }
 
+    public void spendResources(List<BigDecimal> resources) {
+        for (var i = 0; i < storage.size(); i++) {
+            storage.set(i, storage.get(i).subtract(resources.get(i)));
+        }
+    }
+
+    public void addConstructionTask(ConstructionTask task) {
+        constructionTasks.add(task);
+    }
+
+    public void addConstruction(int buildingId, int specificationId, int level) {
+        buildings.add(Arrays.asList(buildingId, specificationId, level, 0));
+    }
+
+    public int changeBuilding(int buildingId, int specificationId, int level) {
+        var index = -1;
+        for (var i = 0; i < buildings.size(); i++) {
+            if (buildings.get(i).get(0) == buildingId) {
+                index = i;
+                break;
+            }
+        }
+        buildings.set(index, Arrays.asList(buildingId, specificationId, level, 0));
+        return BuildingsConst.BUILDINGS.get(specificationId).getPopulation(level);
+    }
+
+    public void checkBuildingsForUpgradePossibility(int maxConstructionTasksInQueue) {
+        for (List<Integer> building : buildings) {
+            if (building.get(1) == 99 || building.get(1) == 100) continue;
+            var canBeUpgraded = BuildingsConst.BUILDINGS.get(building.get(1))
+          .canBeUpgraded(storage, null, building.get(2) + 1);
+            if (canBeUpgraded) {
+                if (constructionTasks.size() < maxConstructionTasksInQueue) {
+                    building.set(3, 1);
+                } else if (constructionTasks.size() == maxConstructionTasksInQueue) {
+                    building.set(3, 1);
+                } else {
+                    building.set(3, 0);
+                }
+            } else {
+                building.set(3, 0);
+            }
+        }
     }
 
     private List<Executable> combineAllEvents(LocalDateTime untilTime) {

@@ -2,14 +2,18 @@ package xyz.qruto.java_server;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import xyz.qruto.java_server.entities.Settings;
 import xyz.qruto.java_server.entities.SettlementEntity;
 import xyz.qruto.java_server.models.Nations;
 import xyz.qruto.java_server.models.SettlementKind;
 import xyz.qruto.java_server.models.executables.ConstructionTask;
-import xyz.qruto.java_server.models.executables.EmptyTask;
 import xyz.qruto.java_server.models.units.CombatUnitQueue;
+import xyz.qruto.java_server.services.SettingsService;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -19,13 +23,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
 
+@ExtendWith(MockitoExtension.class)
 public class SettlementEntityTest {
 
     private SettlementEntity settlementEntity;
+    @Mock
+    private SettingsService settingsService;
 
     @BeforeEach
     public void setUp() {
+        given(settingsService.readSettings()).willReturn(
+                Settings.builder()
+                        .maxConstructionTasksInQueue(2)
+                        .build()
+        );
         settlementEntity = SettlementEntity.builder()
                 .userId("SerhiyId")
                 .name("New Settlement")
@@ -50,7 +63,7 @@ public class SettlementEntityTest {
 
     @Test
     public void testCalculateProducePerHour() {
-        settlementEntity.update(LocalDateTime.now());
+        settlementEntity.update(LocalDateTime.now(), settingsService.readSettings());
         /*assertThat(settlementEntity.getStorage().get(0)).isEqualTo(15);
         assertThat(result.get(1)).isEqualTo(15);
         assertThat(result.get(2)).isEqualTo(15);
@@ -60,7 +73,7 @@ public class SettlementEntityTest {
     @Test
     public void testLastTimeModifiedUpdated() {
         LocalDateTime untilTime = LocalDateTime.now();
-        settlementEntity.update(untilTime);
+        settlementEntity.update(untilTime, settingsService.readSettings());
         assertThat(settlementEntity.getLastModified().truncatedTo(ChronoUnit.SECONDS))
                 .isEqualTo(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
     }
@@ -68,7 +81,7 @@ public class SettlementEntityTest {
     @Test
     public void testUpdate_withNoEvents() {
         LocalDateTime untilTime = LocalDateTime.now();
-        settlementEntity.update(untilTime);
+        settlementEntity.update(untilTime, settingsService.readSettings());
 
         assertThat(settlementEntity.getStorage().get(0))
                 .isEqualTo(BigDecimal.valueOf(15).setScale(3, RoundingMode.HALF_DOWN));
@@ -92,12 +105,12 @@ public class SettlementEntityTest {
                 new ConstructionTask("2", 1, 1, 1,
                         LocalDateTime.now().minusMinutes(15)));
 
-        settlementEntity.update(untilTime);
+        settlementEntity.update(untilTime, settingsService.readSettings());
 
         assertThat(settlementEntity.getStorage().get(0))
-                .isEqualTo(BigDecimal.valueOf(18.5).setScale(3, RoundingMode.HALF_UP));
+                .isEqualTo(BigDecimal.valueOf(10.0).setScale(3, RoundingMode.HALF_UP));
         assertThat(settlementEntity.getStorage().get(1))
-                .isEqualTo(BigDecimal.valueOf(16.75).setScale(3, RoundingMode.HALF_UP));
+                .isEqualTo(BigDecimal.valueOf(12.5).setScale(3, RoundingMode.HALF_UP));
         assertThat(settlementEntity.getStorage().get(2))
                 .isEqualTo(BigDecimal.valueOf(15.0).setScale(3, RoundingMode.HALF_UP));
         assertThat(settlementEntity.getStorage().get(3))
@@ -107,7 +120,7 @@ public class SettlementEntityTest {
     @Test
     public void testCastStorage_storageHasToBeCast() {
         LocalDateTime untilTime = LocalDateTime.now().plusDays(3);
-        settlementEntity.update(untilTime);
+        settlementEntity.update(untilTime, settingsService.readSettings());
         assertThat(settlementEntity.getStorage().get(0)).isEqualTo(BigDecimal.valueOf(800));
         assertThat(settlementEntity.getStorage().get(3)).isEqualTo(BigDecimal.valueOf(800));
     }
@@ -124,13 +137,13 @@ public class SettlementEntityTest {
 
         assertThat(settlementEntity.getCombatUnitQueue().size()).isEqualTo(2);
 
-        settlementEntity.update(untilTime);
+        settlementEntity.update(untilTime, settingsService.readSettings());
 
         assertThat(settlementEntity.getArmy().get(0)).isEqualTo(5);
         assertThat(settlementEntity.getCombatUnitQueue().size()).isEqualTo(1);
 
         LocalDateTime untilTime2 = LocalDateTime.now().plusSeconds(60);
-        settlementEntity.update(untilTime2);
+        settlementEntity.update(untilTime2, settingsService.readSettings());
 
         assertThat(settlementEntity.getArmy().get(0)).isEqualTo(6);
         assertThat(settlementEntity.getCombatUnitQueue().size()).isEqualTo(1);
@@ -143,7 +156,7 @@ public class SettlementEntityTest {
                 .add(new CombatUnitQueue("1", LocalDateTime.now().minusMinutes(5),
                         0, 5, 60));
 
-        settlementEntity.update(untilTime);
+        settlementEntity.update(untilTime, settingsService.readSettings());
 
         assertThat(settlementEntity.getArmy().get(0)).isEqualTo(5);
     }
@@ -154,7 +167,7 @@ public class SettlementEntityTest {
         settlementEntity.setArmy(Arrays.asList(5, 0, 0, 10, 0, 0, 0, 0, 0, 0));
         settlementEntity.getStorage().set(3, BigDecimal.valueOf(50));
 
-        settlementEntity.update(untilTime);
+        settlementEntity.update(untilTime, settingsService.readSettings());
 
         assertThat(settlementEntity.getStorage().get(3))
                 .isEqualTo(BigDecimal.valueOf(45).setScale(3, RoundingMode.HALF_DOWN));
@@ -167,7 +180,7 @@ public class SettlementEntityTest {
         settlementEntity.setArmy(Arrays.asList(units, 0, 0, 0, 0, 0, 0, 0, 0, 0));
         settlementEntity.getStorage().set(3, BigDecimal.valueOf(30));
 
-        settlementEntity.update(untilTime);
+        settlementEntity.update(untilTime, settingsService.readSettings());
 
         assertThat(settlementEntity.getStorage().get(3)).isEqualTo(BigDecimal.valueOf(expected)
                 .setScale(3, RoundingMode.HALF_UP));
@@ -178,7 +191,7 @@ public class SettlementEntityTest {
         LocalDateTime untilTime = LocalDateTime.now();
         settlementEntity.setArmy(Arrays.asList(60, 0, 0, 0, 0, 0, 0, 0, 0, 0));
         settlementEntity.getStorage().set(3, BigDecimal.TEN);
-        settlementEntity.update(untilTime);
+        settlementEntity.update(untilTime, settingsService.readSettings());
 
         assertThat(settlementEntity.getArmy().get(0)).isEqualTo(58);
     }

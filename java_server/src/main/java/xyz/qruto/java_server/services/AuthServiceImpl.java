@@ -152,8 +152,8 @@ public class AuthServiceImpl implements AuthService {
                 .constructionTasks(new ArrayList<>())
                 .combatUnitQueue(new ArrayList<>())
                 .movements(new ArrayList<>())
-                .lastModified(LocalDateTime.now().minusHours(1))
-                .lastSpawnedAnimals(LocalDateTime.now().minusHours(1))
+                .lastModified(LocalDateTime.now())
+                .lastSpawnedAnimals(LocalDateTime.now())
                 .build();
         var newSettlementEntity = settlementRepository.save(settlementEntity);
         updateTile(emptyTile, newSettlementEntity);

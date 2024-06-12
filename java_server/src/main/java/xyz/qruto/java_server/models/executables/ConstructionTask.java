@@ -19,10 +19,10 @@ public class ConstructionTask implements Executable {
 
     @Override
     public int execute(SettlementEntity settlement) {
-        var building = settlement.getBuildings().stream()
-                .filter(b -> b.get(0) == buildingId).findFirst().orElseThrow();
-        building.set(2, building.get(2) + 1);
-        return 0;
+        var statPoints = settlement.changeBuilding(buildingId, specificationId, toLevel);
+        // remove executed Task
+        settlement.getConstructionTasks().remove(this);
+        return statPoints;
     }
 
     @Override

@@ -27,10 +27,6 @@ class Api {
     return '/settlements/$id';
   }
 
-  static String fetchSettlementById2(String id) {
-    return 'http://10.0.2.2:8282/api/settlements/$id';
-  }
-
   static String upgradeBuilding(String settlementId) {
     return '/settlements/$settlementId/constructions';
   }

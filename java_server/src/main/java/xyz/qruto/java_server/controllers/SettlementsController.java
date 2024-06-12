@@ -6,10 +6,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.web.bind.annotation.*;
 import xyz.qruto.java_server.entities.SettlementEntity;
 import xyz.qruto.java_server.models.UserDetailsImpl;
+import xyz.qruto.java_server.models.requests.ConstructionRequest;
 import xyz.qruto.java_server.models.responses.ShortSettlementInfo;
 import xyz.qruto.java_server.services.automation.AutomationService;
 import xyz.qruto.java_server.services.SettlementService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -23,12 +25,6 @@ public class SettlementsController {
     public SettlementsController(AutomationService automationService, SettlementService settlementService) {
         this.automationService = automationService;
         this.settlementService = settlementService;
-    }
-
-    @PostMapping()
-    public ResponseEntity<SettlementEntity> createSettlement() {
-        var settlementEntity = settlementService.createMockSettlement();
-        return ResponseEntity.ok(settlementEntity);
     }
 
     @GetMapping()
@@ -45,10 +41,19 @@ public class SettlementsController {
             System.out.printf("Automation has been started by settlementId - %s%n",
                     settlementId);
         }
-        var settlement = settlementService.getSettlementById(settlementId);
+        var settlement = settlementService.getSettlementById(settlementId, LocalDateTime.now());
         return settlement != null ?
                 new ResponseEntity<>(settlement, HttpStatus.OK) :
                 new ResponseEntity<>(null, HttpStatus.CONFLICT);
+    }
+
+    @PostMapping("/{settlementId}/constructions")
+    public ResponseEntity<SettlementEntity> constructBuilding(@PathVariable String settlementId,
+                                                              @RequestBody ConstructionRequest request) {
+        var result = settlementService.addConstructionTask(settlementId, request);
+        return request != null ?
+                new ResponseEntity<>(result, HttpStatus.OK) :
+                new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
 }

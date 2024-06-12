@@ -6,6 +6,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 @Data
@@ -25,11 +26,11 @@ public class Building {
     private final boolean isMulti;
     private final String imagePath;
 
-    public double getBenefit(int level){
+    public double getBenefit(int level) {
         return benefit.apply(level);
     }
 
-    public int getPopulation(int level){
+    public int getPopulation(int level) {
         return level == 1 ? upkeep : (int) Math.round((5 * upkeep + level - 1) / 10.0);
     }
 
@@ -47,7 +48,34 @@ public class Building {
         );
     }
 
-    private long round(double v, double n){
+    public boolean canBeUpgraded(List<BigDecimal> storage,
+                                 List<List<Integer>> existingBuildings,
+                                 int toLevel) {
+        for (int i = 0; i < 4; i++) {
+            if (storage.get(i).compareTo(getResourcesToNextLevel(toLevel).get(i)) < 0) {
+                return false;
+            }
+        }
+
+        if (existingBuildings != null) {
+            for (List<Integer> bR : requirementBuildings) {
+                if (isBuildingExistInVillage(bR, existingBuildings)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private boolean isBuildingExistInVillage(List<Integer> building,
+                                             List<List<Integer>> existingBuildings) {
+        return existingBuildings.stream()
+                .anyMatch(bR -> Objects.equals(bR.get(1), building.get(0)) &&
+                        building.get(1) <= bR.get(2));
+    }
+
+    private long round(double v, double n) {
         return (long) (Math.round(v / n) * n);
     }
 
