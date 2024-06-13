@@ -59,7 +59,7 @@ public class Building {
 
         if (existingBuildings != null) {
             for (List<Integer> bR : requirementBuildings) {
-                if (isBuildingExistInVillage(bR, existingBuildings)) {
+                if (!isBuildingExistInVillage(bR, existingBuildings)) {
                     return false;
                 }
             }
@@ -71,7 +71,7 @@ public class Building {
     private boolean isBuildingExistInVillage(List<Integer> building,
                                              List<List<Integer>> existingBuildings) {
         return existingBuildings.stream()
-                .anyMatch(bR -> Objects.equals(bR.get(1), building.get(0)) &&
+                .anyMatch(bR -> bR.get(1) == building.get(0) &&
                         building.get(1) <= bR.get(2));
     }
 
