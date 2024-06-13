@@ -93,7 +93,7 @@ public class WorldServiceImpl implements WorldService{
 
     @Override
     public TileDetails getTileByCoordinates(int x, int y){
-        var settlement = settlementRepository.findByXAndY(x, y);
+        var settlement = settlementRepository.findByXAndY(x, y).orElseThrow();
         var user = userRepository.findById(settlement.getUserId()).orElseThrow();
         if(settlement.getKind().isOasis()){
             oasesService.spawnAnimals(settlement);

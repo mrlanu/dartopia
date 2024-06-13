@@ -2,6 +2,8 @@ package xyz.qruto.java_server.services;
 
 import xyz.qruto.java_server.entities.SettlementEntity;
 import xyz.qruto.java_server.models.requests.ConstructionRequest;
+import xyz.qruto.java_server.models.requests.SendTroopsRequest;
+import xyz.qruto.java_server.models.requests.TroopsSendContract;
 import xyz.qruto.java_server.models.responses.ShortSettlementInfo;
 
 import java.time.LocalDateTime;
@@ -13,4 +15,8 @@ public interface SettlementService {
 
     SettlementEntity addConstructionTask(String settlementId,
                                          ConstructionRequest constructionRequest);
+
+    TroopsSendContract updateContract(String fromSettlementId, TroopsSendContract troopsSendContract);
+
+    String sendUnits(String fromSettlementId, SendTroopsRequest request);
 }

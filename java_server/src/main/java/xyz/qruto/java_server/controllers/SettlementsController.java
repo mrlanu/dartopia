@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import xyz.qruto.java_server.entities.SettlementEntity;
 import xyz.qruto.java_server.models.UserDetailsImpl;
 import xyz.qruto.java_server.models.requests.ConstructionRequest;
+import xyz.qruto.java_server.models.requests.SendTroopsRequest;
+import xyz.qruto.java_server.models.requests.TroopsSendContract;
 import xyz.qruto.java_server.models.responses.ShortSettlementInfo;
 import xyz.qruto.java_server.services.automation.AutomationService;
 import xyz.qruto.java_server.services.SettlementService;
@@ -41,7 +43,8 @@ public class SettlementsController {
             System.out.printf("Automation has been started by settlementId - %s%n",
                     settlementId);
         }
-        var settlement = settlementService.getSettlementById(settlementId, LocalDateTime.now());
+        SettlementEntity settlement = settlementService
+                .getSettlementById(settlementId, LocalDateTime.now());
         return settlement != null ?
                 new ResponseEntity<>(settlement, HttpStatus.OK) :
                 new ResponseEntity<>(null, HttpStatus.CONFLICT);
@@ -56,4 +59,16 @@ public class SettlementsController {
                 new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
+    @PostMapping("/{fromSettlementId}/troops_send_contract")
+    public TroopsSendContract updateContract(@PathVariable String fromSettlementId,
+                                             @RequestBody TroopsSendContract troopsSendContract) {
+        return settlementService.updateContract(fromSettlementId, troopsSendContract);
+    }
+
+    @PostMapping("/{fromSettlementId}/send_units")
+    public ResponseEntity<String> updateContract(@PathVariable String fromSettlementId,
+                                             @RequestBody SendTroopsRequest request) {
+        var result = settlementService.sendUnits(fromSettlementId, request);
+        return ResponseEntity.ok(result);
+    }
 }

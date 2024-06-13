@@ -92,6 +92,12 @@ public class SettlementEntity {
         }
     }
 
+    public void subtractUnits(List<Integer> subtractedUnits) {
+        for (int i = 0; i < 10; i++) {
+            army.set(i, army.get(i) - subtractedUnits.get(i));
+        }
+    }
+
     public void addConstructionTask(ConstructionTask task) {
         constructionTasks.add(task);
     }
