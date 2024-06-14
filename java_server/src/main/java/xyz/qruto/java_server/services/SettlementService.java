@@ -12,7 +12,7 @@ import java.util.List;
 public interface SettlementService {
     SettlementEntity getSettlementById(String settlementId, LocalDateTime untilTime);
 
-    SettlementEntity recalculateSettlement(String settlementId, LocalDateTime untilTime);
+    SettlementEntity recalculateSettlementWithoutSave(String settlementId, LocalDateTime untilTime);
 
     List<ShortSettlementInfo> getAllSettlementsByUserId(String userId);
 

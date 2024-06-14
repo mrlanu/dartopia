@@ -44,10 +44,10 @@ public class AttackMissionStrategy extends MissionStrategy {
         var battle = new Battle();
         List<Army> sidesArmy = new ArrayList<>();
 
-        SettlementEntity offenseSettlement = settlementService.recalculateSettlement(
+        SettlementEntity offenseSettlement = settlementService.recalculateSettlementWithoutSave(
                 movement.getFrom().getVillageId(),
                 movement.getWhen());
-        SettlementEntity defenseSettlement = settlementService.recalculateSettlement(
+        SettlementEntity defenseSettlement = settlementService.recalculateSettlementWithoutSave(
                 movement.getTo().getVillageId(),
                 movement.getWhen());
 

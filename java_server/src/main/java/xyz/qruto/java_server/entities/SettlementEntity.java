@@ -92,9 +92,21 @@ public class SettlementEntity {
         }
     }
 
+    public void addResources(List<BigDecimal> resources) {
+        for (var i = 0; i < storage.size(); i++) {
+            storage.set(i, storage.get(i).add(resources.get(i)));
+        }
+    }
+
     public void subtractUnits(List<Integer> subtractedUnits) {
         for (int i = 0; i < 10; i++) {
             army.set(i, army.get(i) - subtractedUnits.get(i));
+        }
+    }
+
+    public void addUnits(List<Integer> addedUnits) {
+        for (int i = 0; i < 10; i++) {
+            army.set(i, army.get(i) + addedUnits.get(i));
         }
     }
 

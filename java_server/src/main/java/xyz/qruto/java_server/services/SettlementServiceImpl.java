@@ -1,12 +1,12 @@
 package xyz.qruto.java_server.services;
 
-import org.springframework.http.HttpStatus;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 import xyz.qruto.java_server.entities.Movement;
 import xyz.qruto.java_server.entities.SettlementEntity;
 import xyz.qruto.java_server.entities.UserEntity;
+import xyz.qruto.java_server.models.Mission;
 import xyz.qruto.java_server.models.SideBrief;
 import xyz.qruto.java_server.models.buildings.BuildingsConst;
 import xyz.qruto.java_server.models.executables.ConstructionTask;
@@ -60,13 +60,14 @@ public class SettlementServiceImpl implements SettlementService{
                 .orElseThrow(() -> new IllegalArgumentException("Settlement not found"));
         List<Movement> movements = movementRepository.findAllBySettlementId(settlementId);
         settlement.update(LocalDateTime.now(), settingsService.readSettings());
+        movements.add(buildHomeLegion(settlement));
         SettlementEntity updatedSettlement = settlementRepository.save(settlement);
         updatedSettlement.setMovements(movements);
         return updatedSettlement;
     }
 
     @Override
-    public SettlementEntity recalculateSettlement(String settlementId, LocalDateTime untilTime) {
+    public SettlementEntity recalculateSettlementWithoutSave(String settlementId, LocalDateTime untilTime) {
         SettlementEntity settlement = settlementRepository.findById(settlementId)
                 .orElseThrow(() -> new IllegalArgumentException("Settlement not found"));
         settlement.update(untilTime, settingsService.readSettings());
@@ -88,7 +89,7 @@ public class SettlementServiceImpl implements SettlementService{
     @Override
     public SettlementEntity addConstructionTask(String settlementId,
                                                 ConstructionRequest constructionRequest){
-        SettlementEntity settlement = recalculateSettlement(settlementId, LocalDateTime.now());
+        SettlementEntity settlement = recalculateSettlementWithoutSave(settlementId, LocalDateTime.now());
         var constructionTasks = settlement.getConstructionTasks();
         var specification = BuildingsConst.BUILDINGS
                 .get(constructionRequest.getSpecificationId());
@@ -190,5 +191,33 @@ public class SettlementServiceImpl implements SettlementService{
 
         settlementRepository.save(senderSettlement);
         return "Units have been sent to " + receiverSettlement.getName();
+    }
+
+    private Movement buildHomeLegion(SettlementEntity settlement) {
+        var fromSide = SideBrief.builder()
+                .villageId(settlement.getId())
+                .villageName(settlement.getName())
+                .playerName(settlement.getUserId())
+                .userId(settlement.getUserId())
+                .coordinates(Arrays.asList(settlement.getX(), settlement.getY()))
+                .build();
+        var toSide = SideBrief.builder()
+                .villageId(settlement.getId())
+                .villageName(settlement.getName())
+                .playerName(settlement.getUserId())
+                .userId(settlement.getUserId())
+                .coordinates(Arrays.asList(settlement.getX(), settlement.getY()))
+                .build();
+        return Movement.builder()
+                .moving(false)
+                .id(ObjectId.get().toHexString())
+                .from(fromSide)
+                .to(toSide)
+                .units(settlement.getArmy())
+                .when(LocalDateTime.now())
+                .mission(Mission.home)
+                .plunder(new ArrayList<>())
+                .nation(settlement.getNation())
+                .build();
     }
 }

@@ -15,12 +15,12 @@ class NetworkClient {
 
     _dio.interceptors.add(AuthInterceptor());
     if (kDebugMode) {
-      /*_dio.interceptors.add(
+      _dio.interceptors.add(
         PrettyDioLogger(
           requestHeader: true,
           requestBody: true,
         ),
-      );*/
+      );
     }
   }
   static final NetworkClient _instance = NetworkClient._init();
