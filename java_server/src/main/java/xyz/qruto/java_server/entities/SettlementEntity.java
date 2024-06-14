@@ -257,12 +257,6 @@ public class SettlementEntity {
         }
     }
 
-    private void manipulateHomeLegion(List<Integer> newUnits) {
-        for (int i = 0; i < army.size(); i++) {
-            army.set(i, army.get(i) + newUnits.get(i));
-        }
-    }
-
     private List<Executable> getReadyUnits(LocalDateTime untilDateTime) {
         List<Executable> result = new ArrayList<>();
         List<CombatUnitQueue> newOrdersList = new ArrayList<>();
