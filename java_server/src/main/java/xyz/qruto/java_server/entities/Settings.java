@@ -20,6 +20,8 @@ public class Settings {
     private int mapHeight;
     private int oasesAmount;
     private int troopsSpeedX;
+    private int minUnitsForOasis;
+    private int maxUnitsForOasis;
 
     // after development should be deleted(should be gotten from models/UnitsConst)
     private int troopBuildDuration;

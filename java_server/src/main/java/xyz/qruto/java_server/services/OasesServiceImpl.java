@@ -14,7 +14,7 @@ import java.util.Random;
 
 @Service
 public class OasesServiceImpl implements OasesService {
-    private final SettingsService  settingsService;
+    private final SettingsService settingsService;
 
     public OasesServiceImpl(SettingsService settingsService) {
         this.settingsService = settingsService;
@@ -54,7 +54,7 @@ public class OasesServiceImpl implements OasesService {
         }
     }
 
-    public void calculateSpawnedUnits(SettlementKind kind, List<Integer> units) {
+    private void calculateSpawnedUnits(SettlementKind kind, List<Integer> units) {
         switch (kind) {
             case w:
                 if (shouldSpawn(units, 4, 5, 6)) {
@@ -119,19 +119,13 @@ public class OasesServiceImpl implements OasesService {
         }
     }
 
-    private static boolean shouldSpawn(List<Integer> units, int... indices) {
-        final int MIN_UNITS_FOR_OASIS = 15;
-        final int MAX_UNITS_FOR_OASIS = 30;
-
-        for (int index : indices) {
-            if (units.get(index) <= MIN_UNITS_FOR_OASIS + getRandom(MAX_UNITS_FOR_OASIS)) {
-                return true;
-            }
-        }
-        return false;
+    private boolean shouldSpawn(List<Integer> units, int... indices) {
+        return Arrays.stream(indices)
+                .allMatch(i -> units.get(i) <= settingsService.readSettings().getMinUnitsForOasis()
+                        + getRandom(settingsService.readSettings().getMaxUnitsForOasis()));
     }
 
-    private static int getRandom(int bound) {
+    private int getRandom(int bound) {
         Random random = new Random();
         return random.nextInt(bound + 1);
     }
