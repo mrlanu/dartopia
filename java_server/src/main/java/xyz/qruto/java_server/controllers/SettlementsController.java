@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import xyz.qruto.java_server.entities.SettlementEntity;
 import xyz.qruto.java_server.models.UserDetailsImpl;
 import xyz.qruto.java_server.models.requests.ConstructionRequest;
@@ -47,7 +48,7 @@ public class SettlementsController {
                 .getSettlementById(settlementId, LocalDateTime.now());
         return settlement != null ?
                 new ResponseEntity<>(settlement, HttpStatus.OK) :
-                new ResponseEntity<>(null, HttpStatus.CONFLICT);
+                new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/{settlementId}/constructions")

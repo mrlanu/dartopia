@@ -1,9 +1,9 @@
 package xyz.qruto.java_server.services.automation.missions;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import xyz.qruto.java_server.entities.Movement;
+import xyz.qruto.java_server.repositories.MovementRepository;
 import xyz.qruto.java_server.services.SettingsService;
 import xyz.qruto.java_server.services.SettlementService;
 
@@ -13,12 +13,16 @@ public abstract class MissionStrategy {
 
     protected SettlementService settlementService;
     protected SettingsService settingsService;
+    protected MovementRepository movementRepository;
     protected Movement movement;
 
     public MissionStrategy(SettlementService settlementService,
-                           SettingsService settingsService, Movement movement) {
+                           SettingsService settingsService,
+                           MovementRepository movementRepository,
+                           Movement movement) {
         this.settlementService = settlementService;
         this.settingsService = settingsService;
+        this.movementRepository = movementRepository;
         this.movement = movement;
     }
 

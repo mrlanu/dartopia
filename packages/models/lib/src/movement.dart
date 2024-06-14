@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:models/models.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
@@ -10,9 +11,9 @@ enum Mission {
   reinforcement,
 }
 
-class Movement {
+class Movement extends Equatable{
   final ObjectId? id;
-  final bool isMoving;
+  final bool moving;
   final SideBrief from;
   final SideBrief to;
   final DateTime when;
@@ -23,7 +24,7 @@ class Movement {
 
   Movement(
       {this.id,
-      this.isMoving = true,
+      this.moving = true,
       required this.from,
       required this.to,
       required this.when,
@@ -33,7 +34,7 @@ class Movement {
 
   Movement.fromMap(Map<String, dynamic> map)
       : id = map['_id'] as ObjectId,
-        isMoving = map['isMoving'] as bool,
+        moving = map['moving'] as bool,
         from = SideBrief.fromMap(map['from'] as Map<String, dynamic>),
         to = SideBrief.fromMap(map['to'] as Map<String, dynamic>),
         when = map['when'] as DateTime,
@@ -44,7 +45,7 @@ class Movement {
 
   Movement.fromJson(Map<String, dynamic> map)
       : id = ObjectId.parse(map['_id'] as String),
-        isMoving = map['isMoving'] as bool,
+        moving = map['moving'] as bool,
         from = SideBrief.fromJson(map['from'] as Map<String, dynamic>),
         to = SideBrief.fromJson(map['to'] as Map<String, dynamic>),
         when = DateTime.parse(map['when'] as String),
@@ -55,7 +56,7 @@ class Movement {
 
   Map<String, dynamic> toMap() => <String, dynamic>{
         '_id': id,
-        'isMoving': isMoving,
+        'moving': moving,
         'from': from.toMap(),
         'to': to.toMap(),
         'when': when,
@@ -67,7 +68,7 @@ class Movement {
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         '_id': id,
-        'isMoving': isMoving,
+        'moving': moving,
         'from': from,
         'to': to,
         'when': when.toIso8601String(),
@@ -79,7 +80,7 @@ class Movement {
 
   Movement copyWith({
     ObjectId? id,
-    bool? isMoving,
+    bool? moving,
     SideBrief? from,
     SideBrief? to,
     DateTime? when,
@@ -90,7 +91,7 @@ class Movement {
   }) {
     return Movement(
       id: id ?? this.id,
-      isMoving: isMoving ?? this.isMoving,
+      moving: moving ?? this.moving,
       from: from ?? this.from,
       to: to ?? this.to,
       when: when ?? this.when,
@@ -103,5 +104,8 @@ class Movement {
 
   @override
   String toString() =>
-      'Movement(id: $id, isMoving: $isMoving, from: $from, to: $to, when: $when, units: $units, mission: ${mission.name})';
+      'Movement(id: $id, isMoving: $moving, from: $from, to: $to, when: $when, units: $units, mission: ${mission.name})';
+
+  @override
+  List<Object?> get props => [id, from, to, units, when];
 }

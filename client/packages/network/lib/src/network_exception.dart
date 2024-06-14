@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:models/models.dart';
 
 class NetworkException implements Exception {
-  NetworkException.fromDioError(DioError dioError) {
+  NetworkException.fromDioError(DioException dioError) {
     switch (dioError.type) {
       case DioExceptionType.cancel:
         message = 'Request was cancelled';

@@ -11,6 +11,9 @@ import java.util.List;
 
 public interface SettlementService {
     SettlementEntity getSettlementById(String settlementId, LocalDateTime untilTime);
+
+    SettlementEntity recalculateSettlement(String settlementId, LocalDateTime untilTime);
+
     List<ShortSettlementInfo> getAllSettlementsByUserId(String userId);
 
     SettlementEntity addConstructionTask(String settlementId,
@@ -19,4 +22,6 @@ public interface SettlementService {
     TroopsSendContract updateContract(String fromSettlementId, TroopsSendContract troopsSendContract);
 
     String sendUnits(String fromSettlementId, SendTroopsRequest request);
+
+    SettlementEntity save(SettlementEntity defenseSettlement);
 }

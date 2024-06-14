@@ -41,11 +41,14 @@ public class AutomationServiceImpl implements AutomationService {
             for (Movement movement : movementsList) {
                 MissionStrategy strategy = switch (movement.getMission()) {
                     case attack, raid ->
-                            new AttackMissionStrategy(settlementService, settingsService, movement);
+                            new AttackMissionStrategy(settlementService, settingsService,
+                                    movementRepository, movement);
                     case back ->
-                            new ReturnHomeMissionStrategy(settlementService, settingsService, movement);
+                            new ReturnHomeMissionStrategy(settlementService, settingsService,
+                                    movementRepository, movement);
                     case reinforcement ->
-                            new ReinforcementMissionStrategy(settlementService, settingsService, movement);
+                            new ReinforcementMissionStrategy(settlementService, settingsService,
+                                    movementRepository, movement);
                     case home, caught ->
                             throw new RuntimeException("Caught exception");
                 };

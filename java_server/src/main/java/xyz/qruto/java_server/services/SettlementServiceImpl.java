@@ -1,6 +1,9 @@
 package xyz.qruto.java_server.services;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import xyz.qruto.java_server.entities.Movement;
 import xyz.qruto.java_server.entities.SettlementEntity;
 import xyz.qruto.java_server.entities.UserEntity;
@@ -30,36 +33,43 @@ public class SettlementServiceImpl implements SettlementService{
     private final SettlementRepository settlementRepository;
     private final MovementRepository movementRepository;
     private final UserRepository userRepository;
-    private final MovementRepository managementRepository;
 
     public SettlementServiceImpl(SettingsService settingsService,
                                  SettlementRepository settlementRepository,
-                                 MovementRepository movementRepository, UserRepository userRepository, MovementRepository managementRepository) {
+                                 MovementRepository movementRepository,
+                                 UserRepository userRepository) {
         this.settingsService = settingsService;
         this.settlementRepository = settlementRepository;
         this.movementRepository = movementRepository;
         this.userRepository = userRepository;
-        this.managementRepository = managementRepository;
     }
 
     @Override
+    public SettlementEntity save(SettlementEntity settlement){
+        return settlementRepository.save(settlement);
+    }
+
+    @Override
+    @Transactional
     public SettlementEntity getSettlementById(String settlementId, LocalDateTime untilTime) {
         List<Movement> t = movementRepository.findMovingToOrFromVillageIdBeforeDate(settlementId, LocalDateTime.now());
-        List<Movement> all = movementRepository.findAllByMovingIsTrueAndWhenIsBefore(LocalDateTime.now());
-        var time = LocalDateTime.now();
         if(!t.isEmpty()){
             return null;
         }
         SettlementEntity settlement = settlementRepository.findById(settlementId)
                 .orElseThrow(() -> new IllegalArgumentException("Settlement not found"));
+        List<Movement> movements = movementRepository.findAllBySettlementId(settlementId);
         settlement.update(LocalDateTime.now(), settingsService.readSettings());
-        return settlementRepository.save(settlement);
+        SettlementEntity updatedSettlement = settlementRepository.save(settlement);
+        updatedSettlement.setMovements(movements);
+        return updatedSettlement;
     }
 
-    private SettlementEntity recalculateSettlement(String settlementId, LocalDateTime untilTime) {
+    @Override
+    public SettlementEntity recalculateSettlement(String settlementId, LocalDateTime untilTime) {
         SettlementEntity settlement = settlementRepository.findById(settlementId)
                 .orElseThrow(() -> new IllegalArgumentException("Settlement not found"));
-        settlement.update(LocalDateTime.now(), settingsService.readSettings());
+        settlement.update(untilTime, settingsService.readSettings());
         return settlement;
     }
 

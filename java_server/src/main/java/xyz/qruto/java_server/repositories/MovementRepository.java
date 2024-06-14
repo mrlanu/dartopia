@@ -10,5 +10,11 @@ import java.util.List;
 public interface MovementRepository extends MongoRepository<Movement, String> {
     @Query("{ 'moving': true, 'when': { '$lte': ?1 }, '$or': [ { 'to.villageId': ?0 }, { 'from.villageId': ?0, 'mission': { '$ne': 'back' } } ] }")
     List<Movement> findMovingToOrFromVillageIdBeforeDate(String villageId, LocalDateTime currentDate);
+
+    @Query("{ '$or': [ { 'to.villageId': ?0 }, { 'from.villageId': ?0, 'mission': { '$ne': 'back' } } ] }")
+    List<Movement> findAllBySettlementId(String settlementId);
+
     List<Movement> findAllByMovingIsTrueAndWhenIsBefore(LocalDateTime currentDate);
+
+    List<Movement> getAllByToVillageIdAndMovingIsFalse(String villageId);
 }
