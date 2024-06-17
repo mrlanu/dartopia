@@ -11,9 +11,13 @@ import xyz.qruto.java_server.models.SideBrief;
 import xyz.qruto.java_server.models.buildings.BuildingsConst;
 import xyz.qruto.java_server.models.executables.ConstructionTask;
 import xyz.qruto.java_server.models.requests.ConstructionRequest;
+import xyz.qruto.java_server.models.requests.OrderCombatUnitRequest;
 import xyz.qruto.java_server.models.requests.SendTroopsRequest;
 import xyz.qruto.java_server.models.requests.TroopsSendContract;
 import xyz.qruto.java_server.models.responses.ShortSettlementInfo;
+import xyz.qruto.java_server.models.units.CombatUnitQueue;
+import xyz.qruto.java_server.models.units.Unit;
+import xyz.qruto.java_server.models.units.UnitsConst;
 import xyz.qruto.java_server.repositories.MovementRepository;
 import xyz.qruto.java_server.repositories.SettlementRepository;
 import xyz.qruto.java_server.repositories.UserRepository;
@@ -121,6 +125,42 @@ public class SettlementServiceImpl implements SettlementService{
             return settlementRepository.save(settlement);
         }
         return null;
+    }
+
+    @Override
+    public SettlementEntity orderCombatUnits(String settlementId,
+                                             OrderCombatUnitRequest request) {
+        SettlementEntity settlement = recalculateSettlementWithoutSave(settlementId, LocalDateTime.now());
+        List<CombatUnitQueue> ordersList = settlement.getCombatUnitQueue();
+
+        LocalDateTime lastTime;
+        if (!ordersList.isEmpty()) {
+            var lastOrder = ordersList.get(ordersList.size() - 1);
+            lastTime = lastOrder.getLastTime()
+                    .plusSeconds((long) lastOrder.getLeftTrain() * lastOrder.getDurationEach());
+        } else {
+            lastTime = LocalDateTime.now();
+        }
+
+        var order = CombatUnitQueue.builder()
+                .id(UUID.randomUUID().toString())
+                .lastTime(lastTime)
+                .unitId(request.getUnitId())
+                .leftTrain(request.getAmount())
+                .durationEach(settingsService.readSettings().getTroopBuildDuration())
+                .build();
+
+        Unit unit = UnitsConst.UNITS
+                .get(settlement.getNation().ordinal())
+                .get(order.getUnitId());
+        List<BigDecimal> costOfAll = unit.getCost().stream()
+                .map(price -> BigDecimal.valueOf((long) price * order.getLeftTrain()))
+                .toList();
+
+        settlement.spendResources(costOfAll);
+        settlement.addCombatUnitOrder(order);
+
+        return settlementRepository.save(settlement);
     }
 
     @Override

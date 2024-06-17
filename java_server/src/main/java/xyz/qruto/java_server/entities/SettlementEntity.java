@@ -118,6 +118,10 @@ public class SettlementEntity {
         buildings.add(Arrays.asList(buildingId, specificationId, level, 0));
     }
 
+    public void addCombatUnitOrder(CombatUnitQueue order) {
+        combatUnitQueue.add(order);
+    }
+
     public int changeBuilding(int buildingId, int specificationId, int level) {
         var index = -1;
         for (var i = 0; i < buildings.size(); i++) {

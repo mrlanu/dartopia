@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import xyz.qruto.java_server.entities.SettlementEntity;
 import xyz.qruto.java_server.models.UserDetailsImpl;
 import xyz.qruto.java_server.models.requests.ConstructionRequest;
+import xyz.qruto.java_server.models.requests.OrderCombatUnitRequest;
 import xyz.qruto.java_server.models.requests.SendTroopsRequest;
 import xyz.qruto.java_server.models.requests.TroopsSendContract;
 import xyz.qruto.java_server.models.responses.ShortSettlementInfo;
@@ -58,6 +59,13 @@ public class SettlementsController {
         return request != null ?
                 new ResponseEntity<>(result, HttpStatus.OK) :
                 new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping("/{settlementId}/order_troops")
+    public ResponseEntity<SettlementEntity> orderTroops(@PathVariable String settlementId,
+                                                        @RequestBody OrderCombatUnitRequest request) {
+        var result = settlementService.orderCombatUnits(settlementId, request);
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/{fromSettlementId}/troops_send_contract")
