@@ -47,10 +47,6 @@ class Api {
     return '/settlements/$settlementId/send_units';
   }
 
-  static String fetchMovements(String settlementId) {
-    return '/settlements/$settlementId/movements';
-  }
-
   static String fetchAllReportsBrief() {
     return '/reports';
   }
