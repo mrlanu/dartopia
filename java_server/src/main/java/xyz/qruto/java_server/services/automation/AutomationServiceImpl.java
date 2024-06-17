@@ -4,6 +4,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import xyz.qruto.java_server.entities.Movement;
 import xyz.qruto.java_server.repositories.MovementRepository;
+import xyz.qruto.java_server.services.ReportService;
 import xyz.qruto.java_server.services.SettingsService;
 import xyz.qruto.java_server.services.SettlementService;
 import xyz.qruto.java_server.services.automation.missions.AttackMissionStrategy;
@@ -20,13 +21,15 @@ public class AutomationServiceImpl implements AutomationService {
     private final ReentrantLock lock = new ReentrantLock();
     private final MovementRepository movementRepository;
     private final SettlementService settlementService;
+    private final ReportService reportService;
     private final SettingsService settingsService;
 
     public AutomationServiceImpl(MovementRepository movementRepository,
-                                 SettlementService settlementService,
+                                 SettlementService settlementService, ReportService reportService,
                                  SettingsService settingsService) {
         this.movementRepository = movementRepository;
         this.settlementService = settlementService;
+        this.reportService = reportService;
         this.settingsService = settingsService;
     }
 
@@ -42,13 +45,13 @@ public class AutomationServiceImpl implements AutomationService {
                 MissionStrategy strategy = switch (movement.getMission()) {
                     case attack, raid ->
                             new AttackMissionStrategy(settlementService, settingsService,
-                                    movementRepository, movement);
+                                    reportService, movementRepository, movement);
                     case back ->
                             new ReturnHomeMissionStrategy(settlementService, settingsService,
-                                    movementRepository, movement);
+                                    reportService, movementRepository, movement);
                     case reinforcement ->
                             new ReinforcementMissionStrategy(settlementService, settingsService,
-                                    movementRepository, movement);
+                                    reportService, movementRepository, movement);
                     case home, caught ->
                             throw new RuntimeException("Caught exception");
                 };

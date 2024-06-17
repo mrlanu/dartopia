@@ -64,7 +64,7 @@ class MilitaryReportResponse {
   }
 
   MilitaryReportResponse.fromMap(Map<String, dynamic> map)
-      : id = map['_id'] as String,
+      : id = map['id'] as String,
         failed = map['failed'] as bool,
         mission = Mission.values.byName(map['mission'] as String),
         off = map.containsKey('off') && map['off'] != null
@@ -80,7 +80,7 @@ class MilitaryReportResponse {
         bounty = (map['bounty'] as List<dynamic>).map((u) => u as int).toList();
 
   MilitaryReportResponse.fromJson(Map<String, dynamic> map)
-      : id = map['_id'] as String,
+      : id = map['id'] as String,
         failed = map['failed'] as bool,
         mission = Mission.values.byName(map['mission'] as String),
         off = map.containsKey('off') && map['off'] != null
@@ -96,7 +96,7 @@ class MilitaryReportResponse {
         bounty = (map['bounty'] as List<dynamic>).map((u) => u as int).toList();
 
   Map<String, dynamic> toMap() => <String, dynamic>{
-        '_id': id,
+        'id': id,
         'failed': failed,
         'mission': mission.name,
         'off': off?.toMap(),
@@ -107,7 +107,7 @@ class MilitaryReportResponse {
       };
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-        '_id': id,
+        'id': id,
         'failed': failed,
         'mission': mission.name,
         'off': off?.toMap(),

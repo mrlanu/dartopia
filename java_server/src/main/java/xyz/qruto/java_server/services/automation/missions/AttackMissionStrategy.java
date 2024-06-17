@@ -11,6 +11,7 @@ import xyz.qruto.java_server.models.battle.BattleField;
 import xyz.qruto.java_server.models.units.Unit;
 import xyz.qruto.java_server.models.units.UnitsConst;
 import xyz.qruto.java_server.repositories.MovementRepository;
+import xyz.qruto.java_server.services.ReportService;
 import xyz.qruto.java_server.services.SettingsService;
 import xyz.qruto.java_server.services.SettlementService;
 import xyz.qruto.java_server.utils.ArrivalTimeCalculator;
@@ -29,9 +30,10 @@ public class AttackMissionStrategy extends MissionStrategy {
 
     public AttackMissionStrategy(SettlementService settlementService,
                                  SettingsService settingsService,
+                                 ReportService reportService,
                                  MovementRepository movementRepository,
                                  Movement movement) {
-        super(settlementService, settingsService, movementRepository, movement);
+        super(settlementService, settingsService, reportService, movementRepository, movement);
     }
 
     @Override
@@ -93,7 +95,9 @@ public class AttackMissionStrategy extends MissionStrategy {
         sidesArmy.remove(sidesArmy.size() - 1);
         updateDef(defenseSettlement, sidesArmy, reinforcementEntities);
         settlementService.save(defenseSettlement);
-        //createReports(offenseSettlement, reinforcementEntities, battleResults.get(0), plunder);
+        reportService.createReports(movement, offenseSettlement,
+                defenseSettlement, reinforcementEntities, battleResults.get(0),
+                plunder.stream().map(BigDecimal::intValue).toList());
     }
 
     private List<BigDecimal> returnOff(Army offArmy, SettlementEntity off, SettlementEntity def) {
@@ -159,49 +163,6 @@ public class AttackMissionStrategy extends MissionStrategy {
 
         return Arrays.asList(wood, clay, iron, crop);
     }
-
-    /*private void createReports(SettlementEntity attacker,
-                               List<CombatGroupEntity> reinforcement,
-                               BattleResult battleResult,
-                               List<BigDecimal> plunder) {
-        var battleField = state.getSettlementEntity();
-        int carry = calculateCarry();
-        List<ReportPlayerEntity> defenders = new ArrayList<>();
-        //own def
-        defenders.add(ReportPlayerEntity.builder()
-                .settlementId(battleField.getId())
-                .nation(battleField.getNation())
-                .troops(battleResult.getUnitsBeforeBattle().get(0))
-                .dead(battleResult.getCasualties().get(0))
-                .build());
-        for (int i = 0; i < reinforcement.size(); i++){
-            var current = reinforcement.get(i);
-            defenders.add(ReportPlayerEntity.builder()
-                    .settlementId(current.getFromSettlementId())
-                    .nation(current.getOwnerNation())
-                    .troops(battleResult.getUnitsBeforeBattle().get(i + 1))
-                    .dead(battleResult.getCasualties().get(i + 1))
-                    .build());
-        }
-        var report = new ReportEntity(
-                attacker.getAccountId(),
-                combatGroup.getMission(),
-                ReportPlayerEntity.builder()
-                        //here is to instead of from because swap was apply in the returnOff method
-                        .settlementId(combatGroup.getFromSettlementId())
-                        .nation(combatGroup.getOwnerNation())
-                        .troops(battleResult.getUnitsBeforeBattle().get(battleResult.getUnitsBeforeBattle().size() - 1))
-                        .dead(battleResult.getCasualties().get(battleResult.getCasualties().size() - 1))
-                        .bounty(plunder)
-                        .carry(carry)
-                        .build(),
-                defenders, combatGroup.getExecutionTime());
-        var repo = engineService.getReportRepository();
-        repo.save(report);
-        report.setReportOwner(battleField.getAccountId());
-        report.setId(null);
-        repo.save(report);
-    }*/
 
     private int calculateCarry(List<Integer> units) {
         List<Unit> template = UnitsConst.UNITS.get(movement.getNation().ordinal());
