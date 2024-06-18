@@ -21,10 +21,10 @@ StatisticsResponse _$StatisticsResponseFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$StatisticsResponse {
   List<StatisticsModel> get modelsList => throw _privateConstructorUsedError;
-  String get currentPage => throw _privateConstructorUsedError;
-  String get totalItems => throw _privateConstructorUsedError;
-  String get totalPages => throw _privateConstructorUsedError;
-  String get itemsPerPage => throw _privateConstructorUsedError;
+  int get currentPage => throw _privateConstructorUsedError;
+  int get totalItems => throw _privateConstructorUsedError;
+  int get totalPages => throw _privateConstructorUsedError;
+  int get itemsPerPage => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -40,10 +40,10 @@ abstract class $StatisticsResponseCopyWith<$Res> {
   @useResult
   $Res call(
       {List<StatisticsModel> modelsList,
-      String currentPage,
-      String totalItems,
-      String totalPages,
-      String itemsPerPage});
+      int currentPage,
+      int totalItems,
+      int totalPages,
+      int itemsPerPage});
 }
 
 /// @nodoc
@@ -73,19 +73,19 @@ class _$StatisticsResponseCopyWithImpl<$Res, $Val extends StatisticsResponse>
       currentPage: null == currentPage
           ? _value.currentPage
           : currentPage // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
       totalItems: null == totalItems
           ? _value.totalItems
           : totalItems // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
       totalPages: null == totalPages
           ? _value.totalPages
           : totalPages // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
       itemsPerPage: null == itemsPerPage
           ? _value.itemsPerPage
           : itemsPerPage // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
     ) as $Val);
   }
 }
@@ -100,10 +100,10 @@ abstract class _$$StatisticsResponseImplCopyWith<$Res>
   @useResult
   $Res call(
       {List<StatisticsModel> modelsList,
-      String currentPage,
-      String totalItems,
-      String totalPages,
-      String itemsPerPage});
+      int currentPage,
+      int totalItems,
+      int totalPages,
+      int itemsPerPage});
 }
 
 /// @nodoc
@@ -131,19 +131,19 @@ class __$$StatisticsResponseImplCopyWithImpl<$Res>
       currentPage: null == currentPage
           ? _value.currentPage
           : currentPage // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
       totalItems: null == totalItems
           ? _value.totalItems
           : totalItems // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
       totalPages: null == totalPages
           ? _value.totalPages
           : totalPages // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
       itemsPerPage: null == itemsPerPage
           ? _value.itemsPerPage
           : itemsPerPage // ignore: cast_nullable_to_non_nullable
-              as String,
+              as int,
     ));
   }
 }
@@ -171,13 +171,13 @@ class _$StatisticsResponseImpl implements _StatisticsResponse {
   }
 
   @override
-  final String currentPage;
+  final int currentPage;
   @override
-  final String totalItems;
+  final int totalItems;
   @override
-  final String totalPages;
+  final int totalPages;
   @override
-  final String itemsPerPage;
+  final int itemsPerPage;
 
   @override
   String toString() {
@@ -229,10 +229,10 @@ class _$StatisticsResponseImpl implements _StatisticsResponse {
 abstract class _StatisticsResponse implements StatisticsResponse {
   const factory _StatisticsResponse(
       {required final List<StatisticsModel> modelsList,
-      required final String currentPage,
-      required final String totalItems,
-      required final String totalPages,
-      required final String itemsPerPage}) = _$StatisticsResponseImpl;
+      required final int currentPage,
+      required final int totalItems,
+      required final int totalPages,
+      required final int itemsPerPage}) = _$StatisticsResponseImpl;
 
   factory _StatisticsResponse.fromJson(Map<String, dynamic> json) =
       _$StatisticsResponseImpl.fromJson;
@@ -240,13 +240,13 @@ abstract class _StatisticsResponse implements StatisticsResponse {
   @override
   List<StatisticsModel> get modelsList;
   @override
-  String get currentPage;
+  int get currentPage;
   @override
-  String get totalItems;
+  int get totalItems;
   @override
-  String get totalPages;
+  int get totalPages;
   @override
-  String get itemsPerPage;
+  int get itemsPerPage;
   @override
   @JsonKey(ignore: true)
   _$$StatisticsResponseImplCopyWith<_$StatisticsResponseImpl> get copyWith =>

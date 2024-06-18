@@ -10,7 +10,7 @@ abstract class StatisticsRepository {
   Future<StatisticsModel> createStatistics(StatisticsModel statisticsModel);
 
   Future<StatisticsResponse> getStatisticsList(
-      String playerId, String? page, String sortBy);
+      String playerId, String? page, String sortBy,);
 
   Future<void> addPopulation({required String playerId, required int amount});
 }
@@ -23,7 +23,7 @@ class StatisticsRepositoryImpl implements StatisticsRepository {
 
   @override
   Future<StatisticsModel> createStatistics(
-      StatisticsModel statisticsModel) async {
+      StatisticsModel statisticsModel,) async {
     try {
       if (_databaseClient.db != null && _databaseClient.db!.isConnected) {
         final response = await _databaseClient.db!
@@ -78,10 +78,10 @@ class StatisticsRepositoryImpl implements StatisticsRepository {
         }
         return StatisticsResponse(
             modelsList: players,
-            currentPage: page.toString(),
-            totalItems: totalPlayers.toString(),
-            totalPages: totalPages.toString(),
-            itemsPerPage: pageSize.toString());
+            currentPage: page,
+            totalItems: totalPlayers,
+            totalPages: totalPages,
+            itemsPerPage: pageSize,);
       } else {
         throw DatabaseConnectionException();
       }

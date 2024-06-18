@@ -18,6 +18,7 @@ import xyz.qruto.java_server.models.requests.SignupRequest;
 import xyz.qruto.java_server.models.responses.JwtResponse;
 import xyz.qruto.java_server.repositories.RoleRepository;
 import xyz.qruto.java_server.repositories.SettlementRepository;
+import xyz.qruto.java_server.repositories.StatisticsRepository;
 import xyz.qruto.java_server.repositories.UserRepository;
 
 import java.math.BigDecimal;
@@ -35,13 +36,15 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder encoder;
     private final SettlementRepository settlementRepository;
     private final WorldService worldService;
+    private final StatisticsRepository statisticsRepository;
 
     public AuthServiceImpl(AuthenticationManager authenticationManager,
                            JwtUtils jwtUtils, UserRepository userRepository,
                            RoleRepository roleRepository,
                            PasswordEncoder encoder,
                            SettlementRepository settlementRepository,
-                           WorldService worldService) {
+                           WorldService worldService,
+                           StatisticsRepository statisticsRepository) {
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
         this.userRepository = userRepository;
@@ -49,6 +52,7 @@ public class AuthServiceImpl implements AuthService {
         this.encoder = encoder;
         this.settlementRepository = settlementRepository;
         this.worldService = worldService;
+        this.statisticsRepository = statisticsRepository;
     }
 
     public JwtResponse login(String username, String password) {
@@ -94,7 +98,20 @@ public class AuthServiceImpl implements AuthService {
         user.setRoles(roles);
         var newUser = userRepository.save(user);
         foundFirstSettlement(newUser.getId());
+        createStatistics(newUser);
         return newUser;
+    }
+
+    private void createStatistics(UserEntity newUser) {
+        StatisticsEntity statistics = StatisticsEntity.builder()
+                .playerName(newUser.getName())
+                .playerId(newUser.getId())
+                .population(0)
+                .allianceName("")
+                .attackPoints(0)
+                .defensePoints(0)
+                .build();
+        statisticsRepository.save(statistics);
     }
 
     private Set<Role> assignRoles(Set<String> strRoles) {
