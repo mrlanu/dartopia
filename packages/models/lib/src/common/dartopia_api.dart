@@ -1,6 +1,10 @@
 class Api {
   Api._();
 
+  //dart server
+  //static const baseURL = 'http://10.0.2.2:8080';
+
+  //java server
   static const baseURL = 'http://10.0.2.2:8282';
 
   static String signup() {
