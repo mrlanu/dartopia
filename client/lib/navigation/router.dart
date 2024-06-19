@@ -69,7 +69,6 @@ final GoRouter _router = GoRouter(
                         .add(const SettlementFetchRequested());
                     return BuildingDetailPage(buildingRecord: buildingRecord);
                   },
-                  onExit: onExit
                 ),
               ],
             ),
@@ -91,16 +90,17 @@ final GoRouter _router = GoRouter(
               builder: (BuildContext context, GoRouterState state) {
                 return const WorldMapPage();
               },
-              onExit: onExit,
             ),
           ]),
-          StatefulShellBranch(routes: [
+          StatefulShellBranch(observers: [
+            NavigatorObserver(),
+          ],
+              routes: [
             GoRoute(
               path: '/statistics',
               builder: (BuildContext context, GoRouterState state) {
                 return const StatisticsPage();
               },
-              onExit: onExit,
             ),
           ]),
           StatefulShellBranch(routes: [
@@ -118,7 +118,6 @@ final GoRouter _router = GoRouter(
                   },
                 ),
               ],
-              onExit: onExit,
             ),
           ]),
           StatefulShellBranch(routes: [
