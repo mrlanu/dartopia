@@ -77,7 +77,7 @@ class TroopDetailsTable extends StatelessWidget {
                 // Skip the right side border
               ),
             ),
-            child: movement.isMoving
+            child: movement.moving
                 ? Center(
                     child: Text(
                         overflow: TextOverflow.ellipsis,
@@ -233,7 +233,7 @@ class TroopDetailsTable extends StatelessWidget {
               // Skip the right side border
             ),
           ),
-          child: movement.isMoving
+          child: movement.moving
               ? const Center(child: Text('Arrival'))
               : const Center(child: Text('Maintenance')),
         ),
@@ -250,7 +250,7 @@ class TroopDetailsTable extends StatelessWidget {
               ),
               child: isEstimate // USED on send troops confirmation form
                   ? _buildRowForEstimateArrival()
-                  : movement.isMoving
+                  : movement.moving
                       ? _buildRowForMovingUnits(context)
                       : _buildRowForStaticUnits()),
         ),
@@ -259,6 +259,7 @@ class TroopDetailsTable extends StatelessWidget {
   }
 
   Widget _buildRowForMovingUnits(BuildContext context) {
+    print('Start value: ${movement.when.difference(DateTime.now()).inSeconds}');
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0.0),
       child: Row(
@@ -271,6 +272,7 @@ class TroopDetailsTable extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               CountdownTimer(
+                key: ValueKey('${movement.when} ${movement.id?.$oid}'),
                 textStyle: Theme.of(context).textTheme.bodySmall,
                 startValue: movement.when.difference(DateTime.now()).inSeconds,
                 onFinish: () {

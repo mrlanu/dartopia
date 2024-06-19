@@ -9,10 +9,10 @@ part 'statistics_response.g.dart';
 class StatisticsResponse with _$StatisticsResponse {
   const factory StatisticsResponse({
     required List<StatisticsModel> modelsList,
-    required String currentPage,
-    required String totalItems,
-    required String totalPages,
-    required String itemsPerPage,
+    required int currentPage,
+    required int totalItems,
+    required int totalPages,
+    required int itemsPerPage,
   }) = _StatisticsResponse;
 
   factory StatisticsResponse.fromJson(Map<String, dynamic> json) =>

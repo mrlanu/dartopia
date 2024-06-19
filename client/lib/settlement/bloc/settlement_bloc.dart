@@ -94,13 +94,13 @@ class SettlementBloc extends Bloc<SettlementEvent, SettlementState> {
         if (m.mission == Mission.home) {
           result[MovementLocation.home]!.add(m);
         } else if (m.from.villageId == currentSettlementId) {
-          if (m.isMoving) {
+          if (m.moving) {
             result[MovementLocation.outgoing]!.add(m);
           } else {
             result[MovementLocation.away]!.add(m);
           }
         } else if (m.to.villageId == currentSettlementId) {
-          if (m.isMoving) {
+          if (m.moving) {
             result[MovementLocation.incoming]!.add(m);
           } else {
             result[MovementLocation.home]!.add(m);

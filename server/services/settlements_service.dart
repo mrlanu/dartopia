@@ -426,7 +426,7 @@ class SettlementServiceImpl extends SettlementService {
     );
     return Movement(
       id: ObjectId(),
-      isMoving: false,
+      moving: false,
       from: fromSide,
       to: toSide,
       units: settlement.units,

@@ -20,7 +20,8 @@ class AuthRepo {
       final response = await _networkClient.post<Map<String, dynamic>>(
           Api.signup(),
           data:
-          json.encode({'email': email, 'password': password, 'name': ''}));
+          json.encode({'email': email, 'password': password,
+            'name': _trimEmail(email), 'roles': ['user', 'mod']}));
       if (response.statusCode == HttpStatus.created) {
         return;
       }
@@ -43,5 +44,20 @@ class AuthRepo {
     } on DioException catch (e) {
     throw NetworkException.fromDioError(e);
     }
+  }
+
+  String _trimEmail(String email) {
+    final atIndex = email.indexOf('@');
+    if (atIndex != -1) {
+      final name = email.substring(0, atIndex);
+      return _capitalizeFirst(name);
+    } else {
+      return email;
+    }
+  }
+
+  String _capitalizeFirst(String text) {
+    if (text.isEmpty) return text;
+    return text[0].toUpperCase() + text.substring(1);
   }
 }

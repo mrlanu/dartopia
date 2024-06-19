@@ -379,7 +379,8 @@ class Settlement extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, storage, buildings, constructionTasks];
+  List<Object?> get props =>
+      [id, storage, buildings, constructionTasks, movements];
 
   void reorderBuildings(List<List<int>> newBuildings) {
     for (var i = 0; i < buildings.length; i++) {

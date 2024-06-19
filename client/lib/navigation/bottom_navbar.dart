@@ -1,3 +1,5 @@
+import 'package:dartopia/settlement/bloc/settlement_bloc.dart';
+import 'package:dartopia/statistics/cubit/statistics_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -61,6 +63,14 @@ class _BottomNavBarState extends State<BottomNavBar> {
       index,
       initialLocation: index == widget.navigationShell.currentIndex,
     );
+    switch (index) {
+      case 0:
+        context.read<SettlementBloc>().add(const SettlementFetchRequested());
+      case 2:
+        context.read<StatisticsCubit>().fetchStatistics();
+      case 3: context.read<ReportsBloc>().add(const ListOfBriefsRequested());
+      default: throw const FormatException("Invalid");
+    }
   }
 
   BottomNavigationBarItem _buildReportsBarItem(BuildContext context) {

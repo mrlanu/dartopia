@@ -12,10 +12,10 @@ _$StatisticsResponseImpl _$$StatisticsResponseImplFromJson(
       modelsList: (json['modelsList'] as List<dynamic>)
           .map((e) => StatisticsModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      currentPage: json['currentPage'] as String,
-      totalItems: json['totalItems'] as String,
-      totalPages: json['totalPages'] as String,
-      itemsPerPage: json['itemsPerPage'] as String,
+      currentPage: json['currentPage'] as int,
+      totalItems: json['totalItems'] as int,
+      totalPages: json['totalPages'] as int,
+      itemsPerPage: json['itemsPerPage'] as int,
     );
 
 Map<String, dynamic> _$$StatisticsResponseImplToJson(

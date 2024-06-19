@@ -31,10 +31,11 @@ class _CountdownTimerState extends State<CountdownTimer> {
         if (timeResume == 0) {
           widget.onFinish();
           timer.cancel();
+        } else {
+          setState(() {
+            timeResume--;
+          });
         }
-        setState(() {
-          timeResume--;
-        });
       },
     );
     super.initState();
@@ -48,6 +49,9 @@ class _CountdownTimerState extends State<CountdownTimer> {
 
   @override
   Widget build(BuildContext context) {
-    return Text(FormatUtil.formatTime(timeResume), style: widget.textStyle,);
+    return Text(
+      FormatUtil.formatTime(timeResume),
+      style: widget.textStyle,
+    );
   }
 }

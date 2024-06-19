@@ -212,7 +212,7 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
       // 'isMoving' == true' &&
       // (to.villageId' == id ||
       // ('from.villageId' == id && 'mission' != 'back'))
-      selector = where.eq('isMoving', true).and(
+      selector = where.eq('moving', true).and(
             where.eq('to.villageId', id).or(
                   where
                       .eq('from.villageId', id)
@@ -221,7 +221,7 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
           );
     }
     if (isMoving != null && isMoving == false) {
-      selector = where.eq('isMoving', false).and(
+      selector = where.eq('moving', false).and(
             where.eq('to.villageId', id).or(
                   where
                       .eq('from.villageId', id)
@@ -252,7 +252,7 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
       if (_databaseClient.db != null && _databaseClient.db!.isConnected) {
         return _databaseClient.db!
             .collection('movements')
-            .find(where.eq('to.villageId', id).and(where.eq('isMoving', false)))
+            .find(where.eq('to.villageId', id).and(where.eq('moving', false)))
             .map(Movement.fromMap)
             .toList();
       } else {
@@ -286,7 +286,7 @@ class SettlementRepositoryMongoImpl implements SettlementRepository {
         return _databaseClient.db!
             .collection('movements')
             .find(
-              where.eq('isMoving', true).and(where.lte('when', DateTime.now())),
+              where.eq('moving', true).and(where.lte('when', DateTime.now())),
             )
             .map(Movement.fromMap)
             .toList();

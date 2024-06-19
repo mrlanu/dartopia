@@ -31,9 +31,3 @@ Future<Response> _post(RequestContext context, String settlementId) async {
     body: result?.toJson(),
   );
 }
-
-Future<Response> _delete(RequestContext context, String id) async {
-  /*final dataSource = context.read<TodosDataSource>();
-  await dataSource.delete(id);*/
-  return Response(statusCode: HttpStatus.noContent);
-}

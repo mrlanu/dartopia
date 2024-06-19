@@ -13,10 +13,8 @@ class Paginator extends StatelessWidget {
   Widget build(BuildContext context) {
     final statResponse =
         context.select((StatisticsCubit bloc) => bloc.state.statisticsResponse);
-    final totalPageInt =
-        int.parse(statResponse != null ? statResponse.totalPages : '2');
-    final currentPage =
-        int.parse(statResponse != null ? statResponse.currentPage : '1');
+    final totalPageInt = statResponse != null ? statResponse.totalPages : 2;
+    final currentPage = statResponse != null ? statResponse.currentPage : 1;
     return NumberPaginator(
       key: UniqueKey(),
       config: NumberPaginatorUIConfig(
