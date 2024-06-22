@@ -213,7 +213,7 @@ class _BuildingGridItem extends StatelessWidget {
               Text(buildingSpecefication[constructionTask!.specificationId]!
                   .name),
               const SizedBox(width: 5),
-              CountdownTimer(
+              CountdownTimer(key: UniqueKey(),
                 startValue: constructionTask!.executionTime
                     .difference(DateTime.now())
                     .inSeconds,
