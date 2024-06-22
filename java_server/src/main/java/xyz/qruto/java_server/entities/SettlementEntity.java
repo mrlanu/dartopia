@@ -53,7 +53,8 @@ public class SettlementEntity {
     private LocalDateTime lastModified;
     private LocalDateTime lastSpawnedAnimals;
 
-    public void update(LocalDateTime untilTime, Settings settings) {
+    public int update(LocalDateTime untilTime, Settings settings) {
+        int populationAdded = 0;
         var events = combineAllEvents(untilTime);
         for (Executable event : events) {
             var cropPerHour = calculateProducePerHour().get(3) - calculateEatPerHour();
@@ -79,11 +80,12 @@ public class SettlementEntity {
             calculateProducedGoods(event.getExecutionTime());
             calculateEatenCrop(event.getExecutionTime());
             castStorage();
-            event.execute(this);
+            populationAdded += event.execute(this);
             lastModified = event.getExecutionTime();
         }
         checkBuildingsForUpgradePossibility(
                 settings.getMaxConstructionTasksInQueue());
+        return populationAdded;
     }
 
     public void spendResources(List<BigDecimal> resources) {

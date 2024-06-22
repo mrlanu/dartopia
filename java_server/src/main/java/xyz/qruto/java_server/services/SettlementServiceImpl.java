@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import xyz.qruto.java_server.entities.Movement;
 import xyz.qruto.java_server.entities.SettlementEntity;
+import xyz.qruto.java_server.entities.StatisticsEntity;
 import xyz.qruto.java_server.entities.UserEntity;
 import xyz.qruto.java_server.models.Mission;
 import xyz.qruto.java_server.models.SideBrief;
@@ -37,15 +38,17 @@ public class SettlementServiceImpl implements SettlementService{
     private final SettlementRepository settlementRepository;
     private final MovementRepository movementRepository;
     private final UserRepository userRepository;
+    private final StatisticsService statisticsService;
 
     public SettlementServiceImpl(SettingsService settingsService,
                                  SettlementRepository settlementRepository,
                                  MovementRepository movementRepository,
-                                 UserRepository userRepository) {
+                                 UserRepository userRepository, StatisticsService statisticsService) {
         this.settingsService = settingsService;
         this.settlementRepository = settlementRepository;
         this.movementRepository = movementRepository;
         this.userRepository = userRepository;
+        this.statisticsService = statisticsService;
     }
 
     @Override
@@ -63,11 +66,18 @@ public class SettlementServiceImpl implements SettlementService{
         SettlementEntity settlement = settlementRepository.findById(settlementId)
                 .orElseThrow(() -> new IllegalArgumentException("Settlement not found"));
         List<Movement> movements = movementRepository.findAllBySettlementId(settlementId);
-        settlement.update(LocalDateTime.now(), settingsService.readSettings());
+        int populationAdded = settlement.update(LocalDateTime.now(), settingsService.readSettings());
         movements.add(buildHomeLegion(settlement));
         SettlementEntity updatedSettlement = settlementRepository.save(settlement);
+        addPopulationToStatistics(settlement.getUserId(), populationAdded);
         updatedSettlement.setMovements(movements);
         return updatedSettlement;
+    }
+
+    private void addPopulationToStatistics(String userId, int populationAdded) {
+        StatisticsEntity statistics = statisticsService.getByUserId(userId);
+        statistics.setPopulation(statistics.getPopulation() + populationAdded);
+        statisticsService.save(statistics);
     }
 
     @Override

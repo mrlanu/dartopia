@@ -18,6 +18,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         this.statisticsRepository = repository;
     }
 
+
     //not used, just for reference
     @Override
     public Page<StatisticsEntity> getStatisticsSortedAndPaginated(int page, int size, String sortBy, boolean ascending) {
@@ -82,5 +83,15 @@ public class StatisticsServiceImpl implements StatisticsService {
                         / pagedResult.getPageable().getPageSize()))
                 .itemsPerPage(pageSize)
                 .build();
+    }
+
+    @Override
+    public StatisticsEntity getByUserId(String userId) {
+        return statisticsRepository.findByPlayerId(userId).orElseThrow();
+    }
+
+    @Override
+    public StatisticsEntity save(StatisticsEntity statistics) {
+        return statisticsRepository.save(statistics);
     }
 }
