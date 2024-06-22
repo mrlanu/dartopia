@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:dartopia/settlement/bloc/settlement_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:models/models.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
@@ -16,6 +18,7 @@ class StorageBar extends StatefulWidget {
 class _StorageBarState extends State<StorageBar> {
   late Settlement _settlement;
   final List<Timer> _timers = [];
+  bool isCropNegative = false;
 
   @override
   void didUpdateWidget(covariant StorageBar oldWidget) {
@@ -49,6 +52,8 @@ class _StorageBarState extends State<StorageBar> {
 
   void _startCounting() {
     final producePerHour = _settlement.calculateProducePerHour();
+    isCropNegative =
+        (producePerHour[3] - _settlement.calculateEatPerHour()) < 0;
     _timers.add(_startTimer(
         milliseconds: 3600000 ~/ producePerHour[0], resource: Resource.WOOD));
     _timers.add(_startTimer(
@@ -56,7 +61,9 @@ class _StorageBarState extends State<StorageBar> {
     _timers.add(_startTimer(
         milliseconds: 3600000 ~/ producePerHour[2], resource: Resource.IRON));
     _timers.add(_startTimer(
-        milliseconds: 3600000 ~/ producePerHour[3], resource: Resource.CROP));
+        milliseconds:
+            3600000 ~/ (producePerHour[3] - _settlement.calculateEatPerHour()),
+        resource: Resource.CROP));
   }
 
   @override
@@ -94,7 +101,7 @@ class _StorageBarState extends State<StorageBar> {
   }
 
   Timer _startTimer({required Resource resource, required int milliseconds}) =>
-      Timer.periodic(Duration(milliseconds: milliseconds), (timer) {
+      Timer.periodic(Duration(milliseconds: milliseconds.abs()), (timer) {
         switch (resource) {
           case Resource.WOOD:
             setState(() {
@@ -113,7 +120,12 @@ class _StorageBarState extends State<StorageBar> {
             break;
           case Resource.CROP:
             setState(() {
-              _settlement.storage[3]++;
+              milliseconds >= 0
+                  ? _settlement.storage[3]++
+                  : _settlement.storage[3]--;
+              if(_settlement.storage[3] <= 0 ){
+                context.read<SettlementBloc>().add(const SettlementFetchRequested());
+              }
             });
             break;
         }
@@ -132,10 +144,11 @@ class _StorageBarState extends State<StorageBar> {
     );
   }
 
-  Widget _itemBuilder(
-      {required int amount,
-      required int maxCapacity,
-      required String pngName}) {
+  Widget _itemBuilder({
+    required int amount,
+    required int maxCapacity,
+    required String pngName,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
@@ -143,8 +156,18 @@ class _StorageBarState extends State<StorageBar> {
         Column(
           children: [
             Text(
-              amount > maxCapacity ? maxCapacity.toString() : amount.toString(),
-              style: const TextStyle(color: Colors.black, fontSize: 15),
+              amount > maxCapacity
+                  ? maxCapacity.toString()
+                  : amount <= 0
+                      ? '0'
+                      : amount.toString(),
+              style: TextStyle(
+                  color: pngName == 'crop'
+                      ? isCropNegative
+                          ? Colors.red
+                          : Colors.black
+                      : Colors.black,
+                  fontSize: 15),
             ),
             Stack(
               alignment: Alignment.center,
