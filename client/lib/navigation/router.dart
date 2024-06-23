@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dartopia/messages/messages.dart';
 import 'package:dartopia/reports/reports.dart';
 import 'package:dartopia/reports/view/report_page.dart';
 import 'package:dartopia/statistics/statistics.dart';
@@ -122,9 +123,9 @@ final GoRouter _router = GoRouter(
           ]),
           StatefulShellBranch(routes: [
             GoRoute(
-              path: '/empty2',
+              path: '/messages',
               builder: (BuildContext context, GoRouterState state) {
-                return const Scaffold();
+                return const MessagesPage();
               },
             ),
           ]),

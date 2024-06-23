@@ -9,6 +9,7 @@ export 'src/construction_task.dart';
 export 'src/death_task.dart';
 export 'src/empty_task.dart';
 export 'src/executable_task.dart';
+export 'src/messages/messages.dart';
 export 'src/movement.dart';
 export 'src/movement_location.dart';
 export 'src/nations.dart';

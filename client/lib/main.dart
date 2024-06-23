@@ -1,5 +1,6 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:dartopia/authentication/bloc/auth_bloc.dart';
+import 'package:dartopia/messages/messages.dart';
 import 'package:dartopia/navigation/router.dart';
 import 'package:dartopia/reports/bloc/reports_bloc.dart';
 import 'package:dartopia/reports/repository/reports_repository.dart';
@@ -37,6 +38,9 @@ class MyApp extends StatelessWidget {
         RepositoryProvider<StatisticsRepository>(
           create: (context) => StatisticsRepositoryImpl(),
         ),
+        RepositoryProvider<MessagesRepository>(
+          create: (context) => MessagesRepositoryImpl(),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -54,6 +58,10 @@ class MyApp extends StatelessWidget {
           BlocProvider(
             create: (context) => StatisticsCubit(
                 statisticsRepository: context.read<StatisticsRepository>()),
+          ),
+          BlocProvider(
+            create: (context) => MessagesCubit(
+                messagesRepository: context.read<MessagesRepository>()),
           ),
         ],
         child: const AppView(),
