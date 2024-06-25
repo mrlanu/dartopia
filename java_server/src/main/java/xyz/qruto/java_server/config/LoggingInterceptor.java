@@ -14,7 +14,8 @@ public class LoggingInterceptor implements HandlerInterceptor {
                              Object handler) throws Exception {
         String method = request.getMethod();
         String path = request.getRequestURI();
-        System.out.println("Request Method: " + method + ", Request Path: " + path);
+        String query = request.getQueryString();
+        System.out.println("Request Method: " + method + ", Request Path: " + path + ", Request Query: " + query)   ;
         return true;
     }
 }

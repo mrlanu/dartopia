@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.*;
 import xyz.qruto.java_server.entities.MessageEntity;
 import xyz.qruto.java_server.models.UserDetailsImpl;
 import xyz.qruto.java_server.models.requests.MessageSendRequest;
-import xyz.qruto.java_server.models.responses.MessageBriefResponse;
 import xyz.qruto.java_server.models.responses.MessageResponse;
+import xyz.qruto.java_server.models.responses.MessagesResponse;
 import xyz.qruto.java_server.services.MessagesService;
 
 import java.util.List;
@@ -26,9 +26,11 @@ public class MessagesController {
     }
 
     @GetMapping()
-    public List<MessageBriefResponse> getAll(UsernamePasswordAuthenticationToken token,
-                                             @RequestParam boolean sent){
-        return messagesService.getAllBriefs(((UserDetailsImpl)token.getPrincipal()).getId(), sent);
+    public MessagesResponse getAll(UsernamePasswordAuthenticationToken token,
+                                   @RequestParam int page,
+                                   @RequestParam int pageSize,
+                                   @RequestParam boolean sent){
+        return messagesService.getAllBriefs(((UserDetailsImpl)token.getPrincipal()).getId(), page, pageSize, sent);
     }
 
     @GetMapping("/{messageId}")

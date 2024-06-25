@@ -1,12 +1,17 @@
 package xyz.qruto.java_server.services;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import xyz.qruto.java_server.entities.MessageEntity;
 import xyz.qruto.java_server.models.requests.MessageSendRequest;
 import xyz.qruto.java_server.models.responses.MessageBriefResponse;
 import xyz.qruto.java_server.models.responses.MessageResponse;
+import xyz.qruto.java_server.models.responses.MessagesResponse;
 import xyz.qruto.java_server.repositories.MessagesRepository;
 import xyz.qruto.java_server.repositories.UserRepository;
 
@@ -39,16 +44,18 @@ public class MessagesServiceImpl implements MessagesService{
     }
 
     @Override
-    public List<MessageBriefResponse> getAllBriefs(String userId, boolean sent) {
-        List<MessageEntity> allMessages;
+    public MessagesResponse getAllBriefs(String userId, int page, int pageSize, boolean sent) {
+        Page<MessageEntity> pagedResult;
+        Sort sort = Sort.by(Sort.Direction.DESC, "dateTime");
+        Pageable pageable = PageRequest.of(page - 1, pageSize, sort);
         if (sent){
-            allMessages = messagesRepository
-                    .findAllBySenderIdAndVisibleForSenderTrue(userId);
+            pagedResult = messagesRepository
+                    .findAllBySenderIdAndVisibleForSenderTrue(userId, pageable);
         } else {
-            allMessages = messagesRepository
-                    .findAllByRecipientIdAndVisibleForRecipientTrue(userId);
+            pagedResult = messagesRepository
+                    .findAllByRecipientIdAndVisibleForRecipientTrue(userId, pageable);
         }
-        return allMessages.stream()
+        List<MessageBriefResponse> messagesList =  pagedResult.getContent().stream()
                 .map(message -> MessageBriefResponse.builder()
                         .id(message.getId())
                         .subject(message.getSubject())
@@ -61,6 +68,14 @@ public class MessagesServiceImpl implements MessagesService{
                         .build())
                 .sorted(Comparator.comparing(MessageBriefResponse::getTime).reversed())
                 .toList();
+        return MessagesResponse.builder()
+                .messagesList(messagesList)
+                .currentPage(page)
+                .itemsPerPage(pageSize)
+                .totalPages((int) Math.ceil((double) pagedResult.getTotalElements()
+                        / pagedResult.getPageable().getPageSize()))
+                .totalItems((int) pagedResult.getTotalElements())
+                .build();
     }
 
     @Override
@@ -92,7 +107,7 @@ public class MessagesServiceImpl implements MessagesService{
     }
 
     @Override
-    public boolean delete(List<String> messagesId, String requestOwnerId){
+    public void delete(List<String> messagesId, String requestOwnerId){
         messagesRepository.findAllById(messagesId).forEach(
                 message -> {
                     if (requestOwnerId.equals(message.getSenderId())){
@@ -112,6 +127,5 @@ public class MessagesServiceImpl implements MessagesService{
                     }
                 }
         );
-        return true;
     }
 }
