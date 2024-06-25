@@ -21,6 +21,11 @@ class MessagesCubit extends Cubit<MessagesState> {
         messagesStatus: MessagesStatus.success));
   }
 
+  Future<void> countNewMessages() async {
+    final amount = await _messagesRepository.countNewMessages();
+    emit(state.copyWith(newMessagesAmount: amount));
+  }
+
   Future<void> changeSelectedTab(MessagesTabs tab) async {
     emit(state.copyWith(selectedTab: tab));
   }

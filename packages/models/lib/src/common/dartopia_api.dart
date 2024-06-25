@@ -72,4 +72,9 @@ class Api {
       {bool sent = false}) {
     return '/messages?page=${page ?? '1'}&pageSize=${pageSize ?? '3'}&sent=$sent';
   }
+
+  static String countNewMessages() {
+    return '/messages/count-new';
+  }
+
 }

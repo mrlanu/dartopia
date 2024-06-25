@@ -23,7 +23,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   void initState() {
     super.initState();
     context.read<ReportsBloc>().add(const ListOfBriefsRequested());
-    context.read<MessagesCubit>().fetchMessages();
+    context.read<MessagesCubit>().countNewMessages();
   }
 
   @override
@@ -54,8 +54,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
             const BottomNavigationBarItem(
                 label: 'charts', icon: FaIcon(FontAwesomeIcons.chartLine)),
             _buildReportsBarItem(context),
-            const BottomNavigationBarItem(
-                label: 'mail', icon: FaIcon(FontAwesomeIcons.envelopeOpenText)),
+            _buildMessagesBarItem(context),
           ],
         ));
   }
@@ -68,11 +67,15 @@ class _BottomNavBarState extends State<BottomNavBar> {
     switch (index) {
       case 0:
         context.read<SettlementBloc>().add(const SettlementFetchRequested());
+        context.read<MessagesCubit>().countNewMessages();
       case 2:
         context.read<StatisticsCubit>().fetchStatistics();
-      case 3: context.read<ReportsBloc>().add(const ListOfBriefsRequested());
-      case 4: context.read<MessagesCubit>().fetchMessages();
-      default: throw const FormatException("Invalid");
+      case 3:
+        context.read<ReportsBloc>().add(const ListOfBriefsRequested());
+      case 4:
+        context.read<MessagesCubit>().fetchMessages();
+      default:
+        throw const FormatException("Invalid");
     }
   }
 
@@ -88,6 +91,23 @@ class _BottomNavBarState extends State<BottomNavBar> {
                         style:
                             const TextStyle(fontSize: 12, color: Colors.white)),
                     child: const FaIcon(FontAwesomeIcons.book),
+                  );
+          },
+        ));
+  }
+
+  BottomNavigationBarItem _buildMessagesBarItem(BuildContext context) {
+    return BottomNavigationBarItem(
+        label: 'messages',
+        icon: BlocBuilder<MessagesCubit, MessagesState>(
+          builder: (context, state) {
+            return state.newMessagesAmount == 0
+                ? const FaIcon(FontAwesomeIcons.envelopeOpenText)
+                : Badge(
+                    label: Text('${state.newMessagesAmount}',
+                        style:
+                            const TextStyle(fontSize: 12, color: Colors.white)),
+                    child: const FaIcon(FontAwesomeIcons.envelopeOpenText),
                   );
           },
         ));
