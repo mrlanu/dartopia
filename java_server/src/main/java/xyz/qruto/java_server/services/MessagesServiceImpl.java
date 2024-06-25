@@ -40,7 +40,7 @@ public class MessagesServiceImpl implements MessagesService{
 
     @Override
     public long countNewMessages(String recipientId) {
-        return messagesRepository.countAllByRecipientIdAndVisibleForRecipientAndRead(recipientId, true, false);
+        return messagesRepository.countAllByRecipientIdAndVisibleForRecipientTrueAndReadFalse(recipientId);
     }
 
     @Override
