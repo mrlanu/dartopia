@@ -7,13 +7,15 @@ import '../../../consts/colors.dart';
 class MessagesTabsBar extends StatelessWidget {
   const MessagesTabsBar({super.key});
 
+  static const double fontSize = 30;
+
   @override
   Widget build(BuildContext context) {
     final selected =
-    context.select((MessagesCubit cubit) => cubit.state.selectedTab);
+        context.select((MessagesCubit cubit) => cubit.state.selectedTab);
     const selectedColor = DartopiaColors.primary;
     return Wrap(
-      spacing: 0,
+      spacing: 3,
       children: [
         ChoiceChip(
           shape: const RoundedRectangleBorder(
@@ -28,14 +30,18 @@ class MessagesTabsBar extends StatelessWidget {
           checkmarkColor: Colors.white,
           label: Text(
             'Inbox',
-            style:
-            TextStyle(color: selected.index == 0 ? Colors.white : Colors.black),
+            style: TextStyle(
+                color: selected.index == 0 ? Colors.white : Colors.black,
+                fontSize: fontSize),
           ),
           selected: selected.index == 0,
           onSelected: (value) {
             value
-                ? context.read<MessagesCubit>().changeSelectedTab(MessagesTabs.values[0])
+                ? context
+                    .read<MessagesCubit>()
+                    .changeSelectedTab(MessagesTabs.values[0])
                 : null;
+            context.read<MessagesCubit>().fetchMessages(sent: false);
           },
         ),
         ChoiceChip(
@@ -48,14 +54,18 @@ class MessagesTabsBar extends StatelessWidget {
           checkmarkColor: Colors.white,
           label: Text(
             'Sent',
-            style:
-            TextStyle(color: selected.index == 1 ? Colors.white : Colors.black),
+            style: TextStyle(
+                color: selected.index == 1 ? Colors.white : Colors.black,
+                fontSize: fontSize),
           ),
           selected: selected.index == 1,
           onSelected: (value) {
             value
-                ? context.read<MessagesCubit>().changeSelectedTab(MessagesTabs.values[1])
+                ? context
+                    .read<MessagesCubit>()
+                    .changeSelectedTab(MessagesTabs.values[1])
                 : null;
+            context.read<MessagesCubit>().fetchMessages(sent: true);
           },
         ),
         ChoiceChip(
@@ -71,13 +81,16 @@ class MessagesTabsBar extends StatelessWidget {
           checkmarkColor: Colors.white,
           label: Text(
             'Write',
-            style:
-            TextStyle(color: selected.index == 2 ? Colors.white : Colors.black),
+            style: TextStyle(
+                color: selected.index == 2 ? Colors.white : Colors.black,
+                fontSize: fontSize),
           ),
           selected: selected.index == 2,
           onSelected: (value) {
             value
-                ? context.read<MessagesCubit>().changeSelectedTab(MessagesTabs.values[2])
+                ? context
+                    .read<MessagesCubit>()
+                    .changeSelectedTab(MessagesTabs.values[2])
                 : null;
           },
         ),

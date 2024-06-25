@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:number_paginator/number_paginator.dart';
 
-
 class MessagesPaginator extends StatelessWidget {
   const MessagesPaginator({
     super.key,
@@ -13,8 +12,12 @@ class MessagesPaginator extends StatelessWidget {
   Widget build(BuildContext context) {
     final messagesResponse =
         context.select((MessagesCubit bloc) => bloc.state.messagesResponse);
-    final totalPageInt = messagesResponse != null ? messagesResponse.totalPages : 2;
-    final currentPage = messagesResponse != null ? messagesResponse.currentPage : 1;
+    final selectedTab =
+        context.select((MessagesCubit bloc) => bloc.state.selectedTab);
+    final totalPageInt =
+        messagesResponse != null ? messagesResponse.totalPages : 2;
+    final currentPage =
+        messagesResponse != null ? messagesResponse.currentPage : 1;
     return NumberPaginator(
       key: UniqueKey(),
       config: NumberPaginatorUIConfig(
@@ -23,9 +26,9 @@ class MessagesPaginator extends StatelessWidget {
       numberPages: totalPageInt,
       initialPage: currentPage - 1,
       onPageChange: (int index) {
-        context
-            .read<MessagesCubit>()
-            .fetchMessages(page: (index + 1).toString());
+        context.read<MessagesCubit>().fetchMessages(
+            page: (index + 1).toString(),
+            sent: selectedTab == MessagesTabs.sent);
       },
     );
   }

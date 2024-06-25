@@ -1,3 +1,4 @@
+import 'package:dartopia/messages/messages.dart';
 import 'package:dartopia/settlement/bloc/settlement_bloc.dart';
 import 'package:dartopia/statistics/cubit/statistics_cubit.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   void initState() {
     super.initState();
     context.read<ReportsBloc>().add(const ListOfBriefsRequested());
+    context.read<MessagesCubit>().fetchMessages();
   }
 
   @override
@@ -69,6 +71,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       case 2:
         context.read<StatisticsCubit>().fetchStatistics();
       case 3: context.read<ReportsBloc>().add(const ListOfBriefsRequested());
+      case 4: context.read<MessagesCubit>().fetchMessages();
       default: throw const FormatException("Invalid");
     }
   }

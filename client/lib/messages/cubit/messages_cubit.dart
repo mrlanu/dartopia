@@ -13,12 +13,12 @@ class MessagesCubit extends Cubit<MessagesState> {
 
   final MessagesRepository _messagesRepository;
 
-  Future<void> fetchMessages({String? page}) async {
-    /*emit(state.copyWith(messagesStatus: MessagesStatus.loading));
-    final result = await _messagesRepository.fetchMessages(page: page);
+  Future<void> fetchMessages({String? page, bool? sent}) async {
+    emit(state.copyWith(messagesStatus: MessagesStatus.loading));
+    final result = await _messagesRepository.fetchMessages(page: page, sent: sent?? false);
     emit(state.copyWith(
         messagesResponse: result,
-        messagesStatus: MessagesStatus.success));*/
+        messagesStatus: MessagesStatus.success));
   }
 
   Future<void> changeSelectedTab(MessagesTabs tab) async {

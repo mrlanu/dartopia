@@ -18,7 +18,10 @@ class MessagesView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const MessagesTabsBar(),
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 8.0),
+          child: MessagesTabsBar(),
+        ),
         BlocBuilder<MessagesCubit, MessagesState>(
           builder: (context, state) {
             return switch(state.selectedTab){
