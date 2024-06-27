@@ -1,7 +1,13 @@
+import 'dart:convert';
+
 import 'package:models/models.dart';
 import 'package:network/network.dart';
 
 abstract class MessagesRepository {
+
+  Future<void> sendMessage(
+      {required MessageSendRequest request});
+
   Future<MessagesResponse> fetchMessages({
     String? page,
     bool sent = false,
@@ -15,6 +21,20 @@ class MessagesRepositoryImpl implements MessagesRepository {
       : _networkClient = networkClient ?? NetworkClient.instance;
 
   final NetworkClient _networkClient;
+
+  @override
+  Future<void> sendMessage(
+      {required MessageSendRequest request}) async {
+    try {
+      final response = await _networkClient.post<Map<String, dynamic>>(
+          Api.sendMessage(),
+          data: request.toJson());
+      /*final settlement = Settlement.fromJson(response.data!);
+      _settlementStreamController.add(settlement);*/
+    } on DioException catch (e) {
+      throw NetworkException.fromDioError(e);
+    }
+  }
 
   @override
   Future<MessagesResponse> fetchMessages(

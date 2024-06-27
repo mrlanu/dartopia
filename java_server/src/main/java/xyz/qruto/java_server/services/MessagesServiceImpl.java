@@ -79,7 +79,11 @@ public class MessagesServiceImpl implements MessagesService{
     }
 
     @Override
-    public MessageEntity save(MessageSendRequest messageSendRequest) {
+    public MessageEntity sendMessage(MessageSendRequest messageSendRequest, String userId) {
+        var sender = usersRepository.findById(userId)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException(String.format("User with id - %s is not exist.",
+                                userId)));
         var recipient = usersRepository.findByName(messageSendRequest.getRecipientName())
                 .orElseThrow(() ->
                         new UsernameNotFoundException(String.format("User with username - %s is not exist.",
@@ -87,8 +91,8 @@ public class MessagesServiceImpl implements MessagesService{
         var messageEntity = MessageEntity.builder()
                 .subject(messageSendRequest.getSubject())
                 .body(messageSendRequest.getBody())
-                .senderId(messageSendRequest.getSenderId())
-                .senderName(messageSendRequest.getSenderName())
+                .senderId(sender.getId())
+                .senderName(sender.getName())
                 .visibleForRecipient(true)
                 .visibleForSender(true)
                 .recipientId(recipient.getId())

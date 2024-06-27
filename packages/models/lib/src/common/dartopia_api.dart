@@ -68,6 +68,10 @@ class Api {
     return '/statistics?sort=$sort$pg';
   }
 
+  static String sendMessage(){
+    return '/messages';
+  }
+
   static String fetchMessages(String? page, String? pageSize,
       {bool sent = false}) {
     return '/messages?page=${page ?? '1'}&pageSize=${pageSize ?? '3'}&sent=$sent';

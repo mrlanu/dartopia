@@ -10,7 +10,7 @@ import java.util.List;
 public interface MessagesService {
     MessagesResponse getAllBriefs(String clientId, int page, int pageSize, boolean sent);
 
-    MessageEntity save(MessageSendRequest messageSendRequest);
+    MessageEntity sendMessage(MessageSendRequest messageSendRequest, String userId);
     void read(List<String> messagesId);
     void delete(List<String> messagesId, String requestOwnerId);
     MessageResponse getMessageById(String messageId);

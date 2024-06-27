@@ -21,8 +21,9 @@ public class MessagesController {
     }
 
     @PostMapping()
-    public MessageEntity addMessage(@RequestBody MessageSendRequest messageSendRequest){
-        return messagesService.save(messageSendRequest);
+    public MessageEntity addMessage(@RequestBody MessageSendRequest messageSendRequest,
+                                    UsernamePasswordAuthenticationToken token){
+        return messagesService.sendMessage(messageSendRequest, ((UserDetailsImpl)token.getPrincipal()).getId());
     }
 
     @GetMapping()
