@@ -81,4 +81,12 @@ class Api {
     return '/messages/count-new';
   }
 
+  static String deleteMessages() {
+    return '/messages/delete';
+  }
+
+  static String fetchMessageById({String?messageId}) {
+    return '/messages/$messageId';
+  }
+
 }

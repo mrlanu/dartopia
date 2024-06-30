@@ -13,7 +13,11 @@ abstract class MessagesRepository {
     bool sent = false,
   });
 
+  Future<MessageResponse> fetchMessageById({String? messageId,});
+
   Future<int> countNewMessages();
+
+  Future<void> delete(List<String> checkedMessagesId);
 }
 
 class MessagesRepositoryImpl implements MessagesRepository {
@@ -29,8 +33,6 @@ class MessagesRepositoryImpl implements MessagesRepository {
       final response = await _networkClient.post<Map<String, dynamic>>(
           Api.sendMessage(),
           data: request.toJson());
-      /*final settlement = Settlement.fromJson(response.data!);
-      _settlementStreamController.add(settlement);*/
     } on DioException catch (e) {
       throw NetworkException.fromDioError(e);
     }
@@ -50,11 +52,33 @@ class MessagesRepositoryImpl implements MessagesRepository {
   }
 
   @override
+  Future<MessageResponse> fetchMessageById(
+      {String? messageId}) async {
+    try {
+      final response = await _networkClient
+          .get<Map<String, dynamic>>(Api.fetchMessageById(messageId: messageId));
+      return MessageResponse.fromJson(response.data!);
+    } on DioException catch (e) {
+      throw NetworkException.fromDioError(e);
+    }
+  }
+
+  @override
   Future<int> countNewMessages() async{
     try {
       final response = await _networkClient
           .get<int>(Api.countNewMessages());
       return response.data?? 0;
+    } on DioException catch (e) {
+      throw NetworkException.fromDioError(e);
+    }
+  }
+
+  @override
+  Future<void> delete(List<String> checkedMessagesId) async {
+    try {
+      await _networkClient
+          .post<void>(Api.deleteMessages(), data: json.encode(checkedMessagesId));
     } on DioException catch (e) {
       throw NetworkException.fromDioError(e);
     }

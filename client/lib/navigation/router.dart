@@ -95,8 +95,7 @@ final GoRouter _router = GoRouter(
           ]),
           StatefulShellBranch(observers: [
             NavigatorObserver(),
-          ],
-              routes: [
+          ], routes: [
             GoRoute(
               path: '/statistics',
               builder: (BuildContext context, GoRouterState state) {
@@ -123,11 +122,21 @@ final GoRouter _router = GoRouter(
           ]),
           StatefulShellBranch(routes: [
             GoRoute(
-              path: '/messages',
-              builder: (BuildContext context, GoRouterState state) {
-                return const MessagesPage();
-              },
-            ),
+                path: '/messages',
+                builder: (BuildContext context, GoRouterState state) {
+                  return const MessagesPage();
+                },
+                routes: [
+                  GoRoute(
+                    path: ':messageId',
+                    pageBuilder: (BuildContext context, GoRouterState state) {
+                      return DialogPage(
+                        builder: (_) => ReviewMessage(
+                            messageId: state.pathParameters['messageId']!),
+                      );
+                    },
+                  ),
+                ]),
           ]),
         ]),
   ],
@@ -156,4 +165,41 @@ FutureOr<bool> onExit(BuildContext context) {
   print('ON EXIT');
   context.read<SettlementBloc>().add(const SettlementFetchRequested());
   return true;
+}
+
+///Wrapper for open Dialog with go_router
+class DialogPage<T> extends Page<T> {
+  final Offset? anchorPoint;
+  final Color? barrierColor;
+  final bool barrierDismissible;
+  final String? barrierLabel;
+  final bool useSafeArea;
+  final CapturedThemes? themes;
+  final WidgetBuilder builder;
+
+  const DialogPage({
+    required this.builder,
+    this.anchorPoint,
+    this.barrierColor = Colors.black54,
+    this.barrierDismissible = true,
+    this.barrierLabel,
+    this.useSafeArea = true,
+    this.themes,
+    super.key,
+    super.name,
+    super.arguments,
+    super.restorationId,
+  });
+
+  @override
+  Route<T> createRoute(BuildContext context) => DialogRoute<T>(
+      context: context,
+      settings: this,
+      builder: builder,
+      anchorPoint: anchorPoint,
+      barrierColor: barrierColor,
+      barrierDismissible: barrierDismissible,
+      barrierLabel: barrierLabel,
+      useSafeArea: useSafeArea,
+      themes: themes);
 }

@@ -44,7 +44,7 @@ public class MessagesController {
         messagesService.read(messagesId);
     }
 
-    @PutMapping("/delete")
+    @PostMapping("/delete")
     public void deleteMessage(@RequestBody List<String> messagesId, UsernamePasswordAuthenticationToken token){
         messagesService.delete(messagesId, ((UserDetailsImpl)token.getPrincipal()).getId());
     }

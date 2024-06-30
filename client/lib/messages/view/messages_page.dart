@@ -1,5 +1,5 @@
 import 'package:dartopia/messages/messages.dart';
-import 'package:dartopia/messages/view/new_meddage_page.dart';
+import 'package:dartopia/messages/view/new_message_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -36,26 +36,44 @@ class MessagesView extends StatelessWidget {
                 MessagesTabs.inbox =>
                   state.messagesStatus == MessagesStatus.loading
                       ? const Center(child: CircularProgressIndicator())
-                      : MessagesTable(
-                          messages: state.messagesResponse!.messagesList),
+                      : const MessagesTable(),
                 MessagesTabs.sent =>
                   state.messagesStatus == MessagesStatus.loading
                       ? const Center(child: CircularProgressIndicator())
-                      : MessagesTable(
-                          messages: state.messagesResponse!.messagesList),
+                      : const MessagesTable(),
                 MessagesTabs.write =>
-                  state.messagesStatus == MessagesStatus.loading
+                  state.sendingStatus == SendingStatus.loading
                       ? const Center(child: CircularProgressIndicator())
-                      : const NewMessage(),
+                      : const MessageForm(),
               },
               //const Spacer(),
               const SizedBox(
-                height: 30,
+                height: 15,
               ),
               state.selectedTab != MessagesTabs.write
-                  ? const Padding(
-                      padding: EdgeInsets.only(bottom: 10.0),
-                      child: MessagesPaginator(),
+                  ? Padding(
+                      padding: const EdgeInsets.only(bottom: 10.0),
+                      child: Column(
+                        children: [
+                          const Row(
+                            children: [
+                              Spacer(),
+                              Padding(
+                                padding: EdgeInsets.only(right: 18.0),
+                                child: ButtonsBar(),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          state.messagesResponse != null &&
+                                  state
+                                      .messagesResponse!.messagesList.isNotEmpty
+                              ? const MessagesPaginator()
+                              : const SizedBox(),
+                        ],
+                      ),
                     )
                   : const SizedBox(),
             ],

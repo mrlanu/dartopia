@@ -34,8 +34,10 @@ public class MessagesServiceImpl implements MessagesService{
     @Override
     public MessageResponse getMessageById(String messageId){
         var mapper = new ModelMapper();
-        var entity = messagesRepository.findById(messageId).orElseThrow();
-        return mapper.map(entity, MessageResponse.class);
+        var messageEntity = messagesRepository.findById(messageId).orElseThrow();
+        messageEntity.setRead(true);
+        messagesRepository.save(messageEntity);
+        return mapper.map(messageEntity, MessageResponse.class);
     }
 
     @Override

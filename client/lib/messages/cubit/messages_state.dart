@@ -12,19 +12,37 @@ enum MessagesTabs {
   write,
 }
 
+enum SendingStatus {
+  undefined,
+  loading,
+  success,
+  failure,
+}
+
 class MessagesState extends Equatable {
-  const MessagesState(
-      {this.newMessagesAmount = 0,
-      this.page,
-      this.selectedTab = MessagesTabs.inbox,
-      this.messagesResponse,
-      this.messagesStatus = MessagesStatus.loading});
+  const MessagesState({
+    this.newMessagesAmount = 0,
+    this.page,
+    this.selectedTab = MessagesTabs.inbox,
+    this.messagesResponse,
+    this.messagesStatus = MessagesStatus.loading,
+    this.sendingStatus = SendingStatus.undefined,
+    this.checkedList = const [],
+    this.errorMessage = '',
+  });
 
   final int newMessagesAmount;
   final int? page;
   final MessagesTabs selectedTab;
   final MessagesResponse? messagesResponse;
   final MessagesStatus messagesStatus;
+  final SendingStatus sendingStatus;
+  final List<bool> checkedList;
+  final String errorMessage;
+
+  bool get allChecked => !checkedList.contains(false);
+
+  bool get anyChecked => checkedList.contains(true);
 
   MessagesState copyWith({
     int? newMessagesAmount,
@@ -32,6 +50,9 @@ class MessagesState extends Equatable {
     MessagesTabs? selectedTab,
     MessagesResponse? messagesResponse,
     MessagesStatus? messagesStatus,
+    SendingStatus? sendingStatus,
+    List<bool>? checkedList,
+    String? errorMessage,
   }) {
     return MessagesState(
       newMessagesAmount: newMessagesAmount ?? this.newMessagesAmount,
@@ -39,10 +60,21 @@ class MessagesState extends Equatable {
       selectedTab: selectedTab ?? this.selectedTab,
       messagesResponse: messagesResponse ?? this.messagesResponse,
       messagesStatus: messagesStatus ?? this.messagesStatus,
+      sendingStatus: sendingStatus ?? this.sendingStatus,
+      checkedList: checkedList ?? this.checkedList,
+      errorMessage: errorMessage ?? this.errorMessage,
     );
   }
 
   @override
-  List<Object?> get props =>
-      [newMessagesAmount, page, selectedTab, messagesResponse, messagesStatus];
+  List<Object?> get props => [
+        newMessagesAmount,
+        page,
+        selectedTab,
+        messagesResponse,
+        messagesStatus,
+        sendingStatus,
+        checkedList,
+        errorMessage,
+      ];
 }
