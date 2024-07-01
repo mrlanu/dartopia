@@ -52,7 +52,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             List<StatisticsEntity> sortedList = statisticsRepository.findAll(sort);
             StatisticsEntity targetEntity = statisticsRepository.findByPlayerId(userId).orElseThrow();
             int index = sortedList.indexOf(targetEntity);
-            pageNumber = (int) Math.ceil((double) index / pageSize);
+            pageNumber = (int) Math.ceil((double) (index + 1) / pageSize);
         }
 
         Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
@@ -64,7 +64,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                     StatisticsEntity statisticsOld = pagedResult.getContent().get(i);
                     return StatisticsEntity.builder()
                             .id(statisticsOld.getId())
-                            .position(i + finalPageNumber * pageSize)
+                            .position(i + finalPageNumber * pageSize - (pageSize - 1))
                             .playerName(statisticsOld.getPlayerName())
                             .playerId(statisticsOld.getPlayerId())
                             .population(statisticsOld.getPopulation())
