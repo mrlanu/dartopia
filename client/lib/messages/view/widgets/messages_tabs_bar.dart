@@ -92,6 +92,7 @@ class MessagesTabsBar extends StatelessWidget {
                     .read<MessagesCubit>()
                     .changeSelectedTab(MessagesTabs.values[2])
                 : null;
+            context.read<MessagesCubit>().resetForm();
           },
         ),
       ],

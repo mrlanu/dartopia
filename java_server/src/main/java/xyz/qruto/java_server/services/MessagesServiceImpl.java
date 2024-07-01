@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import xyz.qruto.java_server.entities.MessageEntity;
+import xyz.qruto.java_server.errors.UserErrorException;
 import xyz.qruto.java_server.models.requests.MessageSendRequest;
 import xyz.qruto.java_server.models.responses.MessageBriefResponse;
 import xyz.qruto.java_server.models.responses.MessageResponse;
@@ -84,12 +85,15 @@ public class MessagesServiceImpl implements MessagesService{
     public MessageEntity sendMessage(MessageSendRequest messageSendRequest, String userId) {
         var sender = usersRepository.findById(userId)
                 .orElseThrow(() ->
-                        new UsernameNotFoundException(String.format("User with id - %s is not exist.",
+                        new UserErrorException(String.format("User with id - %s is not exist.",
                                 userId)));
         var recipient = usersRepository.findByName(messageSendRequest.getRecipientName())
                 .orElseThrow(() ->
-                        new UsernameNotFoundException(String.format("User with username - %s is not exist.",
+                        new UserErrorException(String.format("User %s is not exist.",
                                 messageSendRequest.getRecipientName())));
+        if (recipient.getId().equals(sender.getId())) {
+            throw new UserErrorException("You cannot send this message.");
+        }
         var messageEntity = MessageEntity.builder()
                 .subject(messageSendRequest.getSubject())
                 .body(messageSendRequest.getBody())

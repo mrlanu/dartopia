@@ -53,6 +53,8 @@ class NetworkException implements Exception {
         return 'Not Found';
       case 405:
         return 'Method Not Allowed';
+      case 409:
+        return FailureModel.fromJson(errorBody).message;
       case 415:
         return 'Unsupported Media Type';
       case 422:

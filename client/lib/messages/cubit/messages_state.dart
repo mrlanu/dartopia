@@ -21,6 +21,9 @@ enum SendingStatus {
 
 class MessagesState extends Equatable {
   const MessagesState({
+    this.recipient,
+    this.subject,
+    this.message,
     this.newMessagesAmount = 0,
     this.page,
     this.selectedTab = MessagesTabs.inbox,
@@ -31,6 +34,9 @@ class MessagesState extends Equatable {
     this.errorMessage = '',
   });
 
+  final String? recipient;
+  final String? subject;
+  final String? message;
   final int newMessagesAmount;
   final int? page;
   final MessagesTabs selectedTab;
@@ -45,6 +51,9 @@ class MessagesState extends Equatable {
   bool get anyChecked => checkedList.contains(true);
 
   MessagesState copyWith({
+    String? Function()? recipient,
+    String? Function()? subject,
+    String? Function()? message,
     int? newMessagesAmount,
     int? page,
     MessagesTabs? selectedTab,
@@ -55,6 +64,9 @@ class MessagesState extends Equatable {
     String? errorMessage,
   }) {
     return MessagesState(
+      recipient: recipient != null ? recipient() : this.recipient,
+      subject: subject != null ? subject() : this.subject,
+      message: message != null ? message() : this.message,
       newMessagesAmount: newMessagesAmount ?? this.newMessagesAmount,
       page: page ?? this.page,
       selectedTab: selectedTab ?? this.selectedTab,
@@ -68,6 +80,9 @@ class MessagesState extends Equatable {
 
   @override
   List<Object?> get props => [
+        recipient,
+        subject,
+        message,
         newMessagesAmount,
         page,
         selectedTab,

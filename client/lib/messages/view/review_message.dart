@@ -56,7 +56,7 @@ class ReviewMessage extends StatelessWidget {
                                   onPressed: () {
                                     context
                                         .read<MessagesCubit>()
-                                        .reply(messageId: messageId);
+                                        .reply(message: snapshot.data!);
                                     context.pop();
                                   },
                                   icon: const Icon(Icons.reply)),

@@ -155,6 +155,7 @@ class MessagesTable extends StatelessWidget {
                       _ =>
                           GestureDetector(
                             onTap: () {
+                              context.read<MessagesCubit>().decrementAmount();
                               context.push('/messages/$messageId');
                             },
                             child: Padding(
