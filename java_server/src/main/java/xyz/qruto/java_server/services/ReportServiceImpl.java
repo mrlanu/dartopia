@@ -87,7 +87,11 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public UnreadAmountAndBriefs createReportsBrief(String playerId) {
         var cache = new HashMap<String, SettlementEntity>();
-        List<ReportEntity> originalReports = reportRepository.findByPlayerIdInReportOwners(playerId);
+        List<ReportEntity> originalReports = reportRepository
+                .findByPlayerIdInReportOwners(playerId)
+                .stream()
+                .sorted(Comparator.comparing(ReportEntity::getDateTime).reversed())
+                .toList();
         var amountUnreadReports = countUnreadReports(originalReports, playerId);
         var briefs = new ArrayList<ReportBrief>();
         for (var report : originalReports) {
