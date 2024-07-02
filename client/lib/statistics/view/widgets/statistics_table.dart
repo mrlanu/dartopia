@@ -1,8 +1,8 @@
-import 'package:cache_client/cache_client.dart';
 import 'package:dartopia/consts/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:models/models.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../cubit/statistics_cubit.dart';
 
@@ -16,7 +16,9 @@ class StatisticsTable extends StatelessWidget {
     final filter =
         context.select((StatisticsCubit cubit) => cubit.state.sortStat);
     return FutureBuilder(
-      future: CacheClient.instance.getUsername(),
+      future: SharedPreferences.getInstance().then(
+            (value) => value.getString('name'),
+      ),
       builder: (context, snapshot) {
         return snapshot.hasData ? Table(
           columnWidths: filter == SortStat.overview

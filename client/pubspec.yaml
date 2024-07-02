@@ -24,8 +24,6 @@ dependencies:
     path: packages/user_repository
   network:
     path: packages/network
-  cache_client:
-    path: packages/cache_client
   http: ^1.1.0
   percent_indicator: ^4.2.3
   font_awesome_flutter: ^10.6.0
@@ -33,7 +31,7 @@ dependencies:
   intl: ^0.18.1
   flutter_native_splash: ^2.3.7
   formz: ^0.6.1
-  shared_preferences: ^2.2.2
+  shared_preferences: ^2.2.3
   reorderable_grid_view: ^2.2.8
   dartz: ^0.10.1
   jwt_decode: ^0.3.1

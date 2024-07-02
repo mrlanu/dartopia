@@ -7,6 +7,9 @@ class Api {
   //java server
   static const baseURL = 'http://10.0.2.2:8282';
 
+  //web
+  //static const baseURL = 'http://localhost:8282';
+
   static String signup() {
     return '/auth/signup';
   }

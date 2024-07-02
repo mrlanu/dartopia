@@ -1,15 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:cache_client/cache_client.dart';
 import 'package:models/models.dart';
 import 'package:network/network.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepo {
-  AuthRepo({CacheClient? cacheClient, NetworkClient? networkClient})
-      : _cacheClient = cacheClient ?? CacheClient.instance,
-        _networkClient = networkClient ?? NetworkClient.instance;
+  AuthRepo({NetworkClient? networkClient})
+      : _networkClient = networkClient ?? NetworkClient.instance;
 
-  final CacheClient _cacheClient;
   final NetworkClient _networkClient;
 
   Future<void> signup({
@@ -17,11 +15,14 @@ class AuthRepo {
     required String password,
   }) async {
     try {
-      final response = await _networkClient.post<Map<String, dynamic>>(
-          Api.signup(),
-          data:
-          json.encode({'email': email, 'password': password,
-            'name': _trimEmail(email), 'roles': ['user', 'mod']}));
+      final response =
+          await _networkClient.post<Map<String, dynamic>>(Api.signup(),
+              data: json.encode({
+                'email': email,
+                'password': password,
+                'name': _trimEmail(email),
+                'roles': ['user', 'mod']
+              }));
       if (response.statusCode == HttpStatus.created) {
         return;
       }
@@ -37,12 +38,12 @@ class AuthRepo {
     try {
       final response = await _networkClient.post<Map<String, dynamic>>(
           Api.signin(),
-          data: json.encode({'email': email, 'password': password})
-    );
-    await _cacheClient.setAccessToken(accessToken: response.data!['token']);
-    await _cacheClient.setUsername(name: response.data!['name']);
+          data: json.encode({'email': email, 'password': password}));
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', response.data!['token']);
+      await prefs.setString('name', response.data!['name']);
     } on DioException catch (e) {
-    throw NetworkException.fromDioError(e);
+      throw NetworkException.fromDioError(e);
     }
   }
 

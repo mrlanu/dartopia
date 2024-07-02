@@ -1,9 +1,8 @@
-import 'package:cache_client/cache_client.dart';
 import 'package:dartopia/authentication/bloc/auth_bloc.dart';
-import 'package:dartopia/settlement/settlement.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainDrawer extends StatefulWidget {
   final TabController? tabController;
@@ -28,7 +27,9 @@ class _MainDrawerState extends State<MainDrawer> {
                 Color.fromRGBO(26, 89, 5, 1.0),
               ], begin: Alignment.topLeft, end: Alignment.bottomRight)),
               child: FutureBuilder(
-                future: CacheClient.instance.getUsername(),
+                future: SharedPreferences.getInstance().then(
+                  (value) => value.getString('name'),
+                ),
                 builder: (_, snapshot) {
                   return snapshot.connectionState == ConnectionState.done
                       ? Center(
