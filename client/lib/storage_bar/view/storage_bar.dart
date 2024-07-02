@@ -60,10 +60,12 @@ class _StorageBarState extends State<StorageBar> {
         milliseconds: 3600000 ~/ producePerHour[1], resource: Resource.CLAY));
     _timers.add(_startTimer(
         milliseconds: 3600000 ~/ producePerHour[2], resource: Resource.IRON));
+    final dividerForCrop =
+        (producePerHour[3] - _settlement.calculateEatPerHour()) == 0
+            ? 1
+            : (producePerHour[3] - _settlement.calculateEatPerHour());
     _timers.add(_startTimer(
-        milliseconds:
-            3600000 ~/ (producePerHour[3] - _settlement.calculateEatPerHour()),
-        resource: Resource.CROP));
+        milliseconds: 3600000 ~/ dividerForCrop, resource: Resource.CROP));
   }
 
   @override
@@ -123,8 +125,10 @@ class _StorageBarState extends State<StorageBar> {
               milliseconds >= 0
                   ? _settlement.storage[3]++
                   : _settlement.storage[3]--;
-              if(_settlement.storage[3] <= 0 ){
-                context.read<SettlementBloc>().add(const SettlementFetchRequested());
+              if (_settlement.storage[3] <= 0) {
+                context
+                    .read<SettlementBloc>()
+                    .add(const SettlementFetchRequested());
               }
             });
             break;
