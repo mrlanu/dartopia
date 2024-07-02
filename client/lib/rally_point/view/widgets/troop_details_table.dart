@@ -299,7 +299,7 @@ class TroopDetailsTable extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text('6'),
+        Text('${_calculateMaintenance()}'),
         Image.asset(
           DartopiaImages.crop,
           width: 16,
@@ -308,6 +308,15 @@ class TroopDetailsTable extends StatelessWidget {
         const Text('hour'),
       ],
     );
+  }
+
+  int _calculateMaintenance(){
+    final specification = UnitsConst.UNITS[movement.nation.index];
+    int result = 0;
+    for(var i = 0; i < movement.units.length; i++){
+      result += specification[i].upKeep * movement.units[i];
+    }
+    return result;
   }
 
   Widget _buildRowForEstimateArrival() {
