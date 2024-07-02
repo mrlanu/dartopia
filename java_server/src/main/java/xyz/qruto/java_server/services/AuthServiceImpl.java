@@ -161,9 +161,31 @@ public class AuthServiceImpl implements AuthService {
                 .storage(Arrays.asList(BigDecimal.valueOf(500), BigDecimal.valueOf(500),
                         BigDecimal.valueOf(500), BigDecimal.valueOf(500)))
                 .buildings(Arrays.asList(
-                        Arrays.asList(0, 0, 3, 0), Arrays.asList(1, 1, 3, 0),
-                        Arrays.asList(2, 2, 3, 0), Arrays.asList(3, 3, 3, 0),
-                        Arrays.asList(4, 3, 1, 0)))
+                        //lumber
+                        Arrays.asList(0, 0, 0, 0),
+                        Arrays.asList(1, 0, 0, 0),
+                        Arrays.asList(2, 0, 1, 0),
+                        Arrays.asList(3, 0, 0, 0),
+                        //clay
+                        Arrays.asList(4, 1, 0, 0),
+                        Arrays.asList(5, 1, 0, 0),
+                        Arrays.asList(6, 1, 1, 0),
+                        Arrays.asList(7, 1, 0, 0),
+                        //iron
+                        Arrays.asList(8, 2, 0, 0),
+                        Arrays.asList(9, 2, 0, 0),
+                        Arrays.asList(10, 2, 1, 0),
+                        Arrays.asList(11, 2, 0, 0),
+                        //crop
+                        Arrays.asList(12, 3, 0, 0),
+                        Arrays.asList(13, 3, 0, 0),
+                        Arrays.asList(14, 3, 0, 0),
+                        Arrays.asList(15, 3, 1, 0),
+                        Arrays.asList(16, 3, 0, 0),
+                        Arrays.asList(17, 3, 1, 0),
+                        //main
+                        Arrays.asList(18, 4, 1, 0)
+                        ))
                 .army(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
                 .availableUnits(new ArrayList<>())
                 .constructionTasks(new ArrayList<>())

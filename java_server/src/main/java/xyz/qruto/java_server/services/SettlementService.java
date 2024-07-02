@@ -28,4 +28,6 @@ public interface SettlementService {
     String sendUnits(String fromSettlementId, SendTroopsRequest request);
 
     SettlementEntity save(SettlementEntity defenseSettlement);
+
+    void reorderBuildings(String settlementId, List<List<Integer>> buildings);
 }

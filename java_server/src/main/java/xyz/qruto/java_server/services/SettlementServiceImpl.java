@@ -57,6 +57,14 @@ public class SettlementServiceImpl implements SettlementService{
     }
 
     @Override
+    public void reorderBuildings(String settlementId, List<List<Integer>> buildings) {
+        SettlementEntity settlement = settlementRepository.findById(settlementId)
+                .orElseThrow(() -> new IllegalArgumentException("Settlement not found"));
+        settlement.setBuildings(buildings);
+        settlementRepository.save(settlement);
+    }
+
+    @Override
     @Transactional
     public SettlementEntity getSettlementById(String settlementId, LocalDateTime untilTime) {
         List<Movement> t = movementRepository.findMovingToOrFromVillageIdBeforeDate(settlementId, LocalDateTime.now());

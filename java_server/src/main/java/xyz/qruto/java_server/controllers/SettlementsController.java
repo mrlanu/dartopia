@@ -68,6 +68,13 @@ public class SettlementsController {
         return ResponseEntity.ok(result);
     }
 
+    @PostMapping("/{settlementId}/reorder_buildings")
+    public ResponseEntity<String> reorderBuildings(@PathVariable String settlementId,
+                                                        @RequestBody List<List<Integer>> buildings) {
+        settlementService.reorderBuildings(settlementId, buildings);
+        return ResponseEntity.ok("");
+    }
+
     @PostMapping("/{fromSettlementId}/troops_send_contract")
     public TroopsSendContract updateContract(@PathVariable String fromSettlementId,
                                              @RequestBody TroopsSendContract troopsSendContract) {
