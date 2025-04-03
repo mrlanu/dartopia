@@ -1,0 +1,1 @@
+/home/mrlanu/development/dart/dartopia/client/build/app/intermediates/cxx/Debug/2k3u1k3c/obj/armeabi-v7a
