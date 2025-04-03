@@ -17,11 +17,8 @@ public class AutomationController {
 
     @GetMapping
     public String getAsync() {
-        if (!automationService.isLocked()) {
-            automationService.startAutomation();
-            return "Automation has been started on thread - " + Thread.currentThread().getName();
-        } else {
-            return automationService.taskB();
-        }
+        automationService.startAutomation(Thread.currentThread().getName());
+        automationService.taskB();
+        return "Automation started";
     }
 }

@@ -35,9 +35,14 @@ public class AutomationServiceImpl implements AutomationService {
 
     @Override
     @Async
-    public void startAutomation() {
+    public void startAutomation(String settlementId) {
+        if (!lock.tryLock()) {
+            // Already running
+            return;
+        }
         try {
-            lock.lock();
+            System.out.printf("Automation has been started by settlementId - %s%n",
+                    settlementId);
             var movementsList = movementRepository
                     .findAllByMovingIsTrueAndWhenIsBefore(LocalDateTime.now());
 
@@ -58,7 +63,8 @@ public class AutomationServiceImpl implements AutomationService {
 
                 strategy.handle();
                 }
-        }finally {
+        }
+        finally {
             lock.unlock();
         }
     }

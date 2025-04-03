@@ -4,7 +4,7 @@ import org.springframework.scheduling.annotation.Async;
 
 public interface AutomationService {
     @Async
-    void startAutomation();
+    void startAutomation(String settlementId);
 
     String taskB();
 

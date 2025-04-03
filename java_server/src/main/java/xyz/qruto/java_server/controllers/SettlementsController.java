@@ -34,17 +34,15 @@ public class SettlementsController {
     @GetMapping()
     public ResponseEntity<List<ShortSettlementInfo>> getSettlementsShortByUserId(UsernamePasswordAuthenticationToken token) {
         List<ShortSettlementInfo> result =
-                settlementService.getAllSettlementsByUserId(((UserDetailsImpl)token.getPrincipal()).getId());
+                settlementService.getAllSettlementsByUserId(((UserDetailsImpl) token.getPrincipal()).getId());
         return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{settlementId}")
     public ResponseEntity<SettlementEntity> getSettlementById(@PathVariable String settlementId) {
-        if (!automationService.isLocked()) {
-            automationService.startAutomation();
-            System.out.printf("Automation has been started by settlementId - %s%n",
-                    settlementId);
-        }
+        // try to run automation on the other thread
+        automationService.startAutomation(settlementId);
+
         SettlementEntity settlement = settlementService
                 .getSettlementById(settlementId, LocalDateTime.now());
         return settlement != null ?
@@ -70,7 +68,7 @@ public class SettlementsController {
 
     @PostMapping("/{settlementId}/reorder_buildings")
     public ResponseEntity<String> reorderBuildings(@PathVariable String settlementId,
-                                                        @RequestBody List<List<Integer>> buildings) {
+                                                   @RequestBody List<List<Integer>> buildings) {
         settlementService.reorderBuildings(settlementId, buildings);
         return ResponseEntity.ok("");
     }
@@ -83,7 +81,7 @@ public class SettlementsController {
 
     @PostMapping("/{fromSettlementId}/send_units")
     public ResponseEntity<String> updateContract(@PathVariable String fromSettlementId,
-                                             @RequestBody SendTroopsRequest request) {
+                                                 @RequestBody SendTroopsRequest request) {
         var result = settlementService.sendUnits(fromSettlementId, request);
         return ResponseEntity.ok(result);
     }
