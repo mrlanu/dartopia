@@ -1,12 +1,10 @@
 import 'package:dartopia/consts/consts.dart';
-import 'package:dartopia/consts/images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:models/models.dart';
 
 import '../../../settlement/settlement.dart';
 import '../../../utils/time_formatter.dart';
-import '../../buildings.dart';
 
 class BuildingCard extends StatelessWidget {
   final int buildingId;

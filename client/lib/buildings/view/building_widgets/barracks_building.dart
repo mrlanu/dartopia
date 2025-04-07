@@ -1,5 +1,4 @@
 import 'package:dartopia/consts/colors.dart';
-import 'package:dartopia/consts/images.dart';
 import 'package:dartopia/settlement/settlement.dart';
 import 'package:dartopia/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -110,17 +109,20 @@ class _TroopOrderFormState extends State<_TroopOrderForm> {
         elevation: 3.0,
         child: Row(
           children: [
-            Container(
-              height: 100,
-              width: constraints.maxWidth * 0.23,
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(15),
-                  bottomLeft: Radius.circular(15),
-                ),
-                image: DecorationImage(
-                  image: AssetImage(DartopiaImages.phalang),
-                  fit: BoxFit.cover,
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Container(
+                height: 100,
+                width: constraints.maxWidth * 0.23,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    bottomLeft: Radius.circular(15),
+                  ),
+                  image: DecorationImage(
+                    image: AssetImage(unit.imagePath!),
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),

@@ -1,6 +1,8 @@
 import 'dart:core';
 import 'dart:math';
 
+import 'package:models/models.dart';
+
 class Building {
   final int id;
   final String name;
@@ -110,7 +112,7 @@ final buildingSpecefication = <int, Building>{
     k: 1.67,
     upkeep: 2,
     culture: 1,
-    imagePath: 'assets/images/buildings/wood.png',
+    imagePath: DartopiaImages.woodField,
   ),
   1: Building(
     id: 1,
@@ -121,7 +123,7 @@ final buildingSpecefication = <int, Building>{
     k: 1.67,
     upkeep: 2,
     culture: 1,
-    imagePath: 'assets/images/buildings/clay_2.png',
+    imagePath: DartopiaImages.clayField,
   ),
   2: Building(
     id: 2,
@@ -132,7 +134,7 @@ final buildingSpecefication = <int, Building>{
     k: 1.67,
     upkeep: 2,
     culture: 1,
-    imagePath: 'assets/images/buildings/iron_2.png',
+    imagePath: DartopiaImages.ironField,
   ),
   3: Building(
     id: 3,
@@ -143,7 +145,7 @@ final buildingSpecefication = <int, Building>{
     k: 1.67,
     upkeep: 0,
     culture: 1,
-    imagePath: 'assets/images/buildings/crop_2.png',
+    imagePath: DartopiaImages.cropField,
   ),
   4: Building(
     id: 4,
@@ -156,7 +158,7 @@ final buildingSpecefication = <int, Building>{
     culture: 2,
     description:
         'The main building of the village builders live. higher level of the main building , the faster under construction.',
-    imagePath: 'assets/images/buildings/main.png',
+    imagePath: DartopiaImages.main,
   ),
   5: Building(
     id: 5,
@@ -169,7 +171,7 @@ final buildingSpecefication = <int, Building>{
     culture: 1,
     description:
         'Crop produced by your croplands is stored in the granary. By increasing its level, you increase the granarys capacity.',
-    imagePath: 'assets/images/buildings/granary.png',
+    imagePath: DartopiaImages.granary,
     requirementBuildings: [
       [4, 1],
     ],
@@ -185,7 +187,7 @@ final buildingSpecefication = <int, Building>{
     culture: 1,
     description:
         'The resources wood, clay and iron are stored in your warehouse. By increasing its level you increase your warehouses capacity.',
-    imagePath: 'assets/images/buildings/warehouse.png',
+    imagePath: DartopiaImages.warehouse,
     requirementBuildings: [
       [4, 1],
     ],
@@ -201,7 +203,7 @@ final buildingSpecefication = <int, Building>{
     culture: 1,
     description:
         'In the barracks infantry can be trained troops . With the development of the barracks reduced training time soldiers.',
-    imagePath: 'assets/images/buildings/barracks_v.png',
+    imagePath: DartopiaImages.barracks,
     requirementBuildings: [
       [4, 3],
       [8, 1],
@@ -218,7 +220,7 @@ final buildingSpecefication = <int, Building>{
     k: 1.28,
     upkeep: 1,
     culture: 1,
-    imagePath: 'assets/images/buildings/rally_point.png',
+    imagePath: DartopiaImages.rally,
   ),
   9: Building(
     id: 9,
@@ -233,7 +235,7 @@ final buildingSpecefication = <int, Building>{
     k: 1.28,
     upkeep: 4,
     culture: 4,
-    imagePath: 'assets/images/buildings/academy.png',
+    imagePath: DartopiaImages.academy,
     requirementBuildings: [
       [4, 3], //main
       [7, 3], //barracks
@@ -246,7 +248,7 @@ final buildingSpecefication = <int, Building>{
     cost: [0, 0, 0, 0],
     time: Time(1450 / 3, 1.6, 1000 / 3),
     benefit: (val) => 1,
-    imagePath: 'assets/images/buildings/empty.png',
+    imagePath: DartopiaImages.empty,
     k: 0,
     upkeep: 0,
     culture: 0,
@@ -257,7 +259,7 @@ final buildingSpecefication = <int, Building>{
     cost: [0, 0, 0, 0],
     time: Time(1450 / 3, 1.6, 1000 / 3),
     benefit: (val) => 1,
-    imagePath: 'assets/images/buildings/construction.png',
+    imagePath: DartopiaImages.construction,
     k: 0,
     upkeep: 0,
     culture: 0,

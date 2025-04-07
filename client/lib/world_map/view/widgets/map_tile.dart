@@ -7,8 +7,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:models/models.dart';
 
-import '../../../consts/images.dart';
-
 class MapTileWidget extends StatelessWidget {
   final MapTile tile;
   final ui.Image image;

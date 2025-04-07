@@ -6,6 +6,7 @@ export 'src/combat_unit_queue.dart';
 export 'src/common/dartopia_api.dart';
 export 'src/common/failure_model.dart';
 export 'src/construction_task.dart';
+export 'src/consts/consts.dart';
 export 'src/death_task.dart';
 export 'src/empty_task.dart';
 export 'src/executable_task.dart';

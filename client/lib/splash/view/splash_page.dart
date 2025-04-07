@@ -1,5 +1,5 @@
-import 'package:dartopia/consts/images.dart';
 import 'package:flutter/material.dart';
+import 'package:models/models.dart';
 
 class SplashPage extends StatelessWidget {
   const SplashPage({super.key});

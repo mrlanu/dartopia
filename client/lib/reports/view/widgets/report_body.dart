@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:models/models.dart';
 
-import '../../../consts/images.dart';
-
 class ReportBody extends StatelessWidget {
   const ReportBody({super.key, required this.report, required this.briefs});
 

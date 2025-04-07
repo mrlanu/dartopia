@@ -5,8 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:models/models.dart';
 
-import '../../../consts/images.dart';
-
 class SendTroopsForm extends StatelessWidget {
   const SendTroopsForm(
       {super.key, this.targetCoordinates, required this.onConfirm});

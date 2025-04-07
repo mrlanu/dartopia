@@ -6,10 +6,10 @@ import 'package:dartopia/settlement/bloc/settlement_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:models/models.dart';
 
 import 'dart:ui' as ui;
 
-import '../../consts/images.dart';
 import '../world_map.dart';
 
 class WorldMapPage extends StatelessWidget {

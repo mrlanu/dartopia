@@ -1,4 +1,3 @@
-import 'package:dartopia/consts/images.dart';
 import 'package:dartopia/settlement/bloc/settlement_bloc.dart';
 import 'package:dartopia/utils/utils.dart';
 import 'package:flutter/material.dart';

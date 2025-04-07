@@ -177,7 +177,7 @@ class _BuildingGridItem extends StatelessWidget {
       backgroundColor: DartopiaColors.primary,
       textColor: DartopiaColors.onPrimary,
       textStyle: Theme.of(context).textTheme.bodyMedium,
-      offset: Offset(-1.0 * lbl.length, 0),
+      offset: Offset(-2.0 * lbl.length, 3),
       largeSize: 22,
       smallSize: 0,
       child: Badge(
@@ -185,7 +185,7 @@ class _BuildingGridItem extends StatelessWidget {
         label: _buildLabel(labelTextColor, context),
         textColor: DartopiaColors.onPrimary,
         backgroundColor: DartopiaColors.primary,
-        offset: const Offset(0, 0),
+        offset: const Offset(0, -15),
         textStyle: Theme.of(context).textTheme.bodyMedium,
         largeSize: 22,
         child: GestureDetector(
@@ -271,7 +271,7 @@ class _BuildingGridAddItem extends StatelessWidget {
         label: Text(availableEmptySpots.toString()),
         backgroundColor: DartopiaColors.primary,
         textStyle: Theme.of(context).textTheme.bodyMedium,
-        offset: const Offset(5, 0),
+        offset: const Offset(0, -15),
         largeSize: 22,
         child: Card(
           color: labelBackground,

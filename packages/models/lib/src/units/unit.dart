@@ -16,6 +16,7 @@ class Unit {
     required this.infantry,
     required this.researchTime,
     required this.description,
+    this.imagePath,
   });
   final UnitKind unitKind;
   final String name;
@@ -30,6 +31,7 @@ class Unit {
   final bool infantry;
   final int researchTime;
   final String description;
+  final String? imagePath;
 
   // For SPY units
   int getS() {
