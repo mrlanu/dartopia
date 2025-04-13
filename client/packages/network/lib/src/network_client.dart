@@ -14,14 +14,14 @@ class NetworkClient {
     _dio.options.receiveTimeout = const Duration(seconds: 10);
 
     _dio.interceptors.add(AuthInterceptor());
-    if (kDebugMode) {
+    /*if (kDebugMode) {
       _dio.interceptors.add(
         PrettyDioLogger(
           requestHeader: true,
           requestBody: true,
         ),
       );
-    }
+    }*/
   }
   static final NetworkClient _instance = NetworkClient._init();
   static NetworkClient get instance => _instance;

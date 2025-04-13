@@ -51,11 +51,10 @@ class SettlementRepositoryImpl implements SettlementRepository {
   Future<void> fetchSettlementById(String settlementId) async {
     for (var i = 0; i <= 10; i++) {
       try {
-        print('Attempt: $i');
         final response = await _networkClient
             .get<Map<String, dynamic>>(Api.fetchSettlementById(settlementId));
         if (response.statusCode != 200) {
-          //await Future<void>.delayed(const Duration(milliseconds: 200));
+          await Future<void>.delayed(const Duration(milliseconds: 200));
           continue;
         } else {
           final settlement = Settlement.fromJson(response.data!);

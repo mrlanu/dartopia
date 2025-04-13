@@ -65,6 +65,12 @@ class MyApp extends StatelessWidget {
             create: (context) => MessagesCubit(
                 messagesRepository: context.read<MessagesRepository>()),
           ),
+          BlocProvider(
+            create: (context) => PeriodicUpdateCubit(
+                reportsRepository: context.read<ReportsRepository>(),
+                settlementRepository: context.read<SettlementRepository>(),
+                messagesRepository: context.read<MessagesRepository>()),
+          ),
         ],
         child: const AppView(),
       ),

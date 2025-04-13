@@ -18,8 +18,15 @@ class ReportsBloc extends Bloc<ReportsEvent, ReportsState> {
     on<FetchReportRequested>(_onFetchReportRequested);
     on<DeleteReportRequested>(_onDeleteReportRequested);
     on<AmountSubtractRequested>(_onAmountSubtractRequested);
+    _streamSubscription =
+        reportsRepository.unreadReportsAmountAndBriefs().listen(
+      (value) {
+        emit(state.copyWith(amount: value.$1, briefs: value.$2));
+      },
+    );
   }
 
+  late final StreamSubscription<(int, List<ReportBrief>)> _streamSubscription;
   final ReportsRepository _reportsRepository;
 
   Future<void> _onListOfBriefsRequested(
@@ -27,9 +34,7 @@ class ReportsBloc extends Bloc<ReportsEvent, ReportsState> {
     Emitter<ReportsState> emit,
   ) async {
     emit(state.copyWith(status: ReportsStatus.loading));
-    final briefs = await _reportsRepository.fetchAllReportsBriefByUserId();
-    emit(state.copyWith(
-        status: ReportsStatus.success, amount: briefs.$1, briefs: briefs.$2));
+    _reportsRepository.fetchAllReportsBriefByUserId();
   }
 
   Future<void> _onFetchReportRequested(
@@ -39,7 +44,10 @@ class ReportsBloc extends Bloc<ReportsEvent, ReportsState> {
     emit(state.copyWith(status: ReportsStatus.loading));
     final report =
         await _reportsRepository.fetchReportById(reportId: event.reportId);
-    emit(state.copyWith(currentReport: report, status: ReportsStatus.success,));
+    emit(state.copyWith(
+      currentReport: report,
+      status: ReportsStatus.success,
+    ));
   }
 
   Future<void> _onDeleteReportRequested(
@@ -49,16 +57,23 @@ class ReportsBloc extends Bloc<ReportsEvent, ReportsState> {
     final briefs = [...state.briefs];
     final isRead = briefs[event.index].read;
     briefs.removeAt(event.index);
-    emit(state.copyWith(briefs: briefs, amount: isRead ? state.amount : state.amount - 1));
+    emit(state.copyWith(
+        briefs: briefs, amount: isRead ? state.amount : state.amount - 1));
     _reportsRepository.deleteReportById(reportId: event.reportId);
   }
 
   Future<void> _onAmountSubtractRequested(
-      AmountSubtractRequested event,
-      Emitter<ReportsState> emit,
-      ) async {
+    AmountSubtractRequested event,
+    Emitter<ReportsState> emit,
+  ) async {
     final briefs = [...state.briefs];
     briefs[event.index] = briefs[event.index].copyWith(read: true);
     emit(state.copyWith(amount: state.amount - 1, briefs: briefs));
+  }
+
+  @override
+  Future<void> close() {
+    _streamSubscription.cancel();
+    return super.close();
   }
 }

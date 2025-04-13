@@ -22,8 +22,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
   @override
   void initState() {
     super.initState();
-    context.read<ReportsBloc>().add(const ListOfBriefsRequested());
-    context.read<MessagesCubit>().countNewMessages();
   }
 
   @override

@@ -7,7 +7,6 @@ import 'package:models/models.dart';
 import '../settlement.dart';
 
 part 'settlement_event.dart';
-
 part 'settlement_state.dart';
 
 class SettlementBloc extends Bloc<SettlementEvent, SettlementState> {

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:dartopia/messages/messages.dart';
 import 'package:dartopia/messages/messages_repository.dart';
@@ -10,8 +12,15 @@ part 'messages_state.dart';
 class MessagesCubit extends Cubit<MessagesState> {
   MessagesCubit({required MessagesRepository messagesRepository})
       : _messagesRepository = messagesRepository,
-        super(const MessagesState());
+        super(const MessagesState()) {
+    _streamSubscription = messagesRepository.unreadMessagesAmount().listen(
+      (amount) {
+        emit(state.copyWith(newMessagesAmount: amount));
+      },
+    );
+  }
 
+  late final StreamSubscription<int> _streamSubscription;
   final MessagesRepository _messagesRepository;
 
   Future<void> sendMessage({required MessageSendRequest request}) async {
@@ -35,17 +44,14 @@ class MessagesCubit extends Cubit<MessagesState> {
     final result = await _messagesRepository.fetchMessages(
         page: page, sent: sent ?? false);
     final checkedList = result.messagesList.map((e) => false).toList();
-    final amount = await _messagesRepository.countNewMessages();
     emit(state.copyWith(
         checkedList: checkedList,
         messagesResponse: result,
-        newMessagesAmount: amount,
         messagesStatus: MessagesStatus.success));
   }
 
   Future<void> countNewMessages() async {
-    final amount = await _messagesRepository.countNewMessages();
-    emit(state.copyWith(newMessagesAmount: amount));
+    _messagesRepository.countNewMessages();
   }
 
   Future<void> changeSelectedTab(MessagesTabs tab) async {
@@ -104,10 +110,16 @@ class MessagesCubit extends Cubit<MessagesState> {
 
   Future<void> decrementAmount() async {
     final amount = state.newMessagesAmount - 1;
-    if(amount >= 0)emit(state.copyWith(newMessagesAmount: amount));
+    if (amount >= 0) emit(state.copyWith(newMessagesAmount: amount));
   }
 
   Future<void> resetSendingStatus() async {
     emit(state.copyWith(sendingStatus: SendingStatus.undefined));
+  }
+
+  @override
+  Future<void> close() {
+    _streamSubscription.cancel();
+    return super.close();
   }
 }

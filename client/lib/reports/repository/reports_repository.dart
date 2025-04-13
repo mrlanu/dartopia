@@ -1,8 +1,11 @@
 import 'package:models/models.dart';
 import 'package:network/network.dart';
+import 'package:rxdart/rxdart.dart';
 
 abstract class ReportsRepository {
-  Future<(int, List<ReportBrief>)> fetchAllReportsBriefByUserId();
+  Stream<(int, List<ReportBrief>)> unreadReportsAmountAndBriefs();
+
+  Future<void> fetchAllReportsBriefByUserId();
 
   Future<MilitaryReportResponse> fetchReportById({required String reportId});
 
@@ -14,16 +17,23 @@ class ReportsRepositoryImpl implements ReportsRepository {
       : _networkClient = networkClient ?? NetworkClient.instance;
 
   final NetworkClient _networkClient;
+  final _unreadReportsAmountAndBriefsController =
+      BehaviorSubject<(int, List<ReportBrief>)>.seeded((0, []));
 
   @override
-  Future<(int, List<ReportBrief>)> fetchAllReportsBriefByUserId() async {
+  Stream<(int, List<ReportBrief>)> unreadReportsAmountAndBriefs() =>
+      _unreadReportsAmountAndBriefsController.asBroadcastStream();
+
+  @override
+  Future<void> fetchAllReportsBriefByUserId() async {
     try {
       final response = await _networkClient
           .get<Map<String, dynamic>>(Api.fetchAllReportsBrief());
       final result = (response.data!['briefs'] as List<dynamic>)
           .map((e) => ReportBrief.fromJson(e as Map<String, dynamic>))
           .toList();
-      return (response.data!['amount'] as int, result);
+      _unreadReportsAmountAndBriefsController
+          .add((response.data!['amount'] as int, result));
     } on DioException catch (e) {
       throw NetworkException.fromDioError(e);
     }
