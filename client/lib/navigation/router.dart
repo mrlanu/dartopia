@@ -22,144 +22,158 @@ final GlobalKey<NavigatorState> _buildingsNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'buildingsNav');
 
 /// The route configuration.
-final GoRouter _router = GoRouter(
-  navigatorKey: _rootNavigatorKey,
-  initialLocation: '/',
-  routes: [
-    GoRoute(
-      path: '/',
-      redirect: (_, __) => '/login',
-    ),
-    GoRoute(
-      path: '/splash',
-      builder: (BuildContext context, GoRouterState state) {
-        return const SplashPage();
-      },
-    ),
-    GoRoute(
-        path: '/login',
+GoRouter router({required AuthBloc authBloc}) {
+  return GoRouter(
+    navigatorKey: _rootNavigatorKey,
+    initialLocation: '/',
+    routes: [
+      GoRoute(
+        path: '/',
+        redirect: (_, __) => '/login',
+      ),
+      GoRoute(
+        path: '/splash',
         builder: (BuildContext context, GoRouterState state) {
-          return const LoginPage();
+          return const SplashPage();
         },
-        routes: [
-          GoRoute(
-            path: 'signup',
-            builder: (BuildContext context, GoRouterState state) {
-              return const SignupPage();
-            },
-          ),
-        ]),
-    StatefulShellRoute.indexedStack(
-        builder: (BuildContext context, GoRouterState state,
-                StatefulNavigationShell navigationShell) =>
-            ScaffoldWithNavBar(navigationShell: navigationShell),
-        branches: [
-          StatefulShellBranch(navigatorKey: _buildingsNavigatorKey, routes: [
+      ),
+      GoRoute(
+          path: '/login',
+          builder: (BuildContext context, GoRouterState state) {
+            return const LoginPage();
+          },
+          routes: [
             GoRoute(
-              path: '/buildings',
+              path: 'signup',
               builder: (BuildContext context, GoRouterState state) {
-                return const BuildingsPageGrid();
-              },
-              routes: [
-                GoRoute(
-                  path: 'details',
-                  builder: (context, state) {
-                    final buildingRecord = state.extra as List<int>;
-                    context
-                        .read<SettlementBloc>()
-                        .add(const SettlementFetchRequested());
-                    return BuildingDetailPage(buildingRecord: buildingRecord);
-                  },
-                ),
-              ],
-            ),
-            GoRoute(
-              path: '/rally_point/:tabId',
-              builder: (BuildContext context, GoRouterState state) {
-                final x = state.uri.queryParameters['x'] ?? 0.toString();
-                final y = state.uri.queryParameters['y'] ?? 0.toString();
-                final coordinates = [int.parse(x), int.parse(y)];
-                return RallyPointPage(
-                    targetCoordinates: coordinates,
-                    tabIndex: int.parse(state.pathParameters['tabId']!));
+                return const SignupPage();
               },
             ),
           ]),
-          StatefulShellBranch(routes: [
-            GoRoute(
-              path: '/world',
-              builder: (BuildContext context, GoRouterState state) {
-                return const WorldMapPage();
-              },
-            ),
-          ]),
-          StatefulShellBranch(observers: [
-            NavigatorObserver(),
-          ], routes: [
-            GoRoute(
-              path: '/statistics',
-              builder: (BuildContext context, GoRouterState state) {
-                return const StatisticsPage();
-              },
-            ),
-          ]),
-          StatefulShellBranch(routes: [
-            GoRoute(
-              path: '/reports',
-              builder: (BuildContext context, GoRouterState state) {
-                return const ReportsPage();
-              },
-              routes: [
-                GoRoute(
-                  path: ':reportId',
-                  builder: (BuildContext context, GoRouterState state) {
-                    return ReportPage(
-                        reportId: state.pathParameters['reportId']!);
-                  },
-                ),
-              ],
-            ),
-          ]),
-          StatefulShellBranch(routes: [
-            GoRoute(
-                path: '/messages',
+      StatefulShellRoute.indexedStack(
+          builder: (BuildContext context, GoRouterState state,
+                  StatefulNavigationShell navigationShell) =>
+              ScaffoldWithNavBar(navigationShell: navigationShell),
+          branches: [
+            StatefulShellBranch(navigatorKey: _buildingsNavigatorKey, routes: [
+              GoRoute(
+                path: '/buildings',
                 builder: (BuildContext context, GoRouterState state) {
-                  return const MessagesPage();
+                  return const BuildingsPageGrid();
                 },
                 routes: [
                   GoRoute(
-                    path: ':messageId',
-                    pageBuilder: (BuildContext context, GoRouterState state) {
-                      return DialogPage(
-                        builder: (_) => ReviewMessage(
-                            messageId: state.pathParameters['messageId']!),
-                      );
+                    path: 'details',
+                    builder: (context, state) {
+                      final buildingRecord = state.extra as List<int>;
+                      context
+                          .read<SettlementBloc>()
+                          .add(const SettlementFetchRequested());
+                      return BuildingDetailPage(buildingRecord: buildingRecord);
                     },
                   ),
-                ]),
+                ],
+              ),
+              GoRoute(
+                path: '/rally_point/:tabId',
+                builder: (BuildContext context, GoRouterState state) {
+                  final x = state.uri.queryParameters['x'] ?? 0.toString();
+                  final y = state.uri.queryParameters['y'] ?? 0.toString();
+                  final coordinates = [int.parse(x), int.parse(y)];
+                  return RallyPointPage(
+                      targetCoordinates: coordinates,
+                      tabIndex: int.parse(state.pathParameters['tabId']!));
+                },
+              ),
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                path: '/world',
+                builder: (BuildContext context, GoRouterState state) {
+                  return const WorldMapPage();
+                },
+              ),
+            ]),
+            StatefulShellBranch(observers: [
+              NavigatorObserver(),
+            ], routes: [
+              GoRoute(
+                path: '/statistics',
+                builder: (BuildContext context, GoRouterState state) {
+                  return const StatisticsPage();
+                },
+              ),
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                path: '/reports',
+                builder: (BuildContext context, GoRouterState state) {
+                  return const ReportsPage();
+                },
+                routes: [
+                  GoRoute(
+                    path: ':reportId',
+                    builder: (BuildContext context, GoRouterState state) {
+                      return ReportPage(
+                          reportId: state.pathParameters['reportId']!);
+                    },
+                  ),
+                ],
+              ),
+            ]),
+            StatefulShellBranch(routes: [
+              GoRoute(
+                  path: '/messages',
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const MessagesPage();
+                  },
+                  routes: [
+                    GoRoute(
+                      path: ':messageId',
+                      pageBuilder: (BuildContext context, GoRouterState state) {
+                        return DialogPage(
+                          builder: (_) => ReviewMessage(
+                              messageId: state.pathParameters['messageId']!),
+                        );
+                      },
+                    ),
+                  ]),
+            ]),
           ]),
-        ]),
-  ],
-  redirect: _guard,
-  debugLogDiagnostics: true,
-);
+    ],
+    redirect: (BuildContext context, GoRouterState state) {
+      final bool signedIn = authBloc.state is AuthenticatedState;
+      final bool isUnknown = authBloc.state is UnknownState;
+      final bool isUnauthenticated = authBloc.state is UnauthenticatedState;
+      final String location = state.matchedLocation;
 
-Future<String?> _guard(BuildContext context, GoRouterState state) async {
-  final bool signedIn = context.read<AuthBloc>().state is AuthenticatedState;
-  if (context.read<AuthBloc>().state is UnknownState) {
-    return '/splash';
-  }
-  final bool signingIn =
-      ['/login', '/login/signup', '/splash'].contains(state.matchedLocation);
-  if (!signedIn && !signingIn) {
-    return '/login';
-  } else if (signedIn && signingIn) {
-    return '/buildings';
-  }
-  return null;
+      // While state is unknown, show splash
+      if (isUnknown) {
+        return location == '/splash' ? null : '/splash';
+      }
+
+      final bool isAuthPage = ['/login', '/login/signup', '/splash'].contains(location);
+
+      // If we land on splash but auth resolved to unauthenticated, push to login
+      if (isUnauthenticated && location == '/splash') {
+        return '/login';
+      }
+
+      if (!signedIn && !isAuthPage) {
+        return '/login';
+      }
+
+      if (signedIn && isAuthPage) {
+        return '/buildings';
+      }
+
+      return null;
+    },
+    refreshListenable: GoRouterRefreshStream(authBloc.stream),
+    debugLogDiagnostics: true,
+  );
 }
 
-GoRouter get router => _router;
 
 FutureOr<bool> onExit(BuildContext context) {
   print('ON EXIT');
@@ -202,4 +216,21 @@ class DialogPage<T> extends Page<T> {
       barrierLabel: barrierLabel,
       useSafeArea: useSafeArea,
       themes: themes);
+}
+
+class GoRouterRefreshStream extends ChangeNotifier {
+  GoRouterRefreshStream(Stream<dynamic> stream) {
+    notifyListeners();
+    _sub = stream.asBroadcastStream().listen((event) {
+      notifyListeners();
+    });
+  }
+
+  late final StreamSubscription _sub;
+
+  @override
+  void dispose() {
+    _sub.cancel();
+    super.dispose();
+  }
 }

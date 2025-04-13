@@ -59,7 +59,7 @@ class _MainDrawerState extends State<MainDrawer> {
                               .titleLarge!
                               .copyWith(color: Colors.black)),
                       onTap: () {
-                        context.read<AuthBloc>().add(AuthLogoutRequested());
+                        context.read<AuthBloc>().add(AuthenticationLogoutPressed());
                       },
                     ),
                   ],

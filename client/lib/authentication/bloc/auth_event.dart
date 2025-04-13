@@ -4,6 +4,6 @@ sealed class AuthEvent {
   const AuthEvent();
 }
 
-final class AuthLogoutRequested extends AuthEvent {}
+final class AuthenticationSubscriptionRequested extends AuthEvent {}
 
-final class CheckAuthStatus extends AuthEvent {}
+final class AuthenticationLogoutPressed extends AuthEvent {}

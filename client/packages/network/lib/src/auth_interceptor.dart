@@ -5,7 +5,7 @@ class AuthInterceptor extends Interceptor {
   @override
   Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final accessToken = await prefs.getString('token');
+    final accessToken = prefs.getString('token');
 
     if (accessToken != null) {
       options.headers['Authorization'] = 'Bearer $accessToken';

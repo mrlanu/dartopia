@@ -2,6 +2,7 @@ import 'package:authentication_repository/authentication_repository.dart';
 import 'package:dartopia/authentication/bloc/auth_bloc.dart';
 import 'package:dartopia/messages/messages.dart';
 import 'package:dartopia/navigation/router.dart';
+import 'package:dartopia/periodic_update/cubit/periodic_update_cubit.dart';
 import 'package:dartopia/reports/bloc/reports_bloc.dart';
 import 'package:dartopia/reports/repository/reports_repository.dart';
 import 'package:dartopia/settlement/bloc/settlement_bloc.dart';
@@ -14,20 +15,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
-
-  final AuthRepo _authRepo = AuthRepo();
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider(
-          create: (context) => _authRepo,
+          create: (context) => AuthRepo(),
         ),
         RepositoryProvider<SettlementRepository>(
           create: (context) => SettlementRepositoryImpl(),
@@ -45,7 +44,10 @@ class MyApp extends StatelessWidget {
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (_) => AuthBloc()..add(CheckAuthStatus()),
+            lazy: false,
+            create: (context) => AuthBloc(
+                authenticationRepository: context.read<AuthRepo>(),)
+              ..add(AuthenticationSubscriptionRequested()),
           ),
           BlocProvider(
             create: (context) => SettlementBloc(
@@ -75,14 +77,9 @@ class AppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthBloc, AuthState>(
-      listenWhen: (previous, current) => previous != current,
-      listener: (context, state) {
-        router.refresh();
-        router.go('/');
-      },
+    return SafeArea(
       child: MaterialApp.router(
-        routerConfig: router,
+        routerConfig: router(authBloc: context.read<AuthBloc>()),
         debugShowCheckedModeBanner: false,
         title: 'Dartopia',
         theme: dartopiaTheme,
