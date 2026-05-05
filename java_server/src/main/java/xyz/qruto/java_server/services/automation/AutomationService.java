@@ -1,10 +1,14 @@
 package xyz.qruto.java_server.services.automation;
 
-import org.springframework.scheduling.annotation.Async;
+import java.util.concurrent.CompletableFuture;
 
 public interface AutomationService {
-    @Async
-    void startAutomation(String settlementId);
+
+    /**
+     * Processes all overdue troop movements. Concurrent callers share one run (single-flight)
+     * and each returned future completes when that run finishes.
+     */
+    CompletableFuture<Void> startAutomation(String settlementId);
 
     String taskB();
 

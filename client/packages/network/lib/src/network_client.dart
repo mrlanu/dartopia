@@ -1,7 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:models/models.dart';
-import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import 'auth_interceptor.dart';
 
@@ -35,15 +33,25 @@ class NetworkClient {
         Options? options,
         CancelToken? cancelToken,
         void Function(int, int)? onReceiveProgress,
+        Duration? receiveTimeout,
       }) async {
+    final Options? mergedOptions = _mergeReceiveTimeout(options, receiveTimeout);
     final response = await _dio.get<T>(
       path,
       queryParameters: queryParameters,
-      options: options,
+      options: mergedOptions,
       cancelToken: cancelToken,
       onReceiveProgress: onReceiveProgress,
     );
     return response;
+  }
+
+  static Options? _mergeReceiveTimeout(Options? options, Duration? receiveTimeout) {
+    if (receiveTimeout == null) {
+      return options;
+    }
+    final base = options ?? Options();
+    return base.copyWith(receiveTimeout: receiveTimeout);
   }
 
   // Post:----------------------------------------------------------------------

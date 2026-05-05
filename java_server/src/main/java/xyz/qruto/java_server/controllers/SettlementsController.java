@@ -17,6 +17,7 @@ import xyz.qruto.java_server.services.SettlementService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.CompletionException;
 
 @RestController
 @RequestMapping("/settlements")
@@ -40,8 +41,12 @@ public class SettlementsController {
 
     @GetMapping("/{settlementId}")
     public ResponseEntity<SettlementEntity> getSettlementById(@PathVariable String settlementId) {
-        // try to run automation on the other thread
-        automationService.startAutomation(settlementId);
+        try {
+            automationService.startAutomation(settlementId).join();
+        } catch (CompletionException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Automation failed", e.getCause());
+        }
 
         SettlementEntity settlement = settlementService
                 .getSettlementById(settlementId, LocalDateTime.now());

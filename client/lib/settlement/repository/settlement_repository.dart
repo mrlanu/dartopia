@@ -29,6 +29,14 @@ class SettlementRepositoryImpl implements SettlementRepository {
 
   final _settlementStreamController = BehaviorSubject<Settlement?>.seeded(null);
 
+  /// Server runs single-flight automation on this endpoint before returning; the
+  /// HTTP thread may wait behind other players — allow a long receive timeout.
+  static const Duration _settlementReceiveTimeout = Duration(seconds: 90);
+
+  /// Rare 400 (still blocked) or 5xx; fewer rounds than the old async race workaround.
+  static const int _settlementFetchMaxAttempts = 5;
+  static const Duration _settlementRetryDelay = Duration(milliseconds: 400);
+
   @override
   Stream<Settlement?> getSettlement() =>
       _settlementStreamController.asBroadcastStream();
@@ -49,23 +57,22 @@ class SettlementRepositoryImpl implements SettlementRepository {
 
   @override
   Future<void> fetchSettlementById(String settlementId) async {
-    for (var i = 0; i <= 10; i++) {
+    for (var attempt = 0; attempt < _settlementFetchMaxAttempts; attempt++) {
       try {
-        final response = await _networkClient
-            .get<Map<String, dynamic>>(Api.fetchSettlementById(settlementId));
-        if (response.statusCode != 200) {
-          await Future<void>.delayed(const Duration(milliseconds: 200));
-          continue;
-        } else {
-          final settlement = Settlement.fromJson(response.data!);
-          _settlementStreamController.add(settlement);
-          break;
+        final response = await _networkClient.get<Map<String, dynamic>>(
+          Api.fetchSettlementById(settlementId),
+          receiveTimeout: _settlementReceiveTimeout,
+        );
+        if (response.statusCode == 200 && response.data != null) {
+          _settlementStreamController.add(
+            Settlement.fromJson(response.data!),
+          );
+          return;
         }
       } on DioException catch (_) {
-        await Future<void>.delayed(const Duration(milliseconds: 200));
-        continue;
-        //throw NetworkException.fromDioError(e);
+        // Includes 5xx if validateStatus rejects, timeouts while automation runs, etc.
       }
+      await Future<void>.delayed(_settlementRetryDelay);
     }
   }
 

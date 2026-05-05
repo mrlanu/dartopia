@@ -1,6 +1,5 @@
 import 'package:dartopia/consts/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 final ThemeData dartopiaTheme = _buildDartopiaTheme();
 
@@ -35,5 +34,7 @@ ThemeData _buildDartopiaTheme() {
 }
 
 TextTheme _buildDartopiaTextTheme(TextTheme base) {
-  return GoogleFonts.boogalooTextTheme();
+  // Avoid package:google_fonts here: it reads AssetManifest, which newer Flutter
+  // builds no longer ship as AssetManifest.json (breaks at runtime).
+  return base;
 }
