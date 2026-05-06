@@ -22,6 +22,14 @@ class Api {
     return '/world';
   }
 
+  static String fetchWorldMeta() {
+    return '/world/meta';
+  }
+
+  static String fetchWorldChunk(int cx, int cy) {
+    return '/world/chunks?cx=$cx&cy=$cy';
+  }
+
   static String fetchTileDetails() {
     return '/world/tiles';
   }

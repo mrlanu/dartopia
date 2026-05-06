@@ -66,14 +66,18 @@ class _BottomNavBarState extends State<BottomNavBar> {
       case 0:
         context.read<SettlementBloc>().add(const SettlementFetchRequested());
         context.read<MessagesCubit>().countNewMessages();
+        break;
+      case 1:
+        break;
       case 2:
         context.read<StatisticsCubit>().fetchStatistics();
+        break;
       case 3:
         context.read<ReportsBloc>().add(const ListOfBriefsRequested());
+        break;
       case 4:
         context.read<MessagesCubit>().fetchMessages();
-      default:
-        throw const FormatException("Invalid");
+        break;
     }
   }
 

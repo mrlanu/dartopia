@@ -4,6 +4,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import xyz.qruto.java_server.entities.MapTile;
 import xyz.qruto.java_server.models.responses.TileDetails;
+import xyz.qruto.java_server.models.responses.WorldChunkResponse;
+import xyz.qruto.java_server.models.responses.WorldMetaResponse;
 import xyz.qruto.java_server.services.WorldService;
 
 import java.util.List;
@@ -22,6 +24,16 @@ public class WorldController {
     public ResponseEntity<String> createWorld() {
         worldService.createWorld();
         return ResponseEntity.ok("World created");
+    }
+
+    @GetMapping("/meta")
+    public ResponseEntity<WorldMetaResponse> getMeta() {
+        return ResponseEntity.ok(worldService.getWorldMeta());
+    }
+
+    @GetMapping("/chunks")
+    public ResponseEntity<WorldChunkResponse> getChunk(@RequestParam int cx, @RequestParam int cy) {
+        return ResponseEntity.ok(worldService.getChunk(cx, cy));
     }
 
     @GetMapping()

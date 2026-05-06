@@ -2,16 +2,58 @@ import 'dart:ui' as ui;
 
 import 'package:dartopia/world_map/repository/world_repository.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:models/models.dart';
 
+/// Uses [repo] directly so the tile dialog works when [showDialog]'s route is outside [RepositoryProvider]'s scope (go_router shell / root navigator).
+Future<void> showMapTileDetailsDialog(
+  BuildContext navigatorContext,
+  WorldRepository repo,
+  MapTile tile,
+) {
+  return showDialog<void>(
+    context: navigatorContext,
+    builder: (_) {
+      final height = MediaQuery.of(navigatorContext).size.height * 0.5;
+      return Center(
+        child: Dialog(
+          insetPadding: const EdgeInsets.all(10),
+          child: SizedBox(
+            height: height,
+            child: Center(
+              child: FutureBuilder<TileDetails>(
+                future: repo.fetchTileDetails(tile.corX, tile.corY),
+                builder: (_, snapshot) {
+                  return snapshot.connectionState == ConnectionState.done
+                      ? MapTileDialogBody(tileDetails: snapshot.data!)
+                      : SizedBox(
+                          height: height,
+                          child: const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
 class MapTileWidget extends StatelessWidget {
   final MapTile tile;
   final ui.Image image;
+  final WorldRepository repository;
 
-  const MapTileWidget({super.key, required this.tile, required this.image});
+  const MapTileWidget({
+    super.key,
+    required this.tile,
+    required this.image,
+    required this.repository,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +62,9 @@ class MapTileWidget extends StatelessWidget {
         print('ONE TAP on: ${tile.id.$oid}');
       },
       onDoubleTap: () {
-        tile.tileNumber != 0 ? _openDialog(context) : null;
+        if (tile.tileNumber != 0) {
+          showMapTileDetailsDialog(context, repository, tile);
+        }
       },
       child: SizedBox(
         child: CustomPaint(
@@ -29,39 +73,15 @@ class MapTileWidget extends StatelessWidget {
       ),
     );
   }
+}
 
-  Future<String?> _openDialog(BuildContext context) {
-    return showDialog<String>(
-        context: context,
-        builder: (_) {
-          final height = MediaQuery.of(context).size.height * 0.5;
-          return Center(
-            child: Dialog(
-              insetPadding: const EdgeInsets.all(10),
-              child: SizedBox(
-                height: height,
-                child: Center(
-                  child: FutureBuilder(
-                    future: context
-                        .read<WorldRepository>()
-                        .fetchTileDetails(tile.corX, tile.corY),
-                    builder: (_, snapshot) {
-                      return snapshot.connectionState == ConnectionState.done
-                          ? _buildDialogBody(snapshot.data!, context)
-                          : SizedBox(
-                              height: height,
-                              child: const Center(
-                                  child: CircularProgressIndicator()));
-                    },
-                  ),
-                ),
-              ),
-            ),
-          );
-        });
-  }
+class MapTileDialogBody extends StatelessWidget {
+  const MapTileDialogBody({super.key, required this.tileDetails});
 
-  Widget _buildDialogBody(TileDetails tileDetails, BuildContext context) {
+  final TileDetails tileDetails;
+
+  @override
+  Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
@@ -86,7 +106,10 @@ class MapTileWidget extends StatelessWidget {
                 style: textTheme.titleMedium,
               ),
               tileDetails.animals != null
-                  ? _getAnimals(tileDetails, constraints.maxWidth)
+                  ? _MapTileDialogAnimals(
+                      tileDetails: tileDetails,
+                      maxWidth: constraints.maxWidth,
+                    )
                   : const SizedBox(),
               IconButton.outlined(
                   iconSize: 30,
@@ -103,8 +126,19 @@ class MapTileWidget extends StatelessWidget {
       },
     );
   }
+}
 
-  Widget _getAnimals(TileDetails tileDetails, double maxWidth) {
+class _MapTileDialogAnimals extends StatelessWidget {
+  const _MapTileDialogAnimals({
+    required this.tileDetails,
+    required this.maxWidth,
+  });
+
+  final TileDetails tileDetails;
+  final double maxWidth;
+
+  @override
+  Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -128,7 +162,6 @@ class MapTileWidget extends StatelessWidget {
                                 image: AssetImage(
                                     DartopiaImages.getTroopsByNation(
                                         Nations.nature)),
-                                // Replace with your actual image path
                                 fit: BoxFit.cover,
                               ),
                             ),

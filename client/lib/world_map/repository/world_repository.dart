@@ -5,6 +5,10 @@ abstract class WorldRepository {
   Future<List<MapTile>> fetchPartOfWorld(
       int fromX, int toX, int fromY, int toY);
 
+  Future<WorldMeta> fetchWorldMeta();
+
+  Future<WorldChunk> fetchWorldChunk(int cx, int cy);
+
   Future<TileDetails> fetchTileDetails(int x, int y);
 }
 
@@ -31,6 +35,30 @@ class WorldRepositoryImpl implements WorldRepository {
           .map((e) => MapTile.fromJson(e as Map<String, dynamic>))
           .toList();
       return tiles;
+    } on DioException catch (e) {
+      throw NetworkException.fromDioError(e);
+    }
+  }
+
+  @override
+  Future<WorldMeta> fetchWorldMeta() async {
+    try {
+      final response = await _networkClient.get<Map<String, dynamic>>(
+        Api.fetchWorldMeta(),
+      );
+      return WorldMeta.fromJson(response.data!);
+    } on DioException catch (e) {
+      throw NetworkException.fromDioError(e);
+    }
+  }
+
+  @override
+  Future<WorldChunk> fetchWorldChunk(int cx, int cy) async {
+    try {
+      final response = await _networkClient.get<Map<String, dynamic>>(
+        Api.fetchWorldChunk(cx, cy),
+      );
+      return WorldChunk.fromJson(response.data!);
     } on DioException catch (e) {
       throw NetworkException.fromDioError(e);
     }

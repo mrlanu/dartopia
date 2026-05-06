@@ -1,8 +1,7 @@
 import 'package:dartopia/consts/colors.dart';
+import 'package:dartopia/world_map/cubit/world_map_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../bloc/world_bloc.dart';
 
 class MapButtonRow extends StatelessWidget {
   const MapButtonRow({super.key});
@@ -10,38 +9,17 @@ class MapButtonRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         IconButton.outlined(
-            color: DartopiaColors.primary,
-            onPressed: () {
-              context.read<WorldBloc>().add(XDecremented());
-            },
-            icon: const Icon(Icons.arrow_back_outlined)),
-        IconButton.outlined(
-            iconSize: 30,
-            onPressed: () {
-              context.read<WorldBloc>().add(YDecremented());
-            },
-            icon: const Icon(Icons.arrow_downward_outlined)),
-        IconButton.outlined(
-            iconSize: 40,
-            onPressed: () {
-              context.read<WorldBloc>().add(CenterRequested());
-            },
-            icon: const Icon(Icons.home)),
-        IconButton.outlined(
-            iconSize: 30,
-            onPressed: () {
-              context.read<WorldBloc>().add(YIncremented());
-            },
-            icon: const Icon(Icons.arrow_upward_outlined)),
-        IconButton.outlined(
-            onPressed: () {
-              context.read<WorldBloc>().add(XIncremented());
-            },
-            icon: const Icon(Icons.arrow_forward_outlined)),
+          color: DartopiaColors.primary,
+          iconSize: 40,
+          onPressed: () {
+            context.read<WorldMapCubit>().recenterToVillage();
+          },
+          icon: const Icon(Icons.home),
+        ),
       ],
     );
   }

@@ -27,3 +27,4 @@ export 'src/statistics/statistics.dart';
 export 'src/unit_ready_task.dart';
 export 'src/units/units.dart';
 export 'src/user.dart';
+export 'src/world/world.dart';

@@ -4,14 +4,19 @@ import org.springframework.stereotype.Service;
 import xyz.qruto.java_server.entities.MapTile;
 import xyz.qruto.java_server.entities.SettlementEntity;
 import xyz.qruto.java_server.entities.UserEntity;
+import xyz.qruto.java_server.errors.UserErrorException;
 import xyz.qruto.java_server.models.SettlementKind;
 import xyz.qruto.java_server.models.TileProbability;
+import xyz.qruto.java_server.models.world.WorldChunkConstants;
 import xyz.qruto.java_server.models.responses.TileDetails;
+import xyz.qruto.java_server.models.responses.WorldChunkResponse;
+import xyz.qruto.java_server.models.responses.WorldMetaResponse;
 import xyz.qruto.java_server.repositories.SettlementRepository;
 import xyz.qruto.java_server.repositories.UserRepository;
 import xyz.qruto.java_server.repositories.WorldRepository;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -42,6 +47,11 @@ public class WorldServiceImpl implements WorldService{
         return worldRepository.save(mapTile);
     }
 
+    /**
+     * Builds the map grid: {@code corX} runs 1..width (west→east), {@code corY} runs
+     * 1..height with <strong>larger Y in the north</strong> (outer loop starts at
+     * {@code mapHeight} and decrements, so the first rows stored are the northern edge).
+     */
     @Override
     public void createWorld() {
         dropWorld();
@@ -76,6 +86,50 @@ public class WorldServiceImpl implements WorldService{
     @Override
     public List<MapTile> getAllByCorXBetweenAndCorYBetween(int fromX, int toX, int fromY, int toY) {
         return worldRepository.getAllByCorXBetweenAndCorYBetween(fromX, toX, fromY, toY);
+    }
+
+    @Override
+    public WorldMetaResponse getWorldMeta() {
+        var s = settingsService.readSettings();
+        int w = s.getMapWidth();
+        int h = s.getMapHeight();
+        int cs = WorldChunkConstants.CHUNK_SIZE;
+        int cnX = (w + cs - 1) / cs;
+        int cnY = (h + cs - 1) / cs;
+        return WorldMetaResponse.builder()
+                .mapWidth(w)
+                .mapHeight(h)
+                .chunkSize(cs)
+                .chunksX(cnX)
+                .chunksY(cnY)
+                .revision(1L)
+                .build();
+    }
+
+    @Override
+    public WorldChunkResponse getChunk(int cx, int cy) {
+        WorldMetaResponse meta = getWorldMeta();
+        if (cx < 0 || cy < 0 || cx >= meta.getChunksX() || cy >= meta.getChunksY()) {
+            throw new UserErrorException("Invalid chunk coordinates");
+        }
+        int cs = meta.getChunkSize();
+        int fromX = cx * cs + 1;
+        int toX = Math.min((cx + 1) * cs, meta.getMapWidth());
+        int fromY = cy * cs + 1;
+        int toY = Math.min((cy + 1) * cs, meta.getMapHeight());
+        List<MapTile> tiles = worldRepository.getAllByCorXBetweenAndCorYBetween(fromX, toX, fromY, toY);
+        tiles.sort(Comparator
+                .comparingInt(MapTile::getCorY).reversed()
+                .thenComparingInt(MapTile::getCorX));
+        return WorldChunkResponse.builder()
+                .cx(cx)
+                .cy(cy)
+                .fromX(fromX)
+                .toX(toX)
+                .fromY(fromY)
+                .toY(toY)
+                .tiles(tiles)
+                .build();
     }
 
     @Override
