@@ -38,6 +38,7 @@ public class SettlementEntityTest {
                 Settings.builder()
                         .maxConstructionTasksInQueue(2)
                         .buildingsSpeedX(10)
+                        .productionMultiplier(1.0)
                         .build()
         );
         settlementEntity = SettlementEntity.builder()

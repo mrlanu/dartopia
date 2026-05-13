@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:models/models.dart';
 
 import '../../../consts/colors.dart';
+import '../../../settings/cubit/settings_cubit.dart';
 import '../../../settlement/settlement.dart';
 import '../../../utils/utils.dart';
 
@@ -21,9 +22,12 @@ class FieldViewTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settings = context.read<SettingsCubit>().state.settings;
     final specification = buildingSpecefication[buildingRecord[1]]!;
-    final prod = specification.benefit(buildingRecord[2]).toInt();
-    final prodNext = specification.benefit(buildingRecord[2] + 1).toInt();
+    final prod = specification.benefit(buildingRecord[2]).toInt()
+        * settings!.productionMultiplier;
+    final prodNext = specification.benefit(buildingRecord[2] + 1).toInt()
+        * settings.productionMultiplier;
     final cost = specification.getResourcesToNextLevel(buildingRecord[2] + 1);
     final canBeUpgraded = buildingRecord[3] == 1 ? true : false;
     return Card(

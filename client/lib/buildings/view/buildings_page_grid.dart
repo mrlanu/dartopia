@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:models/models.dart';
 import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 
+import '../../settings/cubit/settings_cubit.dart';
 import '../../settlement/bloc/settlement_bloc.dart';
 import '../../storage_bar/view/storage_bar.dart';
 import '../../utils/countdown.dart';
@@ -167,10 +168,11 @@ class _BuildingGridItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settings = context.read<SettingsCubit>().state.settings;
     final (labelBackground, labelTextColor) = _getLabelColors();
     final id = buildingRecord[1];
     final lbl = id == 0 || id == 1 || id == 2 || id == 3
-        ? prodPerHour[id].toString()
+        ? ((prodPerHour[id] * settings!.productionMultiplier)).toInt().toString()
         : 'lvl ${buildingRecord[2]}';
     return Badge(
       label: Text(lbl),

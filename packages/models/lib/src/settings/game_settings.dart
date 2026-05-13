@@ -10,6 +10,7 @@ class GameSettings extends Equatable {
     required this.oasesAmount,
     required this.troopsSpeedX,
     required this.buildingsSpeedX,
+    required this.productionMultiplier,
     required this.minUnitsForOasis,
     required this.maxUnitsForOasis,
     required this.troopBuildDuration,
@@ -28,6 +29,8 @@ class GameSettings extends Equatable {
       oasesAmount: _asInt(json['oasesAmount']),
       troopsSpeedX: _asInt(json['troopsSpeedX']),
       buildingsSpeedX: _asInt(json['buildingsSpeedX']),
+      productionMultiplier: _productionMultiplierFromJson(
+          json['productionMultiplier'],),
       minUnitsForOasis: _asInt(json['minUnitsForOasis']),
       maxUnitsForOasis: _asInt(json['maxUnitsForOasis']),
       troopBuildDuration: _asInt(json['troopBuildDuration']),
@@ -46,6 +49,7 @@ class GameSettings extends Equatable {
   final int oasesAmount;
   final int troopsSpeedX;
   final int buildingsSpeedX;
+  final double productionMultiplier;
   final int minUnitsForOasis;
   final int maxUnitsForOasis;
   final int troopBuildDuration;
@@ -56,6 +60,13 @@ class GameSettings extends Equatable {
 
   static int _asInt(dynamic value) => (value as num).toInt();
 
+  static double _productionMultiplierFromJson(dynamic value) {
+    if (value == null) {
+      return 1;
+    }
+    return (value as num).toDouble();
+  }
+
   @override
   List<Object?> get props => [
         serverName,
@@ -65,6 +76,7 @@ class GameSettings extends Equatable {
         oasesAmount,
         troopsSpeedX,
         buildingsSpeedX,
+        productionMultiplier,
         minUnitsForOasis,
         maxUnitsForOasis,
         troopBuildDuration,

@@ -55,9 +55,10 @@ public class SettlementEntity {
 
     public int update(LocalDateTime untilTime, Settings settings) {
         int populationAdded = 0;
+        double productionMultiplier = settings.getProductionMultiplier();
         var events = combineAllEvents(untilTime);
         for (Executable event : events) {
-            var cropPerHour = calculateProducePerHour().get(3) - calculateEatPerHour();
+            var cropPerHour = calculateProducePerHour(productionMultiplier).get(3) - calculateEatPerHour();
 
             // if crop in the village is less than 0 keep create the death event & execute them until the crop will be positive
             while (cropPerHour < 0) {
@@ -74,10 +75,10 @@ public class SettlementEntity {
                 } else {
                     break;
                 }
-                cropPerHour = calculateProducePerHour().get(3) - calculateEatPerHour();
+                cropPerHour = calculateProducePerHour(productionMultiplier).get(3) - calculateEatPerHour();
             }
             // recalculate storage leftovers
-            calculateProducedGoods(event.getExecutionTime());
+            calculateProducedGoods(event.getExecutionTime(), productionMultiplier);
             calculateEatenCrop(event.getExecutionTime());
             castStorage();
             populationAdded += event.execute(this);
@@ -127,7 +128,7 @@ public class SettlementEntity {
     public int changeBuilding(int buildingId, int specificationId, int level) {
         var index = -1;
         for (var i = 0; i < buildings.size(); i++) {
-            if (buildings.get(i).get(0) == buildingId) {
+            if (buildings.get(i).getFirst() == buildingId) {
                 index = i;
                 break;
             }
@@ -169,14 +170,14 @@ public class SettlementEntity {
                 .collect(Collectors.toList());
     }
 
-    private List<Integer> calculateProducePerHour() {
+    private List<Integer> calculateProducePerHour(double productionMultiplier) {
         var res = buildings.stream()
                 .filter(b -> b.get(1) == 0 || b.get(1) == 1 || b.get(1) == 2 || b.get(1) == 3)
                 .collect(Collectors.groupingBy(subList -> subList.get(1)));
         List<Integer> result = Arrays.asList(0, 0, 0, 0);
         res.forEach((id, lists) -> {
             var sum = lists.stream().mapToInt(value -> (int) BuildingsConst.BUILDINGS.get(id).getBenefit(value.get(2))).sum();
-            result.set(id, sum);
+            result.set(id, (int) Math.round(sum * productionMultiplier));
         });
         return result;
     }
@@ -187,9 +188,9 @@ public class SettlementEntity {
                 .reduce(0, Integer::sum);
     }
 
-    private void calculateProducedGoods(LocalDateTime untilTime) {
+    private void calculateProducedGoods(LocalDateTime untilTime, double productionMultiplier) {
         final MathContext mc = new MathContext(3);
-        List<Integer> producePerHour = calculateProducePerHour();
+        List<Integer> producePerHour = calculateProducePerHour(productionMultiplier);
 
         long durationFromLastModified = ChronoUnit.MILLIS.between(lastModified, untilTime);
 

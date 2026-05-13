@@ -23,6 +23,8 @@ public class Settings {
     private int oasesAmount;
     private int troopsSpeedX;
     private int buildingsSpeedX;
+    /** Global production scale (1.0 = baseline). */
+    private double productionMultiplier;
     private int minUnitsForOasis;
     private int maxUnitsForOasis;
 
