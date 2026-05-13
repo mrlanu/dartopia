@@ -283,14 +283,20 @@ class SettlementServiceImpl extends SettlementService {
       lastTime = DateTime.now();
     }
 
+    final unit = UnitsConst.UNITS[settlement.nation.index][request.unitId];
+    var mult = ServerSettings().troopsTrainingMultiplier;
+    if (mult <= 0) {
+      mult = 1;
+    }
+    final durationEach = (unit.time / mult).ceil();
+
     final order = CombatUnitQueue(
       lastTime: lastTime,
       unitId: request.unitId,
       leftTrain: request.amount,
-      durationEach: ServerSettings().troopBuildDuration,
+      durationEach: durationEach,
     );
 
-    final unit = UnitsConst.UNITS[settlement.nation.index][order.unitId];
     final costOfAll =
         unit.cost.map((price) => price * order.leftTrain).toList();
     settlement

@@ -13,7 +13,7 @@ class GameSettings extends Equatable {
     required this.productionMultiplier,
     required this.minUnitsForOasis,
     required this.maxUnitsForOasis,
-    required this.troopBuildDuration,
+    required this.troopsTrainingMultiplier,
     required this.maxConstructionTasksInQueue,
     required this.oasisName,
     required this.natureRegTime,
@@ -33,7 +33,8 @@ class GameSettings extends Equatable {
           json['productionMultiplier'],),
       minUnitsForOasis: _asInt(json['minUnitsForOasis']),
       maxUnitsForOasis: _asInt(json['maxUnitsForOasis']),
-      troopBuildDuration: _asInt(json['troopBuildDuration']),
+      troopsTrainingMultiplier: _troopsTrainingMultiplierFromJson(
+          json['troopsTrainingMultiplier'],),
       maxConstructionTasksInQueue:
           _asInt(json['maxConstructionTasksInQueue']),
       oasisName: json['oasisName'] as String,
@@ -52,7 +53,7 @@ class GameSettings extends Equatable {
   final double productionMultiplier;
   final int minUnitsForOasis;
   final int maxUnitsForOasis;
-  final int troopBuildDuration;
+  final double troopsTrainingMultiplier;
   final int maxConstructionTasksInQueue;
   final String oasisName;
   final int natureRegTime;
@@ -61,6 +62,13 @@ class GameSettings extends Equatable {
   static int _asInt(dynamic value) => (value as num).toInt();
 
   static double _productionMultiplierFromJson(dynamic value) {
+    if (value == null) {
+      return 1;
+    }
+    return (value as num).toDouble();
+  }
+
+  static double _troopsTrainingMultiplierFromJson(dynamic value) {
     if (value == null) {
       return 1;
     }
@@ -79,7 +87,7 @@ class GameSettings extends Equatable {
         productionMultiplier,
         minUnitsForOasis,
         maxUnitsForOasis,
-        troopBuildDuration,
+        troopsTrainingMultiplier,
         maxConstructionTasksInQueue,
         oasisName,
         natureRegTime,

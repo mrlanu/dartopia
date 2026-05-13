@@ -14,8 +14,7 @@ class ServerSettings {
     required this.troopsSpeedX,
     required this.buildingsSpeedX,
     required this.productionMultiplier,
-    // after development should be deleted(should be gotten from models/UnitsConst)
-    required this.troopBuildDuration,
+    required this.troopsTrainingMultiplier,
     required this.maxConstructionTasksInQueue,
     required this.oasisName,
     required this.natureRegTime,
@@ -30,8 +29,7 @@ class ServerSettings {
   final int buildingsSpeedX;
   final double productionMultiplier;
 
-  // after development should be deleted(should be gotten from models/UnitsConst)
-  final int troopBuildDuration;
+  final double troopsTrainingMultiplier;
   final int maxConstructionTasksInQueue;
   final String oasisName;
   final int natureRegTime;
@@ -46,7 +44,7 @@ class ServerSettings {
       troopsSpeedX: 1,
       buildingsSpeedX: 10,
       productionMultiplier: 1,
-      troopBuildDuration: 180,
+      troopsTrainingMultiplier: 1,
       maxConstructionTasksInQueue: 2,
       oasisName: 'Unoccupied Oasis',
       natureRegTime: 4,
@@ -63,7 +61,7 @@ class ServerSettings {
       troopsSpeedX: map['troopsSpeedX'] as int,
       buildingsSpeedX: map['buildingsSpeedX'] as int,
       productionMultiplier: _readProductionMultiplier(map),
-      troopBuildDuration: map['troopBuildDuration'] as int,
+      troopsTrainingMultiplier: _readTroopsTrainingMultiplier(map),
       maxConstructionTasksInQueue: map['maxConstructionTasksInQueue'] as int,
       oasisName: map['oasisName'] as String,
       natureRegTime: map['natureRegTime'] as int,
@@ -79,7 +77,7 @@ class ServerSettings {
         'troopsSpeedX': troopsSpeedX,
         'buildingsSpeedX': buildingsSpeedX,
         'productionMultiplier': productionMultiplier,
-        'troopBuildDuration': troopBuildDuration,
+        'troopsTrainingMultiplier': troopsTrainingMultiplier,
         'maxConstructionTasksInQueue': maxConstructionTasksInQueue,
         'oasisName': oasisName,
         'natureRegTime': natureRegTime,
@@ -94,7 +92,7 @@ class ServerSettings {
     int? troopsSpeedX,
     int? buildingsSpeedX,
     double? productionMultiplier,
-    int? troopBuildDuration,
+    double? troopsTrainingMultiplier,
     int? maxConstructionTasksInQueue,
     String? oasisName,
     int? natureRegTime,
@@ -109,13 +107,22 @@ class ServerSettings {
         buildingsSpeedX: buildingsSpeedX ?? this.buildingsSpeedX,
         productionMultiplier:
             productionMultiplier ?? this.productionMultiplier,
-        troopBuildDuration: troopBuildDuration ?? this.troopBuildDuration,
+        troopsTrainingMultiplier:
+            troopsTrainingMultiplier ?? this.troopsTrainingMultiplier,
         maxConstructionTasksInQueue:
             maxConstructionTasksInQueue ?? this.maxConstructionTasksInQueue,
         oasisName: oasisName ?? this.oasisName,
         natureRegTime: natureRegTime ?? this.natureRegTime,
     );
   }
+}
+
+double _readTroopsTrainingMultiplier(Map<String, dynamic> map) {
+  final v = map['troopsTrainingMultiplier'];
+  if (v == null) {
+    return 1;
+  }
+  return (v as num).toDouble();
 }
 
 double _readProductionMultiplier(Map<String, dynamic> map) {

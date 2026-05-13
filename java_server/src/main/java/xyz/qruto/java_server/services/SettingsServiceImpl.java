@@ -49,7 +49,7 @@ public class SettingsServiceImpl implements SettingsService {
                 .productionMultiplier(1.0)
                 .minUnitsForOasis(15)
                 .maxUnitsForOasis(30)
-                .troopBuildDuration(180)
+                .troopsTrainingMultiplier(1.0)
                 .maxConstructionTasksInQueue(2)
                 .oasisName("Unoccupied Oasis")
                 .natureRegTime(4)

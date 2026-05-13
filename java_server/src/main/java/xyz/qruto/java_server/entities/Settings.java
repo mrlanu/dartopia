@@ -28,8 +28,8 @@ public class Settings {
     private int minUnitsForOasis;
     private int maxUnitsForOasis;
 
-    // after development should be deleted(should be gotten from models/UnitsConst)
-    private int troopBuildDuration;
+    /** Training speed vs unit base time (1.0 = baseline; higher = faster). */
+    private double troopsTrainingMultiplier;
     private int maxConstructionTasksInQueue;
     private String oasisName;
     private int natureRegTime;

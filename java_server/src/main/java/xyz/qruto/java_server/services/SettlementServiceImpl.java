@@ -152,6 +152,15 @@ public class SettlementServiceImpl implements SettlementService{
         SettlementEntity settlement = recalculateSettlementWithoutSave(settlementId, LocalDateTime.now());
         List<CombatUnitQueue> ordersList = settlement.getCombatUnitQueue();
 
+        Unit unit = UnitsConst.UNITS
+                .get(settlement.getNation().ordinal())
+                .get(request.getUnitId());
+        double trainingMult = settingsService.readSettings().getTroopsTrainingMultiplier();
+        if (trainingMult <= 0D) {
+            trainingMult = 1D;
+        }
+        int durationEach = (int) Math.ceil(unit.getTime() / trainingMult);
+
         LocalDateTime lastTime;
         if (!ordersList.isEmpty()) {
             var lastOrder = ordersList.get(ordersList.size() - 1);
@@ -166,12 +175,9 @@ public class SettlementServiceImpl implements SettlementService{
                 .lastTime(lastTime)
                 .unitId(request.getUnitId())
                 .leftTrain(request.getAmount())
-                .durationEach(settingsService.readSettings().getTroopBuildDuration())
+                .durationEach(durationEach)
                 .build();
 
-        Unit unit = UnitsConst.UNITS
-                .get(settlement.getNation().ordinal())
-                .get(order.getUnitId());
         List<BigDecimal> costOfAll = unit.getCost().stream()
                 .map(price -> BigDecimal.valueOf((long) price * order.getLeftTrain()))
                 .toList();

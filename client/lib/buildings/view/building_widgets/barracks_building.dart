@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:models/models.dart';
 
+import '../../../settings/cubit/settings_cubit.dart';
 import '../../buildings.dart';
 
 class BarracksBuilding extends StatelessWidget {
@@ -149,7 +150,7 @@ class _TroopOrderFormState extends State<_TroopOrderForm> {
                             '( present ${widget.settlement.units[widget.unitId]})'),
                       ],
                     ),
-                    _CostBar(unitId: widget.unitId),
+                    _CostBar(unit: unit),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -235,20 +236,20 @@ class _TroopOrderFormState extends State<_TroopOrderForm> {
 }
 
 class _CostBar extends StatelessWidget {
-  const _CostBar({required this.unitId});
+  const _CostBar({required this.unit});
 
-  final int unitId;
+  final Unit unit;
 
   @override
   Widget build(BuildContext context) {
-    final unit = UnitsConst.UNITS[0][unitId];
+    final settings = context.read<SettingsCubit>().state.settings;
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       _buildResItem(unit: unit, imagePath: DartopiaImages.lumber, position: 0),
       _buildResItem(unit: unit, imagePath: DartopiaImages.clay, position: 1),
       _buildResItem(unit: unit, imagePath: DartopiaImages.iron, position: 2),
       _buildResItem(unit: unit, imagePath: DartopiaImages.crop, position: 3),
       _buildUpkeep(unit: unit),
-      _buildTime(unit: unit),
+      _buildTime(unit: unit, troopsTrainingMultiplier: settings!.troopsTrainingMultiplier.toInt()),
     ]);
   }
 
@@ -274,11 +275,11 @@ class _CostBar extends StatelessWidget {
     ]);
   }
 
-  Widget _buildTime({required Unit unit}) {
+  Widget _buildTime({required Unit unit, required int troopsTrainingMultiplier}) {
     return Row(children: [
       Image.asset(DartopiaImages.clock, width: 12, height: 12),
       Text(
-        ' ${FormatUtil.formatTime(unit.time)}  ',
+        ' ${FormatUtil.formatTime(unit.time ~/ troopsTrainingMultiplier)}  ',
         style: const TextStyle(fontSize: 12),
       )
     ]);
