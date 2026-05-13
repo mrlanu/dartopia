@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:models/models.dart';
 
 import 'auth_interceptor.dart';
+import 'network_logging_interceptor.dart';
 
 class NetworkClient {
   NetworkClient._init() {
@@ -12,14 +13,7 @@ class NetworkClient {
     _dio.options.receiveTimeout = const Duration(seconds: 10);
 
     _dio.interceptors.add(AuthInterceptor());
-    /*if (kDebugMode) {
-      _dio.interceptors.add(
-        PrettyDioLogger(
-          requestHeader: true,
-          requestBody: true,
-        ),
-      );
-    }*/
+    _dio.interceptors.add(NetworkLoggingInterceptor());
   }
   static final NetworkClient _instance = NetworkClient._init();
   static NetworkClient get instance => _instance;
