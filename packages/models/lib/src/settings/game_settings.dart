@@ -9,6 +9,7 @@ class GameSettings extends Equatable {
     required this.chunkSize,
     required this.oasesAmount,
     required this.troopsSpeedX,
+    required this.buildingsSpeedX,
     required this.minUnitsForOasis,
     required this.maxUnitsForOasis,
     required this.troopBuildDuration,
@@ -26,6 +27,7 @@ class GameSettings extends Equatable {
       chunkSize: _asInt(json['chunkSize']),
       oasesAmount: _asInt(json['oasesAmount']),
       troopsSpeedX: _asInt(json['troopsSpeedX']),
+      buildingsSpeedX: _asInt(json['buildingsSpeedX']),
       minUnitsForOasis: _asInt(json['minUnitsForOasis']),
       maxUnitsForOasis: _asInt(json['maxUnitsForOasis']),
       troopBuildDuration: _asInt(json['troopBuildDuration']),
@@ -43,6 +45,7 @@ class GameSettings extends Equatable {
   final int chunkSize;
   final int oasesAmount;
   final int troopsSpeedX;
+  final int buildingsSpeedX;
   final int minUnitsForOasis;
   final int maxUnitsForOasis;
   final int troopBuildDuration;
@@ -61,6 +64,7 @@ class GameSettings extends Equatable {
         chunkSize,
         oasesAmount,
         troopsSpeedX,
+        buildingsSpeedX,
         minUnitsForOasis,
         maxUnitsForOasis,
         troopBuildDuration,

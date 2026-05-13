@@ -33,7 +33,7 @@ class BuildingDetailView extends StatelessWidget {
                 style: Theme.of(context)
                     .textTheme
                     .titleLarge!
-                    .copyWith(color: DartopiaColors.white),
+                    .copyWith(color: DartopiaColors.black),
               )),
           body: BuildingWidgetsFactory.get(buildingRecord)),
     );

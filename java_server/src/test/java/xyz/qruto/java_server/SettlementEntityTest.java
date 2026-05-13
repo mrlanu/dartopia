@@ -37,6 +37,7 @@ public class SettlementEntityTest {
         given(settingsService.readSettings()).willReturn(
                 Settings.builder()
                         .maxConstructionTasksInQueue(2)
+                        .buildingsSpeedX(10)
                         .build()
         );
         settlementEntity = SettlementEntity.builder()

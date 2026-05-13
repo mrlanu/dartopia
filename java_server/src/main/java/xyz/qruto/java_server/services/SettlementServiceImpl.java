@@ -121,7 +121,8 @@ public class SettlementServiceImpl implements SettlementService{
                 constructionRequest.getToLevel());
 
         if (canBeUpgraded) {
-            int upgradeDuration = specification.getTime().valueOf(constructionRequest.getToLevel());
+            int upgradeDuration = specification.getTime().valueOf(constructionRequest.getToLevel())
+                    / settingsService.readSettings().getBuildingsSpeedX();
             var newTask = new ConstructionTask(
                     UUID.randomUUID().toString(),
                     constructionRequest.getSpecificationId(),

@@ -6,6 +6,7 @@ import 'package:models/models.dart';
 
 import '../../../../utils/countdown.dart';
 import '../../../../utils/time_formatter.dart';
+import '../../../settings/cubit/settings_cubit.dart';
 import '../../../settlement/settlement.dart';
 
 class BuildingContainer extends StatelessWidget {
@@ -25,7 +26,9 @@ class BuildingContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SettlementBloc, SettlementState>(
       builder: (context, state) {
+        final settings = context.read<SettingsCubit>().state.settings;
         final specification = buildingSpecefication[buildingRecord[1]]!;
+        final toLevel = buildingRecord[2] + 1;
         final storage = state.settlement!.storage;
         final upgradingTask = state.settlement!.constructionTasks
             .where((task) =>
@@ -40,7 +43,7 @@ class BuildingContainer extends StatelessWidget {
                     ? child!(state.settlement!, buildingRecord)
                     : Container(),
                 _RequiredResourcesBar(
-                    buildingRecord: buildingRecord,
+                    toLevel: toLevel,
                     specification: specification,
                     storage: storage),
                 Row(
@@ -53,13 +56,15 @@ class BuildingContainer extends StatelessWidget {
                               width: 50,
                               height: 50,
                             ),
-                            Text(FormatUtil.formatTime(specification.time
-                                .valueOf(buildingRecord[2] + 1))),
+                            Text(FormatUtil.formatTime(
+                              specification.time.valueOf(toLevel)
+                                  ~/ settings!.buildingsSpeedX,
+                            )),
                           ])
                         : Column(
                             children: [
                               Text(
-                                'Upgrading to lvl: ${buildingRecord[2] + 1}',
+                                'Upgrading to lvl: $toLevel',
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold),
                               ),
@@ -81,15 +86,15 @@ class BuildingContainer extends StatelessWidget {
                         color: DartopiaColors.primary,
                         onPressed:
                             state.settlement!.constructionTasks.length <
-                                        maxConstructionTasksAllowed &&
+                                        settings!.maxConstructionTasksInQueue &&
                                     specification.canBeUpgraded(
                                         storage: storage,
-                                        toLevel: buildingRecord[2] + 1)
+                                        toLevel: toLevel)
                                 ? () {
                                     final request = ConstructionRequest(
                                         specificationId: specification.id,
                                         buildingId: buildingRecord[0],
-                                        toLevel: buildingRecord[2] + 1);
+                                        toLevel: toLevel);
                                     context.read<SettlementBloc>().add(
                                         BuildingUpgradeRequested(
                                             request: request));
@@ -115,12 +120,13 @@ class BuildingContainer extends StatelessWidget {
 }
 
 class _RequiredResourcesBar extends StatelessWidget {
-  const _RequiredResourcesBar(
-      {required this.buildingRecord,
-        required this.specification,
-        required this.storage});
+  const _RequiredResourcesBar({
+    required this.toLevel,
+    required this.specification,
+    required this.storage,
+  });
 
-  final List<int> buildingRecord;
+  final int toLevel;
   final Building specification;
   final List<double> storage;
 
@@ -135,12 +141,11 @@ class _RequiredResourcesBar extends StatelessWidget {
   }
 
   Widget _buildResItem({required String imagePath, required int position}) {
-    final resToNextLvl =
-    specification.getResourcesToNextLevel(buildingRecord[2] + 1);
+    final resToNextLvl = specification.getResourcesToNextLevel(toLevel);
     return Row(children: [
       Image.asset(imagePath, width: 40, height: 40,),
       Text(
-        '${specification.getResourcesToNextLevel(buildingRecord[2] + 1)[position]}',
+        '${resToNextLvl[position]}',
         style: TextStyle(
             color:
             resToNextLvl[position] > storage[position] ? Colors.red : null),

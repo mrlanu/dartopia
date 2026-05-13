@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:models/models.dart';
 
+import '../../../settings/cubit/settings_cubit.dart';
 import '../../../settlement/settlement.dart';
 import '../../../utils/time_formatter.dart';
 
@@ -24,6 +25,7 @@ class BuildingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final settings = context.read<SettingsCubit>().state.settings;
     return Stack(
         clipBehavior: Clip.none,
         //alignment: Alignment.center,
@@ -146,7 +148,7 @@ class BuildingCard extends StatelessWidget {
                           height: 50,
                         ),
                         Text(FormatUtil.formatTime(
-                            specification.time.valueOf(1))),
+                            specification.time.valueOf(1) ~/ settings!.buildingsSpeedX)),
                         const SizedBox(width: 20),
                         FilledButton(
                             onPressed: _isMatchRequirements() &&

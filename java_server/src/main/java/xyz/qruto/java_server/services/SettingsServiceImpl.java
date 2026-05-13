@@ -45,6 +45,7 @@ public class SettingsServiceImpl implements SettingsService {
                 .chunkSize(16)
                 .oasesAmount(100)
                 .troopsSpeedX(10)
+                .buildingsSpeedX(10)
                 .minUnitsForOasis(15)
                 .maxUnitsForOasis(30)
                 .troopBuildDuration(180)

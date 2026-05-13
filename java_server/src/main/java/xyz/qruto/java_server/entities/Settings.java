@@ -22,6 +22,7 @@ public class Settings {
     private int chunkSize;
     private int oasesAmount;
     private int troopsSpeedX;
+    private int buildingsSpeedX;
     private int minUnitsForOasis;
     private int maxUnitsForOasis;
 
