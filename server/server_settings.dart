@@ -9,6 +9,7 @@ class ServerSettings {
     required this.serverName,
     required this.mapWidth,
     required this.mapHeight,
+    required this.chunkSize,
     required this.oasesAmount,
     required this.troopsSpeedX,
     // after development should be deleted(should be gotten from models/UnitsConst)
@@ -21,6 +22,7 @@ class ServerSettings {
   final String serverName;
   final int mapWidth;
   final int mapHeight;
+  final int chunkSize;
   final int oasesAmount;
   final int troopsSpeedX;
 
@@ -35,12 +37,14 @@ class ServerSettings {
       serverName: 'testServer',
       mapWidth: 50,
       mapHeight: 50,
+      chunkSize: 16,
       oasesAmount: 100,
       troopsSpeedX: 1,
       troopBuildDuration: 180,
       maxConstructionTasksInQueue: 2,
       oasisName: 'Unoccupied Oasis',
-      natureRegTime: 4);
+      natureRegTime: 4,
+  );
 
   // Method to initialize settings from JSON
   static void initializeFromMap(Map<String, dynamic> map) {
@@ -48,6 +52,7 @@ class ServerSettings {
       serverName: map['serverName'] as String,
       mapWidth: map['mapWidth'] as int,
       mapHeight: map['mapHeight'] as int,
+      chunkSize: map['chunkSize'] as int,
       oasesAmount: map['oasesAmount'] as int,
       troopsSpeedX: map['troopsSpeedX'] as int,
       troopBuildDuration: map['troopBuildDuration'] as int,
@@ -61,6 +66,7 @@ class ServerSettings {
         'serverName': serverName,
         'mapWidth': mapWidth,
         'mapHeight': mapHeight,
+        'chunkSize': chunkSize,
         'oasesAmount': oasesAmount,
         'troopsSpeedX': troopsSpeedX,
         'troopBuildDuration': troopBuildDuration,
@@ -73,6 +79,7 @@ class ServerSettings {
     String? serverName,
     int? mapWidth,
     int? mapHeight,
+    int? chunkSize,
     int? oasesAmount,
     int? troopsSpeedX,
     int? troopBuildDuration,
@@ -84,12 +91,14 @@ class ServerSettings {
         serverName: serverName ?? this.serverName,
         mapWidth: mapWidth ?? this.mapWidth,
         mapHeight: mapHeight ?? this.mapHeight,
+        chunkSize: chunkSize ?? this.chunkSize,
         oasesAmount: oasesAmount ?? this.oasesAmount,
         troopsSpeedX: troopsSpeedX ?? this.troopsSpeedX,
         troopBuildDuration: troopBuildDuration ?? this.troopBuildDuration,
         maxConstructionTasksInQueue:
             maxConstructionTasksInQueue ?? this.maxConstructionTasksInQueue,
         oasisName: oasisName ?? this.oasisName,
-        natureRegTime: natureRegTime ?? this.natureRegTime);
+        natureRegTime: natureRegTime ?? this.natureRegTime,
+    );
   }
 }

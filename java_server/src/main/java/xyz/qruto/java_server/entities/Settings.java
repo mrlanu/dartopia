@@ -18,6 +18,8 @@ public class Settings {
     private String serverName;
     private int mapWidth;
     private int mapHeight;
+    /** Edge length of a world map chunk in tiles (must stay in sync with client). */
+    private int chunkSize;
     private int oasesAmount;
     private int troopsSpeedX;
     private int minUnitsForOasis;

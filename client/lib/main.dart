@@ -5,6 +5,8 @@ import 'package:dartopia/navigation/router.dart';
 import 'package:dartopia/periodic_update/cubit/periodic_update_cubit.dart';
 import 'package:dartopia/reports/bloc/reports_bloc.dart';
 import 'package:dartopia/reports/repository/reports_repository.dart';
+import 'package:dartopia/settings/cubit/settings_cubit.dart';
+import 'package:dartopia/settings/settings_repository.dart';
 import 'package:dartopia/settlement/bloc/settlement_bloc.dart';
 import 'package:dartopia/settlement/repository/settlement_repository.dart';
 import 'package:dartopia/statistics/cubit/statistics_cubit.dart';
@@ -40,9 +42,18 @@ class MyApp extends StatelessWidget {
         RepositoryProvider<MessagesRepository>(
           create: (context) => MessagesRepositoryImpl(),
         ),
+        RepositoryProvider<SettingsRepository>(
+          create: (context) => SettingsRepositoryImpl(),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
+          BlocProvider(
+            lazy: false,
+            create: (context) => SettingsCubit(
+              context.read<SettingsRepository>(),
+            )..load(),
+          ),
           BlocProvider(
             lazy: false,
             create: (context) => AuthBloc(

@@ -7,7 +7,6 @@ import xyz.qruto.java_server.entities.UserEntity;
 import xyz.qruto.java_server.errors.UserErrorException;
 import xyz.qruto.java_server.models.SettlementKind;
 import xyz.qruto.java_server.models.TileProbability;
-import xyz.qruto.java_server.models.world.WorldChunkConstants;
 import xyz.qruto.java_server.models.responses.TileDetails;
 import xyz.qruto.java_server.models.responses.WorldChunkResponse;
 import xyz.qruto.java_server.models.responses.WorldMetaResponse;
@@ -93,7 +92,7 @@ public class WorldServiceImpl implements WorldService{
         var s = settingsService.readSettings();
         int w = s.getMapWidth();
         int h = s.getMapHeight();
-        int cs = WorldChunkConstants.CHUNK_SIZE;
+        int cs = s.getChunkSize();
         int cnX = (w + cs - 1) / cs;
         int cnY = (h + cs - 1) / cs;
         return WorldMetaResponse.builder()

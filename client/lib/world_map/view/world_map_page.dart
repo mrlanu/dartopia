@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:dartopia/consts/consts.dart';
+import 'package:dartopia/settings/cubit/settings_cubit.dart';
 import 'package:dartopia/settlement/bloc/settlement_bloc.dart';
 import 'package:dartopia/world_map/cubit/world_map_cubit.dart';
 import 'package:dartopia/world_map/repository/world_repository.dart';
@@ -18,15 +19,55 @@ class WorldMapPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final worldRepo = WorldRepositoryImpl();
     final currentSettlement = context.read<SettlementBloc>().state.settlement!;
-    return RepositoryProvider(
-      create: (context) => worldRepo,
-      child: BlocProvider(
-        create: (context) => WorldMapCubit(worldRepo)
-          ..bootstrap(currentSettlement.x, currentSettlement.y),
-        child: const WorldView(),
-      ),
+    return BlocBuilder<SettingsCubit, SettingsState>(
+      builder: (context, settingsState) {
+        if (settingsState.status == SettingsStatus.loading ||
+            settingsState.status == SettingsStatus.initial) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+        if (settingsState.status == SettingsStatus.failure ||
+            settingsState.settings == null) {
+          return Scaffold(
+            body: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      settingsState.error ?? 'Could not load game settings',
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    FilledButton(
+                      onPressed: () =>
+                          context.read<SettingsCubit>().load(),
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+        final worldRepo = WorldRepositoryImpl();
+        final settings = settingsState.settings!;
+        return RepositoryProvider(
+          create: (context) => worldRepo,
+          child: BlocProvider(
+            create: (context) => WorldMapCubit(worldRepo)
+              ..bootstrap(
+                currentSettlement.x,
+                currentSettlement.y,
+                settings,
+              ),
+            child: const WorldView(),
+          ),
+        );
+      },
     );
   }
 }
@@ -132,9 +173,17 @@ class _WorldViewState extends State<WorldView> {
                       Text(state.error!, textAlign: TextAlign.center),
                       const SizedBox(height: 16),
                       FilledButton(
-                        onPressed: () => context
-                            .read<WorldMapCubit>()
-                            .bootstrap(state.villageX, state.villageY),
+                        onPressed: () {
+                          final settings =
+                              context.read<SettingsCubit>().state.settings;
+                          if (settings != null) {
+                            context.read<WorldMapCubit>().bootstrap(
+                                  state.villageX,
+                                  state.villageY,
+                                  settings,
+                                );
+                          }
+                        },
                         child: const Text('Retry'),
                       ),
                     ],

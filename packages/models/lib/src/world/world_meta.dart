@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:models/src/settings/game_settings.dart';
 
 class WorldMeta extends Equatable {
   const WorldMeta({
@@ -16,6 +17,26 @@ class WorldMeta extends Equatable {
   final int chunksX;
   final int chunksY;
   final int revision;
+
+  /// Matches server `WorldServiceImpl#getWorldMeta` (map size and [GameSettings.chunkSize]).
+  factory WorldMeta.fromGameSettings(
+    GameSettings settings, {
+    int revision = 1,
+  }) {
+    final w = settings.mapWidth;
+    final h = settings.mapHeight;
+    final cs = settings.chunkSize;
+    final cnX = (w + cs - 1) ~/ cs;
+    final cnY = (h + cs - 1) ~/ cs;
+    return WorldMeta(
+      mapWidth: w,
+      mapHeight: h,
+      chunkSize: cs,
+      chunksX: cnX,
+      chunksY: cnY,
+      revision: revision,
+    );
+  }
 
   factory WorldMeta.fromJson(Map<String, dynamic> json) {
     return WorldMeta(

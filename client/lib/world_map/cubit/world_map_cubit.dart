@@ -105,7 +105,11 @@ class WorldMapCubit extends Cubit<WorldMapState> {
   /// Use this when a dialog/overlay context cannot see [RepositoryProvider] (e.g. go_router shells).
   WorldRepository get worldRepository => _repo;
 
-  Future<void> bootstrap(int villageX, int villageY) async {
+  Future<void> bootstrap(
+    int villageX,
+    int villageY,
+    GameSettings gameSettings,
+  ) async {
     emit(state.copyWith(
       loading: true,
       error: null,
@@ -113,7 +117,7 @@ class WorldMapCubit extends Cubit<WorldMapState> {
       villageY: villageY,
     ));
     try {
-      final meta = await _repo.fetchWorldMeta();
+      final meta = WorldMeta.fromGameSettings(gameSettings);
       final nx = villageX.clamp(
         WorldMapState.minCenterX(meta.mapWidth),
         WorldMapState.maxCenterX(meta.mapWidth),

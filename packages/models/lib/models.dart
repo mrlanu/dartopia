@@ -20,6 +20,7 @@ export 'src/requests/requests.dart';
 export 'src/resources/resources.dart';
 export 'src/responses/map_tile.dart';
 export 'src/responses/responses.dart';
+export 'src/settings/game_settings.dart';
 export 'src/settlement.dart';
 export 'src/settlement_kind.dart';
 export 'src/side_brief.dart';

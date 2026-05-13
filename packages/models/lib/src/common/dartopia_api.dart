@@ -22,8 +22,8 @@ class Api {
     return '/world';
   }
 
-  static String fetchWorldMeta() {
-    return '/world/meta';
+  static String fetchSettings() {
+    return '/settings';
   }
 
   static String fetchWorldChunk(int cx, int cy) {
