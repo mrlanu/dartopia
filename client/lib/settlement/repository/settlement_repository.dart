@@ -12,7 +12,7 @@ abstract class SettlementRepository {
   Future<void> upgradeBuilding(
       {required String settlementId, required ConstructionRequest request});
 
-  Future<List<ShortSettlementInfo>> fetchSettlementListByUserId();
+  Future<List<ShortSettlementInfo>> fetchAllSettlementList();
 
   Future<void> orderUnits(
       {required String settlementId, required int unitId, required int amount});
@@ -42,10 +42,10 @@ class SettlementRepositoryImpl implements SettlementRepository {
       _settlementStreamController.asBroadcastStream();
 
   @override
-  Future<List<ShortSettlementInfo>> fetchSettlementListByUserId() async {
+  Future<List<ShortSettlementInfo>> fetchAllSettlementList() async {
     try {
       final response = await _networkClient
-          .get<List<dynamic>>(Api.fetchSettlementsInfoList());
+          .get<List<dynamic>>(Api.fetchAllSettlementsList());
       final result = response.data!
           .map((e) => ShortSettlementInfo.fromJson(e as Map<String, dynamic>))
           .toList();

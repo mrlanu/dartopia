@@ -34,7 +34,7 @@ class Api {
     return '/world/tiles';
   }
 
-  static String fetchSettlementsInfoList() {
+  static String fetchAllSettlementsList() {
     return '/settlements';
   }
 
