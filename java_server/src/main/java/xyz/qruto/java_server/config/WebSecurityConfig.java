@@ -57,7 +57,7 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
         http.csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/**", "/settings", "/world/create")
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/**", "/settings", "/world/create", "/actuator/health")
                         .permitAll().requestMatchers("/admin/**")
                         .permitAll().anyRequest().authenticated());
 
