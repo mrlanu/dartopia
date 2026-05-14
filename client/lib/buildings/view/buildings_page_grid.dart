@@ -56,6 +56,7 @@ class _BuildingsGridViewState extends State<BuildingsGridView> {
   @override
   Widget build(BuildContext context) {
     final settlement = widget.settlement;
+    final settings = context.read<SettingsCubit>().state.settings;
     return Scaffold(
       appBar: buildAppBar(),
       drawer: const MainDrawer(),
@@ -108,7 +109,7 @@ class _BuildingsGridViewState extends State<BuildingsGridView> {
                     key: UniqueKey(),
                     buildingsAmount: settlement.buildings.length,
                     labelBackground: settlement.constructionTasks.length <
-                            maxConstructionTasksAllowed
+                            settings!.maxConstructionTasksInQueue
                         ? DartopiaColors.primaryContainer
                         : DartopiaColors.white38),
               ],

@@ -146,7 +146,7 @@ public class SettlementEntity {
                 if (constructionTasks.size() < maxConstructionTasksInQueue) {
                     building.set(3, 1);
                 } else if (constructionTasks.size() == maxConstructionTasksInQueue) {
-                    building.set(3, 1);
+                    building.set(3, 2);
                 } else {
                     building.set(3, 0);
                 }

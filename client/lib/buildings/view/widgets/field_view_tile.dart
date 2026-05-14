@@ -57,7 +57,7 @@ class FieldViewTile extends StatelessWidget {
                     ? _upgradingBody(
                         context, isUpgrading!, buildingRecord[2] + 1)
                     : _notUpgradingBody(cost,
-                        specification.time.valueOf(buildingRecord[2] + 1))),
+                        specification.time.valueOf(buildingRecord[2] + 1) ~/ settings.buildingsSpeedX)),
             Column(
               children: [
                 IconButton.outlined(
