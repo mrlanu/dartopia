@@ -1,0 +1,15 @@
+spring:
+  devtools:
+    restart:
+      enabled: true
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      username: mrlanu
+      password: pass
+      database: dartopia-java
+      authentication-database: admin
+
+myapp:
+  jwtSecret: nio98282exec3=m=m=a=ExceptionHandlerExceptionResolver=Resolved

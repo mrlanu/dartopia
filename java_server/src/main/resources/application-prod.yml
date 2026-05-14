@@ -1,0 +1,10 @@
+spring:
+  devtools:
+    restart:
+      enabled: false
+  data:
+    mongodb:
+      uri: ${MONGODB_URI}
+
+myapp:
+  jwtSecret: ${JWT_SECRET}
