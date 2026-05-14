@@ -1,5 +1,5 @@
 server:
-  port: 8282
+  port: ${PORT:8282}
 spring:
   cache:
     type: caffeine
