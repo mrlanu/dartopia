@@ -42,13 +42,13 @@ public class AutomationServiceImpl implements AutomationService {
     }
 
     @Override
-    public CompletableFuture<Void> startAutomation(String settlementId) {
+    public CompletableFuture<Void> startAutomation() {
         synchronized (flightMutex) {
             if (inFlight != null && !inFlight.isDone()) {
                 return inFlight;
             }
             CompletableFuture<Void> started = CompletableFuture.runAsync(
-                    () -> processDueMovements(settlementId),
+                    this::processDueMovements,
                     automationExecutor);
             inFlight = started;
             started.whenComplete((r, ex) -> {
@@ -62,8 +62,8 @@ public class AutomationServiceImpl implements AutomationService {
         }
     }
 
-    private void processDueMovements(String settlementId) {
-        System.out.printf("Automation has been started by settlementId - %s%n", settlementId);
+    private void processDueMovements() {
+        System.out.print("Automation has been started by settlementId");
         var movementsList = movementRepository.findAllByMovingIsTrueAndWhenIsBefore(LocalDateTime.now());
 
         for (Movement movement : movementsList) {
@@ -88,11 +88,5 @@ public class AutomationServiceImpl implements AutomationService {
     @Override
     public String taskB() {
         return "TASK B IS RUNNING on " + Thread.currentThread().getName();
-    }
-
-    @Override
-    public boolean isLocked() {
-        CompletableFuture<Void> current = inFlight;
-        return current != null && !current.isDone();
     }
 }

@@ -27,18 +27,18 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public void createReports(Movement movement,
-                              SettlementEntity attacker,
-                              SettlementEntity defender,
+                              SettlementEntity offenseSettlement,
+                              SettlementEntity defenseSettlement,
                               List<Movement> reinforcement,
                               BattleResult battleResult,
                               List<Integer> plunder) {
         var ownDef = PlayerInfo.builder()
-                .settlementId(defender.getId())
-                .settlementName(defender.getName())
+                .settlementId(defenseSettlement.getId())
+                .settlementName(defenseSettlement.getName())
                 .playerName(movement.getTo().getPlayerName())
-                .nation(defender.getNation())
-                .units(battleResult.getUnitsBeforeBattle().get(0))
-                .casualty(battleResult.getCasualties().get(0))
+                .nation(defenseSettlement.getNation())
+                .units(battleResult.getUnitsBeforeBattle().getFirst())
+                .casualty(battleResult.getCasualties().getFirst())
                 .build();
 
         var off = PlayerInfo.builder()
@@ -46,8 +46,8 @@ public class ReportServiceImpl implements ReportService {
                 .settlementName(movement.getFrom().getVillageName())
                 .playerName(movement.getFrom().getPlayerName())
                 .nation(movement.getNation())
-                .units(battleResult.getUnitsBeforeBattle().get(battleResult.getUnitsBeforeBattle().size() - 1))
-                .casualty(battleResult.getCasualties().get(battleResult.getCasualties().size() - 1))
+                .units(battleResult.getUnitsBeforeBattle().getLast())
+                .casualty(battleResult.getCasualties().getLast())
                 .build();
 
         var participants = Arrays.asList(off, ownDef);
@@ -66,9 +66,9 @@ public class ReportServiceImpl implements ReportService {
         }
 
         List<ReportOwner> reportOwners = new ArrayList<>();
-        reportOwners.add(new ReportOwner(attacker.getUserId(), 0));
-        if (!defender.getKind().isOasis()) {
-            reportOwners.add(new ReportOwner(defender.getUserId(), 0));
+        reportOwners.add(new ReportOwner(offenseSettlement.getUserId(), 0));
+        if (!defenseSettlement.getKind().isOasis()) {
+            reportOwners.add(new ReportOwner(defenseSettlement.getUserId(), 0));
         }
         reinforcement.forEach(m -> reportOwners
                 .add(new ReportOwner(m.getFrom().getUserId(), 0)));
@@ -124,8 +124,8 @@ public class ReportServiceImpl implements ReportService {
 
         //report for off
         if (report.getReportOwners().get(0).getPlayerId().equals(playerId)) {
-            List<Integer> units = report.getParticipants().get(0).getUnits();
-            List<Integer> casualty = report.getParticipants().get(0).getCasualty();
+            List<Integer> units = report.getParticipants().getFirst().getUnits();
+            List<Integer> casualty = report.getParticipants().getFirst().getCasualty();
             return isAttackFailed(units, casualty)
                     ? getFailedReport(report)
                     : getFullReport(report);
@@ -171,7 +171,7 @@ public class ReportServiceImpl implements ReportService {
         return MilitaryReportResponse.builder()
                 .id(report.getId())
                 .failed(true)
-                .off(report.getParticipants().get(0))
+                .off(report.getParticipants().getFirst())
                 .def(def)
                 .mission(report.getMission())
                 .dateTime(report.getDateTime())
@@ -247,7 +247,7 @@ public class ReportServiceImpl implements ReportService {
 
     private int getReportStatus(List<ReportOwner> owners, String playerId) {
         return owners.stream()
-                .filter(owner -> owner.getPlayerId().equals(playerId)).toList().get(0).getStatus();
+                .filter(owner -> owner.getPlayerId().equals(playerId)).toList().getFirst().getStatus();
     }
 
     private String createTitle(

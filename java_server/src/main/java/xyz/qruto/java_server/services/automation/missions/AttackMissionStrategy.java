@@ -92,25 +92,25 @@ public class AttackMissionStrategy extends MissionStrategy {
 
         var battleResults = battle.perform(battleField, sidesArmy);
         var plunder = returnOff(off, offenseSettlement, defenseSettlement);
-        sidesArmy.remove(sidesArmy.size() - 1);
+        sidesArmy.removeLast();
         updateDef(defenseSettlement, sidesArmy, reinforcementEntities);
         settlementService.save(defenseSettlement);
         reportService.createReports(movement, offenseSettlement,
-                defenseSettlement, reinforcementEntities, battleResults.get(0),
+                defenseSettlement, reinforcementEntities, battleResults.getFirst(),
                 plunder.stream().map(BigDecimal::intValue).toList());
     }
 
-    private List<BigDecimal> returnOff(Army offArmy, SettlementEntity off, SettlementEntity def) {
+    private List<BigDecimal> returnOff(Army offArmy, SettlementEntity offenseSettlement, SettlementEntity defenseSettlement) {
         //off has been completely destroyed
         if (offArmy.getNumbers().stream().reduce(0, Integer::sum) == 0){
             movementRepository.deleteById(movement.getId());
             return Arrays.asList(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
         }
-        List<BigDecimal> plunder = calculatePlunder(offArmy.getNumbers(), def);
-        def.spendResources(plunder);
+        List<BigDecimal> plunder = calculatePlunder(offArmy.getNumbers(), defenseSettlement);
+        defenseSettlement.spendResources(plunder);
 
-        LocalDateTime whenBack = ArrivalTimeCalculator.getArrivalTime(off.getX(), off.getY(),
-                def.getX(), def.getY(), offArmy.getNumbers(), settingsService.readSettings());
+        LocalDateTime whenBack = ArrivalTimeCalculator.getArrivalTime(offenseSettlement.getX(), offenseSettlement.getY(),
+                defenseSettlement.getX(), defenseSettlement.getY(), offArmy.getNumbers(), settingsService.readSettings());
         var backMovement = Movement.builder()
                 .id(movement.getId())
                 .moving(true)
@@ -128,11 +128,12 @@ public class AttackMissionStrategy extends MissionStrategy {
         return plunder;
     }
 
-    private void updateDef(SettlementEntity def, List<Army> sidesArmy, List<Movement> defEntities) {
-        def.setArmy(sidesArmy.get(0).getNumbers());
+    private void updateDef(SettlementEntity defenseSettlement, List<Army> sidesArmy, List<Movement> defEntities) {
+        defenseSettlement.setArmy(sidesArmy.getFirst().getNumbers());
         // start from 1 because there is off army on the front in sidesArmy
         for (int i = 1; i < sidesArmy.size(); i++){
             var currentDef = defEntities.get(i - 1);
+
             if (sidesArmy.get(i).getNumbers().stream().reduce(0, Integer::sum) == 0){
                 movementRepository.deleteById(currentDef.getId());
                 continue;

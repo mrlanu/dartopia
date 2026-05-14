@@ -8,9 +8,7 @@ public interface AutomationService {
      * Processes all overdue troop movements. Concurrent callers share one run (single-flight)
      * and each returned future completes when that run finishes.
      */
-    CompletableFuture<Void> startAutomation(String settlementId);
+    CompletableFuture<Void> startAutomation();
 
     String taskB();
-
-    boolean isLocked();
 }

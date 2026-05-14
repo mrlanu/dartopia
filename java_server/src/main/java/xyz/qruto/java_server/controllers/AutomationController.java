@@ -22,7 +22,7 @@ public class AutomationController {
     @GetMapping
     public String getAsync() {
         try {
-            automationService.startAutomation(Thread.currentThread().getName()).join();
+            automationService.startAutomation().join();
         } catch (CompletionException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Automation failed", e.getCause());

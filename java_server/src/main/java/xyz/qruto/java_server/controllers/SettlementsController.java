@@ -42,7 +42,7 @@ public class SettlementsController {
     @GetMapping("/{settlementId}")
     public ResponseEntity<SettlementEntity> getSettlementById(@PathVariable String settlementId) {
         try {
-            automationService.startAutomation(settlementId).join();
+            automationService.startAutomation().join();
         } catch (CompletionException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Automation failed", e.getCause());
@@ -50,9 +50,7 @@ public class SettlementsController {
 
         SettlementEntity settlement = settlementService
                 .getSettlementById(settlementId, LocalDateTime.now());
-        return settlement != null ?
-                new ResponseEntity<>(settlement, HttpStatus.OK) :
-                new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(settlement, HttpStatus.OK);
     }
 
     @PostMapping("/{settlementId}/constructions")

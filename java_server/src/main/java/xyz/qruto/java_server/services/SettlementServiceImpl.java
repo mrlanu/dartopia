@@ -67,10 +67,6 @@ public class SettlementServiceImpl implements SettlementService{
     @Override
     @Transactional
     public SettlementEntity getSettlementById(String settlementId, LocalDateTime untilTime) {
-        List<Movement> t = movementRepository.findMovingToOrFromVillageIdBeforeDate(settlementId, LocalDateTime.now());
-        if(!t.isEmpty()){
-            return null;
-        }
         SettlementEntity settlement = settlementRepository.findById(settlementId)
                 .orElseThrow(() -> new IllegalArgumentException("Settlement not found"));
         List<Movement> movements = movementRepository.findAllBySettlementId(settlementId);
@@ -130,7 +126,7 @@ public class SettlementServiceImpl implements SettlementService{
                     constructionRequest.getToLevel(),
                     constructionTasks.isEmpty()
                     ? LocalDateTime.now().plusSeconds(upgradeDuration)
-                    : constructionTasks.get(constructionTasks.size() - 1)
+                    : constructionTasks.getLast()
                             .getExecutionTime().plusSeconds(upgradeDuration));
             List<BigDecimal> resToNextLevel = specification.getResourcesToNextLevel(constructionRequest.getToLevel());
             settlement.spendResources(resToNextLevel);
@@ -163,7 +159,7 @@ public class SettlementServiceImpl implements SettlementService{
 
         LocalDateTime lastTime;
         if (!ordersList.isEmpty()) {
-            var lastOrder = ordersList.get(ordersList.size() - 1);
+            var lastOrder = ordersList.getLast();
             lastTime = lastOrder.getLastTime()
                     .plusSeconds((long) lastOrder.getLeftTrain() * lastOrder.getDurationEach());
         } else {
