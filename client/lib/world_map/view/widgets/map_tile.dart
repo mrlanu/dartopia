@@ -1,17 +1,19 @@
 import 'dart:ui' as ui;
 
-import 'package:dartopia/world_map/repository/world_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:models/models.dart';
+import '../../repository/world_repository.dart';
+
 
 /// Uses [repo] directly so the tile dialog works when [showDialog]'s route is outside [RepositoryProvider]'s scope (go_router shell / root navigator).
 Future<void> showMapTileDetailsDialog(
-  BuildContext navigatorContext,
-  WorldRepository repo,
-  MapTile tile,
-) {
+    BuildContext navigatorContext,
+    WorldRepository repo,
+    MapTile tile,
+    List<int> myCoordinates,
+    ) {
   return showDialog<void>(
     context: navigatorContext,
     builder: (_) {
@@ -23,16 +25,16 @@ Future<void> showMapTileDetailsDialog(
             height: height,
             child: Center(
               child: FutureBuilder<TileDetails>(
-                future: repo.fetchTileDetails(tile.corX, tile.corY),
+                future: repo.fetchTileDetails(myCoordinates[0], myCoordinates[1], tile.corX, tile.corY),
                 builder: (_, snapshot) {
                   return snapshot.connectionState == ConnectionState.done
                       ? MapTileDialogBody(tileDetails: snapshot.data!)
                       : SizedBox(
-                          height: height,
-                          child: const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
+                    height: height,
+                    child: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
                 },
               ),
             ),
@@ -41,38 +43,6 @@ Future<void> showMapTileDetailsDialog(
       );
     },
   );
-}
-
-class MapTileWidget extends StatelessWidget {
-  final MapTile tile;
-  final ui.Image image;
-  final WorldRepository repository;
-
-  const MapTileWidget({
-    super.key,
-    required this.tile,
-    required this.image,
-    required this.repository,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        print('ONE TAP on: ${tile.id.$oid}');
-      },
-      onDoubleTap: () {
-        if (tile.tileNumber != 0) {
-          showMapTileDetailsDialog(context, repository, tile);
-        }
-      },
-      child: SizedBox(
-        child: CustomPaint(
-          painter: TilePainter(image: image, tileNumber: tile.tileNumber),
-        ),
-      ),
-    );
-  }
 }
 
 class MapTileDialogBody extends StatelessWidget {
@@ -102,7 +72,7 @@ class MapTileDialogBody extends StatelessWidget {
                 style: textTheme.titleMedium,
               ),
               Text(
-                'Distance: ${tileDetails.distance}',
+                'Distance: ${tileDetails.distance.toStringAsFixed(1)}',
                 style: textTheme.titleMedium,
               ),
               tileDetails.animals != null

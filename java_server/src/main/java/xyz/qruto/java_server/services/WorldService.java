@@ -19,5 +19,5 @@ public interface WorldService {
 
     MapTile save(MapTile emptyTile);
 
-    TileDetails getTileByCoordinates(int x, int y);
+    TileDetails getTileByCoordinates(int myX, int myY, int x, int y);
 }

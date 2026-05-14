@@ -29,7 +29,7 @@ public class ArrivalTimeCalculator {
         return speed;
     }
 
-    private static double getDistance(int toX, int toY, int fromX, int fromY) {
+    public static double getDistance(int toX, int toY, int fromX, int fromY) {
         double legX = Math.pow(toX - fromX, 2);
         double legY = Math.pow(toY - fromY, 2);
         return Math.sqrt(legX + legY);

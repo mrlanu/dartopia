@@ -45,8 +45,11 @@ public class WorldController {
     }
 
     @GetMapping("/tiles")
-    public ResponseEntity<TileDetails> getTileByCoordinates(@RequestParam int x, int y) {
-        var tileDetails = worldService.getTileByCoordinates(x, y);
+    public ResponseEntity<TileDetails> getTileByCoordinates(@RequestParam int myX,
+                                                            @RequestParam int myY,
+                                                            @RequestParam int x,
+                                                            @RequestParam int y) {
+        var tileDetails = worldService.getTileByCoordinates(myX, myY, x, y);
         return ResponseEntity.ok(tileDetails);
     }
 }

@@ -129,7 +129,7 @@ class _WorldViewState extends State<WorldView> {
   }
 
   /// Uses [State.context] (not BlocBuilder's callback context) so provider lookup matches the pre-refactor GridView widgets.
-  void _onDoubleTapDown(TapDownDetails details, double tilePx) {
+  void _onDoubleTapDown(TapDownDetails details, double tilePx, List<int> myCoordinates,) {
     final state = context.read<WorldMapCubit>().state;
     final meta = state.meta;
     if (meta == null) {
@@ -149,7 +149,7 @@ class _WorldViewState extends State<WorldView> {
       return;
     }
     final repo = context.read<WorldMapCubit>().worldRepository;
-    unawaited(showMapTileDetailsDialog(context, repo, tile));
+    unawaited(showMapTileDetailsDialog(context, repo, tile, myCoordinates));
   }
 
   @override
@@ -163,6 +163,7 @@ class _WorldViewState extends State<WorldView> {
       builder: (context, snapshot) {
         return BlocBuilder<WorldMapCubit, WorldMapState>(
           builder: (context, state) {
+            final settlement = context.read<SettlementBloc>().state.settlement;
             if (state.error != null) {
               return Center(
                 child: Padding(
@@ -246,7 +247,7 @@ class _WorldViewState extends State<WorldView> {
                                 );
                               },
                               onDoubleTapDown: (d) =>
-                                  _onDoubleTapDown(d, tilePx),
+                                  _onDoubleTapDown(d, tilePx, [settlement!.x, settlement.y]),
                               child: Transform.translate(
                                 offset: _panRemainder,
                                 child: CustomPaint(

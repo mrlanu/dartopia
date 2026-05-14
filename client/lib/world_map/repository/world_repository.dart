@@ -7,7 +7,7 @@ abstract class WorldRepository {
 
   Future<WorldChunk> fetchWorldChunk(int cx, int cy);
 
-  Future<TileDetails> fetchTileDetails(int x, int y);
+  Future<TileDetails> fetchTileDetails(int myX, int myY, int x, int y);
 }
 
 class WorldRepositoryImpl implements WorldRepository {
@@ -52,10 +52,14 @@ class WorldRepositoryImpl implements WorldRepository {
 
   @override
   Future<TileDetails> fetchTileDetails(
+    int myX,
+    int myY,
     int x,
     int y,
   ) async {
     final queryParameters = {
+      'myX': myX.toString(),
+      'myY': myY.toString(),
       'x': x.toString(),
       'y': y.toString(),
     };

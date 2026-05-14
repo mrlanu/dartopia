@@ -13,6 +13,7 @@ import xyz.qruto.java_server.models.responses.WorldMetaResponse;
 import xyz.qruto.java_server.repositories.SettlementRepository;
 import xyz.qruto.java_server.repositories.UserRepository;
 import xyz.qruto.java_server.repositories.WorldRepository;
+import xyz.qruto.java_server.utils.ArrivalTimeCalculator;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -145,7 +146,7 @@ public class WorldServiceImpl implements WorldService{
     }
 
     @Override
-    public TileDetails getTileByCoordinates(int x, int y){
+    public TileDetails getTileByCoordinates(int myX, int myY, int x, int y){
         var settlement = settlementRepository.findByXAndY(x, y).orElseThrow();
         var user = userRepository.findById(settlement.getUserId()).orElseThrow();
         if(settlement.getKind().isOasis()){
@@ -160,7 +161,7 @@ public class WorldServiceImpl implements WorldService{
                 .y(settlement.getY())
                 .population(100)
                 .animals(settlement.getKind().isOasis() ? settlement.getArmy() : null)
-                .distance(3)
+                .distance(ArrivalTimeCalculator.getDistance(myX, myY, x, y))
                 .build();
     }
 
