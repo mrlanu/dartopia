@@ -3,6 +3,7 @@ import 'package:dartopia/settlement/settlement.dart';
 import 'package:dartopia/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:models/models.dart';
 
@@ -111,9 +112,9 @@ class _TroopOrderFormState extends State<_TroopOrderForm> {
         child: Row(
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 8.0),
+              padding: EdgeInsets.only(left: 8.w),
               child: Container(
-                height: 100,
+                height: 140,
                 width: constraints.maxWidth * 0.23,
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.only(
@@ -128,7 +129,7 @@ class _TroopOrderFormState extends State<_TroopOrderForm> {
               ),
             ),
             Container(
-              height: 100,
+              height: 140,
               width: constraints.maxWidth * 0.72,
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(
@@ -243,17 +244,22 @@ class _CostBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final settings = context.read<SettingsCubit>().state.settings;
-    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      _buildResItem(context, unit: unit, imagePath: DartopiaImages.lumber, position: 0),
-      _buildResItem(context, unit: unit, imagePath: DartopiaImages.clay, position: 1),
-      _buildResItem(context, unit: unit, imagePath: DartopiaImages.iron, position: 2),
-      _buildResItem(context, unit: unit, imagePath: DartopiaImages.crop, position: 3),
-      _buildUpkeep(context, unit: unit),
-      _buildTime(context,
-          unit: unit,
-          troopsTrainingMultiplier:
-              settings!.troopsTrainingMultiplier.toInt()),
-    ]);
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          _buildResItem(context, unit: unit, imagePath: DartopiaImages.lumber, position: 0),
+          _buildResItem(context, unit: unit, imagePath: DartopiaImages.clay, position: 1),
+          _buildResItem(context, unit: unit, imagePath: DartopiaImages.iron, position: 2),
+          _buildResItem(context, unit: unit, imagePath: DartopiaImages.crop, position: 3),
+          _buildUpkeep(context, unit: unit),
+        ]),
+        _buildTime(context,
+            unit: unit,
+            troopsTrainingMultiplier:
+            settings!.troopsTrainingMultiplier.toInt()),
+      ],
+    );
   }
 
   Widget _buildResItem(BuildContext context,

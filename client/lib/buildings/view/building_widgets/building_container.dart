@@ -35,87 +35,93 @@ class BuildingContainer extends StatelessWidget {
                 task.buildingId == buildingRecord[0] &&
                 task.specificationId == buildingRecord[1])
             .toList();
-        return Card(
-            elevation: 5,
-            child: Column(
-              children: [
-                child != null
-                    ? child!(state.settlement!, buildingRecord)
-                    : Container(),
-                _RequiredResourcesBar(
-                    toLevel: toLevel,
-                    specification: specification,
-                    storage: storage),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Card(
+              elevation: 5,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
                   children: [
-                    upgradingTask.isEmpty
-                        ? Row(children: [
-                            Image.asset(
-                              DartopiaImages.clock,
-                              width: 50,
-                              height: 50,
-                            ),
-                            Text(FormatUtil.formatTime(
-                              specification.time.valueOf(toLevel)
-                                  ~/ settings!.buildingsSpeedX,
-                            )),
-                          ])
-                        : Column(
-                            children: [
-                              Text(
-                                'Upgrading to lvl: $toLevel',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium!
-                                    .copyWith(fontWeight: FontWeight.bold),
+                    child != null
+                        ? child!(state.settlement!, buildingRecord)
+                        : Container(),
+                    _RequiredResourcesBar(
+                        toLevel: toLevel,
+                        specification: specification,
+                        storage: storage),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        upgradingTask.isEmpty
+                            ? Row(children: [
+                                Image.asset(
+                                  DartopiaImages.clock,
+                                  width: 50,
+                                  height: 50,
+                                ),
+                                Text(FormatUtil.formatTime(
+                                  specification.time.valueOf(toLevel)
+                                      ~/ settings!.buildingsSpeedX,
+                                )),
+                              ])
+                            : Column(
+                                children: [
+                                  Text(
+                                    'Upgrading to lvl: $toLevel',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .copyWith(fontWeight: FontWeight.bold),
+                                  ),
+                                  CountdownTimer(
+                                    startValue: upgradingTask[0]
+                                        .executionTime
+                                        .difference(DateTime.now())
+                                        .inSeconds,
+                                    onFinish: () {
+                                      context
+                                          .read<SettlementBloc>()
+                                          .add(const SettlementFetchRequested());
+                                    },
+                                  ),
+                                ],
                               ),
-                              CountdownTimer(
-                                startValue: upgradingTask[0]
-                                    .executionTime
-                                    .difference(DateTime.now())
-                                    .inSeconds,
-                                onFinish: () {
-                                  context
-                                      .read<SettlementBloc>()
-                                      .add(const SettlementFetchRequested());
-                                },
-                              ),
-                            ],
-                          ),
-                    const SizedBox(width: 20),
-                    IconButton.outlined(
-                        color: DartopiaColors.primary,
-                        onPressed:
-                            state.settlement!.constructionTasks.length <
-                                        settings!.maxConstructionTasksInQueue &&
-                                    specification.canBeUpgraded(
-                                        storage: storage,
-                                        toLevel: toLevel)
-                                ? () {
-                                    final request = ConstructionRequest(
-                                        specificationId: specification.id,
-                                        buildingId: buildingRecord[0],
-                                        toLevel: toLevel);
-                                    context.read<SettlementBloc>().add(
-                                        BuildingUpgradeRequested(
-                                            request: request));
-                                  }
-                                : null,
-                        icon: const Icon(Icons.update)),
-                    const SizedBox(width: 20),
-                    enterable
-                        ? IconButton.outlined(
+                        const SizedBox(width: 20),
+                        IconButton.outlined(
                             color: DartopiaColors.primary,
-                            onPressed: () {
-                              onEnter!();
-                            },
-                            icon: const Icon(Icons.input))
-                        : const SizedBox(),
+                            onPressed:
+                                state.settlement!.constructionTasks.length <
+                                            settings!.maxConstructionTasksInQueue &&
+                                        specification.canBeUpgraded(
+                                            storage: storage,
+                                            toLevel: toLevel)
+                                    ? () {
+                                        final request = ConstructionRequest(
+                                            specificationId: specification.id,
+                                            buildingId: buildingRecord[0],
+                                            toLevel: toLevel);
+                                        context.read<SettlementBloc>().add(
+                                            BuildingUpgradeRequested(
+                                                request: request));
+                                      }
+                                    : null,
+                            icon: const Icon(Icons.update)),
+                        const SizedBox(width: 20),
+                        enterable
+                            ? IconButton.outlined(
+                                color: DartopiaColors.primary,
+                                onPressed: () {
+                                  onEnter!();
+                                },
+                                icon: const Icon(Icons.input))
+                            : const SizedBox(),
+                      ],
+                    )
                   ],
-                )
-              ],
-            ));
+                ),
+              )),
+        );
       },
     );
   }

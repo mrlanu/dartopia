@@ -27,13 +27,15 @@ class BuildingDetailView extends StatelessWidget {
       child: Scaffold(
           backgroundColor: DartopiaColors.background,
           appBar: AppBar(
+              foregroundColor: DartopiaColors.onPrimary,
+              backgroundColor: DartopiaColors.primary,
               centerTitle: true,
               title: Text(
                 '${specification.name} level ${buildingRecord[2]}',
                 style: Theme.of(context)
                     .textTheme
                     .titleLarge!
-                    .copyWith(color: DartopiaColors.black),
+                    .copyWith(color: DartopiaColors.white),
               )),
           body: BuildingWidgetsFactory.get(buildingRecord)),
     );
