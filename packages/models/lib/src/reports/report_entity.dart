@@ -1,5 +1,7 @@
 import 'package:models/models.dart';
 
+import '../server_date_time.dart';
+
 class ReportEntity {
   final String? id;
   final List<ReportOwner> reportOwners;
@@ -38,7 +40,7 @@ class ReportEntity {
         participants = (map['participants'] as List<dynamic>)
             .map((e) => PlayerInfo.fromMap(e as Map<String, dynamic>))
             .toList(),
-        dateTime = DateTime.parse(map['dateTime'] as String),
+        dateTime = parseServerDateTime(map['dateTime'] as String),
         bounty = (map['bounty'] as List<dynamic>).map((u) => u as int).toList();
 
   Map<String, dynamic> toMap() => <String, dynamic>{

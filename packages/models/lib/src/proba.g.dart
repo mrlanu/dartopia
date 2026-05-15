@@ -10,9 +10,7 @@ Proba _$ProbaFromJson(Map<String, dynamic> json) => Proba(
       id: json['_id'] as String?,
       firstName: json['firstName'] as String,
       lastName: json['lastName'] as String,
-      dateOfBirth: json['dateOfBirth'] == null
-          ? null
-          : DateTime.parse(json['dateOfBirth'] as String),
+      dateOfBirth: nullableServerDateTimeFromJson(json['dateOfBirth']),
     );
 
 Map<String, dynamic> _$ProbaToJson(Proba instance) => <String, dynamic>{

@@ -14,7 +14,7 @@ _$MessageResponseImpl _$$MessageResponseImplFromJson(
       body: json['body'] as String,
       senderId: json['senderId'] as String,
       senderName: json['senderName'] as String,
-      dateTime: DateTime.parse(json['dateTime'] as String),
+      dateTime: serverDateTimeFromJson(json['dateTime']),
     );
 
 Map<String, dynamic> _$$MessageResponseImplToJson(

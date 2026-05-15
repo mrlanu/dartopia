@@ -2,6 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:models/models.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
+import 'server_date_time.dart';
+
 class ConstructionTask extends Equatable implements Executable {
   final String id;
   final int specificationId;
@@ -37,7 +39,7 @@ class ConstructionTask extends Equatable implements Executable {
         specificationId = map['specificationId'] as int,
         buildingId = map['buildingId'] as int,
         toLevel = map['toLevel'] as int,
-        when = DateTime.parse(map['when'] as String);
+        when = parseServerDateTime(map['when'] as String);
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'id': id,

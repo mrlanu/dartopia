@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '../server_date_time.dart';
+
 class TroopsSendContract extends Equatable {
   final int corX;
   final int corY;
@@ -27,7 +29,7 @@ class TroopsSendContract extends Equatable {
         ownerId = map['ownerId'] as String?,
         playerName = map['playerName'] as String?,
         settlementId = map['settlementId'] as String?,
-        when = DateTime.parse(map['when'] as String);
+        when = parseServerDateTime(map['when'] as String);
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'name': name,

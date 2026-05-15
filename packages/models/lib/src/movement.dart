@@ -2,6 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:models/models.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
+import 'server_date_time.dart';
+
 enum Mission {
   home,
   back,
@@ -48,7 +50,7 @@ class Movement extends Equatable{
         moving = map['moving'] as bool,
         from = SideBrief.fromJson(map['from'] as Map<String, dynamic>),
         to = SideBrief.fromJson(map['to'] as Map<String, dynamic>),
-        when = DateTime.parse(map['when'] as String),
+        when = parseServerDateTime(map['when'] as String),
         units = (map['units'] as List<dynamic>).map((u) => u as int).toList(),
         plunder = (map['plunder'] as List<dynamic>).map((u) => u as int).toList(),
         mission = Mission.values.byName(map['mission'] as String),

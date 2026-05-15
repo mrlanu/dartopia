@@ -5,7 +5,8 @@ class Api {
   //static const baseURL = 'http://10.0.2.2:8080';
 
   //java server
-  static const baseURL = 'http://10.0.2.2:8282';
+  //static const baseURL = 'http://10.0.2.2:8282';
+  static const baseURL = 'https://dartopia-production.up.railway.app';
 
   //web
   //static const baseURL = 'http://localhost:8282';

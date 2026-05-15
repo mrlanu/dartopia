@@ -1,3 +1,5 @@
+import '../server_date_time.dart';
+
 class ReportBrief {
   String id;
   bool read;
@@ -15,7 +17,7 @@ class ReportBrief {
       : id = map['id'] as String,
         read = map['read'] as bool,
         title = map['title'] as String,
-        received = DateTime.parse(map['received'] as String);
+        received = parseServerDateTime(map['received'] as String);
 
   Map<String, dynamic> toJson() => <String, dynamic>{
     'id': id,

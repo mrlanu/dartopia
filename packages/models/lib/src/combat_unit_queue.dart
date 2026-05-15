@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
+import 'server_date_time.dart';
+
 class CombatUnitQueue extends Equatable{
   final String id;
   DateTime lastTime;
@@ -25,7 +27,7 @@ class CombatUnitQueue extends Equatable{
 
   CombatUnitQueue.fromJson(Map<String, dynamic> map)
       : id = map['id'] as String,
-        lastTime = DateTime.parse(map['lastTime'] as String),
+        lastTime = parseServerDateTime(map['lastTime'] as String),
         unitId = map['unitId'] as int,
         leftTrain = map['leftTrain'] as int,
         durationEach = map['durationEach'] as int;

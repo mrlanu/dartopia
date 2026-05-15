@@ -3,6 +3,8 @@ import 'package:equatable/equatable.dart';
 import 'package:models/models.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 
+import 'server_date_time.dart';
+
 /// The `Settlement` class
 class Settlement extends Equatable {
   /// Creates a new `Settlement`.
@@ -113,9 +115,9 @@ class Settlement extends Equatable {
         combatUnitQueue = (map['combatUnitQueue'] as List<dynamic>)
             .map((e) => CombatUnitQueue.fromJson(e as Map<String, dynamic>))
             .toList(),
-        lastModified = DateTime.parse(map['lastModified'] as String),
+        lastModified = parseServerDateTime(map['lastModified'] as String),
         lastSpawnedAnimals =
-            DateTime.parse(map['lastSpawnedAnimals'] as String);
+            parseServerDateTime(map['lastSpawnedAnimals'] as String);
 
   final ObjectId id;
   final SettlementKind kind;

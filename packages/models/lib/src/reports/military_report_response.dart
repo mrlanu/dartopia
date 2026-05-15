@@ -2,6 +2,8 @@ import 'package:collection/collection.dart';
 import 'package:models/models.dart';
 import 'package:models/src/reports/def_info.dart';
 
+import '../server_date_time.dart';
+
 class MilitaryReportResponse {
   final String id;
   final bool failed;
@@ -92,7 +94,7 @@ class MilitaryReportResponse {
         reinforcements = (map['reinforcements'] as List<dynamic>)
             .map((e) => DefenseInfo.fromMap(e as Map<String, dynamic>))
             .toList(),
-        dateTime = DateTime.parse(map['dateTime'] as String),
+        dateTime = parseServerDateTime(map['dateTime'] as String),
         bounty = (map['bounty'] as List<dynamic>).map((u) => u as int).toList();
 
   Map<String, dynamic> toMap() => <String, dynamic>{

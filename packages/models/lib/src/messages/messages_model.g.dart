@@ -15,7 +15,7 @@ _$MessagesModelImpl _$$MessagesModelImplFromJson(Map<String, dynamic> json) =>
       recipientName: json['recipientName'] as String,
       recipientId: json['recipientId'] as String,
       read: json['read'] as bool,
-      time: DateTime.parse(json['time'] as String),
+      time: serverDateTimeFromJson(json['time']),
     );
 
 Map<String, dynamic> _$$MessagesModelImplToJson(_$MessagesModelImpl instance) =>

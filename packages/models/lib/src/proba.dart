@@ -1,5 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
+import 'server_date_time.dart';
+
 part 'proba.g.dart';
 
 @JsonSerializable()
@@ -9,6 +11,7 @@ class Proba {
   final String? id;
 
   final String firstName, lastName;
+  @JsonKey(fromJson: nullableServerDateTimeFromJson)
   final DateTime? dateOfBirth;
 
   Proba({this.id, required this.firstName, required this.lastName, this.dateOfBirth});
