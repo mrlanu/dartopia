@@ -15,123 +15,203 @@ class StatisticsTable extends StatelessWidget {
   Widget build(BuildContext context) {
     final filter =
         context.select((StatisticsCubit cubit) => cubit.state.sortStat);
-    return FutureBuilder(
+    final textTheme = Theme.of(context).textTheme;
+
+    return FutureBuilder<String?>(
       future: SharedPreferences.getInstance().then(
-            (value) => value.getString('name'),
+        (value) => value.getString('name'),
       ),
       builder: (context, snapshot) {
-        return snapshot.hasData ? Table(
-          columnWidths: filter == SortStat.overview
-              ? {
-            0: const FixedColumnWidth(40.0),
-            1: const FixedColumnWidth(110.0),
-            2: const FixedColumnWidth(110.0),
-            3: const FixedColumnWidth(70.0),
-            4: const FixedColumnWidth(60.0),
-          }
-              : {
-            0: const FixedColumnWidth(40.0),
-            1: const FixedColumnWidth(90.0),
-            2: const FixedColumnWidth(80.0),
-            3: const FixedColumnWidth(60.0),
-            4: const FixedColumnWidth(60.0),
-            5: const FixedColumnWidth(60.0),
+        if (!snapshot.hasData) {
+          return const SizedBox.shrink();
+        }
+        final playerName = snapshot.data!;
+
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minWidth: constraints.maxWidth),
+                  child: Table(
+                    columnWidths: _columnWidths(filter),
+                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                    children: [
+                      switch (filter) {
+                        SortStat.overview => _buildHeader(
+                            context,
+                            ['', 'Player', 'Alliance', 'Populations', 'Villages'],
+                          ),
+                        SortStat.attacker => _buildHeader(
+                            context,
+                            [
+                              '',
+                              'Player',
+                              'Alliance',
+                              'Populations',
+                              'Villages',
+                              'Points'
+                            ],
+                          ),
+                        SortStat.defender => _buildHeader(
+                            context,
+                            [
+                              '',
+                              'Player',
+                              'Alliance',
+                              'Populations',
+                              'Villages',
+                              'Points'
+                            ],
+                          ),
+                        SortStat.top => _buildHeader(
+                            context,
+                            [
+                              '',
+                              'Player',
+                              'Alliance',
+                              'Populations',
+                              'Villages',
+                              'Points'
+                            ],
+                          ),
+                      },
+                      ...switch (filter) {
+                        SortStat.overview => staticsModels.map(
+                            (m) => _buildDataRow(
+                                  context,
+                                  textTheme,
+                                  [
+                                    m.position.toString(),
+                                    m.playerName,
+                                    m.allianceName,
+                                    m.population.toString(),
+                                    m.villagesAmount.toString(),
+                                  ],
+                                  playerName,
+                                ),
+                          ),
+                        SortStat.attacker => staticsModels.map(
+                            (m) => _buildDataRow(
+                                  context,
+                                  textTheme,
+                                  [
+                                    m.position.toString(),
+                                    m.playerName,
+                                    m.allianceName,
+                                    m.population.toString(),
+                                    m.villagesAmount.toString(),
+                                    m.attackPoint.toString(),
+                                  ],
+                                  playerName,
+                                ),
+                          ),
+                        SortStat.defender => staticsModels.map(
+                            (m) => _buildDataRow(
+                                  context,
+                                  textTheme,
+                                  [
+                                    m.position.toString(),
+                                    m.playerName,
+                                    m.allianceName,
+                                    m.population.toString(),
+                                    m.villagesAmount.toString(),
+                                    m.defensePoint.toString(),
+                                  ],
+                                  playerName,
+                                ),
+                          ),
+                        SortStat.top => throw UnimplementedError(),
+                      },
+                    ],
+                  ),
+                ),
+              ),
+            );
           },
-          children: [
-            switch (filter) {
-              SortStat.overview =>
-                  _buildHeader(['', 'Player', 'Alliance', 'Populations', 'Villages']),
-              SortStat.attacker => _buildHeader(
-                  ['', 'Player', 'Alliance', 'Populations', 'Villages', 'Points']),
-              SortStat.defender => _buildHeader(
-                  ['', 'Player', 'Alliance', 'Populations', 'Villages', 'Points']),
-              SortStat.top => _buildHeader(
-                  ['', 'Player', 'Alliance', 'Populations', 'Villages', 'Points']),
-            },
-            ...switch (filter) {
-              SortStat.overview => staticsModels.map(
-                    (m) => _buildDataRow([
-                  m.position.toString(),
-                  m.playerName,
-                  m.allianceName,
-                  m.population.toString(),
-                  m.villagesAmount.toString()
-                ], snapshot.data!),
-              ),
-              SortStat.attacker => staticsModels.map(
-                    (m) => _buildDataRow([
-                  m.position.toString(),
-                  m.playerName,
-                  m.allianceName,
-                  m.population.toString(),
-                  m.villagesAmount.toString(),
-                  m.attackPoint.toString()
-                ], snapshot.data!),
-              ),
-              SortStat.defender => staticsModels.map(
-                    (m) => _buildDataRow([
-                  m.position.toString(),
-                  m.playerName,
-                  m.allianceName,
-                  m.population.toString(),
-                  m.villagesAmount.toString(),
-                  m.defensePoint.toString()
-                ], snapshot.data!),
-              ),
-              SortStat.top => throw UnimplementedError(),
-            },
-            // Add more TableRows for additional data rows
-          ],
-        ) : Container();
+        );
       },
     );
   }
 
-  TableRow _buildHeader(List<String> data) {
+  Map<int, TableColumnWidth> _columnWidths(SortStat filter) {
+    if (filter == SortStat.overview) {
+      return const {
+        0: FixedColumnWidth(32),
+        1: FlexColumnWidth(2),
+        2: FlexColumnWidth(2),
+        3: FlexColumnWidth(1.2),
+        4: FlexColumnWidth(1),
+      };
+    }
+    return const {
+      0: FixedColumnWidth(32),
+      1: FlexColumnWidth(2),
+      2: FlexColumnWidth(1.5),
+      3: FlexColumnWidth(1.2),
+      4: FlexColumnWidth(1),
+      5: FlexColumnWidth(1),
+    };
+  }
+
+  TableRow _buildHeader(BuildContext context, List<String> data) {
+    final headerStyle = Theme.of(context)
+        .textTheme
+        .labelMedium!
+        .copyWith(color: Colors.white, fontWeight: FontWeight.w600);
+
     return TableRow(
       decoration: const BoxDecoration(color: DartopiaColors.primary),
       children: [
-        ...List.generate(
-          data.length,
-          (index) => TableCell(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12.0),
-                child: Text(
-                  data[index],
-                  style: const TextStyle(color: Colors.white),
-                ),
+        for (final label in data)
+          TableCell(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+              child: Text(
+                label,
+                style: headerStyle,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
               ),
             ),
           ),
-        )
       ],
     );
   }
 
-  TableRow _buildDataRow(List<String> data, String playerName) {
+  TableRow _buildDataRow(
+    BuildContext context,
+    TextTheme textTheme,
+    List<String> data,
+    String playerName,
+  ) {
+    final cellStyle = textTheme.bodySmall;
+    final isCurrentPlayer = data.length > 1 && data[1] == playerName;
+
     return TableRow(
       decoration: BoxDecoration(
-        color: data[1] == playerName ? DartopiaColors.primaryContainer : null,
-        border: const Border(bottom: BorderSide(color: Colors.grey, width: 1.0)),
+        color: isCurrentPlayer ? DartopiaColors.primaryContainer : null,
+        border: const Border(
+          bottom: BorderSide(color: Colors.grey, width: 1.0),
+        ),
       ),
       children: [
-        ...List.generate(
-          data.length,
-          (index) => TableCell(
-            child: GestureDetector(
-              onTap: () => print(data[1]),
-              child: Center(
-                  child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12.0),
-                child: Text(
-                  data[index],
-                  overflow: TextOverflow.ellipsis,
-                ),
-              )),
+        for (final cell in data)
+          TableCell(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+              child: Text(
+                cell,
+                style: cellStyle,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+              ),
             ),
           ),
-        ),
       ],
     );
   }

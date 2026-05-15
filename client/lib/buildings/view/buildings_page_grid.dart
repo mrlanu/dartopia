@@ -4,6 +4,7 @@ import 'package:dartopia/consts/consts.dart';
 import 'package:dartopia/settlement/repository/settlement_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:models/models.dart';
 import 'package:reorderable_grid_view/reorderable_grid_view.dart';
@@ -62,17 +63,15 @@ class _BuildingsGridViewState extends State<BuildingsGridView> {
       drawer: const MainDrawer(),
       body: Column(
         children: [
-          const SizedBox(
-            height: 3,
-          ),
+          SizedBox(height: 3.h),
           StorageBar(
             settlement: settlement,
           ),
           Expanded(
             child: ReorderableGridView.count(
-              padding: const EdgeInsets.all(10),
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
+              padding: EdgeInsets.all(8.w),
+              crossAxisSpacing: 8.w,
+              mainAxisSpacing: 8.h,
               crossAxisCount: 3,
               dragWidgetBuilder: (index, child) {
                 return Card(
@@ -179,18 +178,18 @@ class _BuildingGridItem extends StatelessWidget {
       label: Text(lbl),
       backgroundColor: DartopiaColors.primary,
       textColor: DartopiaColors.onPrimary,
-      textStyle: Theme.of(context).textTheme.bodyMedium,
-      offset: Offset(-2.0 * lbl.length, 3),
-      largeSize: 22,
+      textStyle: Theme.of(context).textTheme.bodySmall,
+      offset: Offset(-2.0 * lbl.length, 3.h),
+      largeSize: 20.sp,
       smallSize: 0,
       child: Badge(
         alignment: Alignment.bottomLeft,
         label: _buildLabel(labelTextColor, context),
         textColor: DartopiaColors.onPrimary,
         backgroundColor: DartopiaColors.primary,
-        offset: const Offset(0, -15),
-        textStyle: Theme.of(context).textTheme.bodyMedium,
-        largeSize: 22,
+        offset: Offset(0, -12.h),
+        textStyle: Theme.of(context).textTheme.bodySmall,
+        largeSize: 20.sp,
         child: GestureDetector(
           onTap: () {
             context.go('/buildings/details', extra: buildingRecord);
@@ -213,9 +212,9 @@ class _BuildingGridItem extends StatelessWidget {
         ? Text(buildingSpecefication[buildingRecord[1]]!.name)
         : Row(
             children: [
-              Text(buildingSpecefication[constructionTask!.specificationId]!
-                  .name),
-              const SizedBox(width: 5),
+              /*Text(buildingSpecefication[constructionTask!.specificationId]!
+                  .name),*/
+              SizedBox(width: 5.w),
               CountdownTimer(key: UniqueKey(),
                 startValue: constructionTask!.executionTime
                     .difference(DateTime.now())
@@ -225,7 +224,7 @@ class _BuildingGridItem extends StatelessWidget {
                       .read<SettlementBloc>()
                       .add(const SettlementFetchRequested());
                 },
-                textStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                textStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
                       color: DartopiaColors.onPrimary,
                     ),
               ),
@@ -274,12 +273,12 @@ class _BuildingGridAddItem extends StatelessWidget {
         label: Text(availableEmptySpots.toString()),
         backgroundColor: DartopiaColors.primary,
         textStyle: Theme.of(context).textTheme.bodyMedium,
-        offset: const Offset(0, -15),
-        largeSize: 22,
+        offset: Offset(0, -12.h),
+        largeSize: 20.sp,
         child: Card(
           color: labelBackground,
-          child: const Center(
-            child: Icon(Icons.add, color: DartopiaColors.black),
+          child: Center(
+            child: Icon(Icons.add, color: DartopiaColors.black, size: 28.sp),
           ),
         ),
       ),

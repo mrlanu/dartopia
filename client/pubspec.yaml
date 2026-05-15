@@ -36,6 +36,7 @@ dependencies:
   jwt_decode: ^0.3.1
   go_router: ^13.2.0
   number_paginator: ^0.4.1
+  flutter_screenutil: ^5.9.3
 
 dev_dependencies:
   flutter_test:

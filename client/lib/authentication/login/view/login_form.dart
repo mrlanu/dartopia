@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:formz/formz.dart';
 
 import '../login.dart';
@@ -20,7 +21,7 @@ class LoginForm extends StatelessWidget {
                 content: Text(
                   state.errorMessage,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                       color: Colors.black, fontWeight: FontWeight.w700),
                 ),
                 backgroundColor: Colors.redAccent,
@@ -35,11 +36,11 @@ class LoginForm extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             _EmailInput(),
-            const Padding(padding: EdgeInsets.all(12)),
+            Padding(padding: EdgeInsets.all(12.w)),
             _PasswordInput(),
-            const Padding(padding: EdgeInsets.all(12)),
+            Padding(padding: EdgeInsets.all(12.w)),
             _LoginButton(),
-            const Padding(padding: EdgeInsets.all(12)),
+            Padding(padding: EdgeInsets.all(12.w)),
             const SignUpButton()
           ],
         ),
@@ -99,7 +100,7 @@ class _LoginButton extends StatelessWidget {
         return state.status.isInProgress
             ? const CircularProgressIndicator()
             : Padding(
-                padding: const EdgeInsets.only(top: 28.0),
+                padding: EdgeInsets.only(top: 28.h),
                 child: SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -111,9 +112,9 @@ class _LoginButton extends StatelessWidget {
                                 .add(const LoginSubmitted());
                           }
                         : null,
-                    child: const Text(
+                    child: Text(
                       'Login',
-                      style: TextStyle(fontSize: 30),
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
                 ),

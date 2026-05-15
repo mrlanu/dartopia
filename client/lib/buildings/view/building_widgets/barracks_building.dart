@@ -183,9 +183,9 @@ class _TroopOrderFormState extends State<_TroopOrderForm> {
                                     8.0), // Customize the button shape
                               ),
                             ),
-                            child: const Text(
-                              'Train', // Button text
-                              style: TextStyle(fontSize: 18.0),
+                            child: Text(
+                              'Train',
+                              style: Theme.of(context).textTheme.titleSmall,
                             ),
                           ),
                         )
@@ -202,20 +202,20 @@ class _TroopOrderFormState extends State<_TroopOrderForm> {
   }
 
   Widget _buildAmountFormInput(int maxAmount) {
-    final size = MediaQuery.of(context).size;
+    final textTheme = Theme.of(context).textTheme;
     return Form(
       key: _formKey,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       child: TextFormField(
         controller: _textEditingController,
-        style: TextStyle(fontSize: size.width * 0.04),
+        style: textTheme.bodyMedium,
         keyboardType: TextInputType.number,
         decoration: InputDecoration(
           isDense: true,
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-          labelStyle: TextStyle(
-              fontSize: size.width * 0.04, color: DartopiaColors.black),
+          labelStyle: textTheme.bodyMedium!
+              .copyWith(color: DartopiaColors.black),
           border: const OutlineInputBorder(),
           errorStyle: const TextStyle(height: 0.01),
           labelText: 'Amount',
@@ -244,43 +244,47 @@ class _CostBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final settings = context.read<SettingsCubit>().state.settings;
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      _buildResItem(unit: unit, imagePath: DartopiaImages.lumber, position: 0),
-      _buildResItem(unit: unit, imagePath: DartopiaImages.clay, position: 1),
-      _buildResItem(unit: unit, imagePath: DartopiaImages.iron, position: 2),
-      _buildResItem(unit: unit, imagePath: DartopiaImages.crop, position: 3),
-      _buildUpkeep(unit: unit),
-      _buildTime(unit: unit, troopsTrainingMultiplier: settings!.troopsTrainingMultiplier.toInt()),
+      _buildResItem(context, unit: unit, imagePath: DartopiaImages.lumber, position: 0),
+      _buildResItem(context, unit: unit, imagePath: DartopiaImages.clay, position: 1),
+      _buildResItem(context, unit: unit, imagePath: DartopiaImages.iron, position: 2),
+      _buildResItem(context, unit: unit, imagePath: DartopiaImages.crop, position: 3),
+      _buildUpkeep(context, unit: unit),
+      _buildTime(context,
+          unit: unit,
+          troopsTrainingMultiplier:
+              settings!.troopsTrainingMultiplier.toInt()),
     ]);
   }
 
-  Widget _buildResItem(
+  Widget _buildResItem(BuildContext context,
       {required Unit unit, required String imagePath, required int position}) {
     final resToNextLvl = unit.cost;
     return Row(children: [
       Image.asset(imagePath, width: 12, height: 12),
       Text(
         '${resToNextLvl[position]}  ',
-        style: const TextStyle(fontSize: 12),
+        style: Theme.of(context).textTheme.bodySmall,
       )
     ]);
   }
 
-  Widget _buildUpkeep({required Unit unit}) {
+  Widget _buildUpkeep(BuildContext context, {required Unit unit}) {
     return Row(children: [
       Image.asset(DartopiaImages.crop, width: 12, height: 12),
       Text(
         '${unit.upKeep}   ',
-        style: const TextStyle(fontSize: 12),
+        style: Theme.of(context).textTheme.bodySmall,
       )
     ]);
   }
 
-  Widget _buildTime({required Unit unit, required int troopsTrainingMultiplier}) {
+  Widget _buildTime(BuildContext context,
+      {required Unit unit, required int troopsTrainingMultiplier}) {
     return Row(children: [
       Image.asset(DartopiaImages.clock, width: 12, height: 12),
       Text(
         ' ${FormatUtil.formatTime(unit.time ~/ troopsTrainingMultiplier)}  ',
-        style: const TextStyle(fontSize: 12),
+        style: Theme.of(context).textTheme.bodySmall,
       )
     ]);
   }

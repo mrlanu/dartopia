@@ -32,7 +32,7 @@ class MessageForm extends StatelessWidget {
                 content: Text(
                   state.errorMessage,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                       color: Colors.black, fontWeight: FontWeight.w700),
                 ),
                 backgroundColor: Colors.redAccent,
@@ -77,8 +77,8 @@ class MessageForm extends StatelessWidget {
                 ),
                 TextFormField(
                   initialValue: state.message,
-                  minLines: 10,
-                  maxLines: null,
+                  minLines: 6,
+                  maxLines: 12,
                   // Allows for unlimited lines
                   keyboardType: TextInputType.multiline,
                   decoration: const InputDecoration(

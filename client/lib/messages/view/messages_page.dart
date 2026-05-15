@@ -19,24 +19,17 @@ class MessagesView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<MessagesCubit, MessagesState>(
       builder: (context, state) {
-        return SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 30,
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 8.0),
-                child: MessagesTabsBar(),
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              switch (state.selectedTab) {
-                MessagesTabs.inbox =>
-                  state.messagesStatus == MessagesStatus.loading
-                      ? const Center(child: CircularProgressIndicator())
-                      : const MessagesTable(),
+        return Column(
+          children: [
+            const SizedBox(height: 8),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: MessagesTabsBar(),
+            ),
+            const SizedBox(height: 8),
+            Expanded(
+              child: switch (state.selectedTab) {
+                MessagesTabs.inbox ||
                 MessagesTabs.sent =>
                   state.messagesStatus == MessagesStatus.loading
                       ? const Center(child: CircularProgressIndicator())
@@ -44,40 +37,29 @@ class MessagesView extends StatelessWidget {
                 MessagesTabs.write =>
                   state.sendingStatus == SendingStatus.loading
                       ? const Center(child: CircularProgressIndicator())
-                      : const MessageForm(),
+                      : const SingleChildScrollView(
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          child: MessageForm(),
+                        ),
               },
-              //const Spacer(),
-              const SizedBox(
-                height: 15,
+            ),
+            if (state.selectedTab != MessagesTabs.write) ...[
+              const Padding(
+                padding: EdgeInsets.only(right: 8),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: ButtonsBar(),
+                ),
               ),
-              state.selectedTab != MessagesTabs.write
-                  ? Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0),
-                      child: Column(
-                        children: [
-                          const Row(
-                            children: [
-                              Spacer(),
-                              Padding(
-                                padding: EdgeInsets.only(right: 18.0),
-                                child: ButtonsBar(),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          state.messagesResponse != null &&
-                                  state
-                                      .messagesResponse!.messagesList.isNotEmpty
-                              ? const MessagesPaginator()
-                              : const SizedBox(),
-                        ],
-                      ),
-                    )
-                  : const SizedBox(),
+              const SizedBox(height: 4),
+              if (state.messagesResponse != null &&
+                  state.messagesResponse!.messagesList.isNotEmpty)
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 8),
+                  child: MessagesPaginator(),
+                ),
             ],
-          ),
+          ],
         );
       },
     );

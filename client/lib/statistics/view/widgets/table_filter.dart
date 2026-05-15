@@ -11,6 +11,7 @@ class TableFilter extends StatelessWidget {
     final sort =
         context.select((StatisticsCubit cubit) => cubit.state.sortStat);
     const selectedColor = DartopiaColors.primary;
+    final chipStyle = Theme.of(context).textTheme.labelLarge;
     return Wrap(
       spacing: 3,
       children: [
@@ -27,8 +28,8 @@ class TableFilter extends StatelessWidget {
           checkmarkColor: Colors.white,
           label: Text(
             'Overview',
-            style:
-                TextStyle(color: sort.index == 0 ? Colors.white : Colors.black),
+            style: chipStyle!.copyWith(
+                color: sort.index == 0 ? Colors.white : Colors.black),
           ),
           selected: sort.index == 0,
           onSelected: (value) {
@@ -47,8 +48,8 @@ class TableFilter extends StatelessWidget {
           checkmarkColor: Colors.white,
           label: Text(
             'Attacker',
-            style:
-                TextStyle(color: sort.index == 1 ? Colors.white : Colors.black),
+            style: chipStyle.copyWith(
+                color: sort.index == 1 ? Colors.white : Colors.black),
           ),
           selected: sort.index == 1,
           onSelected: (value) {
@@ -67,8 +68,8 @@ class TableFilter extends StatelessWidget {
           checkmarkColor: Colors.white,
           label: Text(
             'Defender',
-            style:
-                TextStyle(color: sort.index == 2 ? Colors.white : Colors.black),
+            style: chipStyle.copyWith(
+                color: sort.index == 2 ? Colors.white : Colors.black),
           ),
           selected: sort.index == 2,
           onSelected: (value) {
@@ -90,8 +91,8 @@ class TableFilter extends StatelessWidget {
           checkmarkColor: Colors.white,
           label: Text(
             'Top 10',
-            style:
-                TextStyle(color: sort.index == 3 ? Colors.white : Colors.black),
+            style: chipStyle.copyWith(
+                color: sort.index == 3 ? Colors.white : Colors.black),
           ),
           selected: sort.index == 3,
           onSelected: (value) {

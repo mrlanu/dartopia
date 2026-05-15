@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:models/models.dart';
 
 import '../../../settings/cubit/settings_cubit.dart';
@@ -32,8 +33,8 @@ class BuildingCard extends StatelessWidget {
           Card(
               elevation: 5,
               child: Container(
-                padding: const EdgeInsets.all(15),
-                height: 390,
+                padding: EdgeInsets.all(15.w),
+                height: 0.46.sh,
                 //width: size.width * 0.9,
                 child: Column(
                   children: [
@@ -43,12 +44,12 @@ class BuildingCard extends StatelessWidget {
                           specification.name,
                           style: Theme.of(context).textTheme.titleLarge,
                         )),
-                    const SizedBox(height: 10),
+                    SizedBox(height: 10.h),
                     Align(
                       alignment: Alignment.topLeft,
                       child: SizedBox(
                         width: size.width * 0.55,
-                        height: 120,
+                        height: 120.h,
                         child: Text(
                             overflow: TextOverflow.clip,
                             specification.description),
@@ -59,8 +60,8 @@ class BuildingCard extends StatelessWidget {
                       Row(children: [
                         Image.asset(
                           DartopiaImages.lumber,
-                          width: 40,
-                          height: 40,
+                          width: 32.w,
+                          height: 32.w,
                         ),
                         Text(
                           '${specification.cost[0]}',
@@ -73,8 +74,8 @@ class BuildingCard extends StatelessWidget {
                       Row(children: [
                         Image.asset(
                           DartopiaImages.clay,
-                          width: 40,
-                          height: 40,
+                          width: 32.w,
+                          height: 32.w,
                         ),
                         Text(
                           '${specification.cost[1]}',
@@ -87,8 +88,8 @@ class BuildingCard extends StatelessWidget {
                       Row(children: [
                         Image.asset(
                           DartopiaImages.iron,
-                          width: 40,
-                          height: 40,
+                          width: 32.w,
+                          height: 32.w,
                         ),
                         Text(
                           '${specification.cost[2]}',
@@ -101,8 +102,8 @@ class BuildingCard extends StatelessWidget {
                       Row(children: [
                         Image.asset(
                           DartopiaImages.crop,
-                          width: 40,
-                          height: 40,
+                          width: 32.w,
+                          height: 32.w,
                         ),
                         Text(
                           '${specification.cost[3]}',
@@ -117,14 +118,14 @@ class BuildingCard extends StatelessWidget {
                     Align(
                       alignment: Alignment.topLeft,
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(8.w),
                         child: Text('Requirements:',
                             style: Theme.of(context).textTheme.titleMedium),
                       ),
                     ),
                     Row(
                       children: [
-                        const SizedBox(width: 10),
+                        SizedBox(width: 10.w),
                         ...specification.requirementBuildings.map((e) {
                           final building = buildingSpecefication[e[0]]!;
                           return Text(
@@ -143,12 +144,12 @@ class BuildingCard extends StatelessWidget {
                       children: [
                         Image.asset(
                           DartopiaImages.clock,
-                          width: 50,
-                          height: 50,
+                          width: 40.w,
+                          height: 40.w,
                         ),
                         Text(FormatUtil.formatTime(
                             specification.time.valueOf(1) ~/ settings!.buildingsSpeedX)),
-                        const SizedBox(width: 20),
+                        SizedBox(width: 20.w),
                         FilledButton(
                             onPressed: _isMatchRequirements() &&
                                     constructionsTaskAmount <
@@ -173,13 +174,13 @@ class BuildingCard extends StatelessWidget {
                 ),
               )),
           Positioned(
-            right: 15,
-            top: 40,
+            right: 15.w,
+            top: 40.h,
             child: Image.asset(
               fit: BoxFit.cover,
               specification.imagePath,
-              width: 100,
-              height: 100,
+              width: 90.w,
+              height: 90.w,
             ),
           )
         ]);

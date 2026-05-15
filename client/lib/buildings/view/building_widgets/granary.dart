@@ -22,11 +22,11 @@ class Granary extends StatelessWidget {
             children: [
               Text(
                 'Capacity: ${buildingSpecefication[buildingRecord[1]]!.getCapacity(buildingRecord[2])}',
-                style: const TextStyle(fontSize: 20),
+                style: Theme.of(context).textTheme.titleMedium,
               ),
               Text(
                 'Capacity on level ${buildingRecord[2] + 1} : ${buildingSpecefication[buildingRecord[1]]!.getCapacity(buildingRecord[2] + 1)}',
-                style: const TextStyle(fontSize: 20),
+                style: Theme.of(context).textTheme.titleMedium,
               ),
             ],
           ),

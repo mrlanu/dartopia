@@ -7,12 +7,11 @@ import '../../../consts/colors.dart';
 class MessagesTabsBar extends StatelessWidget {
   const MessagesTabsBar({super.key});
 
-  static const double fontSize = 30;
-
   @override
   Widget build(BuildContext context) {
     final selected =
         context.select((MessagesCubit cubit) => cubit.state.selectedTab);
+    final tabStyle = Theme.of(context).textTheme.labelLarge;
     const selectedColor = DartopiaColors.primary;
     return Wrap(
       spacing: 3,
@@ -30,9 +29,8 @@ class MessagesTabsBar extends StatelessWidget {
           checkmarkColor: Colors.white,
           label: Text(
             'Inbox',
-            style: TextStyle(
-                color: selected.index == 0 ? Colors.white : Colors.black,
-                fontSize: fontSize),
+            style: tabStyle!.copyWith(
+                color: selected.index == 0 ? Colors.white : Colors.black),
           ),
           selected: selected.index == 0,
           onSelected: (value) {
@@ -54,9 +52,8 @@ class MessagesTabsBar extends StatelessWidget {
           checkmarkColor: Colors.white,
           label: Text(
             'Sent',
-            style: TextStyle(
-                color: selected.index == 1 ? Colors.white : Colors.black,
-                fontSize: fontSize),
+            style: tabStyle.copyWith(
+                color: selected.index == 1 ? Colors.white : Colors.black),
           ),
           selected: selected.index == 1,
           onSelected: (value) {
@@ -81,9 +78,8 @@ class MessagesTabsBar extends StatelessWidget {
           checkmarkColor: Colors.white,
           label: Text(
             'Write',
-            style: TextStyle(
-                color: selected.index == 2 ? Colors.white : Colors.black,
-                fontSize: fontSize),
+            style: tabStyle.copyWith(
+                color: selected.index == 2 ? Colors.white : Colors.black),
           ),
           selected: selected.index == 2,
           onSelected: (value) {

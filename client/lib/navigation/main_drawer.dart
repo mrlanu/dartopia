@@ -1,6 +1,7 @@
 import 'package:dartopia/authentication/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,7 +21,7 @@ class _MainDrawerState extends State<MainDrawer> {
       child: Column(
         children: [
           DrawerHeader(
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.all(20.w),
               decoration: const BoxDecoration(
                   gradient: LinearGradient(colors: [
                 Color.fromRGBO(21, 56, 2, 1.0),
@@ -38,8 +39,10 @@ class _MainDrawerState extends State<MainDrawer> {
                               width: double.infinity,
                               child: Text(
                                 'Dartopia for ${snapshot.data}',
-                                style: const TextStyle(
-                                    color: Colors.white70, fontSize: 25),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(color: Colors.white70),
                               )))
                       : const Center(child: CircularProgressIndicator());
                 },
@@ -47,7 +50,7 @@ class _MainDrawerState extends State<MainDrawer> {
           Expanded(
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                padding: EdgeInsets.symmetric(horizontal: 10.w),
                 child: Column(
                   children: [
                     ListTile(

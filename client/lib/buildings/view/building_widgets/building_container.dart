@@ -65,8 +65,10 @@ class BuildingContainer extends StatelessWidget {
                             children: [
                               Text(
                                 'Upgrading to lvl: $toLevel',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .copyWith(fontWeight: FontWeight.bold),
                               ),
                               CountdownTimer(
                                 startValue: upgradingTask[0]
@@ -133,22 +135,23 @@ class _RequiredResourcesBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      _buildResItem(imagePath: DartopiaImages.lumber, position: 0),
-      _buildResItem(imagePath: DartopiaImages.clay, position: 1),
-      _buildResItem(imagePath: DartopiaImages.iron, position: 2),
-      _buildResItem(imagePath: DartopiaImages.crop, position: 3),
+      _buildResItem(context, imagePath: DartopiaImages.lumber, position: 0),
+      _buildResItem(context, imagePath: DartopiaImages.clay, position: 1),
+      _buildResItem(context, imagePath: DartopiaImages.iron, position: 2),
+      _buildResItem(context, imagePath: DartopiaImages.crop, position: 3),
     ]);
   }
 
-  Widget _buildResItem({required String imagePath, required int position}) {
+  Widget _buildResItem(BuildContext context,
+      {required String imagePath, required int position}) {
     final resToNextLvl = specification.getResourcesToNextLevel(toLevel);
     return Row(children: [
       Image.asset(imagePath, width: 40, height: 40,),
       Text(
         '${resToNextLvl[position]}',
-        style: TextStyle(
+        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
             color:
-            resToNextLvl[position] > storage[position] ? Colors.red : null),
+                resToNextLvl[position] > storage[position] ? Colors.red : null),
       )
     ]);
   }

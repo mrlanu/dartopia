@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:models/models.dart';
 
 class ReviewMessage extends StatelessWidget {
   const ReviewMessage({super.key, required this.messageId});
@@ -11,65 +12,73 @@ class ReviewMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return Dialog(
-        insetPadding:
-            const EdgeInsets.only(left: 10, right: 10, top: 30, bottom: 50),
-        child: FutureBuilder(
-          builder: (context, snapshot) {
-            return !snapshot.hasData
-                ? const Center(child: CircularProgressIndicator())
-                : Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'From: ${snapshot.data!.senderName}',
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          'Date: ${DateFormat('M/d/yyyy HH:mm:ss').format(snapshot.data!.dateTime)}',
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                        const Divider(),
-                        Expanded(
-                            child: SingleChildScrollView(
-                                child: Text(
-                          snapshot.data!.body,
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ))),
-                        const Divider(),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 5.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              IconButton.outlined(
-                                  color: Colors.green,
-                                  onPressed: () {},
-                                  icon: const Icon(Icons.delete)),
-                              IconButton.outlined(
-                                  color: Colors.green,
-                                  onPressed: () {
-                                    context
-                                        .read<MessagesCubit>()
-                                        .reply(message: snapshot.data!);
-                                    context.pop();
-                                  },
-                                  icon: const Icon(Icons.reply)),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-          },
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.sizeOf(context).height * 0.75,
+        ),
+        child: FutureBuilder<MessageResponse>(
           future: context
               .read<MessagesRepository>()
               .fetchMessageById(messageId: messageId),
-        ));
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const Padding(
+                padding: EdgeInsets.all(32),
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            final message = snapshot.data!;
+
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'From: ${message.senderName}',
+                    style: textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Date: ${DateFormat('M/d/yyyy HH:mm:ss').format(message.dateTime)}',
+                    style: textTheme.bodyMedium,
+                  ),
+                  const Divider(height: 24),
+                  Text(
+                    message.body,
+                    style: textTheme.bodyLarge,
+                  ),
+                  const Divider(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      IconButton.outlined(
+                        color: Colors.green,
+                        onPressed: () {},
+                        icon: const Icon(Icons.delete),
+                      ),
+                      IconButton.outlined(
+                        color: Colors.green,
+                        onPressed: () {
+                          context.read<MessagesCubit>().reply(message: message);
+                          context.pop();
+                        },
+                        icon: const Icon(Icons.reply),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
   }
 }

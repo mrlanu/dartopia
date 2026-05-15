@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:dartopia/consts/consts.dart';
@@ -154,10 +155,6 @@ class _WorldViewState extends State<WorldView> {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final tilePx = width * 0.9 / mapWidth;
-    final gridExtent = tilePx * mapWidth;
-
     return FutureBuilder<ui.Image>(
       future: _atlasFuture,
       builder: (context, snapshot) {
@@ -206,73 +203,106 @@ class _WorldViewState extends State<WorldView> {
                   setState(() => _panRemainder = Offset.zero);
                 }
               },
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildXAxis(context, state.centerX, tilePx),
-                  Row(
-                    children: [
-                      _buildYAxis(context, state.centerY, tilePx),
-                      Expanded(
-                        child: ClipRect(
-                          child: SizedBox(
-                            height: gridExtent,
-                            width: double.infinity,
-                            child: Center(
-                              child: GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              onPanStart: (_) {
-                                setState(() => _panRemainder = Offset.zero);
-                              },
-                              onPanUpdate: (details) {
-                                _panRemainder += details.delta;
-                                final steps = _extractTileSteps(tilePx);
-                                setState(() {});
-                                if (steps.$1 != 0 || steps.$2 != 0) {
-                                  unawaited(
-                                    context.read<WorldMapCubit>().nudgeCenterByDelta(
-                                          steps.$1,
-                                          steps.$2,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final mediaSize = MediaQuery.sizeOf(context);
+                  final textScaler = MediaQuery.textScalerOf(context);
+                  const yAxisWidth = 20.0;
+                  const footerHeight = 56.0;
+                  const verticalPadding = 16.0;
+                  final axisLabelHeight = textScaler.scale(
+                    Theme.of(context).textTheme.labelMedium!.fontSize!,
+                  );
+
+                  final maxGridFromWidth =
+                      (mediaSize.width - yAxisWidth * 2) * 0.95;
+                  final maxGridFromHeight = constraints.maxHeight -
+                      2 * axisLabelHeight -
+                      footerHeight -
+                      verticalPadding;
+                  final gridExtent = math
+                      .min(maxGridFromWidth, math.max(0.0, maxGridFromHeight))
+                      .clamp(120.0, maxGridFromWidth)
+                      .toDouble();
+                  final tilePx = gridExtent / mapWidth;
+                  final yAxisBand = tilePx * 0.35;
+
+                  return SingleChildScrollView(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildXAxis(context, state.centerX, tilePx, yAxisBand),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _buildYAxis(context, state.centerY, tilePx),
+                              SizedBox(
+                                width: gridExtent,
+                                height: gridExtent,
+                                child: ClipRect(
+                                  child: GestureDetector(
+                                    behavior: HitTestBehavior.opaque,
+                                    onPanStart: (_) {
+                                      setState(() => _panRemainder = Offset.zero);
+                                    },
+                                    onPanUpdate: (details) {
+                                      _panRemainder += details.delta;
+                                      final steps = _extractTileSteps(tilePx);
+                                      setState(() {});
+                                      if (steps.$1 != 0 || steps.$2 != 0) {
+                                        unawaited(
+                                          context
+                                              .read<WorldMapCubit>()
+                                              .nudgeCenterByDelta(
+                                                steps.$1,
+                                                steps.$2,
+                                              ),
+                                        );
+                                      }
+                                    },
+                                    onPanEnd: (_) {
+                                      final r = _panRemainder;
+                                      setState(() => _panRemainder = Offset.zero);
+                                      unawaited(
+                                        context
+                                            .read<WorldMapCubit>()
+                                            .nudgeFromPan(r.dx, r.dy),
+                                      );
+                                    },
+                                    onDoubleTapDown: (d) => _onDoubleTapDown(
+                                      d,
+                                      tilePx,
+                                      [settlement!.x, settlement.y],
+                                    ),
+                                    child: Transform.translate(
+                                      offset: _panRemainder,
+                                      child: CustomPaint(
+                                        size: Size(gridExtent, gridExtent),
+                                        painter: WorldViewportPainter(
+                                          image: snapshot.data!,
+                                          tilesByCoord: state.tilesByCoord,
+                                          centerX: state.centerX,
+                                          centerY: state.centerY,
+                                          tilePixelSize: tilePx,
                                         ),
-                                  );
-                                }
-                              },
-                              onPanEnd: (_) {
-                                final r = _panRemainder;
-                                setState(() => _panRemainder = Offset.zero);
-                                unawaited(
-                                  context
-                                      .read<WorldMapCubit>()
-                                      .nudgeFromPan(r.dx, r.dy),
-                                );
-                              },
-                              onDoubleTapDown: (d) =>
-                                  _onDoubleTapDown(d, tilePx, [settlement!.x, settlement.y]),
-                              child: Transform.translate(
-                                offset: _panRemainder,
-                                child: CustomPaint(
-                                  size: Size(gridExtent, gridExtent),
-                                  painter: WorldViewportPainter(
-                                    image: snapshot.data!,
-                                    tilesByCoord: state.tilesByCoord,
-                                    centerX: state.centerX,
-                                    centerY: state.centerY,
-                                    tilePixelSize: tilePx,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
+                              _buildYAxis(context, state.centerY, tilePx),
+                            ],
                           ),
-                        ),
-                        ),
+                          _buildXAxis(context, state.centerX, tilePx, yAxisBand),
+                          const SizedBox(height: 8),
+                          const MapButtonRow(),
+                        ],
                       ),
-                      _buildYAxis(context, state.centerY, tilePx),
-                    ],
-                  ),
-                  _buildXAxis(context, state.centerX, tilePx),
-                  const SizedBox(height: 50),
-                  const MapButtonRow(),
-                ],
+                    ),
+                  );
+                },
               ),
             );
           },
@@ -281,49 +311,59 @@ class _WorldViewState extends State<WorldView> {
     );
   }
 
-  Widget _buildXAxis(BuildContext context, int currentX, double tilePx) {
-    final width = MediaQuery.of(context).size.width;
+  Widget _buildXAxis(
+      BuildContext context, int currentX, double tilePx, double yAxisBand) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        SizedBox(width: yAxisBand),
         ...List.generate(
           mapWidth,
           (index) => Container(
-            width: width * 0.9 / mapWidth,
+            width: tilePx,
+            height: tilePx * 0.35,
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               color: const Color.fromRGBO(164, 206, 128, 1.0),
             ),
-            child: Center(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
               child: Text(
                 '${(index + currentX - (mapWidth - 1) / 2).toInt()}',
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: Theme.of(context)
+                    .textTheme
+                    .labelMedium!
+                    .copyWith(fontWeight: FontWeight.bold),
               ),
             ),
           ),
         ),
+        SizedBox(width: yAxisBand),
       ],
     );
   }
 
   Widget _buildYAxis(BuildContext context, int currentY, double tilePx) {
-    final width = MediaQuery.of(context).size.width;
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         ...List.generate(
           mapWidth,
           (index) => Container(
-            width: 20,
-            height: width * 0.9 / mapWidth,
+            width: tilePx * 0.35,
+            height: tilePx,
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               color: const Color.fromRGBO(164, 206, 128, 1.0),
             ),
-            child: Center(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
               child: Text(
                 '${(currentY + (mapWidth - 1) / 2 - index).toInt()}',
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: Theme.of(context)
+                    .textTheme
+                    .labelMedium!
+                    .copyWith(fontWeight: FontWeight.bold),
               ),
             ),
           ),

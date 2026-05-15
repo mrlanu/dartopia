@@ -7,8 +7,7 @@ class StatisticsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return
-      const StatisticsView();
+    return const StatisticsView();
   }
 }
 
@@ -19,21 +18,24 @@ class StatisticsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const TableFilter(),
-        BlocBuilder<StatisticsCubit, StatisticsState>(
-              builder: (context, state) {
-                return state.statisticsStatus == StatisticsStatus.loading
-                    ? const Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : StatisticsTable(
-                        staticsModels: state.statisticsResponse!.modelsList,
-                      );
-              },
-        ),
-        const Spacer(),
         const Padding(
-          padding: EdgeInsets.only(bottom: 10.0),
+          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          child: TableFilter(),
+        ),
+        Expanded(
+          child: BlocBuilder<StatisticsCubit, StatisticsState>(
+            builder: (context, state) {
+              if (state.statisticsStatus == StatisticsStatus.loading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              return StatisticsTable(
+                staticsModels: state.statisticsResponse!.modelsList,
+              );
+            },
+          ),
+        ),
+        const Padding(
+          padding: EdgeInsets.only(bottom: 8),
           child: Paginator(),
         ),
       ],

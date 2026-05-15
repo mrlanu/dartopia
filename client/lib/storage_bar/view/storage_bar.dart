@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dartopia/settlement/bloc/settlement_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:models/models.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
@@ -71,11 +72,12 @@ class _StorageBarState extends State<StorageBar> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 0),
+      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _barBuilder(itemsList: [
+          Expanded(
+            flex: 3,
+            child: _barBuilder(itemsList: [
             _itemBuilder(
                 amount: _settlement.storage[0].toInt(),
                 maxCapacity: _settlement.getMaxCapacity(6).toInt(),
@@ -88,15 +90,20 @@ class _StorageBarState extends State<StorageBar> {
                 amount: _settlement.storage[2].toInt(),
                 maxCapacity: _settlement.getMaxCapacity(6).toInt(),
                 pngName: 'iron'),
-          ]),
-          _barBuilder(
-            itemsList: [
-              _itemBuilder(
-                  amount: _settlement.storage[3].toInt(),
-                  maxCapacity: _settlement.getMaxCapacity(5).toInt(),
-                  pngName: 'crop'),
-            ],
-          )
+            ]),
+          ),
+          //SizedBox(width: 1.w),
+          Expanded(
+            flex: 1,
+            child: _barBuilder(
+              itemsList: [
+                _itemBuilder(
+                    amount: _settlement.storage[3].toInt(),
+                    maxCapacity: _settlement.getMaxCapacity(5).toInt(),
+                    pngName: 'crop'),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -139,10 +146,12 @@ class _StorageBarState extends State<StorageBar> {
       {required List<Widget> itemsList, Color backgroundColor = Colors.grey}) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 4.0),
+        padding: EdgeInsets.symmetric(vertical: 2.h, horizontal: 3.w),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [...itemsList],
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            for (final item in itemsList) item,
+          ],
         ),
       ),
     );
@@ -154,48 +163,63 @@ class _StorageBarState extends State<StorageBar> {
     required String pngName,
   }) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
-        Image.asset('assets/images/resources/$pngName.png'),
         Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              amount > maxCapacity
-                  ? maxCapacity.toString()
-                  : amount <= 0
-                      ? '0'
-                      : amount.toString(),
-              style: TextStyle(
-                  color: pngName == 'crop'
-                      ? isCropNegative
-                          ? Colors.red
-                          : Colors.black
-                      : Colors.black,
-                  fontSize: 15),
+            Row(
+              children: [
+                Image.asset(
+                  'assets/images/resources/$pngName.png',
+                  width: 16.w,
+                  height: 16.w,
+                  fit: BoxFit.contain,
+                ),
+                SizedBox(width: 5.w),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    amount > maxCapacity
+                        ? maxCapacity.toString()
+                        : amount <= 0
+                            ? '0'
+                            : amount.toString(),
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                        color: pngName == 'crop'
+                            ? isCropNegative
+                                ? Colors.red
+                                : Colors.black
+                            : Colors.black),
+                  ),
+                ),
+              ],
             ),
             Stack(
               alignment: Alignment.center,
               children: [
                 LinearPercentIndicator(
-                  barRadius: const Radius.circular(5),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 3, vertical: 0),
+                  barRadius: Radius.circular(8.r),
+                  padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 0),
                   animation: false,
-                  width: 60.0,
-                  lineHeight: 10.0,
-                  percent: amount <= maxCapacity ? amount / maxCapacity : 1.0,
+                  width: 58.w,
+                  lineHeight: 12.h,
+                  percent:
+                      amount <= maxCapacity ? amount / maxCapacity : 1.0,
                   progressColor: _getColor(amount, maxCapacity),
                 ),
                 Positioned(
                   child: Text(
                     maxCapacity.toString(),
-                    style: const TextStyle(color: Colors.black, fontSize: 10),
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelSmall!
+                        .copyWith(color: Colors.black, fontSize: 9.sp),
                   ),
                 ),
               ],
             )
           ],
-        )
+        ),
       ],
     );
   }

@@ -12,8 +12,10 @@ import 'package:dartopia/settlement/repository/settlement_repository.dart';
 import 'package:dartopia/statistics/cubit/statistics_cubit.dart';
 import 'package:dartopia/statistics/statistics_repository.dart';
 import 'package:dartopia/utils/app_theme.dart';
+import 'package:dartopia/utils/screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -94,13 +96,20 @@ class AppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: MaterialApp.router(
-        routerConfig: router(authBloc: context.read<AuthBloc>()),
-        debugShowCheckedModeBanner: false,
-        title: 'Dartopia',
-        theme: dartopiaTheme,
-      ),
+    return ScreenUtilInit(
+      designSize: kDesignSize,
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return SafeArea(
+          child: MaterialApp.router(
+            routerConfig: router(authBloc: context.read<AuthBloc>()),
+            debugShowCheckedModeBanner: false,
+            title: 'Dartopia',
+            theme: scaledDartopiaTheme,
+          ),
+        );
+      },
     );
   }
 }

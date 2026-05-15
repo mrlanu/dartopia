@@ -16,28 +16,24 @@ Future<void> showMapTileDetailsDialog(
     ) {
   return showDialog<void>(
     context: navigatorContext,
-    builder: (_) {
-      final height = MediaQuery.of(navigatorContext).size.height * 0.5;
-      return Center(
-        child: Dialog(
-          insetPadding: const EdgeInsets.all(10),
-          child: SizedBox(
-            height: height,
-            child: Center(
-              child: FutureBuilder<TileDetails>(
-                future: repo.fetchTileDetails(myCoordinates[0], myCoordinates[1], tile.corX, tile.corY),
-                builder: (_, snapshot) {
-                  return snapshot.connectionState == ConnectionState.done
-                      ? MapTileDialogBody(tileDetails: snapshot.data!)
-                      : SizedBox(
-                    height: height,
-                    child: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
-                },
-              ),
-            ),
+    builder: (dialogContext) {
+      final maxHeight = MediaQuery.of(dialogContext).size.height * 0.75;
+      return Dialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: maxHeight),
+          child: FutureBuilder<TileDetails>(
+            future: repo.fetchTileDetails(
+                myCoordinates[0], myCoordinates[1], tile.corX, tile.corY),
+            builder: (_, snapshot) {
+              if (snapshot.connectionState != ConnectionState.done) {
+                return const Padding(
+                  padding: EdgeInsets.all(32),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+              return MapTileDialogBody(tileDetails: snapshot.data!);
+            },
           ),
         ),
       );
@@ -53,95 +49,97 @@ class MapTileDialogBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        return Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Text(
-                '${tileDetails.name} (${tileDetails.x}|${tileDetails.y})',
-                style: textTheme.titleLarge,
-              ),
-              const Divider(),
-              Text('Player name: ${tileDetails.playerName}',
-                  style: textTheme.titleMedium),
-              Text(
-                'Population: ${tileDetails.population}',
-                style: textTheme.titleMedium,
-              ),
-              Text(
-                'Distance: ${tileDetails.distance.toStringAsFixed(1)}',
-                style: textTheme.titleMedium,
-              ),
-              tileDetails.animals != null
-                  ? _MapTileDialogAnimals(
-                      tileDetails: tileDetails,
-                      maxWidth: constraints.maxWidth,
-                    )
-                  : const SizedBox(),
-              IconButton.outlined(
-                  iconSize: 30,
-                  color: Colors.green,
-                  onPressed: () {
-                    context.push(
-                        '/rally_point/1?x=${tileDetails.x}&y=${tileDetails.y}');
-                    Navigator.of(context, rootNavigator: true).pop();
-                  },
-                  icon: const FaIcon(FontAwesomeIcons.khanda)),
-            ],
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            '${tileDetails.name} (${tileDetails.x}|${tileDetails.y})',
+            style: textTheme.titleLarge,
+            textAlign: TextAlign.center,
           ),
-        );
-      },
+          const SizedBox(height: 8),
+          const Divider(),
+          const SizedBox(height: 8),
+          Text(
+            'Player name: ${tileDetails.playerName}',
+            style: textTheme.titleMedium,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Population: ${tileDetails.population}',
+            style: textTheme.titleMedium,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Distance: ${tileDetails.distance.toStringAsFixed(1)}',
+            style: textTheme.titleMedium,
+            textAlign: TextAlign.center,
+          ),
+          if (tileDetails.animals != null) ...[
+            const SizedBox(height: 12),
+            _MapTileDialogAnimals(tileDetails: tileDetails),
+          ],
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.center,
+            child: IconButton.outlined(
+              iconSize: 28,
+              color: Colors.green,
+              onPressed: () {
+                context.push(
+                    '/rally_point/1?x=${tileDetails.x}&y=${tileDetails.y}');
+                Navigator.of(context, rootNavigator: true).pop();
+              },
+              icon: const FaIcon(FontAwesomeIcons.khanda),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
 class _MapTileDialogAnimals extends StatelessWidget {
-  const _MapTileDialogAnimals({
-    required this.tileDetails,
-    required this.maxWidth,
-  });
+  const _MapTileDialogAnimals({required this.tileDetails});
 
   final TileDetails tileDetails;
-  final double maxWidth;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    final textTheme = Theme.of(context).textTheme;
+    return Wrap(
+      alignment: WrapAlignment.center,
+      spacing: 8,
+      runSpacing: 8,
       children: [
-        ...tileDetails.animals!
-            .asMap()
-            .entries
-            .map((e) => tileDetails.animals?[e.key] == 0
-                ? const SizedBox()
-                : SizedBox(
-                    width: (maxWidth - maxWidth * 0.1) / 6,
-                    height: 22,
-                    child: Center(
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 21.0,
-                            height: 21.0,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                alignment: Alignment(-1.0 + 0.217 * e.key, 0.0),
-                                image: AssetImage(
-                                    DartopiaImages.getTroopsByNation(
-                                        Nations.nature)),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          Text(' / ${tileDetails.animals?[e.key]}'),
-                        ],
-                      ),
+        for (final entry in tileDetails.animals!.asMap().entries)
+          if (entry.value != 0)
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 20,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      alignment: Alignment(-1.0 + 0.217 * entry.key, 0.0),
+                      image: AssetImage(
+                          DartopiaImages.getTroopsByNation(Nations.nature)),
+                      fit: BoxFit.cover,
                     ),
-                  ))
-            .toList(),
+                  ),
+                ),
+                Text(
+                  ' / ${entry.value}',
+                  style: textTheme.labelSmall,
+                ),
+              ],
+            ),
       ],
     );
   }

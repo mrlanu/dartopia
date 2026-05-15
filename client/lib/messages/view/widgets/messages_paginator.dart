@@ -21,8 +21,9 @@ class MessagesPaginator extends StatelessWidget {
     return NumberPaginator(
       key: UniqueKey(),
       config: NumberPaginatorUIConfig(
-          buttonSelectedBackgroundColor: Colors.orange,
-          buttonTextStyle: Theme.of(context).textTheme.displayLarge),
+        buttonSelectedBackgroundColor: Colors.orange,
+        buttonTextStyle: Theme.of(context).textTheme.labelLarge,
+      ),
       numberPages: totalPageInt,
       initialPage: currentPage - 1,
       onPageChange: (int index) {

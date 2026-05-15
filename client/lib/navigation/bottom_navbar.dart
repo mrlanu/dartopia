@@ -3,6 +3,7 @@ import 'package:dartopia/settlement/bloc/settlement_bloc.dart';
 import 'package:dartopia/statistics/cubit/statistics_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 
@@ -43,14 +44,17 @@ class _BottomNavBarState extends State<BottomNavBar> {
           //selectedItemColor: bottomNavBarSelectedItem,
           //unselectedItemColor: bottomNavBarItem,
           type: BottomNavigationBarType.fixed,
+          iconSize: 22.sp,
           items: [
-            const BottomNavigationBarItem(
+            BottomNavigationBarItem(
                 label: 'buildings',
-                icon: FaIcon(FontAwesomeIcons.houseChimney)),
-            const BottomNavigationBarItem(
-                label: 'map', icon: FaIcon(FontAwesomeIcons.mapLocationDot)),
-            const BottomNavigationBarItem(
-                label: 'charts', icon: FaIcon(FontAwesomeIcons.chartLine)),
+                icon: FaIcon(FontAwesomeIcons.houseChimney, size: 22.sp)),
+            BottomNavigationBarItem(
+                label: 'map',
+                icon: FaIcon(FontAwesomeIcons.mapLocationDot, size: 22.sp)),
+            BottomNavigationBarItem(
+                label: 'charts',
+                icon: FaIcon(FontAwesomeIcons.chartLine, size: 22.sp)),
             _buildReportsBarItem(context),
             _buildMessagesBarItem(context),
           ],
@@ -87,12 +91,14 @@ class _BottomNavBarState extends State<BottomNavBar> {
         icon: BlocBuilder<ReportsBloc, ReportsState>(
           builder: (context, state) {
             return state.amount == 0
-                ? const FaIcon(FontAwesomeIcons.book)
+                ? FaIcon(FontAwesomeIcons.book, size: 22.sp)
                 : Badge(
                     label: Text('${state.amount}',
-                        style:
-                            const TextStyle(fontSize: 12, color: Colors.white)),
-                    child: const FaIcon(FontAwesomeIcons.book),
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelSmall!
+                            .copyWith(color: Colors.white)),
+                    child: FaIcon(FontAwesomeIcons.book, size: 22.sp),
                   );
           },
         ));
@@ -104,12 +110,15 @@ class _BottomNavBarState extends State<BottomNavBar> {
         icon: BlocBuilder<MessagesCubit, MessagesState>(
           builder: (context, state) {
             return state.newMessagesAmount == 0
-                ? const FaIcon(FontAwesomeIcons.envelopeOpenText)
+                ? FaIcon(FontAwesomeIcons.envelopeOpenText, size: 22.sp)
                 : Badge(
                     label: Text('${state.newMessagesAmount}',
-                        style:
-                            const TextStyle(fontSize: 12, color: Colors.white)),
-                    child: const FaIcon(FontAwesomeIcons.envelopeOpenText),
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelSmall!
+                            .copyWith(color: Colors.white)),
+                    child:
+                        FaIcon(FontAwesomeIcons.envelopeOpenText, size: 22.sp),
                   );
           },
         ));

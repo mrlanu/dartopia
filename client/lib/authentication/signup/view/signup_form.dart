@@ -16,11 +16,11 @@ class SignupForm extends StatelessWidget {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
-              const SnackBar(
+              SnackBar(
                 content: Text(
                   'Account has been created',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                       color: Colors.white, fontWeight: FontWeight.w700),
                 ),
                 backgroundColor: Colors.green,
@@ -36,7 +36,7 @@ class SignupForm extends StatelessWidget {
                 content: Text(
                   state.errorMessage,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                       color: Colors.black, fontWeight: FontWeight.w700),
                 ),
                 backgroundColor: Colors.redAccent,
@@ -148,7 +148,10 @@ class _SignupButton extends StatelessWidget {
                           context.read<SignupBloc>().add(const SignupSubmitted());
                         }
                       : null,
-                  child: const Text('Signup', style: TextStyle(fontSize: 30),),
+                  child: Text(
+                    'Signup',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
                 ),
             );
       },
