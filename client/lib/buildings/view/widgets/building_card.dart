@@ -34,7 +34,7 @@ class BuildingCard extends StatelessWidget {
               elevation: 5,
               child: Container(
                 padding: EdgeInsets.all(15.w),
-                height: 0.46.sh,
+                height: 0.56.sh,
                 //width: size.width * 0.9,
                 child: Column(
                   children: [
@@ -138,7 +138,7 @@ class BuildingCard extends StatelessWidget {
                         }).toList()
                       ],
                     ),
-                    const Divider(),
+                    const Spacer(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
