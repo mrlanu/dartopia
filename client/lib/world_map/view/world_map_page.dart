@@ -32,23 +32,25 @@ class WorldMapPage extends StatelessWidget {
         if (settingsState.status == SettingsStatus.failure ||
             settingsState.settings == null) {
           return Scaffold(
-            body: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      settingsState.error ?? 'Could not load game settings',
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 16),
-                    FilledButton(
-                      onPressed: () =>
-                          context.read<SettingsCubit>().load(),
-                      child: const Text('Retry'),
-                    ),
-                  ],
+            body: SafeArea(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        settingsState.error ?? 'Could not load game settings',
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16),
+                      FilledButton(
+                        onPressed: () =>
+                            context.read<SettingsCubit>().load(),
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

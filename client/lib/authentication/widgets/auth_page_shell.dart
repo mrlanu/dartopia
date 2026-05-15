@@ -17,45 +17,47 @@ class AuthPageShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          const _AuthBackground(),
-          SafeArea(
-            child: Column(
-              children: [
-                if (showBackButton)
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: IconButton(
-                      onPressed: () => Navigator.of(context).maybePop(),
-                      icon: Icon(
-                        Icons.arrow_back_rounded,
-                        color: DartopiaColors.onPrimary,
-                        size: 26.sp,
+      body: SafeArea(
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            const _AuthBackground(),
+            SafeArea(
+              child: Column(
+                children: [
+                  if (showBackButton)
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: IconButton(
+                        onPressed: () => Navigator.of(context).maybePop(),
+                        icon: Icon(
+                          Icons.arrow_back_rounded,
+                          color: DartopiaColors.onPrimary,
+                          size: 26.sp,
+                        ),
+                      ),
+                    )
+                  else
+                    SizedBox(height: 8.h),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.symmetric(horizontal: 24.w),
+                      child: Column(
+                        children: [
+                          SizedBox(height: showBackButton ? 8.h : 24.h),
+                          _AuthLogo(),
+                          SizedBox(height: 28.h),
+                          child,
+                          SizedBox(height: 32.h),
+                        ],
                       ),
                     ),
-                  )
-                else
-                  SizedBox(height: 8.h),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: Column(
-                      children: [
-                        SizedBox(height: showBackButton ? 8.h : 24.h),
-                        _AuthLogo(),
-                        SizedBox(height: 28.h),
-                        child,
-                        SizedBox(height: 32.h),
-                      ],
-                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -16,29 +16,33 @@ class StatisticsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          child: TableFilter(),
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: [
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              child: TableFilter(),
+            ),
+            Expanded(
+              child: BlocBuilder<StatisticsCubit, StatisticsState>(
+                builder: (context, state) {
+                  if (state.statisticsStatus == StatisticsStatus.loading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  return StatisticsTable(
+                    staticsModels: state.statisticsResponse!.modelsList,
+                  );
+                },
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.only(bottom: 8),
+              child: Paginator(),
+            ),
+          ],
         ),
-        Expanded(
-          child: BlocBuilder<StatisticsCubit, StatisticsState>(
-            builder: (context, state) {
-              if (state.statisticsStatus == StatisticsStatus.loading) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              return StatisticsTable(
-                staticsModels: state.statisticsResponse!.modelsList,
-              );
-            },
-          ),
-        ),
-        const Padding(
-          padding: EdgeInsets.only(bottom: 8),
-          child: Paginator(),
-        ),
-      ],
+      ),
     );
   }
 }

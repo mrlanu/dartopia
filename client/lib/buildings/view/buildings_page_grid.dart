@@ -61,74 +61,76 @@ class _BuildingsGridViewState extends State<BuildingsGridView> {
     return Scaffold(
       appBar: buildAppBar(),
       drawer: const MainDrawer(),
-      body: Column(
-        children: [
-          SizedBox(height: 3.h),
-          StorageBar(
-            settlement: settlement,
-          ),
-          Expanded(
-            child: ReorderableGridView.count(
-              padding: EdgeInsets.all(8.w),
-              crossAxisSpacing: 8.w,
-              mainAxisSpacing: 8.h,
-              crossAxisCount: 3,
-              dragWidgetBuilder: (index, child) {
-                return Card(
-                  color: DartopiaColors.primary,
-                  child: child,
-                );
-              },
-              onReorder: (oldIndex, newIndex) {
-                setState(() {
-                  final element = settlement.buildings.removeAt(oldIndex + 18);
-                  settlement.buildings.insert(newIndex + 18, element);
-                });
-                context.read<SettlementRepository>().reorderBuildings(
-                    settlementId: settlement.id.$oid,
-                    newBuildings: settlement.buildings);
-              },
-              header: _groupFieldsByType(settlement).map(
-                (fieldRecord) {
-                  final constructionTasks = settlement.constructionTasks
-                      .where((task) => task.specificationId == fieldRecord[1])
-                      .toList();
-                  return _BuildingGridItem(
-                    key: ValueKey('${fieldRecord[0]} ${fieldRecord[1]}'),
-                    buildingRecord: fieldRecord,
-                    constructionTask: constructionTasks.firstOrNull,
-                    constructionsTaskAmount: settlement.constructionTasks.length,
-                    storage: settlement.storage,
-                    prodPerHour: settlement.calculateProducePerHour(),
-                  );
-                },
-              ).toList(),
-              footer: [
-                _BuildingGridAddItem(
-                    key: UniqueKey(),
-                    buildingsAmount: settlement.buildings.length,
-                    labelBackground: settlement.constructionTasks.length <
-                            settings!.maxConstructionTasksInQueue
-                        ? DartopiaColors.primaryContainer
-                        : DartopiaColors.white38),
-              ],
-              children: settlement.buildingsExceptFieldsAndEmpty.map(
-                (bRecord) {
-                  final upgradingTasks = settlement.constructionTasks
-                      .where((task) => task.buildingId == bRecord[0])
-                      .toList();
-                  return _BuildingGridItem(
-                    key: ValueKey('${bRecord[0]} ${bRecord[1]}'),
-                    buildingRecord: bRecord,
-                    storage: settlement.storage,
-                    constructionTask: upgradingTasks.firstOrNull,
-                    constructionsTaskAmount: settlement.constructionTasks.length,
-                  );
-                },
-              ).toList(),
+      body: SafeArea(
+        child: Column(
+          children: [
+            SizedBox(height: 3.h),
+            StorageBar(
+              settlement: settlement,
             ),
-          ),
-        ],
+            Expanded(
+              child: ReorderableGridView.count(
+                padding: EdgeInsets.all(8.w),
+                crossAxisSpacing: 8.w,
+                mainAxisSpacing: 8.h,
+                crossAxisCount: 3,
+                dragWidgetBuilder: (index, child) {
+                  return Card(
+                    color: DartopiaColors.primary,
+                    child: child,
+                  );
+                },
+                onReorder: (oldIndex, newIndex) {
+                  setState(() {
+                    final element = settlement.buildings.removeAt(oldIndex + 18);
+                    settlement.buildings.insert(newIndex + 18, element);
+                  });
+                  context.read<SettlementRepository>().reorderBuildings(
+                      settlementId: settlement.id.$oid,
+                      newBuildings: settlement.buildings);
+                },
+                header: _groupFieldsByType(settlement).map(
+                  (fieldRecord) {
+                    final constructionTasks = settlement.constructionTasks
+                        .where((task) => task.specificationId == fieldRecord[1])
+                        .toList();
+                    return _BuildingGridItem(
+                      key: ValueKey('${fieldRecord[0]} ${fieldRecord[1]}'),
+                      buildingRecord: fieldRecord,
+                      constructionTask: constructionTasks.firstOrNull,
+                      constructionsTaskAmount: settlement.constructionTasks.length,
+                      storage: settlement.storage,
+                      prodPerHour: settlement.calculateProducePerHour(),
+                    );
+                  },
+                ).toList(),
+                footer: [
+                  _BuildingGridAddItem(
+                      key: UniqueKey(),
+                      buildingsAmount: settlement.buildings.length,
+                      labelBackground: settlement.constructionTasks.length <
+                              settings!.maxConstructionTasksInQueue
+                          ? DartopiaColors.primaryContainer
+                          : DartopiaColors.white38),
+                ],
+                children: settlement.buildingsExceptFieldsAndEmpty.map(
+                  (bRecord) {
+                    final upgradingTasks = settlement.constructionTasks
+                        .where((task) => task.buildingId == bRecord[0])
+                        .toList();
+                    return _BuildingGridItem(
+                      key: ValueKey('${bRecord[0]} ${bRecord[1]}'),
+                      buildingRecord: bRecord,
+                      storage: settlement.storage,
+                      constructionTask: upgradingTasks.firstOrNull,
+                      constructionsTaskAmount: settlement.constructionTasks.length,
+                    );
+                  },
+                ).toList(),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
