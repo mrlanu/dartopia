@@ -1,5 +1,7 @@
+import 'package:dartopia/authentication/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:formz/formz.dart';
 
 import '../signup.dart';
@@ -17,13 +19,19 @@ class SignupForm extends StatelessWidget {
             ..hideCurrentSnackBar()
             ..showSnackBar(
               SnackBar(
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 content: Text(
-                  'Account has been created',
+                  'Account created successfully',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      color: Colors.white, fontWeight: FontWeight.w700),
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
-                backgroundColor: Colors.green,
+                backgroundColor: const Color(0xFF2E7D32),
               ),
             );
           Navigator.of(context).pop();
@@ -33,30 +41,50 @@ class SignupForm extends StatelessWidget {
             ..hideCurrentSnackBar()
             ..showSnackBar(
               SnackBar(
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 content: Text(
                   state.errorMessage,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      color: Colors.black, fontWeight: FontWeight.w700),
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
-                backgroundColor: Colors.redAccent,
+                backgroundColor: Colors.redAccent.shade700,
               ),
             );
           context.read<SignupBloc>().add(const ResetSignupStatus());
         }
       },
-      child: Align(
-        alignment: const Alignment(0, -1 / 3),
+      child: AuthFormCard(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _EmailInput(),
-            const Padding(padding: EdgeInsets.all(12)),
-            _PasswordInput(),
-            const Padding(padding: EdgeInsets.all(12)),
-            _ConfirmPasswordInput(),
-            const Padding(padding: EdgeInsets.all(12)),
-            _SignupButton(),
+            Text(
+              'Create account',
+              style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: const Color(0xFF1B5E20),
+                  ),
+            ),
+            SizedBox(height: 6.h),
+            Text(
+              'Join Dartopia and start your adventure',
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    color: const Color(0xFF5F6F5F),
+                  ),
+            ),
+            SizedBox(height: 24.h),
+            const _EmailInput(),
+            SizedBox(height: 16.h),
+            const _PasswordInput(),
+            SizedBox(height: 16.h),
+            const _ConfirmPasswordInput(),
+            SizedBox(height: 24.h),
+            const _SignupButton(),
           ],
         ),
       ),
@@ -65,20 +93,23 @@ class SignupForm extends StatelessWidget {
 }
 
 class _EmailInput extends StatelessWidget {
+  const _EmailInput();
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SignupBloc, SignupState>(
       buildWhen: (previous, current) => previous.email != current.email,
       builder: (context, state) {
-        return TextField(
-          key: const Key('signupForm_emILInput_textField'),
+        return AuthTextField(
+          fieldKey: const Key('signupForm_emILInput_textField'),
+          label: 'Email',
+          hint: 'you@example.com',
+          prefixIcon: Icons.mail_outline_rounded,
+          keyboardType: TextInputType.emailAddress,
+          textInputAction: TextInputAction.next,
+          errorText: state.email.displayError != null ? 'Invalid email' : null,
           onChanged: (email) =>
               context.read<SignupBloc>().add(SignupEmailChanged(email)),
-          decoration: InputDecoration(
-            labelText: 'email',
-            errorText:
-                state.email.displayError != null ? 'invalid email' : null,
-          ),
         );
       },
     );
@@ -86,21 +117,24 @@ class _EmailInput extends StatelessWidget {
 }
 
 class _PasswordInput extends StatelessWidget {
+  const _PasswordInput();
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SignupBloc, SignupState>(
       buildWhen: (previous, current) => previous.password != current.password,
       builder: (context, state) {
-        return TextField(
-          key: const Key('signupForm_passwordInput_textField'),
+        return AuthTextField(
+          fieldKey: const Key('signupForm_passwordInput_textField'),
+          label: 'Password',
+          hint: 'At least 6 characters',
+          prefixIcon: Icons.lock_outline_rounded,
+          obscureText: true,
+          textInputAction: TextInputAction.next,
+          errorText:
+              state.password.displayError != null ? 'Invalid password' : null,
           onChanged: (password) =>
               context.read<SignupBloc>().add(SignupPasswordChanged(password)),
-          obscureText: true,
-          decoration: InputDecoration(
-            labelText: 'password',
-            errorText:
-                state.password.displayError != null ? 'invalid password' : null,
-          ),
         );
       },
     );
@@ -108,24 +142,28 @@ class _PasswordInput extends StatelessWidget {
 }
 
 class _ConfirmPasswordInput extends StatelessWidget {
+  const _ConfirmPasswordInput();
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SignupBloc, SignupState>(
       buildWhen: (previous, current) =>
-      previous.password != current.password ||
+          previous.password != current.password ||
           previous.confirmedPassword != current.confirmedPassword,
       builder: (context, state) {
-        return TextField(
-          key: const Key('signupForm_confirmPasswordInput_textField'),
-          onChanged: (password) =>
-              context.read<SignupBloc>().add(SignupConfirmPasswordChanged(password)),
+        return AuthTextField(
+          fieldKey: const Key('signupForm_confirmPasswordInput_textField'),
+          label: 'Confirm password',
+          hint: 'Repeat your password',
+          prefixIcon: Icons.lock_person_outlined,
           obscureText: true,
-          decoration: InputDecoration(
-            labelText: 'confirm password',
-            errorText: state.confirmedPassword.displayError != null
-                ? 'passwords do not match'
-                : null,
-          ),
+          textInputAction: TextInputAction.done,
+          errorText: state.confirmedPassword.displayError != null
+              ? 'Passwords do not match'
+              : null,
+          onChanged: (password) => context
+              .read<SignupBloc>()
+              .add(SignupConfirmPasswordChanged(password)),
         );
       },
     );
@@ -133,27 +171,20 @@ class _ConfirmPasswordInput extends StatelessWidget {
 }
 
 class _SignupButton extends StatelessWidget {
+  const _SignupButton();
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SignupBloc, SignupState>(
       builder: (context, state) {
-        return state.status.isInProgress
-            ? const CircularProgressIndicator()
-            : Padding(
-              padding: const EdgeInsets.only(top: 28.0),
-              child: ElevatedButton(
-                  key: const Key('signupForm_continue_raisedButton'),
-                  onPressed: state.isValid
-                      ? () {
-                          context.read<SignupBloc>().add(const SignupSubmitted());
-                        }
-                      : null,
-                  child: Text(
-                    'Signup',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                ),
-            );
+        return AuthPrimaryButton(
+          buttonKey: const Key('signupForm_continue_raisedButton'),
+          label: 'Create account',
+          isLoading: state.status.isInProgress,
+          onPressed: state.isValid && !state.status.isInProgress
+              ? () => context.read<SignupBloc>().add(const SignupSubmitted())
+              : null,
+        );
       },
     );
   }

@@ -1,8 +1,8 @@
 import 'package:authentication_repository/authentication_repository.dart';
+import 'package:dartopia/authentication/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../consts/colors.dart';
 import '../signup.dart';
 
 class SignupPage extends StatelessWidget {
@@ -14,27 +14,13 @@ class SignupPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: const Color(0xFFC0D9B6),
-        appBar: AppBar(
-          foregroundColor: DartopiaColors.onPrimary,
-          backgroundColor: DartopiaColors.primary,
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(12),
-          child: BlocProvider(
-            create: (context) {
-              return SignupBloc(
-                authenticationRepository: context.read<AuthRepo>(),
-              );
-            },
-            child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 40.0),
-              child: SignupForm(),
-            ),
-          ),
-        ),
+    return BlocProvider(
+      create: (context) => SignupBloc(
+        authenticationRepository: context.read<AuthRepo>(),
+      ),
+      child: const AuthPageShell(
+        showBackButton: true,
+        child: SignupForm(),
       ),
     );
   }

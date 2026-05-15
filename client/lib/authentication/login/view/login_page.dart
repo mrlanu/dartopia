@@ -1,4 +1,5 @@
 import 'package:authentication_repository/authentication_repository.dart';
+import 'package:dartopia/authentication/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -13,26 +14,13 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Color(0xFFC0D9B6),
-        body: Padding(
-          padding: const EdgeInsets.all(12),
-          child: BlocProvider(
-            create: (context) {
-              return LoginBloc(
-                authenticationRepository:
-                context.read<AuthRepo>(),
-              );
-            },
-            child: const Padding(
-              padding: EdgeInsets.all(40.0),
-              child: LoginForm(),
-            ),
-          ),
-        ),
+    return BlocProvider(
+      create: (context) => LoginBloc(
+        authenticationRepository: context.read<AuthRepo>(),
+      ),
+      child: const AuthPageShell(
+        child: LoginForm(),
       ),
     );
   }
 }
-
