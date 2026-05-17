@@ -8,6 +8,8 @@ spring:
     type: caffeine
 
 myapp:
-  jwtExpirationMs: 86400000
+  jwtExpirationMs: 900000
+  jwtAccessExpirationMs: 900000
+  jwtRefreshExpirationMs: 604800000
   settings:
     server-name: ${SERVER_NAME:test1}

@@ -6,5 +6,10 @@ import xyz.qruto.java_server.models.responses.JwtResponse;
 
 public interface AuthService {
     JwtResponse login(String username, String password);
+
+    JwtResponse refresh(String refreshToken);
+
+    void logout(String refreshToken);
+
     UserEntity signup(SignupRequest signUpRequest);
 }

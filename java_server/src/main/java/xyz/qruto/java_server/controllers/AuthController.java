@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import xyz.qruto.java_server.entities.UserEntity;
 import xyz.qruto.java_server.models.requests.LoginRequest;
+import xyz.qruto.java_server.models.requests.RefreshTokenRequest;
 import xyz.qruto.java_server.models.requests.SignupRequest;
 import xyz.qruto.java_server.models.responses.JwtResponse;
 import xyz.qruto.java_server.services.AuthService;
@@ -25,6 +26,17 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(
                 loginRequest.getEmail(),
                 loginRequest.getPassword()));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<JwtResponse> refresh(@Valid @RequestBody RefreshTokenRequest request) {
+        return ResponseEntity.ok(authService.refresh(request.getRefreshToken()));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@Valid @RequestBody RefreshTokenRequest request) {
+        authService.logout(request.getRefreshToken());
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/signup")

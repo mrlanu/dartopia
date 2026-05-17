@@ -37,6 +37,7 @@ public class AuthServiceImpl implements AuthService {
     private final SettlementRepository settlementRepository;
     private final WorldService worldService;
     private final StatisticsRepository statisticsRepository;
+    private final RefreshTokenService refreshTokenService;
 
     public AuthServiceImpl(AuthenticationManager authenticationManager,
                            JwtUtils jwtUtils, UserRepository userRepository,
@@ -44,7 +45,8 @@ public class AuthServiceImpl implements AuthService {
                            PasswordEncoder encoder,
                            SettlementRepository settlementRepository,
                            WorldService worldService,
-                           StatisticsRepository statisticsRepository) {
+                           StatisticsRepository statisticsRepository,
+                           RefreshTokenService refreshTokenService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
         this.userRepository = userRepository;
@@ -53,6 +55,7 @@ public class AuthServiceImpl implements AuthService {
         this.settlementRepository = settlementRepository;
         this.worldService = worldService;
         this.statisticsRepository = statisticsRepository;
+        this.refreshTokenService = refreshTokenService;
     }
 
     public JwtResponse login(String username, String password) {
@@ -60,9 +63,32 @@ public class AuthServiceImpl implements AuthService {
                 new UsernamePasswordAuthenticationToken(username, password));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
+        return buildJwtResponse(authentication);
+    }
 
+    @Override
+    public JwtResponse refresh(String refreshToken) {
+        var consumed = refreshTokenService.consumeRefreshToken(refreshToken);
+        UserEntity user = userRepository.findById(consumed.getUserId())
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
+                        org.springframework.http.HttpStatus.UNAUTHORIZED, "User not found"));
+
+        UserDetailsImpl userDetails = UserDetailsImpl.build(user);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return buildJwtResponse(authentication);
+    }
+
+    @Override
+    public void logout(String refreshToken) {
+        refreshTokenService.revokeRefreshToken(refreshToken);
+    }
+
+    private JwtResponse buildJwtResponse(Authentication authentication) {
+        String jwt = jwtUtils.generateJwtToken(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        String refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
 
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -70,6 +96,7 @@ public class AuthServiceImpl implements AuthService {
 
         return JwtResponse.builder()
                 .token(jwt)
+                .refreshToken(refreshToken)
                 .type("Bearer")
                 .id(userDetails.getId())
                 .name(userDetails.getUsername())

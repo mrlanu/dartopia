@@ -19,6 +19,14 @@ class Api {
     return '/auth/login';
   }
 
+  static String refresh() {
+    return '/auth/refresh';
+  }
+
+  static String logout() {
+    return '/auth/logout';
+  }
+
   static String fetchPartOfWorld() {
     return '/world';
   }

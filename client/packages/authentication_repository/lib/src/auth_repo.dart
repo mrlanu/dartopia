@@ -4,7 +4,9 @@ import 'dart:io';
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:models/models.dart';
 import 'package:network/network.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'token_storage.dart';
+
+export 'token_storage.dart';
 
 sealed class AuthStatus {
   const AuthStatus();
@@ -32,21 +34,39 @@ class UnauthenticatedStatus extends AuthStatus {
 
 class AuthRepo {
   AuthRepo({NetworkClient? networkClient})
-      : _networkClient = networkClient ?? NetworkClient.instance;
+      : _networkClient = networkClient ?? NetworkClient.instance {
+    TokenRefreshInterceptor.onRefreshTokens = tryRefresh;
+  }
 
   final NetworkClient _networkClient;
   final _authStatusController = StreamController<AuthStatus>.broadcast();
   bool _clearingSession = false;
 
   Stream<AuthStatus> get authStatus async* {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
-    final name = prefs.getString('name');
+    final accessToken = await TokenStorage.getAccessToken();
+    final refreshToken = await TokenStorage.getRefreshToken();
+    final name = await TokenStorage.getName();
 
-    if (token != null && name != null && !_isTokenExpired(token)) {
-      yield AuthenticatedStatus(User(name, token));
-    } else if (token != null) {
-      await _clearStoredSession(prefs);
+    if (accessToken != null &&
+        name != null &&
+        !_isAccessTokenExpired(accessToken)) {
+      yield AuthenticatedStatus(User(name, accessToken));
+    } else if (refreshToken != null && name != null) {
+      final refreshed = await tryRefresh();
+      if (refreshed) {
+        final newAccess = await TokenStorage.getAccessToken();
+        final storedName = await TokenStorage.getName();
+        if (newAccess != null && storedName != null) {
+          yield AuthenticatedStatus(User(storedName, newAccess));
+        } else {
+          yield const UnauthenticatedStatus();
+        }
+      } else {
+        await TokenStorage.clear();
+        yield const UnauthenticatedStatus();
+      }
+    } else if (accessToken != null || refreshToken != null) {
+      await TokenStorage.clear();
       SessionNotifier.instance.reset();
       yield const UnauthenticatedStatus();
     } else {
@@ -85,26 +105,51 @@ class AuthRepo {
       final response = await _networkClient.post<Map<String, dynamic>>(
           Api.signin(),
           data: json.encode({'email': email, 'password': password}));
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', response.data!['token']);
-      await prefs.setString('name', response.data!['name']);
+      await _persistAuthResponse(response.data!);
       SessionNotifier.instance.reset();
-      _authStatusController.add(AuthenticatedStatus(
-          User(response.data!['name'], response.data!['token'])));
+      final accessToken = await TokenStorage.getAccessToken();
+      final name = await TokenStorage.getName();
+      _authStatusController.add(
+          AuthenticatedStatus(User(name!, accessToken!)));
     } on DioException catch (e) {
       throw NetworkException.fromDioError(e);
     }
   }
 
-  /// Clears stored credentials after 401 or local JWT expiry.
+  /// Exchanges a refresh token for a new access + refresh pair.
+  Future<bool> tryRefresh() async {
+    final refreshToken = await TokenStorage.getRefreshToken();
+    if (refreshToken == null) {
+      return false;
+    }
+
+    try {
+      final response = await _networkClient.post<Map<String, dynamic>>(
+        Api.refresh(),
+        data: json.encode({'refreshToken': refreshToken}),
+      );
+      await _persistAuthResponse(response.data!);
+      SessionNotifier.instance.reset();
+
+      final accessToken = await TokenStorage.getAccessToken();
+      final name = await TokenStorage.getName();
+      if (accessToken != null && name != null) {
+        _authStatusController.add(
+            AuthenticatedStatus(User(name, accessToken)));
+      }
+      return true;
+    } on DioException {
+      return false;
+    }
+  }
+
   Future<void> sessionExpired() async {
     if (_clearingSession) {
       return;
     }
     _clearingSession = true;
     try {
-      final prefs = await SharedPreferences.getInstance();
-      await _clearStoredSession(prefs);
+      await TokenStorage.clear();
       _authStatusController.add(const UnauthenticatedStatus());
     } finally {
       _clearingSession = false;
@@ -117,8 +162,18 @@ class AuthRepo {
     }
     _clearingSession = true;
     try {
-      final prefs = await SharedPreferences.getInstance();
-      await _clearStoredSession(prefs);
+      final refreshToken = await TokenStorage.getRefreshToken();
+      if (refreshToken != null) {
+        try {
+          await _networkClient.post<void>(
+            Api.logout(),
+            data: json.encode({'refreshToken': refreshToken}),
+          );
+        } on DioException {
+          // Clear local session even if revoke fails (offline / expired).
+        }
+      }
+      await TokenStorage.clear();
       SessionNotifier.instance.reset();
       _authStatusController.add(const UnauthenticatedStatus());
     } finally {
@@ -126,12 +181,23 @@ class AuthRepo {
     }
   }
 
-  Future<void> _clearStoredSession(SharedPreferences prefs) async {
-    await prefs.remove('token');
-    await prefs.remove('name');
+  Future<void> _persistAuthResponse(Map<String, dynamic> data) async {
+    final accessToken = data['token'] as String?;
+    final refreshToken = data['refreshToken'] as String?;
+    final name = data['name'] as String?;
+
+    if (accessToken == null || refreshToken == null || name == null) {
+      throw StateError('Auth response missing token, refreshToken, or name');
+    }
+
+    await TokenStorage.saveSession(
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      name: name,
+    );
   }
 
-  bool _isTokenExpired(String token) {
+  bool _isAccessTokenExpired(String token) {
     try {
       return Jwt.isExpired(token);
     } catch (_) {

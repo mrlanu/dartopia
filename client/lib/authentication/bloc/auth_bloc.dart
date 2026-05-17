@@ -50,6 +50,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     await _authenticationRepository.logout();
+    emit(const UnauthenticatedState());
   }
 
   @override

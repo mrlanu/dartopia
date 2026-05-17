@@ -3,6 +3,7 @@ import 'package:models/models.dart';
 
 import 'auth_interceptor.dart';
 import 'network_logging_interceptor.dart';
+import 'token_refresh_interceptor.dart';
 import 'unauthorized_interceptor.dart';
 
 class NetworkClient {
@@ -15,6 +16,7 @@ class NetworkClient {
 
     _dio.interceptors.add(AuthInterceptor());
     _dio.interceptors.add(UnauthorizedInterceptor());
+    _dio.interceptors.add(TokenRefreshInterceptor(_dio));
     _dio.interceptors.add(NetworkLoggingInterceptor());
   }
   static final NetworkClient _instance = NetworkClient._init();

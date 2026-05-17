@@ -13,3 +13,5 @@ spring:
 
 myapp:
   jwtSecret: nio98282exec3=m=m=a=ExceptionHandlerExceptionResolver=Resolved
+  jwtAccessExpirationMs: 900000
+  jwtRefreshExpirationMs: 604800000
