@@ -3,6 +3,7 @@ import 'package:models/models.dart';
 
 import 'auth_interceptor.dart';
 import 'network_logging_interceptor.dart';
+import 'unauthorized_interceptor.dart';
 
 class NetworkClient {
   NetworkClient._init() {
@@ -13,6 +14,7 @@ class NetworkClient {
     _dio.options.receiveTimeout = const Duration(seconds: 10);
 
     _dio.interceptors.add(AuthInterceptor());
+    _dio.interceptors.add(UnauthorizedInterceptor());
     _dio.interceptors.add(NetworkLoggingInterceptor());
   }
   static final NetworkClient _instance = NetworkClient._init();

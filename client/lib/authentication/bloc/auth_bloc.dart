@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:bloc/bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:network/network.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -17,42 +17,44 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   final AuthRepo _authenticationRepository;
+  StreamSubscription<void>? _sessionExpiredSubscription;
 
   Future<void> _onSubscriptionRequested(
     AuthenticationSubscriptionRequested event,
     Emitter<AuthState> emit,
-  ) {
-    return emit.onEach(
+  ) async {
+    await _sessionExpiredSubscription?.cancel();
+    _sessionExpiredSubscription =
+        SessionNotifier.instance.onSessionExpired.listen((_) {
+      _authenticationRepository.sessionExpired();
+    });
+
+    await emit.onEach(
       _authenticationRepository.authStatus,
-      onData: (status) async {
+      onData: (status) {
         switch (status) {
           case UnauthenticatedStatus():
-            return emit(const UnauthenticatedState());
+            emit(const UnauthenticatedState());
           case AuthenticatedStatus(:final user):
-            return emit(AuthenticatedState(user));
+            emit(AuthenticatedState(user));
           case UnknownStatus():
-            return emit(const UnauthenticatedState());
+            emit(const UnauthenticatedState());
         }
       },
       onError: addError,
     );
   }
 
-  /*Future<void> _onCheckAuthState(
-      CheckAuthStatus event, Emitter<AuthState> emit) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final accessToken = prefs.getString('token');
-    if (accessToken != null && !Jwt.isExpired(accessToken)) {
-      emit(AuthenticatedState());
-    } else {
-      emit(UnauthenticatedState());
-    }
-  }*/
-
   Future<void> _onLogout(
-      AuthenticationLogoutPressed event, Emitter<AuthState> emit) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-    emit(const UnauthenticatedState());
+    AuthenticationLogoutPressed event,
+    Emitter<AuthState> emit,
+  ) async {
+    await _authenticationRepository.logout();
+  }
+
+  @override
+  Future<void> close() {
+    _sessionExpiredSubscription?.cancel();
+    return super.close();
   }
 }
